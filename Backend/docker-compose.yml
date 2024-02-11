@@ -1,0 +1,29 @@
+services:
+  api:
+    build: ./api
+    ports:
+      - "8080:8080"
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - net
+
+  db:
+    build: ./db
+    networks:
+      - net
+    environment:
+      MYSQL_ROOT_PASSWORD: adminpw
+      MYSQL_DATABASE: harmonize-db
+      MYSQL_USER: hermonize
+      MYSQL_PASSWORD: hermonizepw
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p$MYSQL_ROOT_PASSWORD"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+networks:
+  net:
+    driver: bridge

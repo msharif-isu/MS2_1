@@ -1,18 +1,18 @@
 services:
-  api:
+  harmonize-api:
     build: ./api
     ports:
       - "8080:8080"
     depends_on:
-      db:
+      harmonize-db:
         condition: service_healthy
     networks:
-      - net
+      - harmonize-net
 
-  db:
+  harmonize-db:
     build: ./db
     networks:
-      - net
+      - harmonize-net
     environment:
       MYSQL_ROOT_PASSWORD: adminpw
       MYSQL_DATABASE: harmonize-db
@@ -25,5 +25,5 @@ services:
       retries: 10
 
 networks:
-  net:
+  harmonize-net:
     driver: bridge

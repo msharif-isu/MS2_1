@@ -3,6 +3,7 @@ services:
     build: ./api
     ports:
       - "8080:8080"
+      - "8443:8443"
     depends_on:
       db:
         condition: service_healthy
@@ -20,7 +21,7 @@ services:
       MYSQL_PASSWORD: hermonizepw
     healthcheck:
       test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p$MYSQL_ROOT_PASSWORD"]
-      interval: 5s
+      interval: 10s
       timeout: 5s
       retries: 10
 

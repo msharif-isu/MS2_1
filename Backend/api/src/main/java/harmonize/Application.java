@@ -2,14 +2,16 @@ package harmonize;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
 /**
- * PetClinic Spring Boot Application.
+ * Harmonize Spring Boot Application.
  * 
- * @author Vivek Bengre
+ * @author ms2-1
  */
 
 @SpringBootApplication
+@EnableJpaRepositories
 public class Application {
 	
     public static void main(String[] args) throws Exception {

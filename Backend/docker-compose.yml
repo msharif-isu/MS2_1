@@ -1,15 +1,4 @@
 services:
-  harmonize-api:
-    build: ./api
-    ports:
-      - "8080:8080"
-    depends_on:
-      harmonize-db:
-        condition: service_healthy
-    networks:
-      - harmonize-net
-    restart: always
-
   harmonize-db:
     build: ./db
     networks:
@@ -26,6 +15,17 @@ services:
       interval: 5s
       timeout: 5s
       retries: 10
+    restart: always
+
+  harmonize-api:
+    build: ./api
+    ports:
+      - "8080:8080"
+    depends_on:
+      harmonize-db:
+        condition: service_healthy
+    networks:
+      - harmonize-net
     restart: always
 
 networks:

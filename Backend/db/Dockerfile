@@ -3,8 +3,8 @@ FROM mysql:latest
 
 # Environment variables for MySQL configuration
 ENV MYSQL_DATABASE=harmonize-db \
-    MYSQL_USER=hermonize \
-    MYSQL_PASSWORD=hermonizepw \
+    MYSQL_USER=harmonize \
+    MYSQL_PASSWORD=harmonizepw \
     MYSQL_ROOT_PASSWORD=adminpw
 
 # Copy the init.sql script into the Docker container

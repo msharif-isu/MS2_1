@@ -8,11 +8,14 @@ services:
         condition: service_healthy
     networks:
       - harmonize-net
+    restart: always
 
   harmonize-db:
     build: ./db
     networks:
       - harmonize-net
+    ports:
+      - "3306:3306"
     environment:
       MYSQL_ROOT_PASSWORD: adminpw
       MYSQL_DATABASE: harmonize-db
@@ -23,6 +26,7 @@ services:
       interval: 5s
       timeout: 5s
       retries: 10
+    restart: always
 
 networks:
   harmonize-net:

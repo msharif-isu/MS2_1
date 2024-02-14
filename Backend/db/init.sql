@@ -1,7 +1,8 @@
 CREATE TABLE users (
-    ID INT PRIMARY KEY,
+    ID INT NOT NULL AUTO_INCREMENT,
     Username VARCHAR(255) NOT NULL,
-    Password VARCHAR(255) NOT NULL
+    Password VARCHAR(255) NOT NULL,
+    PRIMARY KEY (ID)
 );
 
 CREATE TABLE friends (
@@ -14,9 +15,9 @@ CREATE TABLE friends (
 
 
 -- Dummy data
-INSERT INTO users (ID, Username, Password) VALUES 
-(1, 'bob', 'bobpw'),
-(2, 'joe', 'joepw');
+INSERT INTO users (Username, Password) VALUES 
+('bob', 'bobpw'),
+('joe', 'joepw');
 
 INSERT INTO friends (UserID, FriendID) VALUES 
 (1, 2),

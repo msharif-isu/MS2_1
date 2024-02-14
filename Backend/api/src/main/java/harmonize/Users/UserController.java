@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
@@ -32,25 +33,26 @@ public class UserController {
     }
 
     @GetMapping(path = "/users/{id}")
-    User getUserById( @PathVariable int id){
-        return userRepository.findById(id);
+    User getUserById(@PathVariable int id){
+        return userRepository.findReferenceById(id);
     }
 
     @PostMapping(path = "/users")
     String createUser(@RequestBody User user){
         if (user == null)
             return failure;
+
         userRepository.save(user);
         return success;
     }
 
     @PutMapping("/users/{id}")
     User updateUser(@PathVariable int id, @RequestBody User request){
-        User user = userRepository.findById(id);
+        User user = userRepository.findReferenceById(id);
         if(user == null)
             return null;
         userRepository.save(request);
-        return userRepository.findById(id);
+        return userRepository.findReferenceById(id);
     }
 
     @DeleteMapping(path = "/users/{id}")

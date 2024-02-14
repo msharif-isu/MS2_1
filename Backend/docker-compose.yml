@@ -1,4 +1,20 @@
 services:
+  harmonize-db:
+    build: ./db
+    networks:
+      - harmonize-net
+    environment:
+      MYSQL_ROOT_PASSWORD: adminpw
+      MYSQL_DATABASE: harmonize-db
+      MYSQL_USER: harmonize
+      MYSQL_PASSWORD: harmonizepw
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p$MYSQL_ROOT_PASSWORD"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    restart: always
+
   harmonize-api:
     build: ./api
     ports:
@@ -9,21 +25,7 @@ services:
         condition: service_healthy
     networks:
       - harmonize-net
-
-  harmonize-db:
-    build: ./db
-    networks:
-      - harmonize-net
-    environment:
-      MYSQL_ROOT_PASSWORD: adminpw
-      MYSQL_DATABASE: harmonize-db
-      MYSQL_USER: hermonize
-      MYSQL_PASSWORD: hermonizepw
-    healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p$MYSQL_ROOT_PASSWORD"]
-      interval: 10s
-      timeout: 5s
-      retries: 10
+    restart: always
 
 networks:
   harmonize-net:

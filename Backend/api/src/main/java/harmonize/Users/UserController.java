@@ -51,6 +51,7 @@ public class UserController {
         User user = userRepository.findReferenceById(id);
         if(user == null)
             return null;
+            
         userRepository.save(request);
         return userRepository.findReferenceById(id);
     }

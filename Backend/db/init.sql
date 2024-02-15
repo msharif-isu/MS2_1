@@ -12,13 +12,3 @@ CREATE TABLE friends (
     FOREIGN KEY (FriendID) REFERENCES users(ID),
     PRIMARY KEY (UserID, FriendID)
 );
-
-
--- Dummy data
-INSERT INTO users (Username, Password) VALUES 
-('bob', 'bobpw'),
-('joe', 'joepw');
-
-INSERT INTO friends (UserID, FriendID) VALUES 
-(1, 2),
-(2, 1);

@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
@@ -49,7 +48,7 @@ public class UserController {
     @PutMapping("/users/{id}")
     public User updateUser(@PathVariable int id, @RequestBody User request){
         User user = userRepository.findReferenceById(id);
-        if(user == null)
+        if(user == null || request == null)
             return null;
             
         userRepository.save(request);

@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import harmonize.Users.User;
+import harmonize.Users.UserController;
 import harmonize.Users.UserRepository;
 
 /**
@@ -24,17 +25,26 @@ import harmonize.Users.UserRepository;
 
 @RestController
 public class AuthController {
+
+    @Autowired
+    UserController userController;
+
     @Autowired
     UserRepository userRepository;
 
     private String success = "{\"message\":\"success\"}";
     private String failure = "{\"message\":\"failure\"}";
     
-    @PostMapping(path = "/auth")
-    String ValidLogin(@RequestBody User user) {
-        if (userRepository.findByUsernameandPassword(user.getUsername(), user.getPassword()) == null)
-            return failure;
+    @PostMapping(path = "/auth/login")
+    public boolean ValidLogin(@RequestBody User user) {        
+        return userRepository.findByUsernameAndPassword(user.getUsername(), user.getPassword()) != null;
+    }
+
+    @PostMapping(path = "/auth/register")
+    public String RegisterUser(@RequestBody User user) {
+        if (userRepository.findByUsername(user.getUsername()) != null)
+            return "Username taken";   
         
-        return success;
+        return userController.createUser(user);
     }
 }

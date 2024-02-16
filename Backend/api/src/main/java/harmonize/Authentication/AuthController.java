@@ -4,6 +4,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import harmonize.Users.User;
 import harmonize.Users.UserController;
@@ -17,6 +19,7 @@ import harmonize.Users.UserRepository;
 
 @RestController
 public class AuthController {
+    private BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();  
 
     @Autowired
     UserController userController;
@@ -25,15 +28,22 @@ public class AuthController {
     UserRepository userRepository;
     
     @PostMapping(path = "/auth/login")
-    public boolean ValidLogin(@RequestBody User user) {        
-        return userRepository.findByUsernameAndPassword(user.getUsername(), user.getPassword()) != null;
+    public boolean ValidLogin(@RequestBody User user) {      
+        User validUser = userRepository.findByUsername(user.getUsername());  
+
+        if(validUser == null)
+            return false;
+
+        return encoder.matches(user.getPassword(), validUser.getPassword());
     }
 
     @PostMapping(path = "/auth/register")
     public String RegisterUser(@RequestBody User user) {
         if (userRepository.findByUsername(user.getUsername()) != null)
-            return "Username taken";   
+            return "Username taken";
         
-        return userController.createUser(user);
+        User encodedUser = new User(user.getUsername(), encoder.encode(user.getPassword()));
+
+        return userController.createUser(encodedUser);
     }
 }

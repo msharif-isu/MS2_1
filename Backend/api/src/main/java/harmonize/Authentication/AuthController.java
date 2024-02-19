@@ -1,5 +1,7 @@
 package harmonize.Authentication;
 
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -28,7 +30,7 @@ public class AuthController {
     UserRepository userRepository;
     
     @PostMapping(path = "/auth/login")
-    public boolean ValidLogin(@RequestBody User user) {      
+    public boolean ValidLogin(@Valid @RequestBody User user) {      
         User validUser = userRepository.findByUsername(user.getUsername());  
 
         if(validUser == null)
@@ -38,7 +40,7 @@ public class AuthController {
     }
 
     @PostMapping(path = "/auth/register")
-    public String RegisterUser(@RequestBody User user) {
+    public String RegisterUser(@Valid @RequestBody User user) {
         if (userRepository.findByUsername(user.getUsername()) != null)
             return "Username taken";
         

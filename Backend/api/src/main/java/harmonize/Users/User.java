@@ -5,15 +5,19 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Size;
 
 /**
  * 
- * @author Isaac Denning
+ * @author Isaac Denning and Phu Nguyen
  * 
  */ 
 @Entity
 @Table(name = "Users")
 public class User {
+    static final int MAXUSERNAMELENGTH = 20;
+    static final int MINPASSWORDLENGTH = 4;
 
      /* 
      * The annotation @ID marks the field below as the primary key for the table created by springboot
@@ -22,7 +26,13 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
+
+    @NotBlank(message = "Username cannot be blank")
+    @Size(max = MAXUSERNAMELENGTH, message = "Username cannot not be more than {max} characters")
     private String username;
+
+    @NotBlank(message = "Password cannot be blank")
+    @Size(min = MINPASSWORDLENGTH, message = "Password should not be less than {min} characters")
     private String password;
 
     public User(String username, String password) {

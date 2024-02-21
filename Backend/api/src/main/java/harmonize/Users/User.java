@@ -16,7 +16,7 @@ import lombok.Data;
  * 
  */ 
 @Entity
-@Table(name = "Users")
+@Table(name = "users")
 @Data
 public class User {
     static final int MAXUSERNAMELENGTH = 20;
@@ -42,6 +42,7 @@ public class User {
     }
 
     public User() {
+
     }
 }
 

@@ -3,6 +3,7 @@ package harmonize.Authentication;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -20,14 +21,18 @@ import harmonize.Users.UserRepository;
 
 @RestController
 public class AuthController {
-    private BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();  
-    private String salt = "coms309";
+    private BCryptPasswordEncoder encoder;
 
     @Autowired
     UserController userController;
 
     @Autowired
     UserRepository userRepository;
+
+    @Autowired
+    public AuthController (BCryptPasswordEncoder encoder) {
+        this.encoder = encoder;
+    }
     
     @PostMapping(path = "/auth/login")
     public boolean ValidLogin(@Valid @RequestBody User user) {      
@@ -36,7 +41,7 @@ public class AuthController {
         if(validUser == null)
             return false;
 
-        return encoder.matches(SaltPassword(user.getPassword()), validUser.getPassword());
+        return encoder.matches(user.getPassword(), validUser.getPassword());
     }
 
     @PostMapping(path = "/auth/register")
@@ -44,12 +49,8 @@ public class AuthController {
         if (userRepository.findByUsername(user.getUsername()) != null)
             return "Username taken";
         
-        User encodedUser = new User(user.getUsername(), encoder.encode(SaltPassword(user.getPassword())));
+        User encodedUser = new User(user.getUsername(), encoder.encode(user.getPassword()));
 
         return userController.createUser(encodedUser);
-    }
-
-    public String SaltPassword(String password) {
-        return salt + password;
     }
 }

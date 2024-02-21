@@ -8,6 +8,8 @@ import javax.persistence.Table;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 
+import lombok.Data;
+
 /**
  * 
  * @author Isaac Denning and Phu Nguyen
@@ -15,9 +17,9 @@ import javax.validation.constraints.Size;
  */ 
 @Entity
 @Table(name = "Users")
+@Data
 public class User {
     static final int MAXUSERNAMELENGTH = 20;
-    static final int MINPASSWORDLENGTH = 4;
 
      /* 
      * The annotation @ID marks the field below as the primary key for the table created by springboot
@@ -32,7 +34,6 @@ public class User {
     private String username;
 
     @NotBlank(message = "Password cannot be blank")
-    @Size(min = MINPASSWORDLENGTH, message = "Password should not be less than {min} characters")
     private String password;
 
     public User(String username, String password) {
@@ -42,32 +43,5 @@ public class User {
 
     public User() {
     }
-
-    // =============================== Getters and Setters for each field ================================== //
-
-    public int getId(){
-        return id;
-    }
-
-    public void setId(int id){
-        this.id = id;
-    }
-
-    public String getUsername(){
-        return username;
-    }
-
-    public void setUsername(String username){
-        this.username = username;
-    }
-
-    public String getPassword(){
-        return password;
-    }
-
-    public void setPassword(String password){
-        this.password = password;
-    }
-    
 }
 

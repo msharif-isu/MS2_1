@@ -19,7 +19,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 public class UserController {
-
     @Autowired
     UserRepository userRepository;
 
@@ -51,7 +50,8 @@ public class UserController {
         if(user == null || request == null)
             return null;
             
-        userRepository.save(request);
+        userRepository.setUsername(id, request.getUsername());
+        
         return userRepository.findReferenceById(id);
     }
 

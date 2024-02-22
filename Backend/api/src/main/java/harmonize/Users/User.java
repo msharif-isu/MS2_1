@@ -21,6 +21,7 @@ import lombok.Data;
  * @author Isaac Denning and Phu Nguyen
  * 
  */ 
+
 @Entity
 @Table(name = "users")
 @Data

@@ -16,6 +16,12 @@ import harmonize.Roles.Role;
 import harmonize.Users.User;
 import harmonize.Users.UserRepository;
 
+/**
+ * 
+ * @author Phu Nguyen
+ * 
+ */ 
+
 @Service
 public class CustomUserDetailsService implements UserDetailsService {
     private UserRepository userRepository;

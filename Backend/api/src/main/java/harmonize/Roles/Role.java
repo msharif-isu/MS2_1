@@ -9,6 +9,12 @@ import javax.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
 
+/**
+ * 
+ * @author Phu Nguyen
+ * 
+ */ 
+
 @Getter
 @Setter
 @Table(name = "roles")

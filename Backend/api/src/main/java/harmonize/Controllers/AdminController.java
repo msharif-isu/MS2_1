@@ -1,5 +1,6 @@
 package harmonize.Controllers;
 
+import java.util.HashSet;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,17 +13,29 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import harmonize.Roles.Role;
+import harmonize.Roles.RoleRepository;
 import harmonize.Users.User;
 import harmonize.Users.UserRepository;
+import io.jsonwebtoken.lang.Collections;
+
+/**
+ * 
+ * @author Phu Nguyen
+ * 
+ */ 
 
 @RestController
 @RequestMapping("/admin")
 public class AdminController {
     private UserRepository userRepository;
+    
+    private RoleRepository roleRepository;
 
     @Autowired
-    public AdminController(UserRepository userRepository) {
+    public AdminController(UserRepository userRepository, RoleRepository roleRepository) {
         this.userRepository = userRepository;
+        this.roleRepository = roleRepository;
     }
 
     @GetMapping(path = "/users")
@@ -62,4 +75,45 @@ public class AdminController {
         
         return new ResponseEntity<>("\"" + deletedUser.getUsername() + "\"" + " has been deleted", HttpStatus.OK);
     }
+
+    @PutMapping(path = "/roles/{id}/{role}")
+    public ResponseEntity<String> updateRole(@PathVariable int id, @PathVariable String role){
+        User user = userRepository.findReferenceById(id);
+        Role newRole = roleRepository.findByName(role);
+
+        if(user == null)
+            return new ResponseEntity<>("User does not exist", HttpStatus.NOT_FOUND);
+
+        if(newRole == null)
+            return new ResponseEntity<>("Role does not exist", HttpStatus.NOT_FOUND);
+
+        if(user.getRoles().contains(newRole))
+            return new ResponseEntity<>("User already has role", HttpStatus.NOT_FOUND);
+
+        user.getRoles().add(newRole);
+        userRepository.save(user);
+
+        return new ResponseEntity<>("\"" + role + "\"" + " has been added to " + "\"" + user.getUsername() + "\"", HttpStatus.OK);
+    }
+
+    @DeleteMapping(path = "/roles/{id}/{role}")
+    public ResponseEntity<String> deleteRole(@PathVariable int id, @PathVariable String role){
+        User user = userRepository.findReferenceById(id);
+        Role newRole = roleRepository.findByName(role);
+
+        if(user == null)
+            return new ResponseEntity<>("User does not exist", HttpStatus.NOT_FOUND);
+
+        if(newRole == null)
+            return new ResponseEntity<>("Role does not exist", HttpStatus.NOT_FOUND);
+
+        if(!user.getRoles().contains(newRole))
+            return new ResponseEntity<>("User does not have role", HttpStatus.NOT_FOUND);
+
+        user.getRoles().remove(newRole);
+        userRepository.save(user);
+
+        return new ResponseEntity<>("\"" + role + "\"" + " has been deleted from " + "\"" + user.getUsername() + "\"", HttpStatus.OK);
+    }
+
 }

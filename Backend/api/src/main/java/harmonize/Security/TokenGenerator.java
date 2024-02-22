@@ -11,6 +11,12 @@ import org.springframework.stereotype.Component;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 
+/**
+ * 
+ * @author Phu Nguyen
+ * 
+ */ 
+
 @Component
 public class TokenGenerator {
     public static final long EXPIRATION_DATE = 60000;

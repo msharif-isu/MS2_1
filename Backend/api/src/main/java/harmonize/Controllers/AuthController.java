@@ -1,4 +1,4 @@
-package harmonize.Authentication;
+package harmonize.Controllers;
 
 import java.util.Collections;
 
@@ -70,7 +70,7 @@ public class AuthController {
         
         User newUser = new User(user.getUsername(), encoder.encode(user.getPassword()));
 
-        newUser.setRoles(Collections.singletonList(roleRepository.findByName("USER")));
+        newUser.setRoles(Collections.singleton(roleRepository.findByName("USER")));
 
         userRepository.save(newUser);
         return new ResponseEntity<>("Registered User", HttpStatus.CREATED);

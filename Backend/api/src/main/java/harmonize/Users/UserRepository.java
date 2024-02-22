@@ -15,6 +15,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
     User findReferenceById(int id);
 
     @Transactional
+    @Modifying
     void deleteById(int id);
     
     @Query("select u from User u where u.username = ?1")

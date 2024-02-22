@@ -3,7 +3,6 @@ package harmonize.Controllers;
 import java.security.Principal;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -11,8 +10,8 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import harmonize.Services.UserService;
 import harmonize.Users.User;
-import harmonize.Users.UserRepository;
 
 /**
  * 
@@ -21,33 +20,28 @@ import harmonize.Users.UserRepository;
  */ 
 
 @RestController
-@RequestMapping("/users/{id}")
+@RequestMapping("/users")
 public class UserController {
-    private UserRepository userRepository;
+    private UserService userService;
 
     @Autowired
-    public UserController(UserRepository userRepository) {
-        this.userRepository = userRepository;
+    public UserController(UserService userService) {
+        this.userService = userService;
     }
 
-    @GetMapping(path = "")
+    @GetMapping(path = "/{id}")
     public ResponseEntity<User> getUserById(@PathVariable int id){
-        return new ResponseEntity<>(userRepository.findReferenceById(id), HttpStatus.OK);
+        return userService.getUserById(id);
     }
 
-    @PutMapping(path = "/{username}")
+    @GetMapping(path = "/{username}")
+    public ResponseEntity<User> getIdByUser(String username) {
+        return userService.getUserByUsername(username);
+    }
+
+    @PutMapping(path = "/{id}/{username}")
     public ResponseEntity<String> updateUser(@PathVariable int id, @PathVariable String username, Principal principal){
-        User user = userRepository.findReferenceById(id);
-
-        if(user.getId() != userRepository.findByUsername(principal.getName()).getId())
-            return new ResponseEntity<>("Cannot change another user", HttpStatus.BAD_REQUEST);
-
-        if(userRepository.findByUsername(username) != null)
-            return new ResponseEntity<>("Username already taken", HttpStatus.BAD_REQUEST);
-            
-        userRepository.setUsername(id, username);
-        
-        return new ResponseEntity<>("\"" + user.getUsername() + "\"" + " was updated to " + "\"" + username + "\"", HttpStatus.OK);
+        return userService.updateUser(id, username, principal);
     }
 }
 

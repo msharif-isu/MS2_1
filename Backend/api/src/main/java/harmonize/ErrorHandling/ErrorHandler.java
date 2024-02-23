@@ -7,6 +7,8 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 
 import harmonize.DTOs.ErrorDTO;
 import harmonize.ErrorHandling.Exceptions.RoleNotFoundException;
+import harmonize.ErrorHandling.Exceptions.RolePermissionException;
+import harmonize.ErrorHandling.Exceptions.UnauthorizedUserException;
 import harmonize.ErrorHandling.Exceptions.UserNotFoundException;
 import harmonize.ErrorHandling.Exceptions.UsernameTakenException;
 
@@ -25,5 +27,15 @@ public class ErrorHandler {
     @ExceptionHandler(UsernameTakenException.class)
     public ResponseEntity<ErrorDTO> handleUsernameTakenException(UsernameTakenException e) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorDTO(HttpStatus.BAD_REQUEST, e.getMessage()));
+    }
+
+    @ExceptionHandler(RolePermissionException.class)
+    public ResponseEntity<ErrorDTO> handleRolePermissionException(RolePermissionException e) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorDTO(HttpStatus.BAD_REQUEST, e.getMessage()));
+    }
+
+    @ExceptionHandler(UnauthorizedUserException.class)
+    public ResponseEntity<ErrorDTO> handleUnauthorizedUserException(UnauthorizedUserException e) {
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new ErrorDTO(HttpStatus.FORBIDDEN, e.getMessage()));
     }
 }

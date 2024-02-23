@@ -29,19 +29,19 @@ public class UserController {
         this.userService = userService;
     }
 
-    @GetMapping(path = "/{id}")
+    @GetMapping(path = "/id/{id}")
     public ResponseEntity<User> getUserById(@PathVariable int id){
-        return userService.getUserById(id);
+        return ResponseEntity.ok(userService.getUserById(id));
     }
 
-    @GetMapping(path = "/{username}")
-    public ResponseEntity<User> getIdByUser(String username) {
-        return userService.getUserByUsername(username);
+    @GetMapping(path = "/username/{username}")
+    public ResponseEntity<User> getIdByUser(@PathVariable String username) {
+        return ResponseEntity.ok(userService.getUserByUsername(username));
     }
 
     @PutMapping(path = "/{id}/{username}")
-    public ResponseEntity<String> updateUser(@PathVariable int id, @PathVariable String username, Principal principal){
-        return userService.updateUser(id, username, principal);
+    public ResponseEntity<String> updateUsername(@PathVariable int id, @PathVariable String username, Principal principal){
+        return ResponseEntity.ok(userService.updateUsername(id, username, principal));
     }
 }
 

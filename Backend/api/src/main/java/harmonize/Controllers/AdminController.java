@@ -42,16 +42,16 @@ public class AdminController {
 
     @DeleteMapping(path = "/users/{id}")
     public ResponseEntity<String> deleteUser(@PathVariable int id){
-        return adminService.deleteUser(id);
+        return ResponseEntity.ok(adminService.deleteUser(id));
     }
 
     @PutMapping(path = "/roles/{id}/{role}")
     public ResponseEntity<String> updateRole(@PathVariable int id, @PathVariable String role){
-        return adminService.updateRole(id, role);
+        return ResponseEntity.ok(adminService.updateRole(id, role));
     }
 
     @DeleteMapping(path = "/roles/{id}/{role}")
     public ResponseEntity<String> deleteRole(@PathVariable int id, @PathVariable String role){
-        return adminService.deleteRole(id, role);
+        return ResponseEntity.ok(adminService.deleteRole(id, role));
     }
 }

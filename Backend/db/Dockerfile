@@ -7,8 +7,8 @@ ENV MYSQL_DATABASE=harmonize-db \
     MYSQL_PASSWORD=harmonizepw \
     MYSQL_ROOT_PASSWORD=adminpw
 
-# Copy the init.sql script into the Docker container
-COPY init.sql /docker-entrypoint-initdb.d/
+# # Copy the init.sql script into the Docker container
+# COPY init.sql /docker-entrypoint-initdb.d/
 
 # Expose MySQL default port
 EXPOSE 3306

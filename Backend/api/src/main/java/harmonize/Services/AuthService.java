@@ -3,8 +3,7 @@ package harmonize.Services;
 import java.util.Collections;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.lang.NonNull;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -15,6 +14,7 @@ import org.springframework.stereotype.Service;
 import harmonize.DTOs.AuthDTO;
 import harmonize.DTOs.LoginDTO;
 import harmonize.DTOs.RegisterDTO;
+import harmonize.ErrorHandling.Exceptions.UsernameTakenException;
 import harmonize.Roles.RoleRepository;
 import harmonize.Security.TokenGenerator;
 import harmonize.Users.User;
@@ -42,25 +42,27 @@ public class AuthService {
         this.tokenGenerator = tokenGenerator;
     }
     
-    public ResponseEntity<AuthDTO> login(LoginDTO user) {    
+    @NonNull
+    public AuthDTO login(LoginDTO user) {    
         Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(user.getUsername(), user.getPassword()));
         
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
         String token = tokenGenerator.generateToken(authentication);
 
-        return new ResponseEntity<>(new AuthDTO(token), HttpStatus.OK);
+        return new AuthDTO(token);
     }
 
-    public ResponseEntity<String> registerUser(RegisterDTO user) {
+    @NonNull
+    public User registerUser(RegisterDTO user) {
         if (userRepository.findByUsername(user.getUsername()) != null)
-            return new ResponseEntity<>("Username Taken", HttpStatus.CONFLICT);
+            throw new UsernameTakenException(user.getUsername());
         
         User newUser = new User(user.getUsername(), encoder.encode(user.getPassword()));
 
         newUser.setRoles(Collections.singleton(roleRepository.findByName("USER")));
 
         userRepository.save(newUser);
-        return new ResponseEntity<>("Registered User", HttpStatus.CREATED);
+        return newUser;
     }
 }

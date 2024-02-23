@@ -1,0 +1,29 @@
+package harmonize.ErrorHandling;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.ControllerAdvice;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+
+import harmonize.DTOs.ErrorDTO;
+import harmonize.ErrorHandling.Exceptions.RoleNotFoundException;
+import harmonize.ErrorHandling.Exceptions.UserNotFoundException;
+import harmonize.ErrorHandling.Exceptions.UsernameTakenException;
+
+@ControllerAdvice
+public class ErrorHandler {
+    @ExceptionHandler(UserNotFoundException.class)
+    public ResponseEntity<ErrorDTO> handleUserNotFoundException(UserNotFoundException e) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorDTO(HttpStatus.NOT_FOUND, e.getMessage()));
+    }
+
+    @ExceptionHandler(RoleNotFoundException.class)
+    public ResponseEntity<ErrorDTO> handleRoleNotFoundException(RoleNotFoundException e) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorDTO(HttpStatus.NOT_FOUND, e.getMessage()));
+    }
+
+    @ExceptionHandler(UsernameTakenException.class)
+    public ResponseEntity<ErrorDTO> handleUsernameTakenException(UsernameTakenException e) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorDTO(HttpStatus.BAD_REQUEST, e.getMessage()));
+    }
+}

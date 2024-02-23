@@ -11,6 +11,7 @@ import harmonize.DTOs.AuthDTO;
 import harmonize.DTOs.LoginDTO;
 import harmonize.DTOs.RegisterDTO;
 import harmonize.Services.AuthService;
+import harmonize.Users.User;
 
 /**
  * 
@@ -30,11 +31,11 @@ public class AuthController {
 
     @PostMapping(path = "/login")
     public ResponseEntity<AuthDTO> login(@RequestBody LoginDTO user) {    
-        return authService.login(user);
+        return ResponseEntity.ok(authService.login(user));
     }
 
     @PostMapping(path = "/register")
-    public ResponseEntity<String> registerUser(@RequestBody RegisterDTO user) {
-        return authService.registerUser(user);
+    public ResponseEntity<User> registerUser(@RequestBody RegisterDTO user) {
+        return ResponseEntity.ok(authService.registerUser(user));
     }
 }

@@ -32,12 +32,12 @@ public class AdminController {
 
     @GetMapping(path = "/users")
     public ResponseEntity<List<User>> getAllUsers(){
-        return adminService.getAllUsers();
+        return ResponseEntity.ok(adminService.getAllUsers());
     }
 
     @PutMapping(path = "/users/{id}/{username}")
     public ResponseEntity<String> updateUser(@PathVariable int id, @PathVariable String username){
-        return adminService.updateUser(id, username);
+        return ResponseEntity.ok(adminService.updateUser(id, username));
     }
 
     @DeleteMapping(path = "/users/{id}")

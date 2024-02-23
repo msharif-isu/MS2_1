@@ -5,8 +5,11 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 
+import harmonize.ErrorHandling.Exceptions.UserNotFoundException;
+import harmonize.ErrorHandling.Exceptions.UsernameTakenException;
 import harmonize.Roles.Role;
 import harmonize.Roles.RoleRepository;
 import harmonize.Users.User;
@@ -24,22 +27,24 @@ public class AdminService {
         this.roleRepository = roleRepository;
     }
     
-    public ResponseEntity<List<User>> getAllUsers() {
-        return new ResponseEntity<>(userRepository.findAll(), HttpStatus.OK);
+    @NonNull
+    public List<User> getAllUsers() {
+        return userRepository.findAll();
     }
 
-    public ResponseEntity<String> updateUser(int id, String username) {
+    @NonNull
+    public String updateUser(int id, String username) {
         User user = userRepository.findReferenceById(id);
 
         if(user == null)
-            return new ResponseEntity<>("User does not exist", HttpStatus.NOT_FOUND);
+            throw new UserNotFoundException(id);
 
         if(userRepository.findByUsername(username) != null)
-            return new ResponseEntity<>("Username already taken", HttpStatus.BAD_REQUEST);
+            throw new UsernameTakenException(username);
             
         userRepository.setUsername(id, username);
         
-        return new ResponseEntity<>("\"" + user.getUsername() + "\"" + " was updated to " + "\"" + username + "\"", HttpStatus.OK);
+        return "\"" + user.getUsername() + "\"" + " was updated to " + "\"" + username + "\"";
     }
 
     public ResponseEntity<String> deleteUser(int id){

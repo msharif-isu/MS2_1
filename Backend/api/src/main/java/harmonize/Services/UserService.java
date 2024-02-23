@@ -53,6 +53,6 @@ public class UserService {
             
         userRepository.setUsername(id, username);
         
-        return "\"" + user.getUsername() + "\"" + " was updated to " + "\"" + username + "\"";
+        return new String(String.format("\"%s\" was updated to \"%s\"", user.getUsername(), username));
     }
 }

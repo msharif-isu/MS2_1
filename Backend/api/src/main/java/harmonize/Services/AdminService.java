@@ -44,7 +44,7 @@ public class AdminService {
             
         userRepository.setUsername(id, username);
         
-        return "\"" + user.getUsername() + "\"" + " was updated to " + "\"" + username + "\"";
+        return new String(String.format("\"%s\" was updated to \"%s\"", user.getUsername(), username));
     }
 
     @NonNull
@@ -57,7 +57,7 @@ public class AdminService {
         user.getRoles().removeAll(user.getRoles());
         userRepository.deleteById(id);
         
-        return "\"" + user.getUsername() + "\"" + " has been deleted";
+        return new String(String.format("\"%s\" has been deleted", user.getUsername()));
     }
 
     @NonNull
@@ -77,7 +77,7 @@ public class AdminService {
         user.getRoles().add(newRole);
         userRepository.save(user);
 
-        return "\"" + role + "\"" + " has been added to " + "\"" + user.getUsername() + "\"";
+        return new String(String.format("\"%s\" has been added to \"%s\"", role, user.getUsername()));
     }
 
     @NonNull
@@ -97,6 +97,6 @@ public class AdminService {
         user.getRoles().remove(newRole);
         userRepository.save(user);
 
-        return "\"" + role + "\"" + " has been deleted from " + "\"" + user.getUsername() + "\"";
+        return new String(String.format("\"%s\" has been deleted from \"%s\"", role, user.getUsername()));
     }
 }

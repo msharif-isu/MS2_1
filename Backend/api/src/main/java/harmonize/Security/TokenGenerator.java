@@ -19,13 +19,13 @@ import io.jsonwebtoken.Jwts;
 
 @Component
 public class TokenGenerator {
-    public static final long EXPIRATION_DATE = 60000;
+    public static final long EXPIRATION_DATE_SECONDS = 86400;
     private static final SecretKey SECRET_KEY = Jwts.SIG.HS512.key().build();
 
     public String generateToken(Authentication authentication) {
         String username = authentication.getName();
         Date currentDate = new Date();
-        Date expireDate = new Date(currentDate.getTime() + EXPIRATION_DATE);
+        Date expireDate = new Date(currentDate.getTime() + EXPIRATION_DATE_SECONDS * 1000);
 
         String token = Jwts.builder()
                             .subject(username)

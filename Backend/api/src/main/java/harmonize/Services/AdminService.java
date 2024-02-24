@@ -1,5 +1,6 @@
 package harmonize.Services;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +31,19 @@ public class AdminService {
     @NonNull
     public List<User> getAllUsers() {
         return userRepository.findAll();
+    }
+
+    @NonNull
+    public List<User> getPossibleFriends(int id) {
+        List<User> possibleFriends = new ArrayList<User>();
+        userRepository.findAllByRole("USER").forEach(user -> {
+            if(user.getId() == id)
+                return;
+            
+            possibleFriends.add(user);
+        });
+
+        return possibleFriends;
     }
 
     @NonNull

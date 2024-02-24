@@ -10,8 +10,8 @@ import org.springframework.web.bind.annotation.RestController;
 import harmonize.DTOs.AuthDTO;
 import harmonize.DTOs.LoginDTO;
 import harmonize.DTOs.RegisterDTO;
+import harmonize.DTOs.UserDTO;
 import harmonize.Services.AuthService;
-import harmonize.Users.User;
 
 /**
  * 
@@ -35,7 +35,7 @@ public class AuthController {
     }
 
     @PostMapping(path = "/register")
-    public ResponseEntity<User> registerUser(@RequestBody RegisterDTO user) {
+    public ResponseEntity<UserDTO> registerUser(@RequestBody RegisterDTO user) {
         return ResponseEntity.ok(authService.registerUser(user));
     }
 }

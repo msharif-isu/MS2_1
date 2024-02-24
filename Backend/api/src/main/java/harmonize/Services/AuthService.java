@@ -14,7 +14,6 @@ import org.springframework.stereotype.Service;
 import harmonize.DTOs.AuthDTO;
 import harmonize.DTOs.LoginDTO;
 import harmonize.DTOs.RegisterDTO;
-import harmonize.DTOs.UserDTO;
 import harmonize.ErrorHandling.Exceptions.UsernameTakenException;
 import harmonize.Roles.RoleRepository;
 import harmonize.Security.TokenGenerator;
@@ -55,7 +54,7 @@ public class AuthService {
     }
 
     @NonNull
-    public UserDTO registerUser(RegisterDTO user) {
+    public AuthDTO registerUser(RegisterDTO user) {
         if (userRepository.findByUsername(user.getUsername()) != null)
             throw new UsernameTakenException(user.getUsername());
         
@@ -64,6 +63,11 @@ public class AuthService {
         newUser.setRoles(Collections.singleton(roleRepository.findByName("USER")));
 
         userRepository.save(newUser);
-        return new UserDTO(newUser.getId(), newUser.getUsername());
+
+        LoginDTO newUserLogin = new LoginDTO();
+        newUserLogin.setUsername(user.getUsername());
+        newUserLogin.setPassword(user.getPassword());
+
+        return login(newUserLogin);
     }
 }

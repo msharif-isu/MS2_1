@@ -34,7 +34,7 @@ public class AdminService {
     }
 
     @NonNull
-    public List<User> getPossibleFriends(int id) {
+    public List<User> getRecommendedFriends(int id) {
         List<User> possibleFriends = new ArrayList<User>();
         userRepository.findAllByRole("USER").forEach(user -> {
             if(user.getId() == id)

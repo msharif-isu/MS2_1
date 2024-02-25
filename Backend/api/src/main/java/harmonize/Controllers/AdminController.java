@@ -36,8 +36,8 @@ public class AdminController {
     }
 
     @GetMapping(path = "/friends/{id}")
-    public ResponseEntity<List<User>> getPossibleFriends(@PathVariable int id){
-        return ResponseEntity.ok(adminService.getPossibleFriends(id));
+    public ResponseEntity<List<User>> getRecommendedFriends(@PathVariable int id){
+        return ResponseEntity.ok(adminService.getRecommendedFriends(id));
     }
 
     @PutMapping(path = "/users/{id}/{username}")

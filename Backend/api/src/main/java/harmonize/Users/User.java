@@ -43,13 +43,34 @@ public class User {
                              inverseJoinColumns = @JoinColumn(name = "role_id", referencedColumnName = "id"))
     private Set<Role> roles = new HashSet<>();
 
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = "friends", joinColumns = @JoinColumn(name = "user_id",   referencedColumnName = "id"),
+                          inverseJoinColumns = @JoinColumn(name = "friend_id", referencedColumnName = "id"))
+    private Set<User> friends = new HashSet<>();
+
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(name = "friendInvites", joinColumns = @JoinColumn(name = "user_id",    referencedColumnName = "id"),
+                                inverseJoinColumns = @JoinColumn(name = "inviter_id", referencedColumnName = "id"))
+    private Set<User> friendInvites = new HashSet<>();
+
     public User(String username, String password) {
         this.username = username;
         this.password = password;
     }
 
-    public User() {
+    public User() {}
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || this.getClass() != o.getClass()) return false;
+        User user = (User) o;
+        return user.id == this.id;
+    }
+
+    @Override
+    public int hashCode() {
+        return id;
     }
 }
 

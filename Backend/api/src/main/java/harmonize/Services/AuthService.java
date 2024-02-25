@@ -54,7 +54,7 @@ public class AuthService {
     }
 
     @NonNull
-    public User registerUser(RegisterDTO user) {
+    public AuthDTO registerUser(RegisterDTO user) {
         if (userRepository.findByUsername(user.getUsername()) != null)
             throw new UsernameTakenException(user.getUsername());
         
@@ -63,6 +63,11 @@ public class AuthService {
         newUser.setRoles(Collections.singleton(roleRepository.findByName("USER")));
 
         userRepository.save(newUser);
-        return newUser;
+
+        LoginDTO newUserLogin = new LoginDTO();
+        newUserLogin.setUsername(user.getUsername());
+        newUserLogin.setPassword(user.getPassword());
+
+        return login(newUserLogin);
     }
 }

@@ -35,6 +35,11 @@ public class AdminController {
         return ResponseEntity.ok(adminService.getAllUsers());
     }
 
+    @GetMapping(path = "/friends/{id}")
+    public ResponseEntity<List<User>> getPossibleFriends(@PathVariable int id){
+        return ResponseEntity.ok(adminService.getPossibleFriends(id));
+    }
+
     @PutMapping(path = "/users/{id}/{username}")
     public ResponseEntity<String> updateUser(@PathVariable int id, @PathVariable String username){
         return ResponseEntity.ok(adminService.updateUser(id, username));

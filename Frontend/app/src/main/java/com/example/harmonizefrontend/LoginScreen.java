@@ -2,6 +2,8 @@ package com.example.harmonizefrontend;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.ColorStateList;
+import android.graphics.Color;
 import android.os.Bundle;
 
 import com.google.android.material.snackbar.Snackbar;
@@ -46,6 +48,8 @@ public class LoginScreen extends AppCompatActivity implements OnClickListener {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login_screen);
 
+
+
         usernameEditText = findViewById(R.id.UsernameInput);
         passwordEditText = findViewById(R.id.PasswordInput);
 
@@ -57,6 +61,19 @@ public class LoginScreen extends AppCompatActivity implements OnClickListener {
         loginButton.setOnClickListener(this);
 
         registerButton = findViewById(R.id.Register);
+        registerButton.setOnClickListener(this);
+
+        Intent intent = getIntent();
+        if (intent != null) {
+            if (intent.hasExtra("username") && intent.getStringExtra("username") != null) {
+                username = intent.getStringExtra("username");
+                usernameEditText.setText(username);
+            }
+            if (intent.hasExtra("password") && intent.getStringExtra("password") != null) {
+                password = intent.getStringExtra("password");
+                passwordEditText.setText(password);
+            }
+        }
 
         saveLogin = loginPreferences.getBoolean("saveLogin", false);
         if (saveLogin == true) {
@@ -68,9 +85,6 @@ public class LoginScreen extends AppCompatActivity implements OnClickListener {
 
     }
 
-//    registerButton.setOnClickListener(new View.OnClickListener() {
-//
-//    )};
 
     public void onClick(View view) {
         if (view == loginButton) {
@@ -89,6 +103,9 @@ public class LoginScreen extends AppCompatActivity implements OnClickListener {
                 loginPrefsEditor.clear();
                 loginPrefsEditor.commit();
             }
+
+            usernameEditText.setBackgroundTintList(null);
+            passwordEditText.setBackgroundTintList(null);
 
             checkCredentials(username, password);
 
@@ -109,7 +126,16 @@ public class LoginScreen extends AppCompatActivity implements OnClickListener {
     }
 
     private void checkCredentials(String username, String password) {
+        if (username.length() == 0) {
+            Toast.makeText(LoginScreen.this, "Username is required", Toast.LENGTH_LONG).show();
+            usernameEditText.setBackgroundTintList(ColorStateList.valueOf(Color.RED));
 
+        }
+        else if (password.length() == 0) {
+            Toast.makeText(LoginScreen.this, "password is required", Toast.LENGTH_LONG).show();
+            passwordEditText.setBackgroundTintList(ColorStateList.valueOf(Color.RED));
+        }
+        // Connect to backend in order to check if credentials are valid
 
     }
 

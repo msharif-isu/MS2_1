@@ -9,7 +9,10 @@ import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 
 import harmonize.DTOs.UserDTO;
+import harmonize.ErrorHandling.Exceptions.UserAlreadyFriendException;
+import harmonize.ErrorHandling.Exceptions.UserAlreadyInvitedException;
 import harmonize.ErrorHandling.Exceptions.UserNotFoundException;
+import harmonize.ErrorHandling.Exceptions.UserNotFriendException;
 import harmonize.ErrorHandling.Exceptions.UsernameTakenException;
 import harmonize.Users.User;
 import harmonize.Users.UserRepository;
@@ -100,11 +103,14 @@ public class UserService {
         User user = userRepository.findByUsername(principal.getName());
         User friend = userRepository.findReferenceById(id);
 
+        if (friend == null)
+            throw new UserNotFoundException(id);
+
         if (user.getFriends().contains(friend))
-            return new String(String.format("\"%s\" and \"%s\" are already friends", user.getUsername(), friend.getUsername()));
+            throw new UserAlreadyFriendException(friend.getUsername());
         
         if (friend.getFriendInvites().contains(user))
-            return new String(String.format("Friend invite frome \"%s\" to \"%s\" already sent", user.getUsername(), friend.getUsername()));
+            throw new UserAlreadyInvitedException(friend.getUsername());
 
         if (!user.getFriendInvites().contains(friend)) {
             friend.getFriendInvites().add(user);
@@ -126,6 +132,9 @@ public class UserService {
         User user = userRepository.findByUsername(principal.getName());
         User friend = userRepository.findReferenceById(id);
 
+        if (friend == null)
+            throw new UserNotFoundException(id);
+
         if (friend.getFriendInvites().contains(user)) {
             friend.getFriendInvites().remove(user);
             userRepository.save(friend);
@@ -139,7 +148,7 @@ public class UserService {
         }
 
         if (!user.getFriends().contains(friend))
-            return new String(String.format("\"%s\" was not friends with \"%s\"", user.getUsername(), friend.getUsername()));
+            throw new UserNotFriendException(friend.getUsername());
 
         user.getFriends().remove(friend);
         friend.getFriends().remove(user);

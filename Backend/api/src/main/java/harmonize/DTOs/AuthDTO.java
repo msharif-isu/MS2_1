@@ -2,6 +2,12 @@ package harmonize.DTOs;
 
 import lombok.Data;
 
+/**
+ * 
+ * @author Phu Nguyen
+ * 
+ */ 
+
 @Data
 public class AuthDTO {
     private String accessToken;

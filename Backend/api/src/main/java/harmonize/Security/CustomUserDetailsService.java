@@ -1,7 +1,7 @@
 package harmonize.Security;
 
 import java.util.Collection;
-import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +15,12 @@ import org.springframework.stereotype.Service;
 import harmonize.Roles.Role;
 import harmonize.Users.User;
 import harmonize.Users.UserRepository;
+
+/**
+ * 
+ * @author Phu Nguyen
+ * 
+ */ 
 
 @Service
 public class CustomUserDetailsService implements UserDetailsService {
@@ -35,7 +41,7 @@ public class CustomUserDetailsService implements UserDetailsService {
         return new org.springframework.security.core.userdetails.User(user.getUsername(), user.getPassword(), getAuthorities(user.getRoles()));
     }
 
-    private Collection<GrantedAuthority> getAuthorities(List<Role> roles) {
+    private Collection<GrantedAuthority> getAuthorities(Set<Role> roles) {
         return roles.stream().map(role -> new SimpleGrantedAuthority(role.getName())).collect(Collectors.toList());
     }
 }

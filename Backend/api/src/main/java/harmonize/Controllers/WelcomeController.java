@@ -1,4 +1,4 @@
-package harmonize;
+package harmonize.Controllers;
 
 import org.springframework.web.bind.annotation.*;
 

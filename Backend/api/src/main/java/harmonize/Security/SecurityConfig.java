@@ -12,6 +12,12 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+/**
+ * 
+ * @author Phu Nguyen
+ * 
+ */ 
+
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
@@ -33,8 +39,10 @@ public class SecurityConfig {
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .authorizeRequests()
-                .antMatchers("/auth/**").permitAll()
-                .anyRequest().authenticated()
+		    .antMatchers("/").permitAll()
+                    .antMatchers("/auth/**").permitAll()
+                    .antMatchers("/admin/**").hasAuthority("ADMIN")
+                    .anyRequest().authenticated()
                 .and()
                 .httpBasic();
 
@@ -54,7 +62,7 @@ public class SecurityConfig {
     }
 
     @Bean
-    public AuthFilter authenticationFilter() {
-        return new AuthFilter();
+    public TokenAuthFilter authenticationFilter() {
+        return new TokenAuthFilter();
     }
 }

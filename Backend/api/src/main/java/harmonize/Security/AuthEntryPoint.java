@@ -10,6 +10,12 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.stereotype.Component;
 
+/**
+ * 
+ * @author Phu Nguyen
+ * 
+ */ 
+
 @Component
 public class AuthEntryPoint implements AuthenticationEntryPoint{
     @Override

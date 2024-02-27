@@ -1,37 +1,27 @@
-package harmonize.Authentication;
+package harmonize.Services;
 
 import java.util.Collections;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.lang.NonNull;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.stereotype.Service;
 
 import harmonize.DTOs.AuthDTO;
 import harmonize.DTOs.LoginDTO;
 import harmonize.DTOs.RegisterDTO;
+import harmonize.ErrorHandling.Exceptions.UsernameTakenException;
 import harmonize.Roles.RoleRepository;
 import harmonize.Security.TokenGenerator;
 import harmonize.Users.User;
 import harmonize.Users.UserRepository;
 
-/**
- * 
- * @author Phu Nguyen
- * 
- */ 
-
-@RestController
-@RequestMapping("/auth")
-public class AuthController {
+@Service
+public class AuthService {
     private UserRepository userRepository;
 
     private RoleRepository roleRepository;
@@ -43,7 +33,7 @@ public class AuthController {
     private TokenGenerator tokenGenerator;
 
     @Autowired
-    public AuthController (UserRepository userRepository, RoleRepository roleRepository, 
+    public AuthService (UserRepository userRepository, RoleRepository roleRepository, 
                             AuthenticationManager authenticationManager, BCryptPasswordEncoder encoder, TokenGenerator tokenGenerator) {
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
@@ -52,27 +42,32 @@ public class AuthController {
         this.tokenGenerator = tokenGenerator;
     }
     
-    @PostMapping(path = "/login")
-    public ResponseEntity<AuthDTO> login(@RequestBody LoginDTO user) {    
+    @NonNull
+    public AuthDTO login(LoginDTO user) {    
         Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(user.getUsername(), user.getPassword()));
         
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
         String token = tokenGenerator.generateToken(authentication);
 
-        return new ResponseEntity<>(new AuthDTO(token), HttpStatus.OK);
+        return new AuthDTO(token);
     }
 
-    @PostMapping(path = "/register")
-    public ResponseEntity<String> registerUser(@RequestBody RegisterDTO user) {
+    @NonNull
+    public AuthDTO registerUser(RegisterDTO user) {
         if (userRepository.findByUsername(user.getUsername()) != null)
-            return new ResponseEntity<>("Username Taken", HttpStatus.CONFLICT);
+            throw new UsernameTakenException(user.getUsername());
         
         User newUser = new User(user.getUsername(), encoder.encode(user.getPassword()));
 
-        newUser.setRoles(Collections.singletonList(roleRepository.findByName("USER")));
+        newUser.setRoles(Collections.singleton(roleRepository.findByName("USER")));
 
         userRepository.save(newUser);
-        return new ResponseEntity<>("Registered User", HttpStatus.CREATED);
+
+        LoginDTO newUserLogin = new LoginDTO();
+        newUserLogin.setUsername(user.getUsername());
+        newUserLogin.setPassword(user.getPassword());
+
+        return login(newUserLogin);
     }
 }

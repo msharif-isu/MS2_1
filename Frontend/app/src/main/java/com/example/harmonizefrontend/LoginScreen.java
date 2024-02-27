@@ -6,10 +6,13 @@ import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.os.Bundle;
 
+import com.android.volley.RequestQueue;
+import com.android.volley.toolbox.StringRequest;
 import com.google.android.material.snackbar.Snackbar;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.inputmethod.InputMethodManager;
@@ -28,6 +31,20 @@ import androidx.navigation.ui.NavigationUI;
 
 import com.example.harmonizefrontend.databinding.ActivityLoginScreenBinding;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import com.android.volley.AuthFailureError;
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.VolleyLog;
+import com.android.volley.toolbox.JsonObjectRequest;
+
+import java.util.HashMap;
+import java.util.Map;
+
+
 public class LoginScreen extends AppCompatActivity implements OnClickListener {
 
 //    private AppBarConfiguration appBarConfiguration;
@@ -42,6 +59,8 @@ public class LoginScreen extends AppCompatActivity implements OnClickListener {
     private SharedPreferences loginPreferences;
     private SharedPreferences.Editor loginPrefsEditor;
     private Boolean saveLogin;
+
+    private RequestQueue mQueue;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,6 +81,8 @@ public class LoginScreen extends AppCompatActivity implements OnClickListener {
 
         registerButton = findViewById(R.id.Register);
         registerButton.setOnClickListener(this);
+
+        mQueue = VolleySingleton.getInstance(this).getRequestQueue();
 
         Intent intent = getIntent();
         if (intent != null) {
@@ -85,7 +106,6 @@ public class LoginScreen extends AppCompatActivity implements OnClickListener {
 
     }
 
-
     public void onClick(View view) {
         if (view == loginButton) {
             InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
@@ -107,7 +127,18 @@ public class LoginScreen extends AppCompatActivity implements OnClickListener {
             usernameEditText.setBackgroundTintList(null);
             passwordEditText.setBackgroundTintList(null);
 
-            checkCredentials(username, password);
+            if (username.length() == 0) {
+                Toast.makeText(LoginScreen.this, "Username is required", Toast.LENGTH_LONG).show();
+                usernameEditText.setBackgroundTintList(ColorStateList.valueOf(Color.RED));
+
+            }
+            else if (password.length() == 0) {
+                Toast.makeText(LoginScreen.this, "password is required", Toast.LENGTH_LONG).show();
+                passwordEditText.setBackgroundTintList(ColorStateList.valueOf(Color.RED));
+            }
+            else {
+                checkCredentials(username, password);
+            }
 
         }
         else if (view == registerButton) {
@@ -125,17 +156,50 @@ public class LoginScreen extends AppCompatActivity implements OnClickListener {
         super.onPointerCaptureChanged(hasCapture);
     }
 
-    private void checkCredentials(String username, String password) {
-        if (username.length() == 0) {
-            Toast.makeText(LoginScreen.this, "Username is required", Toast.LENGTH_LONG).show();
-            usernameEditText.setBackgroundTintList(ColorStateList.valueOf(Color.RED));
 
-        }
-        else if (password.length() == 0) {
-            Toast.makeText(LoginScreen.this, "password is required", Toast.LENGTH_LONG).show();
-            passwordEditText.setBackgroundTintList(ColorStateList.valueOf(Color.RED));
-        }
+
+    private void checkCredentials(String username, String password) {
+
         // Connect to backend in order to check if credentials are valid
+        JSONObject jsonBody = new JSONObject();
+        String checkCredsURL = "http://coms-309-032.class.las.iastate.edu:8080";
+
+        try {
+            jsonBody.put("username", username);
+            jsonBody.put("password", password);
+        } catch (JSONException e) {
+            throw new RuntimeException(e);
+        }
+
+        JsonObjectRequest request = new JsonObjectRequest(
+                Request.Method.POST,
+                checkCredsURL + "/auth/login",
+                jsonBody,
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        try {
+                                Toast.makeText(LoginScreen.this, "Login Successful", Toast.LENGTH_LONG).show();
+                                // Return jwt token which will be used to auth user for a day
+                                // Returns Http.status.ok
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        error.printStackTrace();
+                    }
+                }
+        );
+        mQueue.add(request);
+
+
+
+
+
 
     }
 

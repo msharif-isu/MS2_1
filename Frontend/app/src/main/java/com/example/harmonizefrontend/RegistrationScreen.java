@@ -6,6 +6,11 @@ import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.os.Bundle;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
 import com.google.android.material.snackbar.Snackbar;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -28,6 +33,9 @@ import androidx.navigation.ui.NavigationUI;
 
 import com.example.harmonizefrontend.databinding.ActivityLoginScreenBinding;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.regex.*;
 
 public class RegistrationScreen extends AppCompatActivity implements OnClickListener {
@@ -39,6 +47,9 @@ public class RegistrationScreen extends AppCompatActivity implements OnClickList
     private EditText firstNameEditText, lastNameEditText, usernameEditText, passwordEditText, reenterpasswordEditText;
     private Button loginButton;
     private Button registerButton;
+
+    private RequestQueue mQueue;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -127,7 +138,8 @@ public class RegistrationScreen extends AppCompatActivity implements OnClickList
 
             }
             else {
-                Toast.makeText(RegistrationScreen.this, "Account has been successfully created!", Toast.LENGTH_LONG).show();
+//                Toast.makeText(RegistrationScreen.this, "Account has been successfully created!", Toast.LENGTH_LONG).show();
+                register(username, password);
 
                 // Connect to backend and add the registration data
             }
@@ -138,6 +150,48 @@ public class RegistrationScreen extends AppCompatActivity implements OnClickList
 
 // DO
         }
+    }
+
+    private void register(String username, String password) {
+
+        // Connect to backend in order to check if credentials are valid
+        JSONObject jsonBody = new JSONObject();
+        String checkCredsURL = "http://coms-309-032.class.las.iastate.edu:8080";
+
+        try {
+            jsonBody.put("username", username);
+            jsonBody.put("password", password);
+        } catch (JSONException e) {
+            throw new RuntimeException(e);
+        }
+
+        JsonObjectRequest request = new JsonObjectRequest(
+                Request.Method.POST,
+                checkCredsURL + "/auth/register",
+                jsonBody,
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                            Toast.makeText(RegistrationScreen.this, "Account Creation Successful", Toast.LENGTH_LONG).show();
+
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Toast.makeText(RegistrationScreen.this, "The username is already in use, please try again!", Toast.LENGTH_LONG).show();
+
+                        error.printStackTrace();
+                    }
+                }
+        );
+        mQueue.add(request);
+
+
+
+
+
+
     }
 
     @Override

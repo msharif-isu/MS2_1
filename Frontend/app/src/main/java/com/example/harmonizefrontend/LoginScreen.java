@@ -174,7 +174,7 @@ public class LoginScreen extends AppCompatActivity implements OnClickListener {
 
         // Connect to backend in order to check if credentials are valid
         JSONObject jsonBody = new JSONObject();
-        String checkCredsURL = "http://coms-309-032.class.las.iastate.edu:8080";
+        String checkCredsURL = "https://coms-309-032.class.las.iastate.edu:8443";
 
         try {
             jsonBody.put("username", username);
@@ -205,6 +205,7 @@ public class LoginScreen extends AppCompatActivity implements OnClickListener {
                     public void onErrorResponse(VolleyError error) {
                         Toast.makeText(LoginScreen.this, "The username or password is incorrect, please try again!", Toast.LENGTH_LONG).show();
                         jwtToken = null;
+                        Log.d("Error", error.toString());
                     }
                 }
         );

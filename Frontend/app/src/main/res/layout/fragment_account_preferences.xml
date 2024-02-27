@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".AccountPreferences">
+
+
+
+
+    <ImageView
+        android:id="@+id/profilepicture"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_marginTop="73dp"
+        android:layout_marginLeft="15dp"
+        tools:src="@tools:sample/avatars" />
+
+    <EditText
+        android:id="@+id/username"
+        android:layout_width="200dp"
+        android:layout_height="45dp"
+        android:layout_marginTop="75dp"
+        android:layout_marginLeft="120dp"
+        android:text="Username" />
+
+    <TextView
+        android:id="@+id/realname"
+        android:layout_width="200dp"
+        android:layout_height="45dp"
+        android:layout_marginLeft="120dp"
+        android:layout_marginTop="125dp"
+        android:text="Real Name" />
+
+
+    <EditText
+        android:id="@+id/password_text_view"
+        android:layout_width="200dp"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="120dp"
+        android:layout_marginTop="175dp"
+        android:inputType="textPassword"
+        android:text="Your Password" />
+
+    <ImageButton
+        android:id="@+id/hideunhide"
+        android:layout_width="25dp"
+        android:layout_height="25dp"
+        android:layout_marginTop="183dp"
+        android:layout_marginLeft="325dp"
+        android:src="@android:drawable/ic_menu_view" />
+
+    <EditText
+        android:id="@+id/bio"
+        android:layout_width="334dp"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="15dp"
+        android:layout_marginTop="225dp"
+        android:text="Bio:"
+        android:textSize="15dp" />
+
+    <TextView
+        android:id="@+id/PasswordText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="186dp"
+        android:layout_marginLeft="15dp"
+        android:ems="10"
+        android:inputType="text"
+        android:text="Password:" />
+
+    <Button
+        android:id="@+id/updatePrefs"
+        android:layout_width="250dp"
+        android:layout_height="60dp"
+        android:layout_gravity="center"
+        android:layout_marginTop="-50dp"
+        app:cornerRadius="5dp"
+        android:text="Update Preferences" />
+
+    <Button
+        android:id="@+id/logOut"
+        android:layout_width="250dp"
+        android:layout_height="60dp"
+        android:layout_gravity="center"
+        android:layout_marginTop="100dp"
+        app:cornerRadius="5dp"
+        android:text="Logout" />
+    <Button
+        android:id="@+id/delAccount"
+        android:layout_width="250dp"
+        android:layout_height="60dp"
+        android:layout_gravity="center"
+        android:layout_marginTop="160dp"
+        app:cornerRadius="5dp"
+        android:text="Delete Account" />
+
+    <ImageButton
+        android:id="@+id/changePicture"
+        android:layout_width="25dp"
+        android:layout_height="25dp"
+        android:layout_marginTop="160dp"
+        android:layout_marginLeft="100dp"
+        android:src="@android:drawable/ic_menu_camera" />
+
+
+</FrameLayout>

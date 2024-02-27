@@ -137,7 +137,10 @@ public class LoginScreen extends AppCompatActivity implements OnClickListener {
                 passwordEditText.setBackgroundTintList(ColorStateList.valueOf(Color.RED));
             }
             else {
-                checkCredentials(username, password);
+//                checkCredentials(username, password);
+                // Take user to account preferences screen
+//                Intent intent = new Intent(this, AccountPreferences.class);
+//                startActivity(intent);
             }
 
         }

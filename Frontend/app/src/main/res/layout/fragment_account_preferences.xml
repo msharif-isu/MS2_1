@@ -96,5 +96,13 @@
         app:cornerRadius="5dp"
         android:text="Delete Account" />
 
+    <ImageButton
+        android:id="@+id/changePicture"
+        android:layout_width="25dp"
+        android:layout_height="25dp"
+        android:layout_marginTop="160dp"
+        android:layout_marginLeft="100dp"
+        android:src="@android:drawable/ic_menu_camera" />
+
 
 </FrameLayout>

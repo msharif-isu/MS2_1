@@ -34,7 +34,10 @@ public class AccountPreferences extends Fragment {
     private EditText username, password, bio;
     private TextView realname;
     private ImageButton unhidePass;
+    private boolean hidden = true;
     private Button updatePrefsBtn, logoutBtn, delAccBtn;
+
+    private ImageButton changePicBtn;
 
     public AccountPreferences() {
         // Required empty public constructor
@@ -89,15 +92,18 @@ public class AccountPreferences extends Fragment {
         updatePrefsBtn = rootView.findViewById(R.id.updatePrefs);
         logoutBtn = rootView.findViewById(R.id.logOut);
         delAccBtn = rootView.findViewById(R.id.delAccount);
+        changePicBtn = rootView.findViewById(R.id.changePicture);
 
 
 
 
-        //When profilePicture is clicked, give the user the option to upload their own picture and change the profile picture
-        profilePicture.setOnClickListener(new View.OnClickListener() {
+
+        //When changeBtn is clicked, give the user the option to upload their own picture and change the profile picture
+        changePicBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 // Give user option to upload their own picture
+
 
             }
         });
@@ -127,6 +133,21 @@ public class AccountPreferences extends Fragment {
             }
         });
 
+        unhidePass.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (hidden) {
+                    password.setInputType(android.text.InputType.TYPE_CLASS_TEXT | android.text.InputType.TYPE_TEXT_VARIATION_PASSWORD);
+                    hidden = false;
+                }
+                else {
+                    password.setInputType(android.text.InputType.TYPE_CLASS_TEXT | android.text.InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
+                    hidden = true;
+                }
+
+            }
+        });
+
         // Inflate the layout for this fragment
         return rootView;
     }
@@ -135,4 +156,6 @@ public class AccountPreferences extends Fragment {
         // Send GET request to server to get user details
 
     }
+
+    
 }

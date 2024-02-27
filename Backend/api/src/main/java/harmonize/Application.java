@@ -33,7 +33,25 @@ public class Application {
     }
 
     @Bean
-<<<<<<< HEAD
+    public CommandLineRunner initUser(RoleRepository roleRepository, UserRepository userRepository, BCryptPasswordEncoder encoder) {
+        return args -> {
+            try {
+                Role adminRole = new Role("ADMIN");
+                Role userRole = new Role("USER");
+                User adminUser = new User("admin", encoder.encode("adminpw"));
+
+                roleRepository.save(adminRole);
+                roleRepository.save(userRole);
+                adminUser.getRoles().add(adminRole);
+                adminUser.getRoles().add(userRole);
+                userRepository.save(adminUser);
+            } catch (Exception e) {
+                System.out.println(e.getMessage());
+            }
+        };
+    }
+
+    @Bean
     public ServletWebServerFactory servletContainer() {
         TomcatServletWebServerFactory tomcat = new TomcatServletWebServerFactory() {
             @Override
@@ -57,24 +75,6 @@ public class Application {
         connector.setSecure(false);
         connector.setRedirectPort(8443);
         return connector;
-=======
-    public CommandLineRunner initUser(RoleRepository roleRepository, UserRepository userRepository, BCryptPasswordEncoder encoder) {
-        return args -> {
-            try {
-                Role adminRole = new Role("ADMIN");
-                Role userRole = new Role("USER");
-                User adminUser = new User("admin", encoder.encode("adminpw"));
-
-                roleRepository.save(adminRole);
-                roleRepository.save(userRole);
-                adminUser.getRoles().add(adminRole);
-                adminUser.getRoles().add(userRole);
-                userRepository.save(adminUser);
-            } catch (Exception e) {
-                System.out.println(e.getMessage());
-            }
-        };
->>>>>>> main
     }
 
 }

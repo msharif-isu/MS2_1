@@ -17,58 +17,52 @@
         android:layout_marginLeft="15dp"
         tools:src="@tools:sample/avatars" />
 
-    <EditText
+    <TextView
         android:id="@+id/username"
-        android:layout_width="200dp"
-        android:layout_height="45dp"
+        android:layout_width="265dp"
+        android:layout_height="33dp"
         android:layout_marginTop="75dp"
-        android:layout_marginLeft="120dp"
+        android:layout_marginLeft="130dp"
+        android:textSize="25dp"
         android:text="Username" />
 
     <TextView
         android:id="@+id/realname"
-        android:layout_width="200dp"
-        android:layout_height="45dp"
-        android:layout_marginLeft="120dp"
-        android:layout_marginTop="125dp"
+        android:layout_width="265dp"
+        android:layout_height="33dp"
+        android:layout_marginLeft="130dp"
+        android:layout_marginTop="110dp"
+        android:textSize="25dp"
         android:text="Real Name" />
 
 
-    <EditText
+    <TextView
         android:id="@+id/password_text_view"
-        android:layout_width="200dp"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="120dp"
-        android:layout_marginTop="175dp"
+        android:layout_width="265dp"
+        android:layout_height="33dp"
+        android:layout_marginLeft="130dp"
+        android:layout_marginTop="145dp"
         android:inputType="textPassword"
+        android:textSize="25dp"
         android:text="Your Password" />
 
     <ImageButton
         android:id="@+id/hideunhide"
         android:layout_width="25dp"
         android:layout_height="25dp"
-        android:layout_marginTop="183dp"
-        android:layout_marginLeft="325dp"
+        android:layout_marginTop="149dp"
+        android:layout_marginLeft="370dp"
         android:src="@android:drawable/ic_menu_view" />
 
-    <EditText
+    <TextView
         android:id="@+id/bio"
         android:layout_width="334dp"
         android:layout_height="wrap_content"
         android:layout_marginLeft="15dp"
-        android:layout_marginTop="225dp"
+        android:layout_marginTop="185dp"
         android:text="Bio:"
         android:textSize="15dp" />
 
-    <TextView
-        android:id="@+id/PasswordText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="186dp"
-        android:layout_marginLeft="15dp"
-        android:ems="10"
-        android:inputType="text"
-        android:text="Password:" />
 
     <Button
         android:id="@+id/updatePrefs"
@@ -103,6 +97,14 @@
         android:layout_marginTop="160dp"
         android:layout_marginLeft="100dp"
         android:src="@android:drawable/ic_menu_camera" />
+
+    <ImageButton
+        android:id="@+id/editInfo"
+        android:layout_width="25dp"
+        android:layout_height="25dp"
+        android:layout_marginTop="79dp"
+        android:layout_marginLeft="370dp"
+        android:src="@android:drawable/ic_menu_edit" />
 
 
 </FrameLayout>

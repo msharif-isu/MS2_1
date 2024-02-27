@@ -48,6 +48,8 @@ public class RegistrationScreen extends AppCompatActivity implements OnClickList
     private Button loginButton;
     private Button registerButton;
 
+    private String jwtToken;
+
     private RequestQueue mQueue;
 
 
@@ -141,6 +143,14 @@ public class RegistrationScreen extends AppCompatActivity implements OnClickList
 //                Toast.makeText(RegistrationScreen.this, "Account has been successfully created!", Toast.LENGTH_LONG).show();
                 register(username, password);
 
+                if (jwtToken != null) {
+                    Intent intent = new Intent(this, AccountPreferences.class);
+                    intent.putExtra("username", username);
+                    intent.putExtra("password", password);
+                    intent.putExtra("jwtToken", jwtToken);
+                    startActivity(intent);
+                }
+
                 // Connect to backend and add the registration data
             }
 
@@ -172,7 +182,13 @@ public class RegistrationScreen extends AppCompatActivity implements OnClickList
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
+                        try {
                             Toast.makeText(RegistrationScreen.this, "Account Creation Successful", Toast.LENGTH_LONG).show();
+                            jwtToken = response.getString("tokenType") + response.getString("accessToken");
+                        }
+                        catch (JSONException e) {
+                            throw new RuntimeException(e);
+                        }
 
                     }
                 },
@@ -180,7 +196,7 @@ public class RegistrationScreen extends AppCompatActivity implements OnClickList
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         Toast.makeText(RegistrationScreen.this, "The username is already in use, please try again!", Toast.LENGTH_LONG).show();
-
+                        jwtToken = null;
                         error.printStackTrace();
                     }
                 }

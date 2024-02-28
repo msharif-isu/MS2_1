@@ -27,13 +27,22 @@
         android:text="Username" />
 
     <TextView
-        android:id="@+id/realname"
-        android:layout_width="265dp"
+        android:id="@+id/firstname"
+        android:layout_width="130dp"
         android:layout_height="33dp"
         android:layout_marginLeft="130dp"
         android:layout_marginTop="110dp"
         android:textSize="25dp"
-        android:text="Real Name" />
+        android:text="First" />
+
+    <TextView
+        android:id="@+id/lastname"
+        android:layout_width="130dp"
+        android:layout_height="33dp"
+        android:layout_marginLeft="265dp"
+        android:layout_marginTop="110dp"
+        android:textSize="25dp"
+        android:text="First" />
 
 
     <TextView

@@ -174,7 +174,7 @@ public class LoginScreen extends AppCompatActivity implements OnClickListener {
 
         // Connect to backend in order to check if credentials are valid
         JSONObject jsonBody = new JSONObject();
-        String checkCredsURL = "https://coms-309-032.class.las.iastate.edu:8443";
+        String checkCredsURL = "http://coms-309-032.class.las.iastate.edu:8080";
 
         try {
             jsonBody.put("username", username);

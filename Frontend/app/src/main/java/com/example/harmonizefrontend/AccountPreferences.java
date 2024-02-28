@@ -31,13 +31,12 @@ public class AccountPreferences extends Fragment {
     private String mParam2;
 
     private ImageView profilePicture;
-    private EditText username, password, bio;
-    private TextView realname;
-    private ImageButton unhidePass;
+    private TextView username, password, bio;
+    private TextView firstName, lastName;
     private boolean hidden = true;
     private Button updatePrefsBtn, logoutBtn, delAccBtn;
 
-    private ImageButton changePicBtn;
+    private ImageButton changePicBtn, editInfoBtn, unhidePass;
 
     public AccountPreferences() {
         // Required empty public constructor
@@ -83,7 +82,8 @@ public class AccountPreferences extends Fragment {
         username = rootView.findViewById(R.id.username);
         password = rootView.findViewById(R.id.password_text_view);
 
-        realname = rootView.findViewById(R.id.realname);
+        firstName = rootView.findViewById(R.id.firstname);
+        lastName = rootView.findViewById(R.id.lastname);
 
         unhidePass = rootView.findViewById(R.id.hideunhide);
 
@@ -108,7 +108,7 @@ public class AccountPreferences extends Fragment {
             }
         });
 
-        // When update preferences is clicked, send PUT request to server given current username, password, and bio. On failure, tell user to try a different username/password
+        // When update preferences is clicked, take user to the change preferences screen
         updatePrefsBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -144,6 +144,14 @@ public class AccountPreferences extends Fragment {
                     password.setInputType(android.text.InputType.TYPE_CLASS_TEXT | android.text.InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
                     hidden = true;
                 }
+
+            }
+        });
+
+        // When this button is clicked, all user information is made into an EditText and the user can edit their information
+        editInfoBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
 
             }
         });

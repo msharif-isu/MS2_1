@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import harmonize.DTOs.UserDTO;
 import harmonize.Services.UserService;
+import harmonize.Users.User;
 
 /**
  * 
@@ -30,6 +31,11 @@ public class UserController {
     @Autowired
     public UserController(UserService userService) {
         this.userService = userService;
+    }
+
+    @GetMapping(path = "/")
+    public ResponseEntity<User> getSelf(Principal principal){
+        return ResponseEntity.ok(userService.getSelf(principal));
     }
 
     @GetMapping(path = "/id/{id}")

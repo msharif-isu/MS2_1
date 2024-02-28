@@ -7,9 +7,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 
+import harmonize.DTOs.UserDTO;
 import harmonize.ErrorHandling.Exceptions.RoleNotFoundException;
 import harmonize.ErrorHandling.Exceptions.RolePermissionException;
+import harmonize.ErrorHandling.Exceptions.UserAlreadyFriendException;
+import harmonize.ErrorHandling.Exceptions.UserAlreadyInvitedException;
 import harmonize.ErrorHandling.Exceptions.UserNotFoundException;
+import harmonize.ErrorHandling.Exceptions.UserNotFriendException;
 import harmonize.ErrorHandling.Exceptions.UsernameTakenException;
 import harmonize.Roles.Role;
 import harmonize.Roles.RoleRepository;
@@ -29,8 +33,20 @@ public class AdminService {
     }
     
     @NonNull
-    public List<User> getAllUsers() {
-        return userRepository.findAll();
+    public List<UserDTO> getAllUsers() {
+        List<UserDTO> result = new ArrayList<UserDTO>();
+        for (User user : userRepository.findAll()) {
+            result.add(new UserDTO(user.getId(), user.getUsername()));
+        }
+        return result;
+    }
+    
+    @NonNull
+    public User getUser(int id) {
+        User user = userRepository.findReferenceById(id);
+        if (user == null)
+            throw new UserNotFoundException(id);
+        return user;
     }
 
     @NonNull
@@ -44,6 +60,61 @@ public class AdminService {
         });
 
         return possibleFriends;
+    }
+
+    @NonNull
+    public String addFriends(int id1, int id2) {
+        User user1 = userRepository.findReferenceById(id1);
+        User user2 = userRepository.findReferenceById(id2);
+
+        if (user1 == null)
+            throw new UserNotFoundException(id1);
+        if (user2 == null)
+            throw new UserNotFoundException(id2);
+
+        if (user1.getFriends().contains(user2))
+            throw new UserAlreadyFriendException(user2.getUsername());
+
+        if (user1.getFriendInvites().contains(user2))
+            user1.getFriendInvites().remove(user2);
+        
+        user1.getFriends().add(user2);
+        user2.getFriends().add(user1);
+        userRepository.save(user1);
+        userRepository.save(user2);
+        return new String(String.format("\"%s\" and \"%s\" are now friends", user1.getUsername(), user2.getUsername()));
+    }
+
+    @NonNull
+    public String removeFriends(int id1, int id2) {
+        User user1 = userRepository.findReferenceById(id1);
+        User user2 = userRepository.findReferenceById(id2);
+
+        if (user1 == null)
+            throw new UserNotFoundException(id1);
+        if (user2 == null)
+            throw new UserNotFoundException(id2);
+
+        if (user1.getFriendInvites().contains(user2)) {
+            user1.getFriendInvites().remove(user2);
+            userRepository.save(user1);
+            return new String(String.format("\"%s\" removed friend invite to \"%s\"", user1.getUsername(), user2.getUsername()));
+        }
+
+        if (user2.getFriendInvites().contains(user1)) {
+            user2.getFriendInvites().remove(user1);
+            userRepository.save(user2);
+            return new String(String.format("\"%s\" removed friend invite from \"%s\"", user1.getUsername(), user2.getUsername()));
+        }
+
+        if (!user1.getFriends().contains(user2))
+            throw new UserNotFriendException(user1.getUsername(), user2.getUsername());
+
+        user1.getFriends().remove(user2);
+        user2.getFriends().remove(user1);
+        userRepository.save(user1);
+        userRepository.save(user2);
+        return new String(String.format("\"%s\" is no longer friends with \"%s\"", user1.getUsername(), user2.getUsername()));
     }
 
     @NonNull

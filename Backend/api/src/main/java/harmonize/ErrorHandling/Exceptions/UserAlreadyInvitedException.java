@@ -1,7 +1,7 @@
 package harmonize.ErrorHandling.Exceptions;
 
-public class UserAlreadySentInviteException extends RuntimeException {
-    public UserAlreadySentInviteException(String user) {
-        super("You are already friends invite to user: " + user);
+public class UserAlreadyInvitedException extends RuntimeException {
+    public UserAlreadyInvitedException(String user1, String user2) {
+        super(user1 + " already sent friend invite to " + user2);
     }
 }

@@ -5,7 +5,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
-    tools:context=".LoginScreen">
+    tools:context=".LoginScreen"
+    android:background="@color/cool_grey">
 
 
 
@@ -17,7 +18,8 @@
         android:layout_marginBottom="275dp"
         android:ems="10"
         android:inputType="text"
-        android:text="Username" />
+        android:text="Username"
+        android:textColor="@color/mint_cream"/>
 
     <EditText
         android:id="@+id/PasswordInput"
@@ -27,7 +29,8 @@
         android:layout_marginBottom="100dp"
         android:ems="10"
         android:inputType="textPassword"
-        tools:text="Password" />
+        tools:text="Password"
+        android:textColor="@color/mint_cream"/>
 
     <EditText
         android:id="@+id/reenterPassword"
@@ -37,7 +40,8 @@
         android:layout_marginBottom="-75dp"
         android:ems="10"
         android:inputType="textPassword"
-        tools:text="Password" />
+        tools:text="Password"
+        android:textColor="@color/mint_cream"/>
 
     <Button
         android:id="@+id/Register"
@@ -46,7 +50,9 @@
         android:layout_gravity="center"
         android:layout_marginTop="250dp"
         app:cornerRadius="5dp"
-        android:text="Register" />
+        android:text="Register"
+        android:textColor="@color/mint_cream"
+        android:backgroundTint="@color/cambridge_blue"/>
 
     <Button
         android:id="@+id/Login"
@@ -55,7 +61,10 @@
         android:layout_gravity="center"
         android:layout_marginTop="400dp"
         android:text="Login"
-        app:cornerRadius="5dp" />
+        app:cornerRadius="5dp"
+        android:textColor="@color/mint_cream"
+        android:backgroundTint="@color/cambridge_blue"
+        />
 
     <TextView
         android:id="@+id/AccountRegistration"
@@ -64,7 +73,8 @@
         android:text="Account Registration"
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="25dp"
-        android:textSize="10pt"/>
+        android:textSize="10pt"
+        android:textColor="@color/mint_cream"/>
 
     <EditText
         android:id="@+id/firstName"
@@ -75,6 +85,7 @@
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="125dp"
         android:layout_marginRight="150dp"
+        android:textColor="@color/mint_cream"
         android:text="First" />
 
     <EditText
@@ -86,6 +97,7 @@
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="125dp"
         android:layout_marginLeft="150dp"
+        android:textColor="@color/mint_cream"
         android:text="Last" />
 
 <!--    <Button-->

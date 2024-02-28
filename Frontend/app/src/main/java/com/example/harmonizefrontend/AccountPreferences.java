@@ -1,10 +1,15 @@
 package com.example.harmonizefrontend;
 
+import static android.content.Intent.getIntent;
+
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
 
+import android.text.method.HideReturnsTransformationMethod;
+import android.text.method.PasswordTransformationMethod;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,6 +18,10 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.android.volley.toolbox.JsonObjectRequest;
+
+import org.json.JSONObject;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -31,12 +40,15 @@ public class AccountPreferences extends Fragment {
     private String mParam2;
 
     private ImageView profilePicture;
-    private TextView username, password, bio;
-    private TextView firstName, lastName;
+    private EditText usernameText, bioText, firstNameText, lastNameText;
+    private TextView passwordView;
     private boolean hidden = true;
+    private boolean allowEdit = false;
     private Button updatePrefsBtn, logoutBtn, delAccBtn;
 
     private ImageButton changePicBtn, editInfoBtn, unhidePass;
+
+    private String jwtToken;
 
     public AccountPreferences() {
         // Required empty public constructor
@@ -79,42 +91,63 @@ public class AccountPreferences extends Fragment {
 
         profilePicture = rootView.findViewById(R.id.profilepicture);
 
-        username = rootView.findViewById(R.id.username);
-        password = rootView.findViewById(R.id.password_text_view);
+        usernameText = rootView.findViewById(R.id.username);
+        passwordView = rootView.findViewById(R.id.password_text_view);
 
-        firstName = rootView.findViewById(R.id.firstname);
-        lastName = rootView.findViewById(R.id.lastname);
+        firstNameText = rootView.findViewById(R.id.firstname);
+        lastNameText = rootView.findViewById(R.id.lastname);
 
         unhidePass = rootView.findViewById(R.id.hideunhide);
 
-        bio = rootView.findViewById(R.id.bio);
+        bioText = rootView.findViewById(R.id.bio);
 
         updatePrefsBtn = rootView.findViewById(R.id.updatePrefs);
         logoutBtn = rootView.findViewById(R.id.logOut);
         delAccBtn = rootView.findViewById(R.id.delAccount);
         changePicBtn = rootView.findViewById(R.id.changePicture);
+        editInfoBtn = rootView.findViewById(R.id.editInfo);
+
+        usernameText.setEnabled(allowEdit);
+        firstNameText.setEnabled(allowEdit);
+        lastNameText.setEnabled(allowEdit);
+        bioText.setEnabled(allowEdit);
+
+//        Intent intent = getIntent();
+//        if (intent != null) {
+//            if (intent.hasExtra("username") && intent.getStringExtra("username") != null) {
+//                String username = intent.getStringExtra("username");
+//                usernameText.setText(username);
+//            }
+//            if (intent.hasExtra("password") && intent.getStringExtra("password") != null) {
+//                String password = intent.getStringExtra("password");
+//                passwordView.setText(password);
+//            }
+//            if (intent.hasExtra("jwtToken") && intent.getStringExtra("jwtToken") != null) {
+//                jwtToken = intent.getStringExtra("jwtToken");
+//            }
+//        }
 
 
 
 
 
         //When changeBtn is clicked, give the user the option to upload their own picture and change the profile picture
-        changePicBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // Give user option to upload their own picture
-
-
-            }
-        });
+//        changePicBtn.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                // Give user option to upload their own picture
+//
+//
+//            }
+//        });
 
         // When update preferences is clicked, take user to the change preferences screen
-        updatePrefsBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // Send PUT request to server
-            }
-        });
+//        updatePrefsBtn.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                // Send PUT request to server
+//            }
+//        });
 
         // When logout is clicked, change intent to login screen
         logoutBtn.setOnClickListener(new View.OnClickListener() {
@@ -126,22 +159,22 @@ public class AccountPreferences extends Fragment {
         });
 
         // When delete account is clicked, send DELETE request to server given username and password
-        delAccBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // Send DELETE request to server
-            }
-        });
+//        delAccBtn.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                // Send DELETE request to server
+//            }
+//        });
 
         unhidePass.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (hidden) {
-                    password.setInputType(android.text.InputType.TYPE_CLASS_TEXT | android.text.InputType.TYPE_TEXT_VARIATION_PASSWORD);
+                    passwordView.setTransformationMethod(PasswordTransformationMethod.getInstance());
                     hidden = false;
                 }
                 else {
-                    password.setInputType(android.text.InputType.TYPE_CLASS_TEXT | android.text.InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
+                    passwordView.setTransformationMethod(HideReturnsTransformationMethod.getInstance());
                     hidden = true;
                 }
 
@@ -152,6 +185,39 @@ public class AccountPreferences extends Fragment {
         editInfoBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (allowEdit == false) {
+                    allowEdit = true;
+                    usernameText.setEnabled(allowEdit);
+                    firstNameText.setEnabled(allowEdit);
+                    lastNameText.setEnabled(allowEdit);
+                    bioText.setEnabled(allowEdit);
+                }
+                else {
+                    allowEdit = false;
+                    usernameText.setEnabled(allowEdit);
+                    firstNameText.setEnabled(allowEdit);
+                    lastNameText.setEnabled(allowEdit);
+                    bioText.setEnabled(allowEdit);
+
+                    String checkCredsURL = "http://coms-309-032.class.las.iastate.edu:8080";
+
+//                    Send all modified data to server
+//                    JSONObject jsonbody = new JSONObject();
+//                    try {
+//                        jsonbody.put("username", usernameText.getText().toString());
+//                        jsonbody.put("firstName", firstNameText.getText().toString());
+//                        jsonbody.put("lastName", lastNameText.getText().toString());
+//                        jsonbody.put("bio", bioText.getText().toString());
+//                    } catch (Exception e) {
+//                        e.printStackTrace();
+//                    }
+//
+//                    JsonObjectRequest request = new JsonObjectRequest(
+//                            Request.Method.PUT,
+//                            checkCredsURL + "/user",
+//
+//                    )
+                }
 
             }
         });

@@ -11,7 +11,6 @@ import harmonize.DTOs.UserDTO;
 import harmonize.ErrorHandling.Exceptions.RoleNotFoundException;
 import harmonize.ErrorHandling.Exceptions.RolePermissionException;
 import harmonize.ErrorHandling.Exceptions.UserAlreadyFriendException;
-import harmonize.ErrorHandling.Exceptions.UserAlreadyInvitedException;
 import harmonize.ErrorHandling.Exceptions.UserNotFoundException;
 import harmonize.ErrorHandling.Exceptions.UserNotFriendException;
 import harmonize.ErrorHandling.Exceptions.UsernameTakenException;
@@ -42,24 +41,52 @@ public class AdminService {
     }
     
     @NonNull
-    public User getUser(int id) {
+    public UserDTO getUser(int id) {
         User user = userRepository.findReferenceById(id);
         if (user == null)
             throw new UserNotFoundException(id);
-        return user;
+        return new UserDTO(user.getId(), user.getUsername());
     }
 
     @NonNull
-    public List<User> getRecommendedFriends(int id) {
-        List<User> possibleFriends = new ArrayList<User>();
+    public List<UserDTO> getFriends(int id) {
+        User user = userRepository.findReferenceById(id);
+        if (user == null)
+            throw new UserNotFoundException(id);
+
+        List<UserDTO> result = new ArrayList<UserDTO>();
+        for (User friend : user.getFriends()) {
+            result.add(new UserDTO(friend.getId(), friend.getUsername()));
+        }
+
+        return result;
+    }
+
+    @NonNull
+    public List<UserDTO> getFriendInvites(int id) {
+        User user = userRepository.findReferenceById(id);
+        if (user == null)
+            throw new UserNotFoundException(id);
+
+        List<UserDTO> result = new ArrayList<UserDTO>();
+        for (User friendInviter : user.getFriendInvites()) {
+            result.add(new UserDTO(friendInviter.getId(), friendInviter.getUsername()));
+        }
+
+        return result;
+    }
+
+    @NonNull
+    public List<UserDTO> getRecommendedFriends(int id) {
+        List<UserDTO> result = new ArrayList<UserDTO>();
         userRepository.findAllByRole("USER").forEach(user -> {
             if(user.getId() == id)
                 return;
             
-            possibleFriends.add(user);
+            result.add(new UserDTO(user.getId(), user.getUsername()));
         });
 
-        return possibleFriends;
+        return result;
     }
 
     @NonNull
@@ -73,7 +100,7 @@ public class AdminService {
             throw new UserNotFoundException(id2);
 
         if (user1.getFriends().contains(user2))
-            throw new UserAlreadyFriendException(user2.getUsername());
+            throw new UserAlreadyFriendException(user1.getUsername(), user2.getUsername());
 
         if (user1.getFriendInvites().contains(user2))
             user1.getFriendInvites().remove(user2);

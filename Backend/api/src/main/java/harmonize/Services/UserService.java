@@ -27,8 +27,8 @@ public class UserService {
     }
 
     @NonNull
-    public User getSelf(Principal principal) {
-        return userRepository.findByUsername(principal.getName());
+    public UserDTO getSelf(Principal principal) {
+        return new UserDTO(userRepository.findByUsername(principal.getName()).getId(), principal.getName());
     }
 
     @NonNull
@@ -112,7 +112,7 @@ public class UserService {
             throw new UserNotFoundException(id);
 
         if (user.getFriends().contains(friend))
-            throw new UserAlreadyFriendException(friend.getUsername());
+            throw new UserAlreadyFriendException(user.getUsername(), friend.getUsername());
         
         if (friend.getFriendInvites().contains(user))
             throw new UserAlreadyInvitedException(user.getUsername(), friend.getUsername());

@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import harmonize.DTOs.UserDTO;
 import harmonize.Services.AdminService;
-import harmonize.Users.User;
 
 /**
  * 
@@ -38,21 +37,31 @@ public class AdminController {
     }
 
     @GetMapping(path = "/users/{id}")
-    public ResponseEntity<User> getUser(@PathVariable int id){
+    public ResponseEntity<UserDTO> getUser(@PathVariable int id){
         return ResponseEntity.ok(adminService.getUser(id));
     }
 
-    @GetMapping(path = "/friends/{id}")
-    public ResponseEntity<List<User>> getRecommendedFriends(@PathVariable int id) {
+    @GetMapping(path = "/friends/recommended/{id}")
+    public ResponseEntity<List<UserDTO>> getRecommendedFriends(@PathVariable int id) {
         return ResponseEntity.ok(adminService.getRecommendedFriends(id));
     }
 
-    @PostMapping(path = "/friend/{id1}/{id2}")
+    @GetMapping(path = "/friends/{id}")
+    public ResponseEntity<List<UserDTO>> getFriends(@PathVariable int id) {
+        return ResponseEntity.ok(adminService.getFriends(id));
+    }
+
+    @GetMapping(path = "/friends/invites/{id}")
+    public ResponseEntity<List<UserDTO>> getFriendInvites(@PathVariable int id) {
+        return ResponseEntity.ok(adminService.getFriendInvites(id));
+    }
+
+    @PostMapping(path = "/friends/{id1}/{id2}")
     public ResponseEntity<String> addFriends(@PathVariable int id1, @PathVariable int id2) {
         return ResponseEntity.ok(adminService.addFriends(id1, id2));
     }
 
-    @DeleteMapping(path = "/friend/{id1}/{id2}")
+    @DeleteMapping(path = "/friends/{id1}/{id2}")
     public ResponseEntity<String> removeFriends(@PathVariable int id1, @PathVariable int id2) {
         return ResponseEntity.ok(adminService.removeFriends(id1, id2));
     }

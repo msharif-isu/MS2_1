@@ -144,11 +144,11 @@ public class LoginScreen extends AppCompatActivity implements OnClickListener {
 
                 if (jwtToken != null) {
                     Toast.makeText(LoginScreen.this, jwtToken, Toast.LENGTH_LONG).show();
-//                    Intent intent = new Intent(this, AccountPreferences.class);
-//                    intent.putExtra("username", username);
-//                    intent.putExtra("password", password);
-//                    intent.putExtra("jwtToken", jwtToken);
-//                    startActivity(intent);
+                    Intent intent = new Intent(this, navbarPlaceholder.class);
+                    intent.putExtra("username", username);
+                    intent.putExtra("password", password);
+                    intent.putExtra("jwtToken", jwtToken);
+                    startActivity(intent);
                 }
             }
 

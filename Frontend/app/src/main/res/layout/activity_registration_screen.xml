@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
     tools:context=".LoginScreen"
-    android:background="@color/cool_grey">
+    android:background="@color/cambridge_blue">
 
 
 
@@ -18,8 +18,9 @@
         android:layout_marginBottom="275dp"
         android:ems="10"
         android:inputType="text"
-        android:text="Username"
-        android:textColor="@color/mint_cream"/>
+        android:hint="Username"
+        android:textColor="@color/mint_cream"
+        />
 
     <EditText
         android:id="@+id/PasswordInput"
@@ -29,7 +30,7 @@
         android:layout_marginBottom="100dp"
         android:ems="10"
         android:inputType="textPassword"
-        tools:text="Password"
+        tools:hint="Password"
         android:textColor="@color/mint_cream"/>
 
     <EditText
@@ -40,7 +41,7 @@
         android:layout_marginBottom="-75dp"
         android:ems="10"
         android:inputType="textPassword"
-        tools:text="Password"
+        tools:hint="Retype password"
         android:textColor="@color/mint_cream"/>
 
     <Button
@@ -51,8 +52,8 @@
         android:layout_marginTop="250dp"
         app:cornerRadius="5dp"
         android:text="Register"
-        android:textColor="@color/mint_cream"
-        android:backgroundTint="@color/cambridge_blue"/>
+        android:textColor="@color/cool_grey"
+        android:backgroundTint="@color/mint_cream"/>
 
     <Button
         android:id="@+id/Login"
@@ -62,8 +63,8 @@
         android:layout_marginTop="400dp"
         android:text="Login"
         app:cornerRadius="5dp"
-        android:textColor="@color/mint_cream"
-        android:backgroundTint="@color/cambridge_blue"
+        android:textColor="@color/cool_grey"
+        android:backgroundTint="@color/mint_cream"
         />
 
     <TextView
@@ -86,7 +87,8 @@
         android:layout_marginTop="125dp"
         android:layout_marginRight="150dp"
         android:textColor="@color/mint_cream"
-        android:text="First" />
+        android:hint="First Name"
+        />
 
     <EditText
         android:id="@+id/lastName"
@@ -98,7 +100,8 @@
         android:layout_marginTop="125dp"
         android:layout_marginLeft="150dp"
         android:textColor="@color/mint_cream"
-        android:text="Last" />
+        android:hint="Last Name"
+         />
 
 <!--    <Button-->
 <!--        android:id="@+id/backButton"-->

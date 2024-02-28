@@ -23,6 +23,8 @@ import com.android.volley.toolbox.JsonObjectRequest;
 
 import org.json.JSONObject;
 
+import java.util.Objects;
+
 /**
  * A simple {@link Fragment} subclass.
  * Use the {@link AccountPreferences#newInstance} factory method to
@@ -112,20 +114,20 @@ public class AccountPreferences extends Fragment {
         lastNameText.setEnabled(allowEdit);
         bioText.setEnabled(allowEdit);
 
-//        Intent intent = getIntent();
-//        if (intent != null) {
-//            if (intent.hasExtra("username") && intent.getStringExtra("username") != null) {
-//                String username = intent.getStringExtra("username");
-//                usernameText.setText(username);
-//            }
-//            if (intent.hasExtra("password") && intent.getStringExtra("password") != null) {
-//                String password = intent.getStringExtra("password");
-//                passwordView.setText(password);
-//            }
-//            if (intent.hasExtra("jwtToken") && intent.getStringExtra("jwtToken") != null) {
-//                jwtToken = intent.getStringExtra("jwtToken");
-//            }
-//        }
+        Intent intent = requireActivity().getIntent();
+        if (intent != null) {
+            if (intent.hasExtra("username") && intent.getStringExtra("username") != null) {
+                String username = intent.getStringExtra("username");
+                usernameText.setText(username);
+            }
+            if (intent.hasExtra("password") && intent.getStringExtra("password") != null) {
+                String password = intent.getStringExtra("password");
+                passwordView.setText(password);
+            }
+            if (intent.hasExtra("jwtToken") && intent.getStringExtra("jwtToken") != null) {
+                jwtToken = intent.getStringExtra("jwtToken");
+            }
+        }
 
 
 

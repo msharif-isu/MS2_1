@@ -4,7 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".AccountPreferences">
+    tools:context=".AccountPreferences"
+    android:background="@color/cambridge_blue">
 
 
 
@@ -23,7 +24,8 @@
         android:layout_height="33dp"
         android:layout_marginTop="75dp"
         android:layout_marginLeft="130dp"
-        android:text="Username" />
+        android:text="Username"
+        android:textColor="@color/mint_cream"/>
 
     <EditText
         android:id="@+id/firstname"
@@ -31,7 +33,8 @@
         android:layout_height="33dp"
         android:layout_marginLeft="130dp"
         android:layout_marginTop="110dp"
-        android:text="First" />
+        android:text="First"
+        android:textColor="@color/mint_cream"/>
 
     <EditText
         android:id="@+id/lastname"
@@ -39,7 +42,8 @@
         android:layout_height="33dp"
         android:layout_marginLeft="265dp"
         android:layout_marginTop="110dp"
-        android:text="First" />
+        android:text="First"
+        android:textColor="@color/mint_cream"/>
 
 
     <TextView
@@ -50,7 +54,8 @@
         android:layout_marginTop="145dp"
         android:inputType="textPassword"
         android:textSize="25dp"
-        android:text="Your Password" />
+        android:text="Your Password"
+        android:textColor="@color/mint_cream"/>
 
     <ImageButton
         android:id="@+id/hideunhide"
@@ -66,7 +71,8 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="15dp"
         android:layout_marginTop="185dp"
-        android:text="Bio:" />
+        android:text="Bio:"
+        android:textColor="@color/mint_cream"/>
 
 
     <Button
@@ -76,7 +82,9 @@
         android:layout_gravity="center"
         android:layout_marginTop="-50dp"
         app:cornerRadius="5dp"
-        android:text="Update Preferences" />
+        android:text="Update Preferences"
+        android:textColor="@color/cool_grey"
+        android:backgroundTint="@color/mint_cream"/>
 
     <Button
         android:id="@+id/logOut"
@@ -85,7 +93,9 @@
         android:layout_gravity="center"
         android:layout_marginTop="100dp"
         app:cornerRadius="5dp"
-        android:text="Logout" />
+        android:text="Logout"
+        android:textColor="@color/cool_grey"
+        android:backgroundTint="@color/mint_cream"/>
     <Button
         android:id="@+id/delAccount"
         android:layout_width="250dp"
@@ -93,7 +103,9 @@
         android:layout_gravity="center"
         android:layout_marginTop="160dp"
         app:cornerRadius="5dp"
-        android:text="Delete Account" />
+        android:text="Delete Account"
+        android:textColor="@color/cool_grey"
+        android:backgroundTint="@color/mint_cream"/>
 
     <ImageButton
         android:id="@+id/changePicture"
@@ -101,7 +113,8 @@
         android:layout_height="25dp"
         android:layout_marginTop="160dp"
         android:layout_marginLeft="100dp"
-        android:src="@android:drawable/ic_menu_camera" />
+        android:src="@android:drawable/ic_menu_camera"
+        />
 
     <ImageButton
         android:id="@+id/editInfo"

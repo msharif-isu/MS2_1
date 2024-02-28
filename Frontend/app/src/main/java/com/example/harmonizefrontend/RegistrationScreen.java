@@ -146,11 +146,22 @@ public class RegistrationScreen extends AppCompatActivity implements OnClickList
 //                Toast.makeText(RegistrationScreen.this, "Account has been successfully created!", Toast.LENGTH_LONG).show();
                 register(username, password);
 
+                if (jwtToken != null) {
+
+                    Intent intent = new Intent(this, navbarPlaceholder.class);
+                    intent.putExtra("username", username);
+                    intent.putExtra("password", password);
+                    intent.putExtra("jwtToken", jwtToken);
+                    startActivity(intent);
+                }
+
+
             }
         }
     }
 
-    private void register(String username, String password) {
+    private void
+    register(String username, String password) {
 
         // Connect to backend in order to check if credentials are valid
         JSONObject jsonBody = new JSONObject();
@@ -173,6 +184,8 @@ public class RegistrationScreen extends AppCompatActivity implements OnClickList
                         try {
                             Toast.makeText(RegistrationScreen.this, "Account Creation Successful", Toast.LENGTH_LONG).show();
                             jwtToken = response.getString("tokenType") + response.getString("accessToken");
+
+
                         }
                         catch (JSONException e) {
                             throw new RuntimeException(e);

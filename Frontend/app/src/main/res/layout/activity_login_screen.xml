@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
     tools:context=".LoginScreen"
-    android:background="@color/cool_grey">
+    android:background="@color/cambridge_blue">
 
 
 
@@ -19,7 +19,7 @@
         android:ems="10"
         android:inputType="text"
         android:textColor="@color/mint_cream"
-        android:text="Username" />
+        android:hint="Username" />
 
     <EditText
         android:id="@+id/PasswordInput"
@@ -29,7 +29,7 @@
         android:ems="10"
         android:inputType="textPassword"
         android:textColor="@color/mint_cream"
-        tools:text="Password" />
+        tools:hint="Password" />
 
     <CheckBox
         android:id="@+id/checkBox"
@@ -58,8 +58,8 @@
         android:layout_marginTop="250dp"
         app:cornerRadius="5dp"
         android:text="Login"
-        android:textColor="@color/mint_cream"
-        android:backgroundTint="@color/cambridge_blue"/>
+        android:textColor="@color/cool_grey"
+        android:backgroundTint="@color/mint_cream"/>
 
     <Button
         android:id="@+id/Register"
@@ -69,8 +69,8 @@
         android:layout_marginTop="400dp"
         android:text="Register"
         app:cornerRadius="5dp"
-        android:textColor="@color/mint_cream"
-        android:backgroundTint="@color/cambridge_blue"/>
+        android:textColor="@color/cool_grey"
+        android:backgroundTint="@color/mint_cream"/>
 
     <ImageView
         android:id="@+id/Logo"

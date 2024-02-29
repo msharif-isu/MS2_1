@@ -21,28 +21,28 @@
     <EditText
         android:id="@+id/username"
         android:layout_width="265dp"
-        android:layout_height="33dp"
-        android:layout_marginTop="75dp"
+        android:layout_height="40dp"
+        android:layout_marginTop="80dp"
         android:layout_marginLeft="130dp"
-        android:text="Username"
+        android:hint="Username"
         android:textColor="@color/mint_cream"/>
 
     <EditText
         android:id="@+id/firstname"
         android:layout_width="130dp"
-        android:layout_height="33dp"
+        android:layout_height="40dp"
         android:layout_marginLeft="130dp"
-        android:layout_marginTop="110dp"
-        android:text="First"
+        android:layout_marginTop="130dp"
+        android:hint="First"
         android:textColor="@color/mint_cream"/>
 
     <EditText
         android:id="@+id/lastname"
         android:layout_width="130dp"
-        android:layout_height="33dp"
+        android:layout_height="40dp"
         android:layout_marginLeft="265dp"
-        android:layout_marginTop="110dp"
-        android:text="First"
+        android:layout_marginTop="130dp"
+        android:hint="First"
         android:textColor="@color/mint_cream"/>
 
 
@@ -51,27 +51,27 @@
         android:layout_width="265dp"
         android:layout_height="33dp"
         android:layout_marginLeft="130dp"
-        android:layout_marginTop="145dp"
+        android:layout_marginTop="180dp"
         android:inputType="textPassword"
         android:textSize="25dp"
-        android:text="Your Password"
+        android:hint="Your Password"
         android:textColor="@color/mint_cream"/>
 
     <ImageButton
         android:id="@+id/hideunhide"
         android:layout_width="25dp"
         android:layout_height="25dp"
-        android:layout_marginTop="149dp"
+        android:layout_marginTop="185dp"
         android:layout_marginLeft="370dp"
         android:src="@android:drawable/ic_menu_view" />
 
     <EditText
         android:id="@+id/bio"
-        android:layout_width="334dp"
+        android:layout_width="380dp"
         android:layout_height="wrap_content"
+        android:layout_marginTop="220dp"
         android:layout_marginLeft="15dp"
-        android:layout_marginTop="185dp"
-        android:text="Bio:"
+        android:hint="Bio: "
         android:textColor="@color/mint_cream"/>
 
 
@@ -80,7 +80,7 @@
         android:layout_width="250dp"
         android:layout_height="60dp"
         android:layout_gravity="center"
-        android:layout_marginTop="-50dp"
+        android:layout_marginTop="40dp"
         app:cornerRadius="5dp"
         android:text="Update Preferences"
         android:textColor="@color/cool_grey"
@@ -91,7 +91,7 @@
         android:layout_width="250dp"
         android:layout_height="60dp"
         android:layout_gravity="center"
-        android:layout_marginTop="100dp"
+        android:layout_marginTop="130dp"
         app:cornerRadius="5dp"
         android:text="Logout"
         android:textColor="@color/cool_grey"
@@ -101,7 +101,7 @@
         android:layout_width="250dp"
         android:layout_height="60dp"
         android:layout_gravity="center"
-        android:layout_marginTop="160dp"
+        android:layout_marginTop="200dp"
         app:cornerRadius="5dp"
         android:text="Delete Account"
         android:textColor="@color/cool_grey"
@@ -120,8 +120,8 @@
         android:id="@+id/editInfo"
         android:layout_width="25dp"
         android:layout_height="25dp"
-        android:layout_marginTop="79dp"
-        android:layout_marginLeft="370dp"
+        android:layout_marginLeft="380dp"
+        android:layout_marginTop="15dp"
         android:src="@android:drawable/ic_menu_edit" />
 
 

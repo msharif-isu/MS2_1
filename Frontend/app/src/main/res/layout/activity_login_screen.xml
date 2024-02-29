@@ -5,7 +5,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
-    tools:context=".LoginScreen">
+    tools:context=".LoginScreen"
+    android:background="@color/cambridge_blue">
 
 
 
@@ -17,7 +18,8 @@
         android:layout_marginBottom="100dp"
         android:ems="10"
         android:inputType="text"
-        android:text="Username" />
+        android:textColor="@color/mint_cream"
+        android:hint="Username" />
 
     <EditText
         android:id="@+id/PasswordInput"
@@ -26,7 +28,8 @@
         android:layout_gravity="center"
         android:ems="10"
         android:inputType="textPassword"
-        tools:text="Password" />
+        android:textColor="@color/mint_cream"
+        tools:hint="Password" />
 
     <CheckBox
         android:id="@+id/checkBox"
@@ -44,6 +47,7 @@
         android:layout_gravity="center"
         android:layout_marginTop="80dp"
         android:layout_marginLeft="150dp"
+        android:textColor="@color/mint_cream"
         android:text="Remember me?" />
 
     <Button
@@ -53,7 +57,9 @@
         android:layout_gravity="center"
         android:layout_marginTop="250dp"
         app:cornerRadius="5dp"
-        android:text="Login" />
+        android:text="Login"
+        android:textColor="@color/cool_grey"
+        android:backgroundTint="@color/mint_cream"/>
 
     <Button
         android:id="@+id/Register"
@@ -62,7 +68,9 @@
         android:layout_gravity="center"
         android:layout_marginTop="400dp"
         android:text="Register"
-        app:cornerRadius="5dp" />
+        app:cornerRadius="5dp"
+        android:textColor="@color/cool_grey"
+        android:backgroundTint="@color/mint_cream"/>
 
     <ImageView
         android:id="@+id/Logo"

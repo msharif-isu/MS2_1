@@ -148,8 +148,8 @@ public class RegistrationScreen extends AppCompatActivity implements OnClickList
 
                 if (jwtToken != null) {
 
-                    Intent intent = new Intent(this, navbarPlaceholder.class);
-                    intent.putExtra("username", username);
+                    Intent intent = new Intent(this, navBar.class);
+                    intent.putExtra("fragment", "profile");
                     intent.putExtra("password", password);
                     intent.putExtra("jwtToken", jwtToken);
                     startActivity(intent);

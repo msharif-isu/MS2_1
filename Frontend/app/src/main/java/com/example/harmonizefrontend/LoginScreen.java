@@ -140,12 +140,12 @@ public class LoginScreen extends AppCompatActivity implements OnClickListener {
                 passwordEditText.setBackgroundTintList(ColorStateList.valueOf(Color.RED));
             }
             else {
-                checkCredentials(username, password);
-
-                if (jwtToken != null) {
-                    Toast.makeText(LoginScreen.this, jwtToken, Toast.LENGTH_LONG).show();
-                    Intent intent = new Intent(this, navbarPlaceholder.class);
-                    intent.putExtra("username", username);
+//                checkCredentials(username, password);
+                // CHANGED DUE TO THE SERVER BEING DOWN
+                if (jwtToken == null) {
+//                    Toast.makeText(LoginScreen.this, jwtToken, Toast.LENGTH_LONG).show();
+                    Intent intent = new Intent(this, navBar.class);
+                    intent.putExtra("fragment", "profile");
                     intent.putExtra("password", password);
                     intent.putExtra("jwtToken", jwtToken);
                     startActivity(intent);

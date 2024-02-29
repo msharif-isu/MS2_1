@@ -19,6 +19,8 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.android.volley.Request;
+import com.android.volley.Response;
 import com.android.volley.toolbox.JsonObjectRequest;
 
 import org.json.JSONObject;
@@ -116,10 +118,6 @@ public class AccountPreferences extends Fragment {
 
         Intent intent = requireActivity().getIntent();
         if (intent != null) {
-            if (intent.hasExtra("username") && intent.getStringExtra("username") != null) {
-                String username = intent.getStringExtra("username");
-                usernameText.setText(username);
-            }
             if (intent.hasExtra("password") && intent.getStringExtra("password") != null) {
                 String password = intent.getStringExtra("password");
                 passwordView.setText(password);
@@ -128,6 +126,9 @@ public class AccountPreferences extends Fragment {
                 jwtToken = intent.getStringExtra("jwtToken");
             }
         }
+
+        // Get the rest of the user details from server
+        getUserDetails();
 
 
 
@@ -230,6 +231,32 @@ public class AccountPreferences extends Fragment {
 
     private void getUserDetails() {
         // Send GET request to server to get user details
+        JSONObject jsonBody = new JSONObject();
+        try {
+            jsonBody.put("jwtToken", jwtToken);
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        String checkCredsURL = "http://coms-309-032.class.las.iastate.edu:8080";
+        JsonObjectRequest request = new JsonObjectRequest(
+                Request.Method.POST,
+                checkCredsURL + "",
+                jsonBody,
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        error.printStackTrace();
+                    }
+                }
+        )
 
     }
 

@@ -11,6 +11,7 @@ import harmonize.ErrorHandling.Exceptions.RolePermissionException;
 import harmonize.ErrorHandling.Exceptions.UnauthorizedUserException;
 import harmonize.ErrorHandling.Exceptions.UserAlreadyFriendException;
 import harmonize.ErrorHandling.Exceptions.UserAlreadyInvitedException;
+import harmonize.ErrorHandling.Exceptions.UserFriendSelfException;
 import harmonize.ErrorHandling.Exceptions.UserNotFoundException;
 import harmonize.ErrorHandling.Exceptions.UserNotFriendException;
 import harmonize.ErrorHandling.Exceptions.UsernameTakenException;
@@ -49,6 +50,11 @@ public class ErrorHandler {
 
     @ExceptionHandler(UserNotFriendException.class)
     public ResponseEntity<ErrorDTO> handleUserNotFriendException(UserNotFriendException e) {
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(new ErrorDTO(HttpStatus.CONFLICT, e.getMessage()));
+    }
+
+    @ExceptionHandler(UserFriendSelfException.class)
+    public ResponseEntity<ErrorDTO> handleUserFriendSelfException(UserFriendSelfException e) {
         return ResponseEntity.status(HttpStatus.CONFLICT).body(new ErrorDTO(HttpStatus.CONFLICT, e.getMessage()));
     }
 

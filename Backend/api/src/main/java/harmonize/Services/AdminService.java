@@ -11,6 +11,7 @@ import harmonize.DTOs.UserDTO;
 import harmonize.ErrorHandling.Exceptions.RoleNotFoundException;
 import harmonize.ErrorHandling.Exceptions.RolePermissionException;
 import harmonize.ErrorHandling.Exceptions.UserAlreadyFriendException;
+import harmonize.ErrorHandling.Exceptions.UserFriendSelfException;
 import harmonize.ErrorHandling.Exceptions.UserNotFoundException;
 import harmonize.ErrorHandling.Exceptions.UserNotFriendException;
 import harmonize.ErrorHandling.Exceptions.UsernameTakenException;
@@ -79,8 +80,14 @@ public class AdminService {
     @NonNull
     public List<UserDTO> getRecommendedFriends(int id) {
         List<UserDTO> result = new ArrayList<UserDTO>();
+        User currUser = userRepository.findReferenceById(id);
+
         userRepository.findAllByRole("USER").forEach(user -> {
             if(user.getId() == id)
+                return;
+            if (currUser.getFriends().contains(user))
+                return;
+            if (user.getFriendInvites().contains(currUser))
                 return;
             
             result.add(new UserDTO(user.getId(), user.getUsername()));
@@ -93,11 +100,13 @@ public class AdminService {
     public String addFriends(int id1, int id2) {
         User user1 = userRepository.findReferenceById(id1);
         User user2 = userRepository.findReferenceById(id2);
-
+        
         if (user1 == null)
             throw new UserNotFoundException(id1);
         if (user2 == null)
             throw new UserNotFoundException(id2);
+        if (user1 == user2)
+            throw new UserFriendSelfException(user1.getUsername());
 
         if (user1.getFriends().contains(user2))
             throw new UserAlreadyFriendException(user1.getUsername(), user2.getUsername());

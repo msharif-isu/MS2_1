@@ -33,18 +33,16 @@ import java.util.ArrayList;
  */
 public class FindFragment extends Fragment {
 
-    // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
 
-    // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
     private ArrayList<User> userList;
     private int id;
     private String username;
-
+    private RequestQueue mQueue;
     public FindFragment() {
         // Required empty public constructor
     }
@@ -70,27 +68,29 @@ public class FindFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
+
+        mQueue = VolleySingleton.getInstance(this).getRequestQueue();
+
     }
 
     @Override
+//    An inflater takes an XML layout file as an input and builds the view object from it at runtime.
+//    A ViewGroup is a View that can contain other views. (In our case, we are using a LinearView)
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
         View rootView = inflater.inflate(R.layout.fragment_find, container, false);
         LinearLayout containerLayout = rootView.findViewById(R.id.container);
 
         // Make API request to fetch recommended friends list
         fetchUserList();
 
-        return inflater.inflate(R.layout.fragment_find, container, false);
+        return rootView;
     }
 
     private void fetchUserList() {
 
-        RequestQueue queue = Volley.newRequestQueue(getContext());
+
         String url = "http://coms-309-032.class.las.iastate.edu:8080/users/friends/recommended";
 
 //        Request a string response from the url.

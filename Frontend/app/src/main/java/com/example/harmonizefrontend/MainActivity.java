@@ -24,6 +24,8 @@ public class MainActivity extends AppCompatActivity {
         bottomNavigationView.setOnItemSelectedListener(navListener);
 
         getSupportFragmentManager().beginTransaction().replace(R.id.frame_layout, new HomeFragment()).commit();
+
+        mQueue = VolleySingleton.getInstance(this).getRequestQueue();
     }
 
     private NavigationBarView.OnItemSelectedListener navListener = new BottomNavigationView.OnItemSelectedListener() {

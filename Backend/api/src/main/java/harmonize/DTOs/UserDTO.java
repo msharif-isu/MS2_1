@@ -1,8 +1,8 @@
 package harmonize.DTOs;
 
 import harmonize.Users.User;
-import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.RequiredArgsConstructor;
 
 /**
  * 
@@ -11,7 +11,7 @@ import lombok.Data;
  */ 
 
 @Data
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class UserDTO {
     private int id;
     private String firstName;

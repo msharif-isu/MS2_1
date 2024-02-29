@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -47,9 +48,9 @@ public class UserController {
         return ResponseEntity.ok(userService.getUserByUsername(username));
     }
 
-    @PutMapping(path = "/username/{username}")
-    public ResponseEntity<String> updateUsername(@PathVariable String username, Principal principal){
-        return ResponseEntity.ok(userService.updateUsername(username, principal));
+    @PutMapping(path = "/update")
+    public ResponseEntity<String> updateSelf(@RequestBody UserDTO update, Principal principal){
+        return ResponseEntity.ok(userService.updateSelf(update, principal));
     }
 
     @DeleteMapping(path = "/delete")

@@ -53,15 +53,42 @@ public class UserService {
     }
 
     @NonNull
-    public String updateUsername(String username, Principal principal){
+    public String updateSelf(UserDTO update, Principal principal){
         User user = userRepository.findByUsername(principal.getName());
 
-        if(userRepository.findByUsername(username) != null)
-            throw new UsernameTakenException(username);
+        if(user == null)
+            throw new UserNotFoundException(principal.getName());
+
+        if(userRepository.findByUsername(update.getUsername()) != null)
+            throw new UsernameTakenException(update.getUsername());
+
+        String nullUpdate = "Nothing was changed for user: " + principal.getName();
+        String response = "";
+
+        if(update.getFirstName() != null) {
+            response += new String(String.format("First name: \"%s\" was updated to \"%s.\"\n", user.getFirstName(), update.getFirstName()));
+            user.setFirstName(update.getFirstName());
+        }
             
-        userRepository.setUsername(user.getId(), username);
+        if(update.getLastName() != null) {
+            response += new String(String.format("Last name: \"%s\" was updated to \"%s.\"\n", user.getLastName(), update.getLastName()));
+            user.setLastName(update.getLastName());
+        }
+
+        if(update.getUsername() != null) {
+            response += new String(String.format("Username: \"%s\" was updated to \"%s.\"\n", user.getUsername(), update.getUsername()));
+            user.setUsername(update.getUsername());
+        }
+
+        if(update.getBio() != null) {
+            response += new String(String.format("Bio: \"%s\" was updated to \"%s.\"\n", user.getBio(), update.getBio()));
+            user.setBio(update.getBio());
+        }
+
+        userRepository.save(user);
+        response = response.trim();
         
-        return new String(String.format("\"%s\" was updated to \"%s\"", user.getUsername(), username));
+        return response.isEmpty() ? nullUpdate : response;
     }
 
     @NonNull

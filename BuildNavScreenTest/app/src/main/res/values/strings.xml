@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">BuildNavScreenTest</string>
+    <string name="title_home">Home</string>
+    <string name="title_findUser">Find</string>
+    <string name="title_messages">Messages</string>
+    <string name="title_profile">Profile</string>
+    <string name="home_fragment_text">Home Page</string>
+    <string name="find_fragment_text">Find Friends Page</string>
+    <string name="messages_fragment_text">Messages Page</string>
+    <string name="profile_fragment_text">Profile Page</string>
+</resources>

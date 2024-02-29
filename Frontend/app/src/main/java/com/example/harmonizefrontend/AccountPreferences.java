@@ -93,7 +93,7 @@ public class AccountPreferences extends Fragment {
 
         View rootView = inflater.inflate(R.layout.fragment_account_preferences, container, false);
 
-        profilePicture = rootView.findViewById(R.id.profilepicture);
+        profilePicture = rootView.findViewById(R.id.profile_Picture);
 
         usernameText = rootView.findViewById(R.id.username);
         passwordView = rootView.findViewById(R.id.password_text_view);
@@ -128,7 +128,7 @@ public class AccountPreferences extends Fragment {
         }
 
         // Get the rest of the user details from server
-        getUserDetails();
+//        getUserDetails();
 
 
 
@@ -229,36 +229,36 @@ public class AccountPreferences extends Fragment {
         return rootView;
     }
 
-    private void getUserDetails() {
-        // Send GET request to server to get user details
-        JSONObject jsonBody = new JSONObject();
-        try {
-            jsonBody.put("jwtToken", jwtToken);
-        }
-        catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        String checkCredsURL = "http://coms-309-032.class.las.iastate.edu:8080";
-        JsonObjectRequest request = new JsonObjectRequest(
-                Request.Method.POST,
-                checkCredsURL + "",
-                jsonBody,
-                new Response.Listener<JSONObject>() {
-                    @Override
-                    public void onResponse(JSONObject response) {
-
-                    }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        error.printStackTrace();
-                    }
-                }
-        )
-
-    }
+//    private void getUserDetails() {
+//        // Send GET request to server to get user details
+//        JSONObject jsonBody = new JSONObject();
+//        try {
+//            jsonBody.put("jwtToken", jwtToken);
+//        }
+//        catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//
+//        String checkCredsURL = "http://coms-309-032.class.las.iastate.edu:8080";
+//        JsonObjectRequest request = new JsonObjectRequest(
+//                Request.Method.POST,
+//                checkCredsURL + "",
+//                jsonBody,
+//                new Response.Listener<JSONObject>() {
+//                    @Override
+//                    public void onResponse(JSONObject response) {
+//
+//                    }
+//                },
+//                new Response.ErrorListener() {
+//                    @Override
+//                    public void onErrorResponse(VolleyError error) {
+//                        error.printStackTrace();
+//                    }
+//                }
+//        )
+//
+//    }
 
     
 }

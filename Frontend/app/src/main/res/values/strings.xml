@@ -7,6 +7,15 @@
     <string name="next">Next</string>
     <string name="previous">Previous</string>
 
+    <string name="title_home">Home</string>
+    <string name="title_findUser">Find</string>
+    <string name="title_messages">Messages</string>
+    <string name="title_profile">Profile</string>
+    <string name="home_fragment_text">Home Page</string>
+    <string name="find_fragment_text">Find Friends Page</string>
+    <string name="messages_fragment_text">Messages Page</string>
+    <string name="profile_fragment_text">Profile Page</string>
+
     <string name="lorem_ipsum">
         Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam in scelerisque sem. Mauris
         volutpat, dolor id interdum ullamcorper, risus dolor egestas lectus, sit amet mattis purus

@@ -52,6 +52,11 @@ public class UserController {
         return ResponseEntity.ok(userService.updateUsername(username, principal));
     }
 
+    @DeleteMapping(path = "/delete")
+    public ResponseEntity<String> deleteSelf(Principal principal){
+        return ResponseEntity.ok(userService.deleteSelf(principal));
+    }
+
     @GetMapping(path = "/friends")
     public ResponseEntity<List<UserDTO>> getFriends(Principal principal){
         return ResponseEntity.ok(userService.getFriends(principal));

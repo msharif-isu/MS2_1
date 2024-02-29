@@ -28,7 +28,8 @@ public class UserService {
 
     @NonNull
     public UserDTO getSelf(Principal principal) {
-        return new UserDTO(userRepository.findByUsername(principal.getName()).getId(), principal.getName());
+        User user = userRepository.findByUsername(principal.getName());
+        return new UserDTO(user);
     }
 
     @NonNull
@@ -38,7 +39,7 @@ public class UserService {
         if(user == null)
             throw new UserNotFoundException(id);
 
-        return new UserDTO(user.getId(), user.getUsername());
+        return new UserDTO(user);
     }
 
     @NonNull
@@ -48,7 +49,7 @@ public class UserService {
         if(user == null)
             throw new UserNotFoundException(username);
 
-        return new UserDTO(user.getId(), user.getUsername());
+        return new UserDTO(user);
     }
 
     @NonNull
@@ -64,6 +65,18 @@ public class UserService {
     }
 
     @NonNull
+    public String deleteSelf(Principal principal){
+        User user = userRepository.findByUsername(principal.getName());
+
+        if(user == null)
+            throw new UserNotFoundException(principal.getName());
+            
+        userRepository.delete(user);
+        
+        return new String(String.format("\"%s\" was deleted.", user.getUsername()));
+    }
+
+    @NonNull
     public List<UserDTO> getRecommendedFriends(Principal principal) {
         User currUser = userRepository.findByUsername(principal.getName());
 
@@ -73,7 +86,7 @@ public class UserService {
             if (user.getId() == currUser.getId())
                 return;
             
-            recommendedFriends.add(new UserDTO(user.getId(), user.getUsername()));
+            recommendedFriends.add(new UserDTO(user));
         });
 
         return recommendedFriends;
@@ -86,7 +99,7 @@ public class UserService {
         List<UserDTO> friends = new ArrayList<UserDTO>();
 
         for (User friend : user.getFriends())
-            friends.add(new UserDTO(friend.getId(), friend.getUsername()));
+            friends.add(new UserDTO(friend));
 
         return friends;
     }
@@ -98,7 +111,7 @@ public class UserService {
         List<UserDTO> inviters = new ArrayList<UserDTO>();
 
         for (User inviter : user.getFriendInvites())
-            inviters.add(new UserDTO(inviter.getId(), inviter.getUsername()));
+            inviters.add(new UserDTO(inviter));
 
         return inviters;
     }

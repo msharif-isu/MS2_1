@@ -35,7 +35,7 @@ public class AdminService {
     public List<UserDTO> getAllUsers() {
         List<UserDTO> result = new ArrayList<UserDTO>();
         for (User user : userRepository.findAll()) {
-            result.add(new UserDTO(user.getId(), user.getUsername()));
+            result.add(new UserDTO(user));
         }
         return result;
     }
@@ -45,7 +45,8 @@ public class AdminService {
         User user = userRepository.findReferenceById(id);
         if (user == null)
             throw new UserNotFoundException(id);
-        return new UserDTO(user.getId(), user.getUsername());
+            
+        return new UserDTO(user);
     }
 
     @NonNull
@@ -56,7 +57,7 @@ public class AdminService {
 
         List<UserDTO> result = new ArrayList<UserDTO>();
         for (User friend : user.getFriends()) {
-            result.add(new UserDTO(friend.getId(), friend.getUsername()));
+            result.add(new UserDTO(friend));
         }
 
         return result;
@@ -70,7 +71,7 @@ public class AdminService {
 
         List<UserDTO> result = new ArrayList<UserDTO>();
         for (User friendInviter : user.getFriendInvites()) {
-            result.add(new UserDTO(friendInviter.getId(), friendInviter.getUsername()));
+            result.add(new UserDTO(friendInviter));
         }
 
         return result;
@@ -83,7 +84,7 @@ public class AdminService {
             if(user.getId() == id)
                 return;
             
-            result.add(new UserDTO(user.getId(), user.getUsername()));
+            result.add(new UserDTO(user));
         });
 
         return result;

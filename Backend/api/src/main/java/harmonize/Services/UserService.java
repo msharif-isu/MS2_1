@@ -9,7 +9,11 @@ import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 
 import harmonize.DTOs.UserDTO;
+import harmonize.ErrorHandling.Exceptions.UserAlreadyFriendException;
+import harmonize.ErrorHandling.Exceptions.UserAlreadyInvitedException;
+import harmonize.ErrorHandling.Exceptions.UserFriendSelfException;
 import harmonize.ErrorHandling.Exceptions.UserNotFoundException;
+import harmonize.ErrorHandling.Exceptions.UserNotFriendException;
 import harmonize.ErrorHandling.Exceptions.UsernameTakenException;
 import harmonize.Users.User;
 import harmonize.Users.UserRepository;
@@ -24,19 +28,8 @@ public class UserService {
     }
 
     @NonNull
-    public List<UserDTO> getPossibleFriends(Principal principal) {
-        User currUser = userRepository.findByUsername(principal.getName());
-
-        List<UserDTO> users = new ArrayList<UserDTO>();
-
-        userRepository.findAllByRole("USER").forEach(user -> {
-            if (user.getId() == currUser.getId())
-                return;
-            
-            users.add(new UserDTO(user.getId(), user.getUsername()));
-        });
-
-        return users;
+    public UserDTO getSelf(Principal principal) {
+        return new UserDTO(userRepository.findByUsername(principal.getName()).getId(), principal.getName());
     }
 
     @NonNull
@@ -70,4 +63,110 @@ public class UserService {
         
         return new String(String.format("\"%s\" was updated to \"%s\"", user.getUsername(), username));
     }
+
+    @NonNull
+    public List<UserDTO> getRecommendedFriends(Principal principal) {
+        User currUser = userRepository.findByUsername(principal.getName());
+
+        List<UserDTO> recommendedFriends = new ArrayList<UserDTO>();
+
+        userRepository.findAllByRole("USER").forEach(user -> {
+            if (user.getId() == currUser.getId())
+                return;
+            if (currUser.getFriends().contains(user))
+                return;
+            if (user.getFriendInvites().contains(currUser))
+                return;
+            
+            recommendedFriends.add(new UserDTO(user.getId(), user.getUsername()));
+        });
+
+        return recommendedFriends;
+    }
+
+    @NonNull
+    public List<UserDTO> getFriends(Principal principal) {
+        User user = userRepository.findByUsername(principal.getName());
+
+        List<UserDTO> friends = new ArrayList<UserDTO>();
+
+        for (User friend : user.getFriends())
+            friends.add(new UserDTO(friend.getId(), friend.getUsername()));
+
+        return friends;
+    }
+
+    @NonNull
+    public List<UserDTO> getFriendInvites(Principal principal) {
+        User user = userRepository.findByUsername(principal.getName());
+
+        List<UserDTO> inviters = new ArrayList<UserDTO>();
+
+        for (User inviter : user.getFriendInvites())
+            inviters.add(new UserDTO(inviter.getId(), inviter.getUsername()));
+
+        return inviters;
+    }
+
+    @NonNull
+    public String addFriend(int id, Principal principal) {
+        User user = userRepository.findByUsername(principal.getName());
+        User friend = userRepository.findReferenceById(id);
+
+        if (friend == null)
+            throw new UserNotFoundException(id);
+        if (user == friend)
+            throw new UserFriendSelfException(user.getUsername());
+
+        if (user.getFriends().contains(friend))
+            throw new UserAlreadyFriendException(user.getUsername(), friend.getUsername());
+        
+        if (friend.getFriendInvites().contains(user))
+            throw new UserAlreadyInvitedException(user.getUsername(), friend.getUsername());
+
+        if (!user.getFriendInvites().contains(friend)) {
+            friend.getFriendInvites().add(user);
+            userRepository.save(friend);
+            return new String(String.format("\"%s\" sent friend invite to \"%s\"", user.getUsername(), friend.getUsername()));
+        }
+
+        user.getFriendInvites().remove(friend);
+        friend.getFriends().add(user);
+        user.getFriends().add(friend);
+        userRepository.save(friend);
+        userRepository.save(user);
+        return new String(String.format("\"%s\" and \"%s\" are now friends", user.getUsername(), friend.getUsername()));
+    
+    }
+
+    @NonNull
+    public String removeFriend(int id, Principal principal) {
+        User user = userRepository.findByUsername(principal.getName());
+        User friend = userRepository.findReferenceById(id);
+
+        if (friend == null)
+            throw new UserNotFoundException(id);
+
+        if (friend.getFriendInvites().contains(user)) {
+            friend.getFriendInvites().remove(user);
+            userRepository.save(friend);
+            return new String(String.format("\"%s\" removed friend invite to \"%s\"", user.getUsername(), friend.getUsername()));
+        }
+
+        if (user.getFriendInvites().contains(friend)) {
+            user.getFriendInvites().remove(friend);
+            userRepository.save(user);
+            return new String(String.format("\"%s\" removed friend invite from \"%s\"", user.getUsername(), friend.getUsername()));
+        }
+
+        if (!user.getFriends().contains(friend))
+            throw new UserNotFriendException(user.getUsername(), friend.getUsername());
+
+        user.getFriends().remove(friend);
+        friend.getFriends().remove(user);
+        userRepository.save(friend);
+        userRepository.save(user);
+        return new String(String.format("\"%s\" is no longer friends with \"%s\"", user.getUsername(), friend.getUsername()));
+    }
+
 }

@@ -62,6 +62,8 @@ public class LoginScreen extends AppCompatActivity implements OnClickListener {
 
     private RequestQueue mQueue;
 
+    private String jwtToken = null;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -84,6 +86,7 @@ public class LoginScreen extends AppCompatActivity implements OnClickListener {
 
         mQueue = VolleySingleton.getInstance(this).getRequestQueue();
 
+        // Checks to see if the user has come from the registration screen/logged out
         Intent intent = getIntent();
         if (intent != null) {
             if (intent.hasExtra("username") && intent.getStringExtra("username") != null) {
@@ -138,9 +141,15 @@ public class LoginScreen extends AppCompatActivity implements OnClickListener {
             }
             else {
 //                checkCredentials(username, password);
-                // Take user to account preferences screen
-//                Intent intent = new Intent(this, AccountPreferences.class);
-//                startActivity(intent);
+                // CHANGED DUE TO THE SERVER BEING DOWN
+                if (jwtToken == null) {
+//                    Toast.makeText(LoginScreen.this, jwtToken, Toast.LENGTH_LONG).show();
+                    Intent intent = new Intent(this, navBar.class);
+                    intent.putExtra("fragment", "profile");
+                    intent.putExtra("password", password);
+                    intent.putExtra("jwtToken", jwtToken);
+                    startActivity(intent);
+                }
             }
 
         }
@@ -174,6 +183,7 @@ public class LoginScreen extends AppCompatActivity implements OnClickListener {
             throw new RuntimeException(e);
         }
 
+
         JsonObjectRequest request = new JsonObjectRequest(
                 Request.Method.POST,
                 checkCredsURL + "/auth/login",
@@ -183,7 +193,7 @@ public class LoginScreen extends AppCompatActivity implements OnClickListener {
                     public void onResponse(JSONObject response) {
                         try {
                                 Toast.makeText(LoginScreen.this, "Login Successful", Toast.LENGTH_LONG).show();
-                                // Return jwt token which will be used to auth user for a day
+                                jwtToken = response.getString("tokenType") + response.getString("accessToken");
                                 // Returns Http.status.ok
                         } catch (Exception e) {
                             e.printStackTrace();
@@ -193,17 +203,13 @@ public class LoginScreen extends AppCompatActivity implements OnClickListener {
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        error.printStackTrace();
+                        Toast.makeText(LoginScreen.this, "The username or password is incorrect, please try again!", Toast.LENGTH_LONG).show();
+                        jwtToken = null;
+                        Log.d("Error", error.toString());
                     }
                 }
         );
         mQueue.add(request);
-
-
-
-
-
-
     }
 
 

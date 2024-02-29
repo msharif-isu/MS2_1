@@ -6,4 +6,13 @@
     </style>
 
     <style name="Theme.HarmonizeFrontend" parent="Base.Theme.HarmonizeFrontend" />
+
+    <style name="Theme.HarmonizeFrontend.NoActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+
+    <style name="Theme.HarmonizeFrontend.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+
+    <style name="Theme.HarmonizeFrontend.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 </resources>

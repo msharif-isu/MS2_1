@@ -20,7 +20,7 @@ import harmonize.Services.UserService;
 
 /**
  * 
- * @author Phu Nguyen
+ * @author Phu Nguyen and Isaac Denning
  * 
  */ 
 
@@ -41,7 +41,7 @@ public class AdminController {
         return ResponseEntity.ok(adminService.getAllUsers());
     }
 
-    @GetMapping(path = "/")
+    @GetMapping(path = "")
     public ResponseEntity<UserDTO> getSelf(Principal principal){
         return ResponseEntity.ok(adminService.getUser(adminService.getUser(principal.getName()).getId()));
     }

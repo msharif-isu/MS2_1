@@ -33,7 +33,7 @@ public class UserController {
         this.userService = userService;
     }
 
-    @GetMapping(path = "/")
+    @GetMapping(path = "")
     public ResponseEntity<UserDTO> getSelf(Principal principal){
         return ResponseEntity.ok(userService.getUser(userService.getUser(principal.getName()).getId()));
     }
@@ -48,12 +48,12 @@ public class UserController {
         return ResponseEntity.ok(userService.getUser(username));
     }
 
-    @PutMapping(path = "/")
+    @PutMapping(path = "")
     public ResponseEntity<String> updateUser(Principal principal, @RequestBody UserDTO update){
         return ResponseEntity.ok(userService.updateUser(userService.getUser(principal.getName()).getId(), update));
     }
 
-    @DeleteMapping(path = "/")
+    @DeleteMapping(path = "")
     public ResponseEntity<String> deleteUser(Principal principal){
         return ResponseEntity.ok(userService.deleteUser(userService.getUser(principal.getName()).getId()));
     }

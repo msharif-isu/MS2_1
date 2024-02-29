@@ -1,7 +1,0 @@
-<resources>
-    <string name="app_name">BuildNavScreenTest</string>
-    <string name="title_home">Home</string>
-    <string name="title_findUser">Find</string>
-    <string name="title_messages">Messages</string>
-    <string name="title_profile">Profile</string>
-</resources>

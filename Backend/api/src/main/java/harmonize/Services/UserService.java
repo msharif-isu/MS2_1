@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import harmonize.DTOs.UserDTO;
 import harmonize.ErrorHandling.Exceptions.UserAlreadyFriendException;
 import harmonize.ErrorHandling.Exceptions.UserAlreadyInvitedException;
+import harmonize.ErrorHandling.Exceptions.UserFriendSelfException;
 import harmonize.ErrorHandling.Exceptions.UserNotFoundException;
 import harmonize.ErrorHandling.Exceptions.UserNotFriendException;
 import harmonize.ErrorHandling.Exceptions.UsernameTakenException;
@@ -111,6 +112,10 @@ public class UserService {
         for (User currUser : userRepository.findAllByRole("USER")) {
             if (currUser.getId() == user.getId())
                 continue;
+            if (user.getFriends().contains(currUser))
+                continue;
+            if (currUser.getFriendInvites().contains(user))
+                continue;
 
             recommendedFriends.add(new UserDTO(currUser));
         }
@@ -155,9 +160,11 @@ public class UserService {
 
         if(user == null)
             throw new UserNotFoundException(id);
-
         if (friend == null)
-            throw new UserNotFoundException(idFriend);
+            throw new UserNotFoundException(id);
+            
+        if (user == friend)
+            throw new UserFriendSelfException(user.getUsername());
 
         if (user.getFriends().contains(friend))
             throw new UserAlreadyFriendException(user.getUsername(), friend.getUsername());

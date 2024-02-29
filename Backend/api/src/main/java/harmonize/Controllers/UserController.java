@@ -73,12 +73,12 @@ public class UserController {
         return ResponseEntity.ok(userService.getFriendInvites(userService.getUser(principal.getName()).getId()));
     }
 
-    @PostMapping(path = "/friends/add/{id}")
+    @PostMapping(path = "/friends/{id}")
     public ResponseEntity<String> addFriend(Principal principal, @PathVariable int id){
         return ResponseEntity.ok(userService.addFriend(userService.getUser(principal.getName()).getId(), id));
     }
 
-    @DeleteMapping(path = "/friends/remove/{id}")
+    @DeleteMapping(path = "/friends/{id}")
     public ResponseEntity<String> removeFriend(Principal principal, @PathVariable int id){
         return ResponseEntity.ok(userService.removeFriend(userService.getUser(principal.getName()).getId(), id));
     }

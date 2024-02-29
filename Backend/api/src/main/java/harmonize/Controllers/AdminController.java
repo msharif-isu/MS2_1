@@ -75,16 +75,6 @@ public class AdminController {
     public ResponseEntity<String> removeFriend(@PathVariable int id1, @PathVariable int id2) {
         return ResponseEntity.ok(userService.removeFriend(id1, id2));
     }
- 
-    @PutMapping(path = "/users/{id}")
-    public ResponseEntity<String> updateUser(@PathVariable int id, @RequestBody UserDTO update) {
-        return ResponseEntity.ok(userService.updateUser(id, update));
-    }
-
-    @DeleteMapping(path = "/users/{id}")
-    public ResponseEntity<String> deleteUser(@PathVariable int id) {
-        return ResponseEntity.ok(userService.deleteUser(id));
-    }
 
     @PutMapping(path = "/roles/{id}/{role}")
     public ResponseEntity<String> updateRole(@PathVariable int id, @PathVariable String role) {

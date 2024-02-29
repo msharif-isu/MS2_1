@@ -1,6 +1,5 @@
 package harmonize.Services;
 
-import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,55 +13,52 @@ import harmonize.ErrorHandling.Exceptions.UserAlreadyInvitedException;
 import harmonize.ErrorHandling.Exceptions.UserNotFoundException;
 import harmonize.ErrorHandling.Exceptions.UserNotFriendException;
 import harmonize.ErrorHandling.Exceptions.UsernameTakenException;
+import harmonize.Roles.RoleRepository;
 import harmonize.Users.User;
 import harmonize.Users.UserRepository;
 
 @Service
 public class UserService {
     private UserRepository userRepository;
+    private RoleRepository roleRepository;
 
     @Autowired
-    public UserService(UserRepository userRepository) {
+    public UserService(UserRepository userRepository, RoleRepository roleRepository) {
         this.userRepository = userRepository;
+        this.roleRepository = roleRepository;
     }
 
     @NonNull
-    public UserDTO getSelf(Principal principal) {
-        User user = userRepository.findByUsername(principal.getName());
-        return new UserDTO(user);
-    }
-
-    @NonNull
-    public UserDTO getUserById(int id) {
+    public UserDTO getUser(int id) {
         User user = userRepository.findReferenceById(id);
 
-        if(user == null)
+        if(user == null || !user.getRoles().contains(roleRepository.findByName("USER")))
             throw new UserNotFoundException(id);
 
         return new UserDTO(user);
     }
 
     @NonNull
-    public UserDTO getUserByUsername(String username) {
+    public UserDTO getUser(String username) {
         User user = userRepository.findByUsername(username);
         
-        if(user == null)
+        if(user == null || !user.getRoles().contains(roleRepository.findByName("USER")))
             throw new UserNotFoundException(username);
 
         return new UserDTO(user);
     }
 
     @NonNull
-    public String updateSelf(UserDTO update, Principal principal){
-        User user = userRepository.findByUsername(principal.getName());
+    public String updateUser(int id, UserDTO update){
+        User user = userRepository.findReferenceById(id);
 
         if(user == null)
-            throw new UserNotFoundException(principal.getName());
+            throw new UserNotFoundException(id);
 
         if(userRepository.findByUsername(update.getUsername()) != null)
             throw new UsernameTakenException(update.getUsername());
 
-        String nullUpdate = "Nothing was changed for user: " + principal.getName();
+        String nullUpdate = "Nothing was changed for user: " + id;
         String response = "";
 
         if(update.getFirstName() != null) {
@@ -92,11 +88,11 @@ public class UserService {
     }
 
     @NonNull
-    public String deleteSelf(Principal principal){
-        User user = userRepository.findByUsername(principal.getName());
+    public String deleteUser(int id){
+        User user = userRepository.findReferenceById(id);
 
         if(user == null)
-            throw new UserNotFoundException(principal.getName());
+            throw new UserNotFoundException(id);
             
         userRepository.delete(user);
         
@@ -104,24 +100,30 @@ public class UserService {
     }
 
     @NonNull
-    public List<UserDTO> getRecommendedFriends(Principal principal) {
-        User currUser = userRepository.findByUsername(principal.getName());
+    public List<UserDTO> getRecommendedFriends(int id) {
+        User user = userRepository.findReferenceById(id);
+
+        if(user == null)
+            throw new UserNotFoundException(id);
 
         List<UserDTO> recommendedFriends = new ArrayList<UserDTO>();
 
-        userRepository.findAllByRole("USER").forEach(user -> {
-            if (user.getId() == currUser.getId())
-                return;
-            
-            recommendedFriends.add(new UserDTO(user));
-        });
+        for (User currUser : userRepository.findAllByRole("USER")) {
+            if (currUser.getId() == user.getId())
+                continue;
+
+            recommendedFriends.add(new UserDTO(currUser));
+        }
 
         return recommendedFriends;
     }
 
     @NonNull
-    public List<UserDTO> getFriends(Principal principal) {
-        User user = userRepository.findByUsername(principal.getName());
+    public List<UserDTO> getFriends(int id) {
+        User user = userRepository.findReferenceById(id);
+
+        if(user == null)
+            throw new UserNotFoundException(id);
 
         List<UserDTO> friends = new ArrayList<UserDTO>();
 
@@ -132,8 +134,11 @@ public class UserService {
     }
 
     @NonNull
-    public List<UserDTO> getFriendInvites(Principal principal) {
-        User user = userRepository.findByUsername(principal.getName());
+    public List<UserDTO> getFriendInvites(int id) {
+        User user = userRepository.findReferenceById(id);
+
+        if(user == null)
+            throw new UserNotFoundException(id);
 
         List<UserDTO> inviters = new ArrayList<UserDTO>();
 
@@ -144,12 +149,15 @@ public class UserService {
     }
 
     @NonNull
-    public String addFriend(int id, Principal principal) {
-        User user = userRepository.findByUsername(principal.getName());
-        User friend = userRepository.findReferenceById(id);
+    public String addFriend(int id, int idFriend) {
+        User user = userRepository.findReferenceById(id);
+        User friend = userRepository.findReferenceById(idFriend);
+
+        if(user == null)
+            throw new UserNotFoundException(id);
 
         if (friend == null)
-            throw new UserNotFoundException(id);
+            throw new UserNotFoundException(idFriend);
 
         if (user.getFriends().contains(friend))
             throw new UserAlreadyFriendException(user.getUsername(), friend.getUsername());
@@ -173,12 +181,15 @@ public class UserService {
     }
 
     @NonNull
-    public String removeFriend(int id, Principal principal) {
-        User user = userRepository.findByUsername(principal.getName());
-        User friend = userRepository.findReferenceById(id);
+    public String removeFriend(int id, int idFriend) {
+        User user = userRepository.findReferenceById(id);
+        User friend = userRepository.findReferenceById(idFriend);
+
+        if (user == null)
+            throw new UserNotFoundException(id);
 
         if (friend == null)
-            throw new UserNotFoundException(id);
+            throw new UserNotFoundException(idFriend);
 
         if (friend.getFriendInvites().contains(user)) {
             friend.getFriendInvites().remove(user);

@@ -94,7 +94,7 @@ public class FindFragment extends Fragment {
         LinearLayout containerLayout = rootView.findViewById(R.id.container);
 
         // Make API request to fetch recommended friends list
-        //fetchUserList();
+        fetchUserList();
 
         return rootView;
     }
@@ -103,24 +103,24 @@ public class FindFragment extends Fragment {
 
         super.onViewCreated(view, savedInstanceState);
 
-        userList.add(new User(1, "James"));
-        userList.add(new User(2, "Jessie"));
-        userList.add(new User(4, "Bobby"));
-        userList.add(new User(6, "Ash"));
-        userList.add(new User(14, "Misty"));
-        userList.add(new User(15, "Brock"));
-        userList.add(new User(16, "Dr. Oak"));
-        userList.add(new User(17, "Gary"));
-        userList.add(new User(18, "Mewtwo"));
-        userList.add(new User(19, "Bulbasaur"));
-        userList.add(new User(20, "Butterfree"));
-        userList.add(new User(21, "Charmander"));
-        userList.add(new User(22, "Mr. Mime"));
-        userList.add(new User(23, "Mew"));
-        userList.add(new User(24, "Pidgeot"));
-        userList.add(new User(25, "Pikachu"));
-
-        populateUserItems();
+//        userList.add(new User(1, "James"));
+//        userList.add(new User(2, "Jessie"));
+//        userList.add(new User(4, "Bobby"));
+//        userList.add(new User(6, "Ash"));
+//        userList.add(new User(14, "Misty"));
+//        userList.add(new User(15, "Brock"));
+//        userList.add(new User(16, "Dr. Oak"));
+//        userList.add(new User(17, "Gary"));
+//        userList.add(new User(18, "Mewtwo"));
+//        userList.add(new User(19, "Bulbasaur"));
+//        userList.add(new User(20, "Butterfree"));
+//        userList.add(new User(21, "Charmander"));
+//        userList.add(new User(22, "Mr. Mime"));
+//        userList.add(new User(23, "Mew"));
+//        userList.add(new User(24, "Pidgeot"));
+//        userList.add(new User(25, "Pikachu"));
+//
+//        populateUserItems();
 
     }
 
@@ -139,8 +139,8 @@ public class FindFragment extends Fragment {
             public void onResponse(JSONArray response) {
 
                 //userList = new ArrayList<User>();
-                String jsonString = response.toString();
-                Log.d(TAG, jsonString);
+//                String jsonString = response.toString();
+//                Log.d(TAG, jsonString);
                 try {
 
                     for (int i = 0; i < response.length(); i++) {

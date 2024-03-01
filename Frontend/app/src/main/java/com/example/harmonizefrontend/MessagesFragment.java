@@ -197,7 +197,7 @@ public class MessagesFragment extends Fragment {
 
         // Makes API requests to remove friend
         RequestQueue queue = Volley.newRequestQueue(requireContext());
-        String url = "http://coms-309-032.class.las.iastate.edu:8080/users/friends" + userId;
+        String url = "http://coms-309-032.class.las.iastate.edu:8080/users/friends/" + userId;
 
         // Request a string response
         StringRequest stringRequest = new StringRequest(Request.Method.DELETE,

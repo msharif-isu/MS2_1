@@ -2,9 +2,9 @@
 <resources>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
-    <color name="off_white">#F7FFF6</color>
-    <color name="teal">#BCEBCB</color>
+    <color name="cool_grey">#8491A3</color>
+    <color name="cambridge_blue">#93B48B</color>
     <color name="light_green">#87D68D</color>
-    <color name="dark_green">#93B48B</color>
-    <color name="blue">#8491A3</color>
+    <color name="celadon">#BCEBCB</color>
+    <color name="mint_cream">#F7FFF6</color>
 </resources>

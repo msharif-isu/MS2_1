@@ -4,6 +4,7 @@ import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,6 +13,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -23,6 +25,9 @@ import com.android.volley.toolbox.Volley;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import java.util.ArrayList;
 
@@ -39,10 +44,12 @@ public class FindFragment extends Fragment {
 
     private String mParam1;
     private String mParam2;
-    private ArrayList<User> userList;
+    //private ArrayList<User> userList;
     private int id;
     private String username;
     private RequestQueue mQueue;
+    private String jwtToken;
+    private static final String TAG = "Idk what this should be";
     public FindFragment() {
         // Required empty public constructor
     }
@@ -69,7 +76,8 @@ public class FindFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        mQueue = VolleySingleton.getInstance(this).getRequestQueue();
+        mQueue = VolleySingleton.getInstance(getActivity()).getRequestQueue();
+        jwtToken = "Bear " + "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJqaW0iLCJleHAiOjE3MDkzMjkxMTd9.4qXILCSharyAZS6fRciVjXBuZhwsX1Nmp6jt8h-J9nsHBxXLF8NQTCUkOUMm7BD8V9i-FDmdzIGnu0GeE162tg";
 
     }
 
@@ -91,7 +99,8 @@ public class FindFragment extends Fragment {
     private void fetchUserList() {
 
 
-        String url = "http://coms-309-032.class.las.iastate.edu:8080/users/friends/recommended";
+        //String url = "http://coms-309-032.class.las.iastate.edu:8080/users/friends/recommended";
+        String url = "10:48.48.244:8080/users/friends/recommended";
 
 //        Request a string response from the url.
 //        'Request.Method.GET' means that this is a GET request.
@@ -102,21 +111,23 @@ public class FindFragment extends Fragment {
             @Override
             public void onResponse(JSONArray response) {
 
-                userList = new ArrayList<User>();
-
+                //userList = new ArrayList<User>();
+                String jsonString = response.toString();
+                Log.d(TAG, jsonString);
                 try {
 
                     for (int i = 0; i < response.length(); i++) {
 
                         JSONObject userJson = response.getJSONObject(i);
+
                         int id = userJson.getInt("id");
                         String username = userJson.getString("username");
-                        userList.add(new User(id, username));
+                        //userList.add(new User(id, username));
 
                     }
 
                     //Populate the user items
-                    populateUserItems();
+                    //populateUserItems();
 
                 } catch (JSONException e) {
 
@@ -132,69 +143,77 @@ public class FindFragment extends Fragment {
                 error.printStackTrace();
 
             }
-        });
-
-        queue.add(jsonArrayRequest);
-
-    }
-
-    private void populateUserItems() {
-
-        if (userList != null) {
-
-            LinearLayout containerLayout = getView().findViewById(R.id.container);
-            LayoutInflater inflater = LayoutInflater.from(getContext());
-
-            for (User user: userList) {
-
-                View userItemView = inflater.inflate(R.layout.user_item, containerLayout, false);
-
-                // This binds the user information to the user item view
-                TextView usernameTextView = userItemView.findViewById(R.id.usernameTextView);
-                Button addFriendButton = userItemView.findViewById(R.id.addFriendButton);
-
-                // idk how to do getUsername()
-                usernameTextView.setText(user.getUsername());
-
-                addFriendButton.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-
-                        // idk how to do getId()
-                        addFriend(user.getId());
-
-                    }
-                });
-
-                containerLayout.addView(userItemView);
-
-            }
-
-        }
-
-    }
-
-    private void addFriend(int userId) {
-
-        // Makes API requests to add friend
-        RequestQueue queue = Volley.newRequestQueue(getContext());
-        String url = "http://coms-309-032.class.las.iastate.edu:8080/users/friends/add/" + userId;
-
-        // Request a string response
-        StringRequest stringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
-
+        }) {
             @Override
-            public void onResponse(String response) {
-
-                // Update UI with the response
-                Toast.makeText(getContext(), response, Toast.LENGTH_SHORT).show();
-
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("Content-Type", "application/json; charset=UTF-8");
+                params.put("Authorization", jwtToken);
+                return params;
             }
+        };
 
-        });
-
-        // Add the request to the requestQueue
-        queue.add(stringRequest);
+        mQueue.add(jsonArrayRequest);
 
     }
+
+//    private void populateUserItems() {
+//
+//        if (userList != null) {
+//
+//            LinearLayout containerLayout = getView().findViewById(R.id.container);
+//            LayoutInflater inflater = LayoutInflater.from(getContext());
+//
+//            for (User user: userList) {
+//
+//                View userItemView = inflater.inflate(R.layout.user_item, containerLayout, false);
+//
+//                // This binds the user information to the user item view
+//                TextView usernameTextView = userItemView.findViewById(R.id.usernameTextView);
+//                Button addFriendButton = userItemView.findViewById(R.id.addFriendButton);
+//
+//                // idk how to do getUsername()
+//                usernameTextView.setText(user.getUsername());
+//
+//                addFriendButton.setOnClickListener(new View.OnClickListener() {
+//                    @Override
+//                    public void onClick(View v) {
+//
+//                        // idk how to do getId()
+//                        //addFriend(user.getId());
+//
+//                    }
+//                });
+//
+//                containerLayout.addView(userItemView);
+//
+//            }
+//
+//        }
+//
+//    }
+
+//    private void addFriend(int userId) {
+//
+//        // Makes API requests to add friend
+//        RequestQueue queue = Volley.newRequestQueue(getContext());
+//        String url = "http://coms-309-032.class.las.iastate.edu:8080/users/friends/add/" + userId;
+//
+//        // Request a string response
+//        StringRequest stringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
+//
+//            @Override
+//            public void onResponse(String response) {
+//
+//                // Update UI with the response
+//                Toast.makeText(getContext(), response, Toast.LENGTH_SHORT).show();
+//
+//            }
+//
+//        });
+//
+//        // Add the request to the requestQueue
+//        queue.add(stringRequest);
+//
+//    }
 }

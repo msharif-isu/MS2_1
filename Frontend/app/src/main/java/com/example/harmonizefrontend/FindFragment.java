@@ -80,7 +80,7 @@ public class FindFragment extends Fragment {
         super.onCreate(savedInstanceState);
         userList = new ArrayList<>();
         mQueue = VolleySingleton.getInstance(getActivity()).getRequestQueue();
-        jwtToken = "Bearer " + "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJUZXN0IiwiZXhwIjoxNzA5MzY0MDI4fQ.5nWx0qZsvfcemxJkvuGFYABLTGgUQwjK10OjWNTxp06kQ9qYmGer2bSoyRSbfIuHPwZ8Wqdrj53lgfzkpGieng";
+        jwtToken = "Bearer " + "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ0ZXN0MSIsImV4cCI6MTcwOTQwOTIwNn0.60NflM9v-M-yWIQhuG7646xYY8pe9rZ4Uk9VE_PvMUtZszhNx_7GjdnwxhtnaIodNjx-jh7RC9pi_wO05ixe4Q";
 
     }
 

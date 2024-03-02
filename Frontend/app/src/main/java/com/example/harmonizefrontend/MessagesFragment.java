@@ -90,8 +90,8 @@ public class MessagesFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        View rootView = inflater.inflate(R.layout.fragment_find, container, false);
-        LinearLayout containerLayout = rootView.findViewById(R.id.container);
+        View rootView = inflater.inflate(R.layout.fragment_messages, container, false);
+        LinearLayout containerLayout = rootView.findViewById(R.id.messagesContainer);
 
         return rootView;
     }
@@ -100,7 +100,7 @@ public class MessagesFragment extends Fragment {
 
         super.onViewCreated(view, savedInstanceState);
 
-        populateFriendItems();
+        fetchFriendList();
 
     }
 
@@ -112,9 +112,8 @@ public class MessagesFragment extends Fragment {
             @Override
             public void onResponse(JSONArray response) {
 
-                //userList = new ArrayList<User>();
                 String jsonString = response.toString();
-                Log.d(TAG, jsonString);
+                Log.d("will", jsonString);
                 try {
 
                     for (int i = 0; i < response.length(); i++) {
@@ -167,15 +166,15 @@ public class MessagesFragment extends Fragment {
 
             for (User friend: friendList) {
 
-                View userItemView = inflater.inflate(R.layout.user_item, containerLayout, false);
+                View friendItemView = inflater.inflate(R.layout.friend_item, containerLayout, false);
 
-                // This binds the friend information to the user item view
-                TextView usernameTextView = userItemView.findViewById(R.id.usernameTextView);
-                Button addFriendButton = userItemView.findViewById(R.id.addFriendButton);
+                // This binds the friend information to the friend item view
+                TextView friendUsernameTextView = friendItemView.findViewById(R.id.friendUsernameTextView);
+                Button removeFriendButton = friendItemView.findViewById(R.id.removeFriendButton);
 
-                usernameTextView.setText(friend.getUsername());
+                friendUsernameTextView.setText(friend.getUsername());
 
-                addFriendButton.setOnClickListener(new View.OnClickListener() {
+                removeFriendButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
 
@@ -185,7 +184,7 @@ public class MessagesFragment extends Fragment {
                     }
                 });
 
-                containerLayout.addView(userItemView);
+                containerLayout.addView(friendItemView);
 
             }
 

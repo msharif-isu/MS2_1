@@ -138,7 +138,6 @@ public class FindFragment extends Fragment {
             @Override
             public void onResponse(JSONArray response) {
 
-                //userList = new ArrayList<User>();
 //                String jsonString = response.toString();
 //                Log.d(TAG, jsonString);
                 try {

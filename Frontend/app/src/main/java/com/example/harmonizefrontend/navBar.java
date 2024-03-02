@@ -27,29 +27,29 @@ public class navBar extends AppCompatActivity {
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottomNavigationView);
         bottomNavigationView.setOnItemSelectedListener(navListener);
 
-//        Intent intent = getIntent();
-//        if (intent != null) {
-//            if (intent.getStringExtra("fragment") != null) {
-//                fragment = intent.getStringExtra("fragment");
-//                if (fragment.equals("home")) {
-//                    loadFragment(new HomeFragment());
-//                } else if (fragment.equals("find")) {
-//                    loadFragment(new FindFragment());
-//                } else if (fragment.equals("messages")) {
-//                    loadFragment(new MessagesFragment());
-//                } else if (fragment.equals("profile")) {
-//                    loadFragment(new AccountPreferences());
-//                }
-//            }
-//            if (intent.getStringExtra("password") != null) {
-//                password = intent.getStringExtra("password");
-//            }
-//            if (intent.getStringExtra("jwtToken") != null) {
-//                jwtToken = intent.getStringExtra("jwtToken");
-//            }
-//        }
+        Intent intent = getIntent();
+        if (intent != null) {
+            if (intent.getStringExtra("fragment") != null) {
+                fragment = intent.getStringExtra("fragment");
+                if (fragment.equals("home")) {
+                    loadFragment(new HomeFragment());
+                } else if (fragment.equals("find")) {
+                    loadFragment(new FindFragment());
+                } else if (fragment.equals("messages")) {
+                    loadFragment(new MessagesFragment());
+                } else if (fragment.equals("profile")) {
+                    loadFragment(new AccountPreferences());
+                }
+            }
+            if (intent.getStringExtra("password") != null) {
+                password = intent.getStringExtra("password");
+            }
+            if (intent.getStringExtra("jwtToken") != null) {
+                jwtToken = intent.getStringExtra("jwtToken");
+            }
+        }
 
-        loadFragment(new FindFragment());
+        //loadFragment(new FindFragment());
 
 
     }

@@ -1,5 +1,14 @@
 stages:
+  - baackendDebug
   - backendDockerDeploy
+
+backend-debug:
+  stage: baackendDebug
+  tags:
+    - backend
+  script:
+    - echo "CI_PIPELINE_SOURCE $CI_PIPELINE_SOURCE"
+    - echo "CI_COMMIT_REF_NAME $CI_COMMIT_REF_NAME"
 
 backend-docker:
   stage: backendDockerDeploy
@@ -13,5 +22,5 @@ backend-docker:
   only:
     variables:
     - $CI_PIPELINE_SOURCE == "web"
-    - $CI_COMMIT_REF_NAME == "master"
+    - $CI_COMMIT_REF_NAME == "main"
   

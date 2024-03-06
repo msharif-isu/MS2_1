@@ -7,10 +7,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 
+import harmonize.DTOs.UserDTO;
 import harmonize.ErrorHandling.Exceptions.RoleNotFoundException;
 import harmonize.ErrorHandling.Exceptions.RolePermissionException;
 import harmonize.ErrorHandling.Exceptions.UserNotFoundException;
-import harmonize.ErrorHandling.Exceptions.UsernameTakenException;
 import harmonize.Roles.Role;
 import harmonize.Roles.RoleRepository;
 import harmonize.Users.User;
@@ -29,49 +29,32 @@ public class AdminService {
     }
     
     @NonNull
-    public List<User> getAllUsers() {
-        return userRepository.findAll();
+    public List<UserDTO> getAllUsers() {
+        List<UserDTO> result = new ArrayList<UserDTO>();
+        for (User user : userRepository.findAll()) {
+            result.add(new UserDTO(user));
+        }
+        return result;
     }
-
+    
     @NonNull
-    public List<User> getPossibleFriends(int id) {
-        List<User> possibleFriends = new ArrayList<User>();
-        userRepository.findAllByRole("USER").forEach(user -> {
-            if(user.getId() == id)
-                return;
-            
-            possibleFriends.add(user);
-        });
-
-        return possibleFriends;
-    }
-
-    @NonNull
-    public String updateUser(int id, String username) {
+    public UserDTO getUser(int id) {
         User user = userRepository.findReferenceById(id);
 
-        if(user == null)
+        if (user == null)
             throw new UserNotFoundException(id);
-
-        if(userRepository.findByUsername(username) != null)
-            throw new UsernameTakenException(username);
             
-        userRepository.setUsername(id, username);
-        
-        return new String(String.format("\"%s\" was updated to \"%s\"", user.getUsername(), username));
+        return new UserDTO(user);
     }
 
     @NonNull
-    public String deleteUser(int id){
-        User user = userRepository.findReferenceById(id);
+    public UserDTO getUser(String username) {
+        User user = userRepository.findByUsername(username);
 
-        if(user == null)
-            throw new UserNotFoundException(id);
-
-        user.getRoles().removeAll(user.getRoles());
-        userRepository.deleteById(id);
-        
-        return new String(String.format("\"%s\" has been deleted", user.getUsername()));
+        if (user == null)
+            throw new UserNotFoundException(username);
+            
+        return new UserDTO(user);
     }
 
     @NonNull

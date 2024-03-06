@@ -62,6 +62,8 @@ public class LoginScreen extends AppCompatActivity implements OnClickListener {
 
     private RequestQueue mQueue;
 
+    private String jwtToken = null;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -84,6 +86,7 @@ public class LoginScreen extends AppCompatActivity implements OnClickListener {
 
         mQueue = VolleySingleton.getInstance(this).getRequestQueue();
 
+        // Checks to see if the user has come from the registration screen/logged out
         Intent intent = getIntent();
         if (intent != null) {
             if (intent.hasExtra("username") && intent.getStringExtra("username") != null) {
@@ -137,10 +140,19 @@ public class LoginScreen extends AppCompatActivity implements OnClickListener {
                 passwordEditText.setBackgroundTintList(ColorStateList.valueOf(Color.RED));
             }
             else {
-//                checkCredentials(username, password);
-                // Take user to account preferences screen
-//                Intent intent = new Intent(this, AccountPreferences.class);
-//                startActivity(intent);
+                checkCredentials(username, password, new VolleyCallBack() {
+                    @Override
+                    public void onSuccess() {
+                        Intent intent = new Intent(LoginScreen.this, navBar.class);
+                        intent.putExtra("username", username);
+                        intent.putExtra("password", password);
+                        intent.putExtra("jwtToken", jwtToken);
+                        intent.putExtra("fragment", "profile");
+                        startActivity(intent);
+                    }
+                });
+
+
             }
 
         }
@@ -161,7 +173,7 @@ public class LoginScreen extends AppCompatActivity implements OnClickListener {
 
 
 
-    private void checkCredentials(String username, String password) {
+    private void checkCredentials(String username, String password, final VolleyCallBack callback) {
 
         // Connect to backend in order to check if credentials are valid
         JSONObject jsonBody = new JSONObject();
@@ -174,6 +186,7 @@ public class LoginScreen extends AppCompatActivity implements OnClickListener {
             throw new RuntimeException(e);
         }
 
+
         JsonObjectRequest request = new JsonObjectRequest(
                 Request.Method.POST,
                 checkCredsURL + "/auth/login",
@@ -183,7 +196,13 @@ public class LoginScreen extends AppCompatActivity implements OnClickListener {
                     public void onResponse(JSONObject response) {
                         try {
                                 Toast.makeText(LoginScreen.this, "Login Successful", Toast.LENGTH_LONG).show();
-                                // Return jwt token which will be used to auth user for a day
+//                                Log.e("JWT", response.getString("tokenType") + response.getString("accessToken"));
+                                jwtToken = response.getString("tokenType") + response.getString("accessToken");
+
+
+                            callback.onSuccess();
+
+
                                 // Returns Http.status.ok
                         } catch (Exception e) {
                             e.printStackTrace();
@@ -193,17 +212,13 @@ public class LoginScreen extends AppCompatActivity implements OnClickListener {
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        error.printStackTrace();
+                        Toast.makeText(LoginScreen.this, "The username or password is incorrect, please try again!", Toast.LENGTH_LONG).show();
+                        jwtToken = null;
+//                        Log.e("JWT", error.toString());
                     }
                 }
         );
         mQueue.add(request);
-
-
-
-
-
-
     }
 
 

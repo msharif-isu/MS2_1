@@ -15,6 +15,7 @@ import com.google.android.material.snackbar.Snackbar;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.inputmethod.InputMethodManager;
@@ -48,6 +49,8 @@ public class RegistrationScreen extends AppCompatActivity implements OnClickList
     private Button loginButton;
     private Button registerButton;
 
+    private String jwtToken;
+
     private RequestQueue mQueue;
 
 
@@ -63,6 +66,9 @@ public class RegistrationScreen extends AppCompatActivity implements OnClickList
         usernameEditText = findViewById(R.id.UsernameInput);
         passwordEditText = findViewById(R.id.PasswordInput);
         reenterpasswordEditText = findViewById(R.id.reenterPassword);
+
+        mQueue = VolleySingleton.getInstance(this).getRequestQueue();
+
 
         Intent intent = getIntent();
         if (intent != null) {
@@ -139,20 +145,25 @@ public class RegistrationScreen extends AppCompatActivity implements OnClickList
             }
             else {
 //                Toast.makeText(RegistrationScreen.this, "Account has been successfully created!", Toast.LENGTH_LONG).show();
-                register(username, password);
+                register(username, password, new VolleyCallBack() {
+                    @Override
+                    public void onSuccess() {
+                        Intent intent = new Intent(RegistrationScreen.this, navBar.class);
+                        intent.putExtra("fragment", "profile");
+                        intent.putExtra("username", username);
+                        intent.putExtra("password", password);
+                        intent.putExtra("jwtToken", jwtToken);
+                        startActivity(intent);
 
-                // Connect to backend and add the registration data
+                    }
+                });
+
             }
-
-
-
-
-
-// DO
         }
     }
 
-    private void register(String username, String password) {
+    private void
+    register(String username, String password, final VolleyCallBack callback) {
 
         // Connect to backend in order to check if credentials are valid
         JSONObject jsonBody = new JSONObject();
@@ -161,6 +172,8 @@ public class RegistrationScreen extends AppCompatActivity implements OnClickList
         try {
             jsonBody.put("username", username);
             jsonBody.put("password", password);
+            jsonBody.put("firstName", first);
+            jsonBody.put("lastName", last);
         } catch (JSONException e) {
             throw new RuntimeException(e);
         }
@@ -172,7 +185,16 @@ public class RegistrationScreen extends AppCompatActivity implements OnClickList
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
+                        try {
                             Toast.makeText(RegistrationScreen.this, "Account Creation Successful", Toast.LENGTH_LONG).show();
+                            jwtToken = response.getString("tokenType") + response.getString("accessToken");
+
+                            callback.onSuccess();
+
+                        }
+                        catch (JSONException e) {
+                            throw new RuntimeException(e);
+                        }
 
                     }
                 },
@@ -180,7 +202,7 @@ public class RegistrationScreen extends AppCompatActivity implements OnClickList
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         Toast.makeText(RegistrationScreen.this, "The username is already in use, please try again!", Toast.LENGTH_LONG).show();
-
+                        jwtToken = null;
                         error.printStackTrace();
                     }
                 }

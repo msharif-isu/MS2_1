@@ -7,6 +7,6 @@ class WelcomeController {
 
     @GetMapping("/")
     public String welcome() {
-        return "Hello and welcome to Harmonize!";
+        return "Hello and welcome to Harmonize! <CI/CD Test1>";
     }
 }

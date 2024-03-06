@@ -1,8 +1,8 @@
 stages:
-  - backendDocker
+  - backendDockerDeploy
 
 backend-docker:
-  stage: backendDocker
+  stage: backendDockerDeploy
   tags:
     - backend
   script:
@@ -10,3 +10,8 @@ backend-docker:
     - sudo docker compose down
     - sudo docker compose build
     - sudo docker compose up -d
+  only:
+    variables:
+    - $CI_PIPELINE_SOURCE == "web"
+    - $CI_COMMIT_REF_NAME == "main"
+  

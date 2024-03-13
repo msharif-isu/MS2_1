@@ -8,12 +8,14 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import harmonize.DTOs.AuthDTO;
 import harmonize.DTOs.LoginDTO;
 import harmonize.DTOs.RegisterDTO;
+import harmonize.ErrorHandling.Exceptions.UserInfoInvalidException;
 import harmonize.ErrorHandling.Exceptions.UsernameTakenException;
 import harmonize.Roles.RoleRepository;
 import harmonize.Security.TokenGenerator;
@@ -54,7 +56,9 @@ public class AuthService {
     }
 
     @NonNull
-    public AuthDTO registerUser(RegisterDTO user) {
+    public AuthDTO register(RegisterDTO user) {
+        if (user.getUsername().isEmpty())
+            throw new UserInfoInvalidException("Username cannot be empty");
         if (userRepository.findByUsername(user.getUsername()) != null)
             throw new UsernameTakenException(user.getUsername());
         

@@ -35,6 +35,6 @@ public class AuthController {
 
     @PostMapping(path = "/register")
     public ResponseEntity<AuthDTO> registerUser(@RequestBody RegisterDTO user) {
-        return ResponseEntity.ok(authService.registerUser(user));
+        return ResponseEntity.ok(authService.register(user));
     }
 }

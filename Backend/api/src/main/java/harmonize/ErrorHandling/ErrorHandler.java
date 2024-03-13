@@ -12,6 +12,7 @@ import harmonize.ErrorHandling.Exceptions.UnauthorizedUserException;
 import harmonize.ErrorHandling.Exceptions.UserAlreadyFriendException;
 import harmonize.ErrorHandling.Exceptions.UserAlreadyInvitedException;
 import harmonize.ErrorHandling.Exceptions.UserFriendSelfException;
+import harmonize.ErrorHandling.Exceptions.UserInfoInvalidException;
 import harmonize.ErrorHandling.Exceptions.UserNotFoundException;
 import harmonize.ErrorHandling.Exceptions.UserNotFriendException;
 import harmonize.ErrorHandling.Exceptions.UsernameTakenException;
@@ -31,6 +32,11 @@ public class ErrorHandler {
     @ExceptionHandler(UsernameTakenException.class)
     public ResponseEntity<ErrorDTO> handleUsernameTakenException(UsernameTakenException e) {
         return ResponseEntity.status(HttpStatus.CONFLICT).body(new ErrorDTO(HttpStatus.CONFLICT, e.getMessage()));
+    }
+
+    @ExceptionHandler(UserInfoInvalidException.class)
+    public ResponseEntity<ErrorDTO> handleUserInfoInvalidException(UserInfoInvalidException e) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorDTO(HttpStatus.BAD_REQUEST, e.getMessage()));
     }
 
     @ExceptionHandler(RolePermissionException.class)

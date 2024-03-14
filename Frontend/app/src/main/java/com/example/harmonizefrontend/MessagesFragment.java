@@ -3,10 +3,17 @@ package com.example.harmonizefrontend;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.EditText;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -23,6 +30,15 @@ public class MessagesFragment extends Fragment {
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
+
+    private ChatListAdapter chatListAdapter;
+    private RecyclerView recyclerView;
+
+    private EditText writeMsg;
+    private Button sendBtn;
+
+    private List<Message> list;
+
 
     public MessagesFragment() {
         // Required empty public constructor
@@ -58,7 +74,50 @@ public class MessagesFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.chat_list_activity, container, false);
+
+        writeMsg = view.findViewById(R.id.edit_message);
+        sendBtn = view.findViewById(R.id.button_send);
+        recyclerView = view.findViewById(R.id.recycler);
+        list = getMessages();
+        chatListAdapter = new ChatListAdapter(list);
+        recyclerView.setAdapter(chatListAdapter);
+        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+
+        sendBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (writeMsg.getText().toString() != null) {
+                    Message newmsg = new Message(0, writeMsg.getText().toString(), new User("Manasm", "blank"));
+                    list.add(newmsg);
+                    chatListAdapter.notifyItemChanged(chatListAdapter.getItemCount() + 1);
+                    writeMsg.setText("");
+                }
+
+            }
+        });
+
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_messages, container, false);
+        return view;
+
+    }
+
+
+
+    private List<Message> getMessages() {
+        List<Message> list = new ArrayList<>();
+        list.add(new Message(
+                1,
+                "Hello this is Mayank!",
+                new User(
+                        "MayankM",
+                        "BlankURL")));
+        list.add(new Message(
+                0,
+                "Hello this is Manas!",
+                new User(
+                        "ManasM",
+                        "BlankURL")));
+        return list;
     }
 }

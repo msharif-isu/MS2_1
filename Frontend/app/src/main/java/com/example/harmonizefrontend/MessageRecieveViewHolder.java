@@ -6,12 +6,12 @@ import android.widget.TextView;
 
 import androidx.recyclerview.widget.RecyclerView;
 
-public class MessageViewHolder extends RecyclerView.ViewHolder{
+public class MessageRecieveViewHolder extends RecyclerView.ViewHolder{
     TextView messageText, timeText, nameText;
     ImageView pfpImage;
 //    android.view.View View;
 
-    MessageViewHolder(View itemView) {
+    MessageRecieveViewHolder(View itemView) {
         super(itemView);
         messageText = itemView.findViewById(R.id.text_message_other);
         timeText = itemView.findViewById(R.id.text_timestamp_other);

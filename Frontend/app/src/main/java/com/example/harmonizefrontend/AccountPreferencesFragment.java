@@ -32,10 +32,10 @@ import java.util.Map;
 
 /**
  * A simple {@link Fragment} subclass.
- * Use the {@link AccountPreferences#newInstance} factory method to
+ * Use the {@link AccountPreferencesFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class AccountPreferences extends Fragment {
+public class AccountPreferencesFragment extends Fragment {
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -62,7 +62,7 @@ public class AccountPreferences extends Fragment {
 
     private String URL = "http://coms-309-032.class.las.iastate.edu:8080";
 
-    public AccountPreferences() {
+    public AccountPreferencesFragment() {
         // Required empty public constructor
     }
 
@@ -75,8 +75,8 @@ public class AccountPreferences extends Fragment {
      * @return A new instance of fragment AccountPreferences.
      */
     // TODO: Rename and change types and number of parameters
-    public static AccountPreferences newInstance(String param1, String param2) {
-        AccountPreferences fragment = new AccountPreferences();
+    public static AccountPreferencesFragment newInstance(String param1, String param2) {
+        AccountPreferencesFragment fragment = new AccountPreferencesFragment();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);

@@ -13,7 +13,6 @@ import com.android.volley.RequestQueue;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationBarView;
 
-import android.util.Log;
 import android.view.MenuItem;
 
 
@@ -41,7 +40,7 @@ public class navBar extends AppCompatActivity {
             } else if (item.getItemId() == R.id.navigation_messages) {
                 loadFragment(new MessagesFragment());
             } else if (item.getItemId() == R.id.navigation_profile) {
-                loadFragment(new AccountPreferences());
+                loadFragment(new AccountPreferencesFragment());
             }
 
 
@@ -89,7 +88,7 @@ public class navBar extends AppCompatActivity {
                         loadFragment(new MessagesFragment());
                         break;
                     case "profile":
-                        loadFragment(new AccountPreferences());
+                        loadFragment(new AccountPreferencesFragment());
                         break;
                 }
 

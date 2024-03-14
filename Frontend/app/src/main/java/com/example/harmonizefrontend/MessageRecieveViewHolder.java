@@ -9,7 +9,7 @@ import androidx.recyclerview.widget.RecyclerView;
 public class MessageViewHolder extends RecyclerView.ViewHolder{
     TextView messageText, timeText, nameText;
     ImageView pfpImage;
-    android.view.View View;
+//    android.view.View View;
 
     MessageViewHolder(View itemView) {
         super(itemView);
@@ -17,7 +17,7 @@ public class MessageViewHolder extends RecyclerView.ViewHolder{
         timeText = itemView.findViewById(R.id.text_timestamp_other);
         nameText = itemView.findViewById(R.id.text_user_other);
         pfpImage = itemView.findViewById(R.id.image_profile_other);
-        itemView = View;
+//        itemView = View;
     }
 
 }

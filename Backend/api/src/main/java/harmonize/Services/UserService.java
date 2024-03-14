@@ -8,15 +8,15 @@ import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 
 import harmonize.DTOs.UserDTO;
+import harmonize.Entities.User;
 import harmonize.ErrorHandling.Exceptions.UserAlreadyFriendException;
 import harmonize.ErrorHandling.Exceptions.UserAlreadyInvitedException;
 import harmonize.ErrorHandling.Exceptions.UserFriendSelfException;
 import harmonize.ErrorHandling.Exceptions.UserNotFoundException;
 import harmonize.ErrorHandling.Exceptions.UserNotFriendException;
 import harmonize.ErrorHandling.Exceptions.UsernameTakenException;
-import harmonize.Roles.RoleRepository;
-import harmonize.Users.User;
-import harmonize.Users.UserRepository;
+import harmonize.Repositories.RoleRepository;
+import harmonize.Repositories.UserRepository;
 
 @Service
 public class UserService {

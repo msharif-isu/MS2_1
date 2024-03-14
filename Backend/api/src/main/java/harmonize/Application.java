@@ -7,10 +7,10 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
-import harmonize.Roles.Role;
-import harmonize.Roles.RoleRepository;
-import harmonize.Users.User;
-import harmonize.Users.UserRepository;
+import harmonize.Entities.Role;
+import harmonize.Entities.User;
+import harmonize.Repositories.RoleRepository;
+import harmonize.Repositories.UserRepository;
 
 /**
  * Harmonize Spring Boot Application.

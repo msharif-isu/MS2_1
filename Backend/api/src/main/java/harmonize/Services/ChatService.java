@@ -5,17 +5,16 @@ import java.text.SimpleDateFormat;
 import java.util.Hashtable;
 import java.util.Map;
 import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import harmonize.Entities.User;
 import harmonize.ErrorHandling.Exceptions.UserNotFoundException;
 import harmonize.ErrorHandling.Exceptions.UsernameTakenException;
-import harmonize.Roles.RoleRepository;
-import harmonize.Users.User;
-import harmonize.Users.UserRepository;
+import harmonize.Repositories.RoleRepository;
+import harmonize.Repositories.UserRepository;
 import jakarta.websocket.Session;
 
 @Service
@@ -37,8 +36,9 @@ public class ChatService {
         }, 0, 10, TimeUnit.SECONDS);
     }
 
-    public void onOpen(Session session) throws IOException {
+    public void onOpen(Session session, String wrapperToken) throws IOException {
         User user = userRepository.findByUsername(session.getUserPrincipal().getName());
+        System.out.println("Wrapper: " + wrapperToken);
         if (user == null)
             throw new UserNotFoundException(session.getUserPrincipal().getName());
         if (userMap.containsKey(user))

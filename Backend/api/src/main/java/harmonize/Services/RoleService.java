@@ -4,8 +4,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 
-import harmonize.Roles.Role;
-import harmonize.Roles.RoleRepository;
+import harmonize.Entities.Role;
+import harmonize.Repositories.RoleRepository;
 
 @Service
 public class RoleService {

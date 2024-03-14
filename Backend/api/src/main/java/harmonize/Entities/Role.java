@@ -1,4 +1,4 @@
-package harmonize.Roles;
+package harmonize.Entities;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

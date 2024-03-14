@@ -14,12 +14,12 @@ import org.springframework.stereotype.Service;
 import harmonize.DTOs.AuthDTO;
 import harmonize.DTOs.LoginDTO;
 import harmonize.DTOs.RegisterDTO;
+import harmonize.Entities.User;
 import harmonize.ErrorHandling.Exceptions.UserInfoInvalidException;
 import harmonize.ErrorHandling.Exceptions.UsernameTakenException;
-import harmonize.Roles.RoleRepository;
+import harmonize.Repositories.RoleRepository;
+import harmonize.Repositories.UserRepository;
 import harmonize.Security.TokenGenerator;
-import harmonize.Users.User;
-import harmonize.Users.UserRepository;
 
 @Service
 public class AuthService {

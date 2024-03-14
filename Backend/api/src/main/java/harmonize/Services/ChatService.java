@@ -1,12 +1,17 @@
 package harmonize.Services;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.Hashtable;
 import java.util.Map;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import harmonize.ErrorHandling.Exceptions.UserNotFoundException;
 import harmonize.ErrorHandling.Exceptions.UsernameTakenException;
 import harmonize.Roles.RoleRepository;
 import harmonize.Users.User;
@@ -23,11 +28,19 @@ public class ChatService {
     @Autowired
     public ChatService(UserRepository userRepository, RoleRepository roleRepository) {
         this.userRepository = userRepository;
+        Executors.newSingleThreadScheduledExecutor().scheduleAtFixedRate(() -> {
+            try {
+                broadcast("Time Hearbeat: " + new SimpleDateFormat("MM/dd/yyyy HH:mm:ss").format(new java.util.Date()));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }, 0, 10, TimeUnit.SECONDS);
     }
 
     public void onOpen(Session session) throws IOException {
         User user = userRepository.findByUsername(session.getUserPrincipal().getName());
-
+        if (user == null)
+            throw new UserNotFoundException(session.getUserPrincipal().getName());
         if (userMap.containsKey(user))
             throw new UsernameTakenException("User " + user.getUsername() + " has already joined the chat on a different connection.");
 

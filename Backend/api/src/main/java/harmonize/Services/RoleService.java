@@ -17,11 +17,15 @@ public class RoleService {
     }
 
     @NonNull
-    public String CreateRole(String role) {
+    public String createRole(String role) {
         Role newRole = new Role(role);
 
         roleRepository.save(newRole);
 
         return new String(String.format("\"%s\" has been created", newRole.getName()));
+    }
+
+    public Role getRole(String role) {
+        return roleRepository.findByName(role);
     }
 }

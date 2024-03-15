@@ -2,6 +2,7 @@ package harmonize.Services;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.lang.NonNull;
@@ -22,11 +23,13 @@ import harmonize.Repositories.UserRepository;
 public class UserService {
     private UserRepository userRepository;
     private RoleRepository roleRepository;
+    private ConversationService conversationService;
 
     @Autowired
-    public UserService(UserRepository userRepository, RoleRepository roleRepository) {
+    public UserService(UserRepository userRepository, RoleRepository roleRepository, ConversationService conversationService) {
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
+        this.conversationService = conversationService;
     }
 
     @NonNull
@@ -178,6 +181,8 @@ public class UserService {
             return new String(String.format("\"%s\" sent friend invite to \"%s\"", user.getUsername(), friend.getUsername()));
         }
 
+        conversationService.createChat(Set.of(user, friend));
+
         user.getFriendInvites().remove(friend);
         friend.getFriends().add(user);
         user.getFriends().add(friend);
@@ -212,6 +217,8 @@ public class UserService {
 
         if (!user.getFriends().contains(friend))
             throw new UserNotFriendException(user.getUsername(), friend.getUsername());
+
+        conversationService.deleteChat(Set.of(user, friend));
 
         user.getFriends().remove(friend);
         friend.getFriends().remove(user);

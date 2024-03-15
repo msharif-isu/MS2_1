@@ -7,7 +7,6 @@ import jakarta.websocket.OnError;
 import jakarta.websocket.OnMessage;
 import jakarta.websocket.OnOpen;
 import jakarta.websocket.Session;
-import jakarta.websocket.server.PathParam;
 import jakarta.websocket.server.ServerEndpoint;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +14,7 @@ import org.springframework.stereotype.Component;
 
 import harmonize.Services.ChatService;
 
-@ServerEndpoint(value = "/chats/{password}")
+@ServerEndpoint(value = "/chats")
 @Component
 public class ChatController {
     private static ChatService chatService;
@@ -26,8 +25,8 @@ public class ChatController {
     }
 
     @OnOpen
-    public void onOpen(Session session, @PathParam(value = "password") String password) throws IOException {
-        chatService.onOpen(session, password);
+    public void onOpen(Session session) throws IOException {
+        chatService.onOpen(session);
     }
 
     @OnMessage

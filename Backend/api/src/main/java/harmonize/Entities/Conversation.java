@@ -13,6 +13,7 @@ import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.Table;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /**
  * 
@@ -20,20 +21,26 @@ import lombok.Data;
  * 
  */ 
 @Entity
-@Table(name = "chats")
+@Table(name = "conversation")
 @Data
-public class Chat {
+@NoArgsConstructor
+public class Conversation {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
     @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(name = "chat_members", joinColumns = @JoinColumn(name = "chat_id", referencedColumnName = "id"),
-                             inverseJoinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"))
+    @JoinTable(name = "conversation_members", 
+               joinColumns = @JoinColumn(name = "conversation_id", referencedColumnName = "id"),
+        inverseJoinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"))
     private Set<User> members = new HashSet<>();
 
     @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(name = "chat_messages", joinColumns = @JoinColumn(name = "chat_id", referencedColumnName = "id"),
-                             inverseJoinColumns = @JoinColumn(name = "message_id", referencedColumnName = "id"))
+    @JoinTable(name = "conversation_messages", joinColumns = @JoinColumn(name = "conversation_id", referencedColumnName = "id"),
+                                        inverseJoinColumns = @JoinColumn(name = "message_id", referencedColumnName = "id"))
     private Set<Message> messages = new HashSet<>();
+
+    public Conversation(Set<User> members) {
+        this.members = members;
+    }
 }

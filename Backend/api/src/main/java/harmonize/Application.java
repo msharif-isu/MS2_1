@@ -5,12 +5,12 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
-import harmonize.Entities.Role;
-import harmonize.Entities.User;
-import harmonize.Repositories.RoleRepository;
-import harmonize.Repositories.UserRepository;
+import harmonize.DTOs.RegisterDTO;
+import harmonize.ErrorHandling.Exceptions.UserNotFoundException;
+import harmonize.Services.AdminService;
+import harmonize.Services.AuthService;
+import harmonize.Services.RoleService;
 
 /**
  * Harmonize Spring Boot Application.
@@ -27,20 +27,25 @@ public class Application {
     }
 
     @Bean
-    public CommandLineRunner initUser(RoleRepository roleRepository, UserRepository userRepository, BCryptPasswordEncoder encoder) {
+    public CommandLineRunner initUser(AuthService authService, RoleService roleService, AdminService adminService) {
         return args -> {
             try {
-                Role adminRole = new Role("ADMIN");
-                Role userRole = new Role("USER");
-                User adminUser = new User("admin", encoder.encode("adminpw"));
-
-                roleRepository.save(adminRole);
-                roleRepository.save(userRole);
-                adminUser.getRoles().add(adminRole);
-                adminUser.getRoles().add(userRole);
-                userRepository.save(adminUser);
+                if (roleService.getRole("ADMIN") == null)
+                    roleService.createRole("ADMIN");
+                if (roleService.getRole("USER") == null)
+                    roleService.createRole("USER");
+                
+                try {
+                    adminService.getUser("admin");
+                } catch (UserNotFoundException e) {
+                    authService.register(
+                        new RegisterDTO("first", "last", "admin", "adminpw")
+                    );
+                }
+            
+                adminService.updateRole(adminService.getUser("admin").getId(), "ADMIN");
             } catch (Exception e) {
-                System.out.println(e.getMessage());
+                e.printStackTrace();
             }
         };
     }

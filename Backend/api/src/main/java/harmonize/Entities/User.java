@@ -3,6 +3,7 @@ package harmonize.Entities;
 import java.util.HashSet;
 import java.util.Set;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -24,10 +25,6 @@ import lombok.Data;
 @Table(name = "users")
 @Data
 public class User {
-     /* 
-     * The annotation @ID marks the field below as the primary key for the table created by springboot
-     * The @GeneratedValue generates a value if not already present, The strategy in this case is to start from 1 and increment for each table
-     */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
@@ -40,11 +37,14 @@ public class User {
 
     private String password;
 
+    @Column(columnDefinition = "LONGTEXT")
     private String bio;
 
-    private String privateKeyWrapped;
-
+    @Column(columnDefinition = "TEXT")
     private String publicKey;
+
+    @Column(columnDefinition = "TEXT")
+    private String privateKeyWrapped;
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "user_roles", joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),
@@ -60,6 +60,11 @@ public class User {
     @JoinTable(name = "friendInvites", joinColumns = @JoinColumn(name = "user_id",    referencedColumnName = "id"),
                                 inverseJoinColumns = @JoinColumn(name = "inviter_id", referencedColumnName = "id"))
     private Set<User> friendInvites = new HashSet<>();
+
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(name = "conversation_members", joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),
+                                       inverseJoinColumns = @JoinColumn(name = "conversation_id", referencedColumnName = "id"))
+    private Set<Conversation> conversations = new HashSet<>();
 
     public User(String firstName, String lastName, String username, String password) {
         this.firstName = firstName;

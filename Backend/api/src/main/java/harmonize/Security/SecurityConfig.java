@@ -69,7 +69,12 @@ public class SecurityConfig {
     }
 
     @Bean
-    public ServerEndpointExporter serverEndpointExporter(){
+    public ServerEndpointExporter serverEndpointExporter() {
         return new ServerEndpointExporter();
+    }
+
+    @Bean
+    public ChatCrypto chatCrypto() {
+        return new ChatCrypto();
     }
 }

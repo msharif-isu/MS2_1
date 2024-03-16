@@ -8,7 +8,6 @@ import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
-import java.util.Arrays;
 import java.util.Base64;
 
 import javax.crypto.Cipher;
@@ -23,7 +22,7 @@ import lombok.Getter;
 
 public class ChatCrypto {
     private static final String TRANSFORMATION = "AES";
-    private static final byte[] SALT = "salt".getBytes();
+    private static final byte[] SALT = "harmonizePasswordPrivateKeyWrapperSalt".getBytes();
 
     public String wrap(String wrapper, String plaintext) throws Exception {
         Cipher cipher = Cipher.getInstance(TRANSFORMATION);

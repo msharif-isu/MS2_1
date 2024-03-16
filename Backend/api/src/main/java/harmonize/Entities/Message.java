@@ -45,7 +45,7 @@ public class Message {
 
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name="message_encryptions", joinColumns=@JoinColumn(name="message_id"))
-    @MapKeyJoinColumn(name="user_id")
+    @MapKeyJoinColumn(name="recipient_id", referencedColumnName = "id")
     @Column(name="encrypted_message", columnDefinition = "LONGTEXT")
     private Map<User, String> encryptions = new HashMap<>();
 

@@ -71,7 +71,6 @@ public class ChatService {
                 }   
             }
         }
-        
     }
 
     public void onMessage(Session session, String message) throws IOException {
@@ -96,7 +95,6 @@ public class ChatService {
             onError(session, new InternalServerErrorException("Could not encrypt message."), false);
             e.printStackTrace();
         }
-        
     }
 
     public void onClose(Session session) throws IOException {

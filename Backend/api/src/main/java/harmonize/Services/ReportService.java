@@ -88,6 +88,12 @@ public class ReportService {
         Report report = reportRepository.findReferenceById(id);
         if (report == null)
             throw new ReportNotFoundException(id);
+        deleteReport(report);
+
+        return new String(String.format("Report %d was deleted.", report.getId()));
+    }
+
+    public void deleteReport(Report report) {
         Message message = report.getMessage();
         User reported = report.getReported();
         User reporter = report.getReporter();
@@ -100,7 +106,5 @@ public class ReportService {
         userRepository.save(reported);
         userRepository.save(reporter);
         reportRepository.delete(report);
-
-        return new String(String.format("Report %d was deleted.", report.getId()));
     }
 }

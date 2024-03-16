@@ -35,11 +35,14 @@ public class Application {
             try {
                 if (roleService.getRole("ADMIN") == null)
                     roleService.createRole("ADMIN");
+                if (roleService.getRole("MODERATOR") == null)
+                    roleService.createRole("MODERATOR");
                 if (roleService.getRole("USER") == null)
                     roleService.createRole("USER");
                 
                 try {
                     authService.register(new RegisterDTO("first", "last", "admin", "adminpw"));
+                    authService.register(new RegisterDTO("first", "last", "mod", "modpw"));
                     authService.register(new RegisterDTO("john", "smith", "jsmith", "johnpw"));
                     authService.register(new RegisterDTO("tim", "brown", "tbrown", "timpw"));
                 } catch (UsernameTakenException e) {}
@@ -51,6 +54,9 @@ public class Application {
             
                 try {
                     adminService.updateRole(adminService.getUser("admin").getId(), "ADMIN");
+                    adminService.updateRole(adminService.getUser("mod").getId(), "MODERATOR");
+                    adminService.deleteRole(adminService.getUser("admin").getId(), "USER");
+                    adminService.deleteRole(adminService.getUser("mod").getId(), "USER");
                 } catch (RolePermissionException e) {}
                 
             } catch (Exception e) {

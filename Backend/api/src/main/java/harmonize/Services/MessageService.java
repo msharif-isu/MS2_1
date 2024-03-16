@@ -15,7 +15,6 @@ import harmonize.Entities.User;
 import harmonize.ErrorHandling.Exceptions.MessageNotFoundException;
 import harmonize.Repositories.ConversationRepository;
 import harmonize.Repositories.MessageRepository;
-import harmonize.Repositories.ReportRepository;
 import harmonize.Security.ChatCrypto;
 
 @Service

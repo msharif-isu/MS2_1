@@ -1,5 +1,6 @@
 package harmonize.Entities;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -31,7 +32,10 @@ public class Report {
     @JoinColumn(name="reported_id", referencedColumnName = "id")
     private User reported;
 
+    @Column(columnDefinition = "LONGTEXT")
     private String messageText;
+
+    @Column(columnDefinition = "LONGTEXT")
     private String reportText;
 
     @Override

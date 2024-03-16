@@ -27,7 +27,7 @@ import harmonize.Services.UserService;
  */ 
 
 @RestController
-@RequestMapping("/admin")
+@RequestMapping("/admins")
 public class AdminController {   
     private AdminService adminService;
     private UserService userService;

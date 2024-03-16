@@ -61,4 +61,19 @@ public class ModeratorService {
             
         return new UserDTO(user);
     }
+
+    @NonNull
+    public String deleteUser(int id){
+        User user = userRepository.findReferenceById(id);
+
+        if (user == null ||
+            (!user.getRoles().contains(roleRepository.findByName("USER")) && 
+             !user.getRoles().contains(roleRepository.findByName("MODERATOR")))
+            )
+            throw new UserNotFoundException(id);
+            
+        userRepository.delete(user);
+        
+        return new String(String.format("\"%s\" was deleted.", user.getUsername()));
+    }
 }

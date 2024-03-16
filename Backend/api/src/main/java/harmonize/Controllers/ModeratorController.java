@@ -47,6 +47,11 @@ public class ModeratorController {
         return ResponseEntity.ok(moderatorService.getUser(id));
     }
 
+    @DeleteMapping(path = "/users/{id}")
+    public ResponseEntity<String> deleteUser(@PathVariable int id){
+        return ResponseEntity.ok(moderatorService.deleteUser(id));
+    }
+
     @GetMapping(path = "/reports")
     public ResponseEntity<List<ReportDTO>> getAllReports() {
         return ResponseEntity.ok(reportService.getAllReports());

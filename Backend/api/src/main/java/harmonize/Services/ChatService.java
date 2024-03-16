@@ -98,12 +98,7 @@ public class ChatService {
     }
 
     public void onClose(Session session) throws IOException {
-        loadProperties(session);
-        User user = (User)session.getUserProperties().get("user");
-
         sessions.remove(session);
-
-        broadcast(user.getUsername() + " disconnected");
     }
 
     public void onError(Session session, Throwable throwable) {
@@ -138,16 +133,6 @@ public class ChatService {
 
     private void send(Session session, Object obj) throws IOException {
         session.getBasicRemote().sendText(mapper.writeValueAsString(new Transmition(obj.getClass(), obj)));
-    }
-
-    private void broadcast(Object obj) throws IOException {
-        sessions.forEach((session) -> {
-            try {
-                send(session, obj);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        });
     }
 
     private void loadProperties(Session session) {

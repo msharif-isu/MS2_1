@@ -13,8 +13,10 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import harmonize.DTOs.ReportDTO;
 import harmonize.DTOs.UserDTO;
 import harmonize.Services.AdminService;
+import harmonize.Services.ReportService;
 import harmonize.Services.UserService;
 
 /**
@@ -28,11 +30,13 @@ import harmonize.Services.UserService;
 public class AdminController {   
     private AdminService adminService;
     private UserService userService;
+    private ReportService reportService;
 
     @Autowired
-    public AdminController(AdminService adminService, UserService userService) {
+    public AdminController(AdminService adminService, UserService userService, ReportService reportService) {
         this.adminService = adminService;
         this.userService = userService;
+        this.reportService = reportService;
     }
 
     @GetMapping(path = "/users")
@@ -89,4 +93,20 @@ public class AdminController {
     public ResponseEntity<String> deleteRole(@PathVariable int id, @PathVariable String role) {
         return ResponseEntity.ok(adminService.deleteRole(id, role));
     }
+
+    @GetMapping(path = "/reports")
+    public ResponseEntity<List<ReportDTO>> getAllReports() {
+        return ResponseEntity.ok(reportService.getAllReports());
+    }
+
+    @GetMapping(path = "/reports/{id}")
+    public ResponseEntity<ReportDTO> getReport(@PathVariable int id) {
+        return ResponseEntity.ok(reportService.getReport(id));
+    }
+
+    @DeleteMapping(path = "/reports/{id}")
+    public ResponseEntity<String> deleteReport(@PathVariable int id) {
+        return ResponseEntity.ok(reportService.deleteReport(id));
+    }
+
 }

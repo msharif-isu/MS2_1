@@ -29,13 +29,13 @@ public class MessageService {
         this.chatCrypto = chatCrypto;
     }
 
-    public Message createMessage(User sender, Conversation conversation, String text, String privateKey) {
+    public Message createMessage(User sender, Conversation conversation, String text, String privateKey) throws Exception {
         Message message = new Message();
         message.setTime(new Date());
         message.setSender(sender);
         message.setConversation(conversation);
         for (User user : conversation.getMembers()) {
-            message.getEncryptions().put(user, text);   
+            message.getEncryptions().put(user, chatCrypto.encrypt(privateKey, user.getPublicKey(), text));   
         }
         conversation.getMessages().add(message);
         messageRepository.save(message);
@@ -43,13 +43,13 @@ public class MessageService {
         return message;
     }
 
-    public MessageDTO readMessage(User reciever, Message message, String privateKey) {
+    public MessageDTO readMessage(User reciever, Message message, String privateKey) throws Exception {
         return new MessageDTO(
             message.getId(),
             message.getTime(),
             new UserDTO(message.getSender()),
             new ConversationDTO(message.getConversation()),
-            message.getEncryptions().get(reciever)
+            chatCrypto.decrypt(privateKey, message.getSender().getPublicKey(), message.getEncryptions().get(reciever))
         );
     }
     

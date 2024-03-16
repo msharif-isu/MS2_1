@@ -1,5 +1,6 @@
 package harmonize.Security;
 
+import java.security.Key;
 import java.security.KeyFactory;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
@@ -7,6 +8,7 @@ import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
+import java.util.Arrays;
 import java.util.Base64;
 
 import javax.crypto.Cipher;
@@ -51,8 +53,15 @@ public class ChatCrypto {
         );
     }
 
-    public String encrypt(String publicKey, String message) throws Exception {
-        PublicKey key = decodePublicKey(publicKey);
+    public String encrypt(String senderPrivateKey, String receiverPublicKey, String message) throws Exception {
+        return encrypt(decodePublicKey(receiverPublicKey), encrypt(decodePrivateKey(senderPrivateKey), message));
+    }
+
+    public String decrypt(String receiverPrivateKey, String senderPublicKey, String data) throws Exception {
+        return decrypt(decodePublicKey(senderPublicKey), decrypt(decodePrivateKey(receiverPrivateKey), data));
+    }
+
+    private String encrypt(Key key, String message) throws Exception {
         KeyGenerator keyGen = KeyGenerator.getInstance("AES");
         keyGen.init(128);
         SecretKey secretKey = keyGen.generateKey();
@@ -62,13 +71,10 @@ public class ChatCrypto {
         Cipher rsaCipher = Cipher.getInstance("RSA");
         rsaCipher.init(Cipher.ENCRYPT_MODE, key);
         byte[] encryptedKey = rsaCipher.doFinal(secretKey.getEncoded());
-        String data = Base64.getEncoder().encodeToString(encryptedKey) + ":" + Base64.getEncoder().encodeToString(encryptedMessage);
-
-        return data;
+        return Base64.getEncoder().encodeToString(encryptedKey) + ":" + Base64.getEncoder().encodeToString(encryptedMessage);
     }
 
-    public String decrypt(String privateKey, String data) throws Exception {
-        PrivateKey key = decodePrivateKey(privateKey);
+    private String decrypt(Key key, String data) throws Exception {
         String[] parts = data.split(":");
         byte[] encryptedKey = Base64.getDecoder().decode(parts[0]);
         byte[] encryptedMessage = Base64.getDecoder().decode(parts[1]);
@@ -79,7 +85,6 @@ public class ChatCrypto {
         Cipher cipher = Cipher.getInstance("AES");
         cipher.init(Cipher.DECRYPT_MODE, secretKey);
         byte[] decryptedMessage = cipher.doFinal(encryptedMessage);
-
         return new String(decryptedMessage);
     }
 
@@ -105,4 +110,5 @@ public class ChatCrypto {
         KeyFactory keyFactory = KeyFactory.getInstance("RSA");
         return keyFactory.generatePrivate(keySpec);
     }
+
 }

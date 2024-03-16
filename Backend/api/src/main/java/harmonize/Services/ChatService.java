@@ -63,7 +63,12 @@ public class ChatService {
         for (Conversation conversation : user.getConversations()) {
             send(session, new ConversationDTO(conversation));
             for (Message message : conversation.getMessages()) {
-                send(session, messageService.readMessage(user, message, keys.getPrivateKey()));   
+                try {
+                    send(session, messageService.readMessage(user, message, keys.getPrivateKey()));
+                } catch (Exception e) {
+                    onError(session, new InternalServerErrorException("Could not decrypt message."), false);
+                    e.printStackTrace();
+                }   
             }
         }
         
@@ -80,12 +85,17 @@ public class ChatService {
             return;
         }
         
-        notifyUsers(messageService.createMessage(
-            user,
-            conversationRepository.findReferenceById(map.at("/data/conversation/id").asInt()),
-            map.at("/data/text").asText(),
-            keys.getPrivateKey()
-        ));
+        try {
+            notifyUsers(messageService.createMessage(
+                user,
+                conversationRepository.findReferenceById(map.at("/data/conversation/id").asInt()),
+                map.at("/data/text").asText(),
+                keys.getPrivateKey()
+            ));
+        } catch (Exception e) {
+            onError(session, new InternalServerErrorException("Could not encrypt message."), false);
+            e.printStackTrace();
+        }
         
     }
 
@@ -113,13 +123,18 @@ public class ChatService {
         }
     }
 
-    private void notifyUsers(Message message) throws IOException {
+    private void notifyUsers(Message message) {
         for (Session session : sessions) {
             User user = (User)session.getUserProperties().get("user");
             if (!message.getConversation().getMembers().contains(user))
                 continue;
 
-            send(session, messageService.readMessage(user, message, ((Keys)session.getUserProperties().get("keys")).getPrivateKey()));
+            try {
+                send(session, messageService.readMessage(user, message, ((Keys)session.getUserProperties().get("keys")).getPrivateKey()));
+            } catch (Exception e) {
+                onError(session, new InternalServerErrorException("Could not decrypt message."), false);
+                e.printStackTrace();
+            }
         }
     }
 

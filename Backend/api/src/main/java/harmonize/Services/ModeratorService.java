@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import harmonize.DTOs.UserDTO;
 import harmonize.Entities.User;
+import harmonize.ErrorHandling.Exceptions.UnauthorizedException;
 import harmonize.ErrorHandling.Exceptions.UserNotFoundException;
 import harmonize.Repositories.RoleRepository;
 import harmonize.Repositories.UserRepository;
@@ -71,6 +72,9 @@ public class ModeratorService {
              !user.getRoles().contains(roleRepository.findByName("MODERATOR")))
             )
             throw new UserNotFoundException(id);
+        if (user.getRoles().contains(roleRepository.findByName("MODERATOR")))
+            throw new UnauthorizedException("Moderators may not delete other moderators.");
+
             
         userRepository.delete(user);
         

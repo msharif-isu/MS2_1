@@ -16,17 +16,20 @@ import harmonize.DTOs.UserDTO;
 import harmonize.Services.MessageService;
 import harmonize.Services.ModeratorService;
 import harmonize.Services.ReportService;
+import harmonize.Services.UserService;
 
 @RestController
 @RequestMapping("/moderators")
 public class ModeratorController {
     private ModeratorService moderatorService;
+    private UserService userService;
     private ReportService reportService;
     private MessageService messageService;
 
     @Autowired
-    public ModeratorController(ModeratorService moderatorService, ReportService reportService, MessageService messageService) {
+    public ModeratorController(ModeratorService moderatorService, UserService userService, ReportService reportService, MessageService messageService) {
         this.moderatorService = moderatorService;
+        this.userService = userService;
         this.reportService = reportService;
         this.messageService = messageService;
     }
@@ -40,6 +43,11 @@ public class ModeratorController {
     @GetMapping(path = "")
     public ResponseEntity<UserDTO> getSelf(Principal principal){
         return ResponseEntity.ok(moderatorService.getUser(principal.getName()));
+    }
+
+    @DeleteMapping(path = "")
+    public ResponseEntity<String> deleteSelf(Principal principal){
+        return ResponseEntity.ok(userService.deleteUser(moderatorService.getUser(principal.getName()).getId()));
     }
 
     @GetMapping(path = "/users/{id}")

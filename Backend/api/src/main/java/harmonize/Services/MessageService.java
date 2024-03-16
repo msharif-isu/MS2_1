@@ -11,6 +11,7 @@ import harmonize.DTOs.UserDTO;
 import harmonize.Entities.Conversation;
 import harmonize.Entities.Message;
 import harmonize.Entities.User;
+import harmonize.ErrorHandling.Exceptions.MessageNotFoundException;
 import harmonize.Repositories.ConversationRepository;
 import harmonize.Repositories.MessageRepository;
 import harmonize.Security.ChatCrypto;
@@ -51,6 +52,20 @@ public class MessageService {
             new ConversationDTO(message.getConversation()),
             chatCrypto.decrypt(privateKey, message.getSender().getPublicKey(), message.getEncryptions().get(reciever))
         );
+    }
+
+    public String deleteMessage(int id) {
+        Message message = messageRepository.findReferenceById(id);
+        if (message == null)
+            throw new MessageNotFoundException(id);
+        Conversation conversation = message.getConversation();
+        
+        conversation.getMessages().remove(message);
+
+        conversationRepository.save(conversation);
+        messageRepository.delete(message);
+        
+        return new String(String.format("Report %d was deleted.", message.getId()));
     }
     
 }

@@ -75,14 +75,18 @@ public class ChatService {
         Keys keys = (Keys)session.getUserProperties().get("keys");
 
         JsonNode map = mapper.readTree(message);
-        if (map.at("/type").textValue().equals(MessageDTO.class.getName())) {
-            messageService.createMessage(
-                user,
-                conversationRepository.findReferenceById(map.at("/data/conversation/id").asInt()),
-                map.at("/data/text").asText(),
-                keys.getPrivateKey()
-            );
+        if (!map.at("/type").textValue().equals(MessageDTO.class.getName())) {
+            onError(session, new InternalServerErrorException("Could not parse message."), false);
+            return;
         }
+        
+        notifyUsers(messageService.createMessage(
+            user,
+            conversationRepository.findReferenceById(map.at("/data/conversation/id").asInt()),
+            map.at("/data/text").asText(),
+            keys.getPrivateKey()
+        ));
+        
     }
 
     public void onClose(Session session) throws IOException {
@@ -95,12 +99,27 @@ public class ChatService {
     }
 
     public void onError(Session session, Throwable throwable) {
+        onError(session, throwable, true);
+    }
+
+    public void onError(Session session, Throwable throwable, Boolean closeSession) {
         throwable.printStackTrace();
         try {
             send(session, throwable);
-            session.close();
+            if (closeSession)
+                session.close();
         } catch (IOException e) {
             e.printStackTrace();
+        }
+    }
+
+    private void notifyUsers(Message message) throws IOException {
+        for (Session session : sessions) {
+            User user = (User)session.getUserProperties().get("user");
+            if (!message.getConversation().getMembers().contains(user))
+                continue;
+
+            send(session, messageService.readMessage(user, message, ((Keys)session.getUserProperties().get("keys")).getPrivateKey()));
         }
     }
 

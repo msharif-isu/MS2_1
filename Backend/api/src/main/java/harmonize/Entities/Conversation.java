@@ -11,7 +11,9 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -35,12 +37,23 @@ public class Conversation {
         inverseJoinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"))
     private Set<User> members = new HashSet<>();
 
-    @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(name = "conversation_messages", joinColumns = @JoinColumn(name = "conversation_id", referencedColumnName = "id"),
-                                        inverseJoinColumns = @JoinColumn(name = "message_id", referencedColumnName = "id"))
+    @OneToMany(mappedBy="conversation", fetch = FetchType.EAGER)
     private Set<Message> messages = new HashSet<>();
 
     public Conversation(Set<User> members) {
         this.members = members;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || this.getClass() != o.getClass()) return false;
+        Conversation conversation = (Conversation) o;
+        return conversation.id == this.id;
+    }
+
+    @Override
+    public int hashCode() {
+        return id;
     }
 }

@@ -15,6 +15,7 @@ import com.google.android.material.snackbar.Snackbar;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.inputmethod.InputMethodManager;
@@ -144,24 +145,25 @@ public class RegistrationScreen extends AppCompatActivity implements OnClickList
             }
             else {
 //                Toast.makeText(RegistrationScreen.this, "Account has been successfully created!", Toast.LENGTH_LONG).show();
-                register(username, password);
+                register(username, password, new VolleyCallBack() {
+                    @Override
+                    public void onSuccess() {
+                        Intent intent = new Intent(RegistrationScreen.this, navBar.class);
+                        intent.putExtra("fragment", "profile");
+                        intent.putExtra("username", username);
+                        intent.putExtra("password", password);
+                        intent.putExtra("jwtToken", jwtToken);
+                        startActivity(intent);
 
-                if (jwtToken != null) {
-
-                    Intent intent = new Intent(this, navBar.class);
-                    intent.putExtra("fragment", "profile");
-                    intent.putExtra("password", password);
-                    intent.putExtra("jwtToken", jwtToken);
-                    startActivity(intent);
-                }
-
+                    }
+                });
 
             }
         }
     }
 
     private void
-    register(String username, String password) {
+    register(String username, String password, final VolleyCallBack callback) {
 
         // Connect to backend in order to check if credentials are valid
         JSONObject jsonBody = new JSONObject();
@@ -170,6 +172,8 @@ public class RegistrationScreen extends AppCompatActivity implements OnClickList
         try {
             jsonBody.put("username", username);
             jsonBody.put("password", password);
+            jsonBody.put("firstName", first);
+            jsonBody.put("lastName", last);
         } catch (JSONException e) {
             throw new RuntimeException(e);
         }
@@ -185,6 +189,7 @@ public class RegistrationScreen extends AppCompatActivity implements OnClickList
                             Toast.makeText(RegistrationScreen.this, "Account Creation Successful", Toast.LENGTH_LONG).show();
                             jwtToken = response.getString("tokenType") + response.getString("accessToken");
 
+                            callback.onSuccess();
 
                         }
                         catch (JSONException e) {

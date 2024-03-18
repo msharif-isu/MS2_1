@@ -140,16 +140,19 @@ public class LoginScreen extends AppCompatActivity implements OnClickListener {
                 passwordEditText.setBackgroundTintList(ColorStateList.valueOf(Color.RED));
             }
             else {
-//                checkCredentials(username, password);
-                // CHANGED DUE TO THE SERVER BEING DOWN
-                if (jwtToken == null) {
-//                    Toast.makeText(LoginScreen.this, jwtToken, Toast.LENGTH_LONG).show();
-                    Intent intent = new Intent(this, navBar.class);
-                    intent.putExtra("fragment", "profile");
-                    intent.putExtra("password", password);
-                    intent.putExtra("jwtToken", jwtToken);
-                    startActivity(intent);
-                }
+                checkCredentials(username, password, new VolleyCallBack() {
+                    @Override
+                    public void onSuccess() {
+                        Intent intent = new Intent(LoginScreen.this, navBar.class);
+                        intent.putExtra("username", username);
+                        intent.putExtra("password", password);
+                        intent.putExtra("jwtToken", jwtToken);
+                        intent.putExtra("fragment", "profile");
+                        startActivity(intent);
+                    }
+                });
+
+
             }
 
         }
@@ -170,7 +173,7 @@ public class LoginScreen extends AppCompatActivity implements OnClickListener {
 
 
 
-    private void checkCredentials(String username, String password) {
+    private void checkCredentials(String username, String password, final VolleyCallBack callback) {
 
         // Connect to backend in order to check if credentials are valid
         JSONObject jsonBody = new JSONObject();
@@ -193,7 +196,13 @@ public class LoginScreen extends AppCompatActivity implements OnClickListener {
                     public void onResponse(JSONObject response) {
                         try {
                                 Toast.makeText(LoginScreen.this, "Login Successful", Toast.LENGTH_LONG).show();
+//                                Log.e("JWT", response.getString("tokenType") + response.getString("accessToken"));
                                 jwtToken = response.getString("tokenType") + response.getString("accessToken");
+
+
+                            callback.onSuccess();
+
+
                                 // Returns Http.status.ok
                         } catch (Exception e) {
                             e.printStackTrace();
@@ -205,7 +214,7 @@ public class LoginScreen extends AppCompatActivity implements OnClickListener {
                     public void onErrorResponse(VolleyError error) {
                         Toast.makeText(LoginScreen.this, "The username or password is incorrect, please try again!", Toast.LENGTH_LONG).show();
                         jwtToken = null;
-                        Log.d("Error", error.toString());
+//                        Log.e("JWT", error.toString());
                     }
                 }
         );

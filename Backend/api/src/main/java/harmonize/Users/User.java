@@ -34,9 +34,15 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
+    private String firstName;
+
+    private String lastName;
+
     private String username;
 
     private String password;
+
+    private String bio;
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "user_roles", joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),
@@ -53,9 +59,20 @@ public class User {
                                 inverseJoinColumns = @JoinColumn(name = "inviter_id", referencedColumnName = "id"))
     private Set<User> friendInvites = new HashSet<>();
 
-    public User(String username, String password) {
+    public User(String firstName, String lastName, String username, String password) {
+        this.firstName = firstName;
+        this.lastName = lastName;
         this.username = username;
         this.password = password;
+        this.bio = "";
+    }
+
+    public User(String username, String password) {
+        this.firstName = "";
+        this.lastName = "";
+        this.username = username;
+        this.password = password;
+        this.bio = "";
     }
 
     public User() {}

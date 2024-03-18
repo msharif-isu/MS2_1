@@ -19,7 +19,7 @@
         tools:src="@tools:sample/avatars" />
 
     <EditText
-        android:id="@+id/username"
+        android:id="@+id/usernameHolder"
         android:layout_width="265dp"
         android:layout_height="40dp"
         android:layout_marginTop="80dp"
@@ -62,7 +62,7 @@
         android:layout_width="25dp"
         android:layout_height="25dp"
         android:layout_marginTop="185dp"
-        android:layout_marginLeft="370dp"
+        android:layout_marginLeft="365dp"
         android:src="@android:drawable/ic_menu_view" />
 
     <EditText
@@ -120,7 +120,7 @@
         android:id="@+id/editInfo"
         android:layout_width="25dp"
         android:layout_height="25dp"
-        android:layout_marginLeft="380dp"
+        android:layout_marginLeft="365dp"
         android:layout_marginTop="15dp"
         android:src="@android:drawable/ic_menu_edit" />
 

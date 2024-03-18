@@ -1,8 +1,5 @@
 package com.example.harmonizefrontend;
 
-import static android.content.Intent.getIntent;
-
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 
@@ -10,6 +7,7 @@ import androidx.fragment.app.Fragment;
 
 import android.text.method.HideReturnsTransformationMethod;
 import android.text.method.PasswordTransformationMethod;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,14 +16,19 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
+import com.android.volley.RequestQueue;
 import com.android.volley.Response;
+import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 
 import org.json.JSONObject;
 
-import java.util.Objects;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -44,6 +47,7 @@ public class AccountPreferences extends Fragment {
     private String mParam2;
 
     private ImageView profilePicture;
+    private String username, password, firstName, lastName, bio;
     private EditText usernameText, bioText, firstNameText, lastNameText;
     private TextView passwordView;
     private boolean hidden = true;
@@ -53,6 +57,10 @@ public class AccountPreferences extends Fragment {
     private ImageButton changePicBtn, editInfoBtn, unhidePass;
 
     private String jwtToken;
+
+    private RequestQueue mQueue;
+
+    private String URL = "http://coms-309-032.class.las.iastate.edu:8080";
 
     public AccountPreferences() {
         // Required empty public constructor
@@ -95,7 +103,7 @@ public class AccountPreferences extends Fragment {
 
         profilePicture = rootView.findViewById(R.id.profile_Picture);
 
-        usernameText = rootView.findViewById(R.id.username);
+        usernameText = rootView.findViewById(R.id.usernameHolder);
         passwordView = rootView.findViewById(R.id.password_text_view);
 
         firstNameText = rootView.findViewById(R.id.firstname);
@@ -116,19 +124,42 @@ public class AccountPreferences extends Fragment {
         lastNameText.setEnabled(allowEdit);
         bioText.setEnabled(allowEdit);
 
-        Intent intent = requireActivity().getIntent();
-        if (intent != null) {
-            if (intent.hasExtra("password") && intent.getStringExtra("password") != null) {
-                String password = intent.getStringExtra("password");
-                passwordView.setText(password);
-            }
-            if (intent.hasExtra("jwtToken") && intent.getStringExtra("jwtToken") != null) {
-                jwtToken = intent.getStringExtra("jwtToken");
-            }
+
+        navBar navBar = (navBar) getActivity();
+        if (navBar != null) {
+            username = navBar.username;
+            password = navBar.password;
+            jwtToken = navBar.jwtToken;
+            mQueue = navBar.mQueue;
         }
 
+        Log.e("JWT", "username: " + username);
+        Log.e("JWT", "password: " + password);
+        Log.e("JWT", "jwtToken: " + jwtToken);
+
+
+
         // Get the rest of the user details from server
-//        getUserDetails();
+        Log.e("JWT", "Running getUserDetails");
+
+
+        getUserDetails(new VolleyCallBack() {
+
+            @Override
+            public void onSuccess() {
+                usernameText.setText(username);
+
+                firstNameText.setText(firstName);
+
+                lastNameText.setText(lastName);
+
+                bioText.setText(bio);
+                passwordView.setText(password);
+            }
+
+        });
+
+
 
 
 
@@ -162,12 +193,21 @@ public class AccountPreferences extends Fragment {
         });
 
         // When delete account is clicked, send DELETE request to server given username and password
-//        delAccBtn.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                // Send DELETE request to server
-//            }
-//        });
+        delAccBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Send DELETE request to server
+                deleteUser(new VolleyCallBack() {
+                    @Override
+                    public void onSuccess() {
+                        Log.e("JWT", "Inside Success");
+                        Intent intent = new Intent(getActivity(), LoginScreen.class);
+                        startActivity(intent);
+                    }
+                });
+
+            }
+        });
 
         unhidePass.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -202,24 +242,17 @@ public class AccountPreferences extends Fragment {
                     lastNameText.setEnabled(allowEdit);
                     bioText.setEnabled(allowEdit);
 
-                    String checkCredsURL = "http://coms-309-032.class.las.iastate.edu:8080";
+                    updateUserDetails(new VolleyCallBack() {
+                        @Override
+                        public void onSuccess() {
+                            Log.e("JWT", "Updated user details!");
+                            usernameText.setText(username);
+                            firstNameText.setText(firstName);
+                            lastNameText.setText(lastName);
+                            bioText.setText(bio);
+                        }
+                    });
 
-//                    Send all modified data to server
-//                    JSONObject jsonbody = new JSONObject();
-//                    try {
-//                        jsonbody.put("username", usernameText.getText().toString());
-//                        jsonbody.put("firstName", firstNameText.getText().toString());
-//                        jsonbody.put("lastName", lastNameText.getText().toString());
-//                        jsonbody.put("bio", bioText.getText().toString());
-//                    } catch (Exception e) {
-//                        e.printStackTrace();
-//                    }
-//
-//                    JsonObjectRequest request = new JsonObjectRequest(
-//                            Request.Method.PUT,
-//                            checkCredsURL + "/user",
-//
-//                    )
                 }
 
             }
@@ -229,36 +262,176 @@ public class AccountPreferences extends Fragment {
         return rootView;
     }
 
-//    private void getUserDetails() {
-//        // Send GET request to server to get user details
-//        JSONObject jsonBody = new JSONObject();
-//        try {
-//            jsonBody.put("jwtToken", jwtToken);
-//        }
-//        catch (Exception e) {
-//            e.printStackTrace();
-//        }
-//
-//        String checkCredsURL = "http://coms-309-032.class.las.iastate.edu:8080";
-//        JsonObjectRequest request = new JsonObjectRequest(
-//                Request.Method.POST,
-//                checkCredsURL + "",
-//                jsonBody,
-//                new Response.Listener<JSONObject>() {
-//                    @Override
-//                    public void onResponse(JSONObject response) {
-//
-//                    }
-//                },
-//                new Response.ErrorListener() {
-//                    @Override
-//                    public void onErrorResponse(VolleyError error) {
-//                        error.printStackTrace();
-//                    }
-//                }
-//        )
-//
-//    }
+    private void updateUserDetails(final VolleyCallBack callBackDetails) {
 
-    
+        JSONObject jsonBody = new JSONObject();
+        try {
+            if (!username.equals(usernameText.getText().toString())) {
+                jsonBody.put("username", usernameText.getText().toString());
+            }
+            jsonBody.put("firstName", firstNameText.getText().toString());
+            jsonBody.put("lastName", lastNameText.getText().toString());
+            jsonBody.put("bio", bioText.getText().toString());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        JsonObjectRequest jsonObjReq = new JsonObjectRequest(
+                Request.Method.PUT,
+                URL + "/users",
+                jsonBody, // Pass null as the request body since it's a GET request
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        try {
+                            Log.e("JWT", "Updating user details!");
+                            username = response.getString("username");
+                            firstName = response.getString("firstName");
+                            lastName = response.getString("lastName");
+                            bio = response.getString("bio");
+                            callBackDetails.onSuccess();
+
+                        }
+                        catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Log.e("JWT", error.toString());
+                    }
+                }
+        )
+
+        {
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                HashMap<String, String> headers = new HashMap<String, String>();
+                headers.put("Authorization", jwtToken);
+                return headers;
+            }
+
+            @Override
+            protected Map<String, String> getParams() {
+                Map<String, String> params = new HashMap<String, String>();
+//                params.put("param1", "value1");
+//                params.put("param2", "value2");
+                return params;
+            }
+        };
+        mQueue.add(jsonObjReq);
+
+    };
+
+    private void deleteUser(final VolleyCallBack delUserCallBack) {
+
+        JsonObjectRequest jsonObjReq = new JsonObjectRequest(
+                Request.Method.DELETE,
+                URL + "/users",
+                null, // Pass null as the request body since it's a GET request
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        try {
+                            Log.e("JWT", "Deleting user");
+                            Toast.makeText(getActivity(), "Account Deleted", Toast.LENGTH_LONG).show();
+
+                            delUserCallBack.onSuccess();
+
+                        }
+                        catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Log.e("JWT", error.toString());
+                    }
+                }
+        )
+
+        {
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                HashMap<String, String> headers = new HashMap<String, String>();
+                headers.put("Authorization", jwtToken);
+                return headers;
+            }
+
+            @Override
+            protected Map<String, String> getParams() {
+                Map<String, String> params = new HashMap<String, String>();
+//                params.put("param1", "value1");
+//                params.put("param2", "value2");
+                return params;
+            }
+        };
+        mQueue.add(jsonObjReq);
+
+
+
+    }
+
+    private void getUserDetails(final VolleyCallBack callBack) {
+
+        Log.e("JWT", "inside the method");
+
+        JsonObjectRequest jsonObjReq = new JsonObjectRequest(
+                Request.Method.GET,
+                URL + "/users",
+                null, // Pass null as the request body since it's a GET request
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        try {
+                            Log.e("JWT", "Accessed user details");
+
+                            username = response.getString("username");
+
+                            firstName = response.getString("firstName");
+
+                            lastName = response.getString("lastName");
+
+                            bio = response.getString("bio");
+
+                            callBack.onSuccess();
+
+                    }
+                    catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Log.e("JWT", error.toString());
+                    }
+                }
+        )
+
+        {
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                HashMap<String, String> headers = new HashMap<String, String>();
+                headers.put("Authorization", jwtToken);
+                return headers;
+            }
+
+            @Override
+            protected Map<String, String> getParams() {
+                Map<String, String> params = new HashMap<String, String>();
+//                params.put("param1", "value1");
+//                params.put("param2", "value2");
+                return params;
+            }
+        };
+        mQueue.add(jsonObjReq);
+    }
+
+
 }

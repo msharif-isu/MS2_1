@@ -58,7 +58,7 @@ public class AuthService {
         if (userRepository.findByUsername(user.getUsername()) != null)
             throw new UsernameTakenException(user.getUsername());
         
-        User newUser = new User(user.getUsername(), encoder.encode(user.getPassword()));
+        User newUser = new User(user.getFirstName(), user.getLastName(), user.getUsername(), encoder.encode(user.getPassword()));
 
         newUser.setRoles(Collections.singleton(roleRepository.findByName("USER")));
 

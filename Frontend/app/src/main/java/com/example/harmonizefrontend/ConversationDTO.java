@@ -1,10 +1,10 @@
 package com.example.harmonizefrontend;
 
-import java.util.Map;
+import java.util.List;
 
 public class ConversationDTO extends packetDTO.Data {
 
     private int id;
-    private Map<Member> members;
+    private List<Member> members;
 
 }

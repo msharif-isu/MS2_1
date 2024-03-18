@@ -21,7 +21,7 @@ public interface WebSocketListener {
      *
      * @param packetDTO The received WebSocket message.
      */
-    void onWebSocketMessage(packetDTO packetDTO);
+    void onWebSocketMessage(String message);
 
     /**
      * Called when the WebSocket connection is closed.

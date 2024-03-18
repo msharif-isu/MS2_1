@@ -155,7 +155,7 @@ public class MessagesFragment extends Fragment implements WebSocketListener {
         }
 
         @Override
-        public void onWebSocketMessage(packetDTO packetDTO) {
+        public void onWebSocketMessage(String message) {
 
         // Why does it not like runOnUiThread? Likely import statement issue?
             runOnUiThread(() -> {

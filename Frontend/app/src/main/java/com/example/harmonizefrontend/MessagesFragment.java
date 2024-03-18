@@ -1,16 +1,22 @@
 package com.example.harmonizefrontend;
 
+import androidx.appcompat.app.AppCompatActivity;
+
 import android.os.Bundle;
-
-import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
+import com.android.volley.RequestQueue;
+
+import org.java_websocket.handshake.ServerHandshake;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,16 +26,16 @@ import java.util.List;
  * Use the {@link MessagesFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class MessagesFragment extends Fragment {
+public class MessagesFragment extends Fragment implements WebSocketListener {
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
-
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
+//    private static final String ARG_PARAM1 = "param1";
+//    private static final String ARG_PARAM2 = "param2";
+//
+//    // TODO: Rename and change types of parameters
+//    private String mParam1;
+//    private String mParam2;
 
     private ChatListAdapter chatListAdapter;
     private RecyclerView recyclerView;
@@ -38,6 +44,10 @@ public class MessagesFragment extends Fragment {
     private Button sendBtn;
 
     private List<Message> list;
+
+    private String password, JWTtoken;
+
+    private RequestQueue mQueue;
 
 
     public MessagesFragment() {
@@ -55,20 +65,38 @@ public class MessagesFragment extends Fragment {
     // TODO: Rename and change types and number of parameters
     public static MessagesFragment newInstance(String param1, String param2) {
         MessagesFragment fragment = new MessagesFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
+//        Bundle args = new Bundle();
+//        args.putString(ARG_PARAM1, param1);
+//        args.putString(ARG_PARAM2, param2);
+//        fragment.setArguments(args);
         return fragment;
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
+//        if (getArguments() != null) {
+//            mParam1 = getArguments().getString(ARG_PARAM1);
+//            mParam2 = getArguments().getString(ARG_PARAM2);
+//        }
+
+        navBar navBar = (navBar) getActivity();
+        if (navBar != null) {
+            password = navBar.password;
+            JWTtoken = navBar.jwtToken;
+            mQueue = navBar.mQueue;
         }
+        else {
+            Log.e("msg", "navBar is null, JWT token not set");
+        }
+
+        // Connect to websocket
+        String serverURL = "ws://coms-309-032.class.las.iastate.edu:8080/chats?password=" + password;
+
+        WebSocketManager.getInstance().connectWebSocket(serverURL, JWTtoken);
+        WebSocketManager.getInstance().setWebSocketListener(this);
+
+
     }
 
     @Override
@@ -120,4 +148,32 @@ public class MessagesFragment extends Fragment {
                         "BlankURL")));
         return list;
     }
+
+        @Override
+        public void onWebSocketOpen(ServerHandshake handshakedata) {
+
+        }
+
+        @Override
+        public void onWebSocketMessage(packetDTO packetDTO) {
+
+        // Why does it not like runOnUiThread? Likely import statement issue?
+            runOnUiThread(() -> {
+                Log.e("msg", "onWebSocketOpen connected to server")
+            })
+
+
+
+        }
+
+        @Override
+        public void onWebSocketClose(int code, String reason, boolean remote) {
+
+        }
+
+        @Override
+        public void onWebSocketError(Exception ex) {
+
+        }
+
 }

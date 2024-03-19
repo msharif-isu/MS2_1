@@ -1,7 +1,5 @@
 package com.example.harmonizefrontend;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -15,18 +13,19 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.android.volley.RequestQueue;
-
-import org.java_websocket.handshake.ServerHandshake;
+import com.google.gson.Gson;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+
 
 /**
  * A simple {@link Fragment} subclass.
  * Use the {@link MessagesFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class MessagesFragment extends Fragment implements WebSocketListener {
+public class MessagesFragment extends Fragment {
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -48,6 +47,19 @@ public class MessagesFragment extends Fragment implements WebSocketListener {
     private String password, JWTtoken;
 
     private RequestQueue mQueue;
+
+    private Member currentMember = new Member(1, "Manas", "Mathur", "admin", ""); // For testing purposes
+    private Member secondMember = new Member(2, "jon", "jon", "jon", ""); // For testing purposes
+    private ConversationDTO convo = new ConversationDTO(
+            "harmonize.DTOs.ConversationDTO",
+            new ConversationDTO.Data(
+                    1,
+                    Arrays.asList(
+                            currentMember,
+                            secondMember)
+
+            )
+            ); // For testing purposes, later on we can have multiple conversations
 
 
     public MessagesFragment() {
@@ -93,8 +105,8 @@ public class MessagesFragment extends Fragment implements WebSocketListener {
         // Connect to websocket
         String serverURL = "ws://coms-309-032.class.las.iastate.edu:8080/chats?password=" + password;
 
-        WebSocketManager.getInstance().connectWebSocket(serverURL, JWTtoken);
-        WebSocketManager.getInstance().setWebSocketListener(this);
+//        WebSocketManager.getInstance().connectWebSocket(serverURL, JWTtoken);
+//        WebSocketManager.getInstance().setWebSocketListener(this);
 
 
     }
@@ -112,14 +124,29 @@ public class MessagesFragment extends Fragment implements WebSocketListener {
         recyclerView.setAdapter(chatListAdapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
+        // Connects the singleton websocket to the chat system
+        onResume();
+
         sendBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (writeMsg.getText().toString() != null) {
-                    Message newmsg = new Message(0, writeMsg.getText().toString(), new User("Manasm", "blank"));
-                    list.add(newmsg);
-                    chatListAdapter.notifyItemChanged(chatListAdapter.getItemCount() + 1);
-                    writeMsg.setText("");
+//                    Message newmsg = new Message(0, writeMsg.getText().toString(), new User("Manasm", "blank"));
+//                    list.add(newmsg);
+//                    chatListAdapter.notifyItemChanged(chatListAdapter.getItemCount() + 1);
+//                    writeMsg.setText("");
+                    MessageDTO messageDTO = new MessageDTO(
+                            "harmonize.DTOs.MessageDTO",
+                            new MessageDTO.Data(1,
+                                    System.currentTimeMillis(),
+                                    currentMember,
+                                    convo),
+                            writeMsg.getText().toString()
+                    );
+                    Gson gson = new Gson();
+                    String json = gson.toJson(messageDTO);
+                    WebSocketManager.getInstance().sendMessage(json);
+
                 }
 
             }
@@ -128,6 +155,19 @@ public class MessagesFragment extends Fragment implements WebSocketListener {
         // Inflate the layout for this fragment
         return view;
 
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        String serverURL = "ws://coms-309-032.class.las.iastate.edu:8080/chats?password=" + password;
+        WebSocketManager.getInstance().connect(serverURL, JWTtoken);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        WebSocketManager.getInstance().close();
     }
 
 
@@ -149,31 +189,5 @@ public class MessagesFragment extends Fragment implements WebSocketListener {
         return list;
     }
 
-        @Override
-        public void onWebSocketOpen(ServerHandshake handshakedata) {
-
-        }
-
-        @Override
-        public void onWebSocketMessage(String message) {
-
-        // Why does it not like runOnUiThread? Likely import statement issue?
-            runOnUiThread(() -> {
-                Log.e("msg", "onWebSocketOpen connected to server")
-            })
-
-
-
-        }
-
-        @Override
-        public void onWebSocketClose(int code, String reason, boolean remote) {
-
-        }
-
-        @Override
-        public void onWebSocketError(Exception ex) {
-
-        }
 
 }

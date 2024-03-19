@@ -16,6 +16,8 @@ public class WebSocketManager {
     private WebSocket webSocket;
     private final OkHttpClient client = new OkHttpClient();
 
+    private messageListener messageListener;
+
     private WebSocketManager() {
     }
 
@@ -101,3 +103,4 @@ public class WebSocketManager {
         }
     }
 }
+

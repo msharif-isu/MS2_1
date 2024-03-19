@@ -25,7 +25,7 @@ import java.util.List;
  * Use the {@link MessagesFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class MessagesFragment extends Fragment {
+public class MessagesFragment extends Fragment implements messageListener{
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -42,7 +42,9 @@ public class MessagesFragment extends Fragment {
     private EditText writeMsg;
     private Button sendBtn;
 
-    private List<Message> list;
+    private List<Message> list; // Earlier iteration, will be removed. Used for dummy messages
+
+    private List<MessageDTO> listDTO; // Will be the final version
 
     private String password, JWTtoken;
 
@@ -146,14 +148,21 @@ public class MessagesFragment extends Fragment {
                     Gson gson = new Gson();
                     String json = gson.toJson(messageDTO);
                     WebSocketManager.getInstance().sendMessage(json);
-
                 }
 
             }
         });
-
         // Inflate the layout for this fragment
         return view;
+    }
+
+    // Will need to create a WebSocketListener for okHttp3
+    @Override
+    public void onMessageSent(String message) {
+
+        getActivity().runOnUiThread(() -> {
+            
+        });
 
     }
 

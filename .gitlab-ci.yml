@@ -4,6 +4,7 @@ stages:
 
 backend-docker-test:
   stage: backendDockerTest
+  needs: []
   tags:
     - backend
   script:
@@ -16,6 +17,7 @@ backend-docker-test:
 
 backend-docker-deploy:
   stage: backendDockerDeploy
+  needs: []
   tags:
     - backend
   script:

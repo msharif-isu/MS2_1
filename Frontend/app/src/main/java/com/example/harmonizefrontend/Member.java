@@ -15,4 +15,25 @@ public class Member {
         this.username = username;
         this.bio = bio;
     }
+
+    // Getters
+    protected int getid() {
+        return id;
+    }
+
+    protected String getFirstName() {
+        return firstName;
+    }
+
+    protected String getLastName() {
+        return lastName;
+    }
+
+    protected String getUsername() {
+        return username;
+    }
+
+    protected String getBio() {
+        return bio;
+    }
 }

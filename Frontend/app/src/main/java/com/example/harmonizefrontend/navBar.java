@@ -1,28 +1,27 @@
 package com.example.harmonizefrontend;
 
+import android.content.Intent;
+import android.os.Bundle;
+import android.view.MenuItem;
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
-import android.content.Intent;
-import android.os.Bundle;
-
 import com.android.volley.RequestQueue;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationBarView;
-
-import android.view.MenuItem;
 
 
 public class navBar extends AppCompatActivity {
 
     private String fragment;
 
-    protected String username;
-    protected String password;
-    protected String jwtToken;
+    protected String username = null;
+    protected String password = null;
+    protected String jwtToken = null;
 
     protected RequestQueue mQueue;
 
@@ -72,7 +71,6 @@ public class navBar extends AppCompatActivity {
             if (intent.getStringExtra("jwtToken") != null) {
                 jwtToken = intent.getStringExtra("jwtToken");
             }
-
             if (intent.getStringExtra("fragment") != null) {
                 fragment = intent.getStringExtra("fragment");
 
@@ -106,4 +104,6 @@ public class navBar extends AppCompatActivity {
         fragmentTransaction.replace(R.id.frame_layout, fragment);
         fragmentTransaction.commit();
     }
+
+
 }

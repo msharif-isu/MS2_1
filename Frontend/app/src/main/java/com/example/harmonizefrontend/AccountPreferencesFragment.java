@@ -2,9 +2,6 @@ package com.example.harmonizefrontend;
 
 import android.content.Intent;
 import android.os.Bundle;
-
-import androidx.fragment.app.Fragment;
-
 import android.text.method.HideReturnsTransformationMethod;
 import android.text.method.PasswordTransformationMethod;
 import android.util.Log;
@@ -17,6 +14,8 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.fragment.app.Fragment;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
@@ -59,6 +58,8 @@ public class AccountPreferencesFragment extends Fragment {
     private String jwtToken;
 
     private RequestQueue mQueue;
+
+    private static Member currentUser;
 
     private String URL = "http://coms-309-032.class.las.iastate.edu:8080";
 
@@ -155,6 +156,10 @@ public class AccountPreferencesFragment extends Fragment {
 
                 bioText.setText(bio);
                 passwordView.setText(password);
+
+                Member currentUser = new Member(99999, firstName, lastName, username, bio);
+                UserSession.getInstance().setCurrentUser(currentUser);
+                Log.e("msg", currentUser.getUsername() + " " + currentUser.getFirstName() + " " + currentUser.getLastName() + " " + currentUser.getBio());
             }
 
         });
@@ -250,6 +255,11 @@ public class AccountPreferencesFragment extends Fragment {
                             firstNameText.setText(firstName);
                             lastNameText.setText(lastName);
                             bioText.setText(bio);
+
+                            currentUser = new Member(99999, firstName, lastName, username, bio);
+                            UserSession.getInstance().setCurrentUser(currentUser);
+                            Log.e("msg", currentUser.getUsername() + " " + currentUser.getFirstName() + " " + currentUser.getLastName() + " " + currentUser.getBio());
+                            // SET ID TO MAX BECAUSE CURRENTLY DO NOT HAVE A REQUEST TO GET ID
                         }
                     });
 
@@ -301,6 +311,8 @@ public class AccountPreferencesFragment extends Fragment {
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         Log.e("JWT", error.toString());
+                        // Gets: com.android.volley.ParseError: org.json.JSONException: Value First of type java.lang.String cannot be converted to JSONObject
+                        // The backend still takes the request and updates the details
                     }
                 }
         )
@@ -375,6 +387,7 @@ public class AccountPreferencesFragment extends Fragment {
 
 
     }
+
 
     private void getUserDetails(final VolleyCallBack callBack) {
 

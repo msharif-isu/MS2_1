@@ -13,7 +13,6 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.android.volley.RequestQueue;
-import com.google.gson.Gson;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -25,7 +24,7 @@ import java.util.List;
  * Use the {@link MessagesFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class MessagesFragment extends Fragment implements messageListener{
+public class MessagesFragment extends Fragment{
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -42,22 +41,21 @@ public class MessagesFragment extends Fragment implements messageListener{
     private EditText writeMsg;
     private Button sendBtn;
 
-    private List<Message> list; // Earlier iteration, will be removed. Used for dummy messages
+    private List<MessageDTO> list;
 
-    private List<MessageDTO> listDTO; // Will be the final version
 
-    private String password, JWTtoken;
+    private String username, password, JWTtoken;
 
     private RequestQueue mQueue;
 
-    private Member currentMember = new Member(1, "Manas", "Mathur", "admin", ""); // For testing purposes
+    private Member currentMember = UserSession.getInstance().getCurrentUser(); // For testing purposes
     private Member secondMember = new Member(2, "jon", "jon", "jon", ""); // For testing purposes
     private ConversationDTO convo = new ConversationDTO(
             "harmonize.DTOs.ConversationDTO",
             new ConversationDTO.Data(
                     1,
                     Arrays.asList(
-                            currentMember,
+                            UserSession.getInstance().getCurrentUser(),
                             secondMember)
 
             )
@@ -96,6 +94,7 @@ public class MessagesFragment extends Fragment implements messageListener{
 
         navBar navBar = (navBar) getActivity();
         if (navBar != null) {
+            username = navBar.username;
             password = navBar.password;
             JWTtoken = navBar.jwtToken;
             mQueue = navBar.mQueue;
@@ -145,9 +144,12 @@ public class MessagesFragment extends Fragment implements messageListener{
                                     convo),
                             writeMsg.getText().toString()
                     );
-                    Gson gson = new Gson();
-                    String json = gson.toJson(messageDTO);
-                    WebSocketManager.getInstance().sendMessage(json);
+                    list.add(messageDTO);
+                    chatListAdapter.notifyItemChanged(chatListAdapter.getItemCount() + 1);
+                    writeMsg.setText("");
+//                    Gson gson = new Gson();
+//                    String json = gson.toJson(messageDTO);
+//                    WebSocketManager.getInstance().sendMessage(json);
                 }
 
             }
@@ -157,44 +159,52 @@ public class MessagesFragment extends Fragment implements messageListener{
     }
 
     // Will need to create a WebSocketListener for okHttp3
-    @Override
-    public void onMessageSent(String message) {
+//    @Override
+//    public void onMessageSent(String message) {
+//
+//        getActivity().runOnUiThread(() -> {
+//
+//        });
+//
+//    }
 
-        getActivity().runOnUiThread(() -> {
-            
-        });
-
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        String serverURL = "ws://coms-309-032.class.las.iastate.edu:8080/chats?password=" + password;
-        WebSocketManager.getInstance().connect(serverURL, JWTtoken);
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-        WebSocketManager.getInstance().close();
-    }
+//    @Override
+//    public void onResume() {
+//        super.onResume();
+//        String serverURL = "ws://coms-309-032.class.las.iastate.edu:8080/chats?password=" + password;
+//        WebSocketManager.getInstance().connect(serverURL, JWTtoken);
+//    }
+//
+//    @Override
+//    public void onPause() {
+//        super.onPause();
+//        WebSocketManager.getInstance().close();
+//    }
 
 
 
-    private List<Message> getMessages() {
-        List<Message> list = new ArrayList<>();
-        list.add(new Message(
-                1,
-                "Hello this is Mayank!",
-                new User(
-                        "MayankM",
-                        "BlankURL")));
-        list.add(new Message(
-                0,
-                "Hello this is Manas!",
-                new User(
-                        "ManasM",
-                        "BlankURL")));
+    private List<MessageDTO> getMessages() {
+        List<MessageDTO> list = new ArrayList<>();
+        list.add(new MessageDTO(
+                "harmonize.DTOs.MessageDTO",
+                new MessageDTO.Data(1,
+                        System.currentTimeMillis(),
+                        currentMember,
+                        convo),
+                "Hello!"
+                )
+        );
+
+        list.add(new MessageDTO(
+                "harmonize.DTOs.MessageDTO",
+                new MessageDTO.Data(2,
+                        System.currentTimeMillis(),
+                        secondMember,
+                        convo),
+                "Hi! How are you?"
+                )
+        );
+
         return list;
     }
 

@@ -18,6 +18,7 @@ import harmonize.Entities.Message;
 import harmonize.Entities.User;
 import harmonize.ErrorHandling.Exceptions.InternalServerErrorException;
 import harmonize.ErrorHandling.Exceptions.UnauthorizedException;
+import harmonize.ErrorHandling.Exceptions.UserNotFoundException;
 import harmonize.Repositories.ConversationRepository;
 import harmonize.Repositories.UserRepository;
 import harmonize.Security.ChatCrypto;
@@ -35,7 +36,7 @@ public class ChatService {
     private MessageService messageService;
     private BCryptPasswordEncoder encoder;
     private ChatCrypto chatCrypto;
-    ObjectMapper mapper = new ObjectMapper();
+    private ObjectMapper mapper;
     
     @Data
     @AllArgsConstructor
@@ -51,6 +52,7 @@ public class ChatService {
         this.messageService = messageService;
         this.encoder = encoder;
         this.chatCrypto = chatCrypto;
+        this.mapper = new ObjectMapper();
     }
 
     public void onOpen(Session session) throws IOException {
@@ -64,7 +66,7 @@ public class ChatService {
                 try {
                     send(session, messageService.readMessage(user, message, keys.getPrivateKey()));
                 } catch (Exception e) {
-                    onError(session, new InternalServerErrorException("Could not decrypt message."), false);
+                    onError(session, e, false);
                     e.printStackTrace();
                 }   
             }
@@ -92,7 +94,7 @@ public class ChatService {
                 keys.getPrivateKey()
             ));
         } catch (Exception e) {
-            onError(session, new InternalServerErrorException("Could not encrypt message."), false);
+            onError(session, e, false);
             e.printStackTrace();
         }
     }
@@ -116,7 +118,7 @@ public class ChatService {
         }
     }
 
-    private void notifyUsers(Message message) {
+    public void notifyUsers(Message message) {
         for (Session session : sessions) {
             User user = (User)session.getUserProperties().get("user");
             if (!message.getConversation().getMembers().contains(user))
@@ -125,7 +127,29 @@ public class ChatService {
             try {
                 send(session, messageService.readMessage(user, message, ((Keys)session.getUserProperties().get("keys")).getPrivateKey()));
             } catch (Exception e) {
-                onError(session, new InternalServerErrorException("Could not decrypt message."), false);
+                onError(session, e, false);
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public void notifyUsers(Conversation conversation) {
+        notifyUsers(conversation, false);
+    }
+
+    public void notifyUsers(Conversation conversation, Boolean isDeleted) {
+        for (Session session : sessions) {
+            User user = (User)session.getUserProperties().get("user");
+            if (!conversation.getMembers().contains(user))
+                continue;
+
+            try {
+                ConversationDTO convoDTO = new ConversationDTO(conversation);
+                if (isDeleted)
+                    convoDTO.getMembers().clear();
+                send(session, convoDTO);
+            } catch (IOException e) {
+                onError(session, e, false);
                 e.printStackTrace();
             }
         }
@@ -141,12 +165,16 @@ public class ChatService {
         Keys keys = null;
 
         if (!session.getRequestParameterMap().containsKey("password"))
-            onError(session, new UnauthorizedException("Your password feild in request parameters was empty."));
+            onError(session, new UnauthorizedException("Password feild in request parameters was empty."));
+        if (!session.getRequestParameterMap().containsKey("username"))
+            onError(session, new UnauthorizedException("Username feild in request parameters was empty."));
 
         user = 
             session.getUserProperties().containsKey("user") ?
                 (User)session.getUserProperties().get("user") :
-                userRepository.findByUsername(session.getUserPrincipal().getName());
+                userRepository.findByUsername(session.getRequestParameterMap().get("username").get(0));
+        if (user == null)
+            onError(session, new UserNotFoundException(session.getRequestParameterMap().get("username").get(0)));
 
         wrapperToken = 
             session.getUserProperties().containsKey("wrapperToken") ? 
@@ -154,7 +182,7 @@ public class ChatService {
                 session.getRequestParameterMap().get("password").get(0);
         
         if (!encoder.matches(wrapperToken, user.getPassword()))
-            onError(session, new UnauthorizedException("Your password feild in request parameters was invalid."));
+            onError(session, new UnauthorizedException("Password feild in request parameters was invalid."));
 
         try {
             keys = 

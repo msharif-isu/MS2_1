@@ -8,29 +8,37 @@ import org.springframework.stereotype.Service;
 import harmonize.Entities.Conversation;
 import harmonize.Entities.User;
 import harmonize.Repositories.ConversationRepository;
+import harmonize.Repositories.UserRepository;
 
 @Service
 public class ConversationService {
     private ConversationRepository conversationRepository;
+    private UserRepository userRepository;
+    private ChatService chatService;
 
     @Autowired
-    public ConversationService(ConversationRepository conversationRepository) {
+    public ConversationService(ConversationRepository conversationRepository, UserRepository userRepository, ChatService chatService) {
         this.conversationRepository = conversationRepository;
+        this.userRepository = userRepository;
+        this.chatService = chatService;
     }
 
-    public Conversation createChat(Set<User> members) {
-        Conversation chat = new Conversation(members);
-        conversationRepository.save(chat);
-        return chat;
+    public Conversation createConversation(Set<User> members) {
+        Conversation conversation = new Conversation(members);
+        conversationRepository.save(conversation);
+        chatService.notifyUsers(conversation);
+        return conversation;
     }
 
-    public void deleteChat(Set<User> members) {
-        for (Conversation chat : conversationRepository.findAll()) {
-            if (chat.getMembers().equals(members)) {
+    public void deleteConversation(Set<User> members) {
+        for (Conversation conversation : conversationRepository.findAll()) {
+            if (conversation.getMembers().equals(members)) {
                 for (User user : members) {
-                    user.getConversations().remove(chat);
+                    user.getConversations().remove(conversation);
+                    userRepository.save(user);
                 }
-                conversationRepository.delete(chat); 
+                chatService.notifyUsers(conversation, true);
+                conversationRepository.delete(conversation);
             }
         }
     }

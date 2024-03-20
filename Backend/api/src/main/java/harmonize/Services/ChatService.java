@@ -65,7 +65,7 @@ public class ChatService {
                 try {
                     send(session, messageService.readMessage(user, message, keys.getPrivateKey()));
                 } catch (Exception e) {
-                    onError(session, new InternalServerErrorException("Could not decrypt message."), false);
+                    onError(session, e, false);
                     e.printStackTrace();
                 }   
             }
@@ -93,7 +93,7 @@ public class ChatService {
                 keys.getPrivateKey()
             ));
         } catch (Exception e) {
-            onError(session, new InternalServerErrorException("Could not encrypt message."), false);
+            onError(session, e, false);
             e.printStackTrace();
         }
     }
@@ -117,7 +117,7 @@ public class ChatService {
         }
     }
 
-    private void notifyUsers(Message message) {
+    public void notifyUsers(Message message) {
         for (Session session : sessions) {
             User user = (User)session.getUserProperties().get("user");
             if (!message.getConversation().getMembers().contains(user))
@@ -127,6 +127,21 @@ public class ChatService {
                 send(session, messageService.readMessage(user, message, ((Keys)session.getUserProperties().get("keys")).getPrivateKey()));
             } catch (Exception e) {
                 onError(session, new InternalServerErrorException("Could not decrypt message."), false);
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public void notifyUsers(Conversation conversation) {
+        for (Session session : sessions) {
+            User user = (User)session.getUserProperties().get("user");
+            if (!conversation.getMembers().contains(user))
+                continue;
+
+            try {
+                send(session, new ConversationDTO(conversation));
+            } catch (IOException e) {
+                onError(session, e);
                 e.printStackTrace();
             }
         }

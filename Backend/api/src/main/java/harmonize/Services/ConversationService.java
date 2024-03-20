@@ -12,25 +12,30 @@ import harmonize.Repositories.ConversationRepository;
 @Service
 public class ConversationService {
     private ConversationRepository conversationRepository;
+    private ChatService chatService;
 
     @Autowired
-    public ConversationService(ConversationRepository conversationRepository) {
+    public ConversationService(ConversationRepository conversationRepository, ChatService chatService) {
         this.conversationRepository = conversationRepository;
+        this.chatService = chatService;
     }
 
-    public Conversation createChat(Set<User> members) {
-        Conversation chat = new Conversation(members);
-        conversationRepository.save(chat);
-        return chat;
+    public Conversation createConversation(Set<User> members) {
+        Conversation conversation = new Conversation(members);
+        conversationRepository.save(conversation);
+        chatService.notifyUsers(conversation);
+        return conversation;
     }
 
-    public void deleteChat(Set<User> members) {
-        for (Conversation chat : conversationRepository.findAll()) {
-            if (chat.getMembers().equals(members)) {
+    public void deleteConversation(Set<User> members) {
+        for (Conversation conversation : conversationRepository.findAll()) {
+            if (conversation.getMembers().equals(members)) {
                 for (User user : members) {
-                    user.getConversations().remove(chat);
+                    user.getConversations().remove(conversation);
+                    conversation.getMembers().remove(user);
                 }
-                conversationRepository.delete(chat); 
+                chatService.notifyUsers(conversation);
+                conversationRepository.delete(conversation); 
             }
         }
     }

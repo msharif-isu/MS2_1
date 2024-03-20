@@ -181,7 +181,7 @@ public class UserService {
             return new String(String.format("\"%s\" sent friend invite to \"%s\"", user.getUsername(), friend.getUsername()));
         }
 
-        conversationService.createChat(Set.of(user, friend));
+        conversationService.createConversation(Set.of(user, friend));
 
         user.getFriendInvites().remove(friend);
         friend.getFriends().add(user);
@@ -218,7 +218,7 @@ public class UserService {
         if (!user.getFriends().contains(friend))
             throw new UserNotFriendException(user.getUsername(), friend.getUsername());
 
-        conversationService.deleteChat(Set.of(user, friend));
+        conversationService.deleteConversation(Set.of(user, friend));
 
         user.getFriends().remove(friend);
         friend.getFriends().remove(user);

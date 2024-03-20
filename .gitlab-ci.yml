@@ -10,6 +10,8 @@ backend-docker:
     - sudo docker compose down
     - sudo docker compose build
     - sudo docker compose up -d
+    - sudo docker image prune -af
+    - sudo docker volume prune -af
   only:
     variables:
     - $CI_PIPELINE_SOURCE == "web"

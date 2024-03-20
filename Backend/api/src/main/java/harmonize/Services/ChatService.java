@@ -18,6 +18,7 @@ import harmonize.Entities.Message;
 import harmonize.Entities.User;
 import harmonize.ErrorHandling.Exceptions.InternalServerErrorException;
 import harmonize.ErrorHandling.Exceptions.UnauthorizedException;
+import harmonize.ErrorHandling.Exceptions.UserNotFoundException;
 import harmonize.Repositories.ConversationRepository;
 import harmonize.Repositories.UserRepository;
 import harmonize.Security.ChatCrypto;
@@ -142,11 +143,15 @@ public class ChatService {
 
         if (!session.getRequestParameterMap().containsKey("password"))
             onError(session, new UnauthorizedException("Your password feild in request parameters was empty."));
+        if (!session.getRequestParameterMap().containsKey("username"))
+            onError(session, new UnauthorizedException("Your username feild in request parameters was empty."));
 
         user = 
             session.getUserProperties().containsKey("user") ?
                 (User)session.getUserProperties().get("user") :
-                userRepository.findByUsername(session.getUserPrincipal().getName());
+                userRepository.findByUsername(session.getRequestParameterMap().get("username").get(0));
+        if (user == null)
+            onError(session, new UserNotFoundException("No user found with the username provided"));
 
         wrapperToken = 
             session.getUserProperties().containsKey("wrapperToken") ? 

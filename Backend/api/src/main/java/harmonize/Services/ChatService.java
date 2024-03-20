@@ -133,13 +133,20 @@ public class ChatService {
     }
 
     public void notifyUsers(Conversation conversation) {
+        notifyUsers(conversation, false);
+    }
+
+    public void notifyUsers(Conversation conversation, Boolean isDeleted) {
         for (Session session : sessions) {
             User user = (User)session.getUserProperties().get("user");
             if (!conversation.getMembers().contains(user))
                 continue;
 
             try {
-                send(session, new ConversationDTO(conversation));
+                ConversationDTO convoDTO = new ConversationDTO(conversation);
+                if (isDeleted)
+                    convoDTO.getMembers().clear();
+                send(session, convoDTO);
             } catch (IOException e) {
                 onError(session, e);
                 e.printStackTrace();

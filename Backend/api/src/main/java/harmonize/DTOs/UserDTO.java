@@ -1,6 +1,6 @@
 package harmonize.DTOs;
 
-import harmonize.Users.User;
+import harmonize.Entities.User;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 

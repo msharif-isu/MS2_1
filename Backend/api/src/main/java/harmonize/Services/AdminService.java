@@ -8,13 +8,13 @@ import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 
 import harmonize.DTOs.UserDTO;
+import harmonize.Entities.Role;
+import harmonize.Entities.User;
 import harmonize.ErrorHandling.Exceptions.RoleNotFoundException;
 import harmonize.ErrorHandling.Exceptions.RolePermissionException;
 import harmonize.ErrorHandling.Exceptions.UserNotFoundException;
-import harmonize.Roles.Role;
-import harmonize.Roles.RoleRepository;
-import harmonize.Users.User;
-import harmonize.Users.UserRepository;
+import harmonize.Repositories.RoleRepository;
+import harmonize.Repositories.UserRepository;
 
 @Service
 public class AdminService {

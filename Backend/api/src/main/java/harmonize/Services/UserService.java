@@ -2,31 +2,34 @@ package harmonize.Services;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 
 import harmonize.DTOs.UserDTO;
+import harmonize.Entities.User;
 import harmonize.ErrorHandling.Exceptions.UserAlreadyFriendException;
 import harmonize.ErrorHandling.Exceptions.UserAlreadyInvitedException;
 import harmonize.ErrorHandling.Exceptions.UserFriendSelfException;
 import harmonize.ErrorHandling.Exceptions.UserNotFoundException;
 import harmonize.ErrorHandling.Exceptions.UserNotFriendException;
 import harmonize.ErrorHandling.Exceptions.UsernameTakenException;
-import harmonize.Roles.RoleRepository;
-import harmonize.Users.User;
-import harmonize.Users.UserRepository;
+import harmonize.Repositories.RoleRepository;
+import harmonize.Repositories.UserRepository;
 
 @Service
 public class UserService {
     private UserRepository userRepository;
     private RoleRepository roleRepository;
+    private ConversationService conversationService;
 
     @Autowired
-    public UserService(UserRepository userRepository, RoleRepository roleRepository) {
+    public UserService(UserRepository userRepository, RoleRepository roleRepository, ConversationService conversationService) {
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
+        this.conversationService = conversationService;
     }
 
     @NonNull
@@ -178,6 +181,8 @@ public class UserService {
             return new String(String.format("\"%s\" sent friend invite to \"%s\"", user.getUsername(), friend.getUsername()));
         }
 
+        conversationService.createConversation(Set.of(user, friend));
+
         user.getFriendInvites().remove(friend);
         friend.getFriends().add(user);
         user.getFriends().add(friend);
@@ -212,6 +217,8 @@ public class UserService {
 
         if (!user.getFriends().contains(friend))
             throw new UserNotFriendException(user.getUsername(), friend.getUsername());
+
+        conversationService.deleteConversation(Set.of(user, friend));
 
         user.getFriends().remove(friend);
         friend.getFriends().remove(user);

@@ -50,6 +50,11 @@ public class AdminController {
         return ResponseEntity.ok(adminService.getUser(id));
     }
 
+    @DeleteMapping(path = "/users/{id}")
+    public ResponseEntity<String> deleteUser(@PathVariable int id){
+        return ResponseEntity.ok(userService.deleteUser(id));
+    }
+
     @GetMapping(path = "/friends/recommended/{id}")
     public ResponseEntity<List<UserDTO>> getRecommendedFriends(@PathVariable int id) {
         return ResponseEntity.ok(userService.getRecommendedFriends(id));

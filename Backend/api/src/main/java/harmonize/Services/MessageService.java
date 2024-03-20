@@ -19,7 +19,7 @@ import harmonize.Security.ChatCrypto;
 public class MessageService {
 
     private MessageRepository messageRepository;
-    ConversationRepository conversationRepository;
+    private ConversationRepository conversationRepository;
     private ChatCrypto chatCrypto;
 
     @Autowired
@@ -34,9 +34,8 @@ public class MessageService {
         message.setTime(new Date());
         message.setSender(sender);
         message.setConversation(conversation);
-        for (User user : conversation.getMembers()) {
+        for (User user : conversation.getMembers())
             message.getEncryptions().put(user, chatCrypto.encrypt(privateKey, user.getPublicKey(), text));   
-        }
         conversation.getMessages().add(message);
         messageRepository.save(message);
         conversationRepository.save(conversation);

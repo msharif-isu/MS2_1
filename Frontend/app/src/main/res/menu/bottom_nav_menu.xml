@@ -4,21 +4,25 @@
     <item
         android:icon="@drawable/baseline_home_24"
         android:id="@+id/navigation_home"
-        android:title="@string/title_home"/>
+        android:title="@string/title_home"
+        android:iconTint="@color/light_green"/>
 
     <item
         android:icon="@drawable/baseline_person_add_24"
         android:id="@+id/navigation_findUser"
-        android:title="@string/title_findUser"/>
+        android:title="@string/title_findUser"
+        android:iconTint="@color/light_green"/>
 
     <item
         android:icon="@drawable/baseline_forum_24"
         android:id="@+id/navigation_messages"
-        android:title="@string/title_messages"/>
+        android:title="@string/title_messages"
+        android:iconTint="@color/light_green"/>
 
     <item
         android:icon="@drawable/baseline_accessibility_24"
         android:id="@+id/navigation_profile"
-        android:title="@string/title_profile"/>
+        android:title="@string/title_profile"
+        android:iconTint="@color/light_green"/>
 
 </menu>

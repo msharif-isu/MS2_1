@@ -2,7 +2,10 @@ package harmonize.Security;
 
 import java.io.IOException;
 
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -26,9 +29,8 @@ public class TokenAuthFilter extends OncePerRequestFilter {
     private CustomUserDetailsService userDetailsService;
 
     @Override
-    protected void doFilterInternal(jakarta.servlet.http.HttpServletRequest request,
-            jakarta.servlet.http.HttpServletResponse response, jakarta.servlet.FilterChain filterChain)
-            throws jakarta.servlet.ServletException, IOException {
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
+            throws ServletException, IOException {
         String token = getTokenFromRequest(request);
 
         if(StringUtils.hasText(token) && tokenGenerator.validateToken(token)) {
@@ -52,5 +54,4 @@ public class TokenAuthFilter extends OncePerRequestFilter {
 
         return null;
     }
-
 }

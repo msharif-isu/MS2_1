@@ -1,6 +1,7 @@
 package harmonize;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,6 +32,7 @@ public class WelcomeTest {
             new HttpEntity<>(null),
             String.class);
 		assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
+		fail();
 	}
 
 }

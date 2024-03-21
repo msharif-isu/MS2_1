@@ -19,7 +19,6 @@ import harmonize.Repositories.UserRepository;
 @Service
 public class AdminService {
     private UserRepository userRepository;
-    
     private RoleRepository roleRepository;
 
     @Autowired

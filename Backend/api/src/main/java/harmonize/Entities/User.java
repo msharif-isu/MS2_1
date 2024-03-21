@@ -12,6 +12,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.Data;
 
@@ -65,6 +66,12 @@ public class User {
     @JoinTable(name = "conversation_members", joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),
                                        inverseJoinColumns = @JoinColumn(name = "conversation_id", referencedColumnName = "id"))
     private Set<Conversation> conversations = new HashSet<>();
+
+    @OneToMany(fetch = FetchType.EAGER)
+    private Set<Report> sentReports = new HashSet<>();
+
+    @OneToMany(fetch = FetchType.EAGER)
+    private Set<Report> recievedReports = new HashSet<>();
 
     public User(String firstName, String lastName, String username, String password) {
         this.firstName = firstName;

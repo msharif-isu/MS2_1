@@ -45,6 +45,7 @@ public class SecurityConfig {
                 .requestMatchers("/chats/**").permitAll()
                 .requestMatchers("/auth/**").permitAll()
                 .requestMatchers("/admin/**").hasAuthority("ADMIN")
+                .requestMatchers("/moderators/**").hasAnyAuthority("MODERATOR", "ADMIN")
                 .anyRequest().authenticated()
             )
             .httpBasic(basic -> basic.authenticationEntryPoint(authEntryPoint));

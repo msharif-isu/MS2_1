@@ -32,7 +32,6 @@ public class WelcomeTest {
             new HttpEntity<>(null),
             String.class);
 		assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
-		fail();
 	}
 
 }

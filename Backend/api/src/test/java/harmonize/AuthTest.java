@@ -111,12 +111,6 @@ public class AuthTest {
             new HttpEntity<RegisterDTO>(body, headers),
             AuthDTO.class);
 
-        responseEntity = restTemplate.exchange(
-            hostname + this.port + "/auth/register",
-            HttpMethod.POST,
-            new HttpEntity<RegisterDTO>(body, headers),
-            AuthDTO.class);
-
         assertEquals(HttpStatus.BAD_REQUEST, responseEntity.getStatusCode());
 	}
 }

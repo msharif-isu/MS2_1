@@ -15,10 +15,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 import harmonize.DTOs.AuthDTO;
+import harmonize.DTOs.LoginDTO;
 import harmonize.DTOs.RegisterDTO;
 import harmonize.DTOs.UserDTO;
 
@@ -33,64 +31,169 @@ public class UserTest {
 
     private static String hostname = "http://localhost:";
     private static AuthDTO auth;
-    private static ObjectMapper objectMapper = new ObjectMapper();
+    private static UserDTO user;
     
     @BeforeEach
     public void createUser() {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
-        Object body = new RegisterDTO("tod", "wilson", "twilson", "todpw");
-        ResponseEntity<AuthDTO> responseEntity = null;
-        try {
-            responseEntity = restTemplate.exchange(
-                hostname + this.port + "/auth/register",
-                HttpMethod.POST,
-                new HttpEntity<>(objectMapper.writeValueAsString(body), headers),
-                AuthDTO.class);
-        } catch (JsonProcessingException e) {
-            e.printStackTrace();
-        }
-        if (responseEntity.getStatusCode().equals(HttpStatus.OK))
-            auth = responseEntity.getBody();
+        RegisterDTO body = new RegisterDTO("tod", "wilson", "twilson", "todpw");
+        ResponseEntity<AuthDTO> registerResponseEntity = null;
+        registerResponseEntity = restTemplate.exchange(
+            hostname + this.port + "/auth/register",
+            HttpMethod.POST,
+            new HttpEntity<RegisterDTO>(body, headers),
+            AuthDTO.class);
+        if (registerResponseEntity.getStatusCode().equals(HttpStatus.OK))
+            auth = registerResponseEntity.getBody();
+
+        headers = new HttpHeaders();
+        headers.set("Authorization", "Bearer " + auth.getAccessToken());
+        ResponseEntity<UserDTO> getSelfResponseEntity = restTemplate.exchange(
+            hostname + port + "/users",
+            HttpMethod.GET,
+            new HttpEntity<>(headers),
+            UserDTO.class);
+        if (getSelfResponseEntity.getStatusCode().equals(HttpStatus.OK))
+            user = getSelfResponseEntity.getBody();
     }
 
     @Test
-    public void getSelf() {
+    public void getSelfOkTest() {
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", "Bearer " + auth.getAccessToken());
-        HttpEntity<UserDTO> entity = new HttpEntity<>(headers);
         ResponseEntity<UserDTO> responseEntity = restTemplate.exchange(
             hostname + port + "/users",
             HttpMethod.GET,
-            entity,
+            new HttpEntity<>(headers),
             UserDTO.class);
         
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
     }
 
     @Test
-    public void getSelfUnauthorized() {
+    public void getSelfUnauthorizedTest() {
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", "Bearer " + "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ0d2lsc29uIiwiZXhwIjoxNzExMDY1MzA0fQ.fMMD-4NPWook1MEwS_PDRkwFDMmAyZyu7dtWp5Uww1XMiLrGuDmKaUM2oYw1r5dBErJv8jYyHIxjOKxoWergFQ");
-        HttpEntity<UserDTO> entity = new HttpEntity<>(headers);
         ResponseEntity<UserDTO> responseEntity = restTemplate.exchange(
             hostname + port + "/users",
             HttpMethod.GET,
-            entity,
+            new HttpEntity<>(headers),
             UserDTO.class);
         
         assertEquals(HttpStatus.UNAUTHORIZED, responseEntity.getStatusCode());
     }
 
     @Test
-    public void adminRequestUnauthorized() {
+    public void updateSelfOkTest() {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.set("Authorization", "Bearer " + auth.getAccessToken());
+        UserDTO body = new UserDTO(user.getId(), "tod2", "wilson2", "twilson2", "My name is tod2.");
+        ResponseEntity<UserDTO> responseEntity = null;
+        responseEntity = restTemplate.exchange(
+            hostname + port + "/users",
+            HttpMethod.PUT,
+            new HttpEntity<UserDTO>(body, headers),
+            UserDTO.class);
+        assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
+
+        headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        LoginDTO loginBody = new LoginDTO("twilson2", "todpw");
+        ResponseEntity<AuthDTO> loginResponseEntity = restTemplate.exchange(
+            hostname + this.port + "/auth/login",
+            HttpMethod.POST,
+            new HttpEntity<LoginDTO>(loginBody, headers),
+            AuthDTO.class);
+        assertEquals(HttpStatus.OK, loginResponseEntity.getStatusCode());
+
+        headers = new HttpHeaders();
+        headers.set("Authorization", "Bearer " + loginResponseEntity.getBody().getAccessToken());
+        ResponseEntity<UserDTO> getSelfResponseEntity = restTemplate.exchange(
+            hostname + port + "/users",
+            HttpMethod.GET,
+            new HttpEntity<>(headers),
+            UserDTO.class);
+
+        assertEquals(HttpStatus.OK, getSelfResponseEntity.getStatusCode());
+        assertEquals(body, getSelfResponseEntity.getBody());
+    }
+
+    @Test
+    public void updateSelfUsernameTakenTest() {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        RegisterDTO registerBody = new RegisterDTO("phil", "swift", "pswift", "philpw");
+        restTemplate.exchange(
+            hostname + this.port + "/auth/register",
+            HttpMethod.POST,
+            new HttpEntity<RegisterDTO>(registerBody, headers),
+            AuthDTO.class);
+        
+
+        headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.set("Authorization", "Bearer " + auth.getAccessToken());
+        UserDTO body = new UserDTO(user.getId(), "tod4", "wilson4", "pswift", "My name is tod4.");
+        ResponseEntity<UserDTO> responseEntity = null;
+        responseEntity = restTemplate.exchange(
+            hostname + port + "/users",
+            HttpMethod.PUT,
+            new HttpEntity<UserDTO>(body, headers),
+            UserDTO.class);
+        
+        assertEquals(HttpStatus.CONFLICT, responseEntity.getStatusCode());
+    }
+
+    @Test
+    public void updateSelfUsernameEmptyTest() {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.set("Authorization", "Bearer " + auth.getAccessToken());
+        UserDTO body = new UserDTO(user.getId(), "tod3", "wilson3", "", "My name is tod3.");
+        ResponseEntity<UserDTO> responseEntity = null;
+        responseEntity = restTemplate.exchange(
+            hostname + port + "/users",
+            HttpMethod.PUT,
+            new HttpEntity<UserDTO>(body, headers),
+            UserDTO.class);
+        
+        assertEquals(HttpStatus.BAD_REQUEST, responseEntity.getStatusCode());
+    }
+
+    @Test
+    public void deleteSelfOkTest() {
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", "Bearer " + auth.getAccessToken());
-        HttpEntity<UserDTO> entity = new HttpEntity<>(headers);
+        ResponseEntity<Object> deleteResponseEntity = restTemplate.exchange(
+            hostname + port + "/users",
+            HttpMethod.DELETE,
+            new HttpEntity<>(headers),
+            Object.class);
+        
+        assertEquals(HttpStatus.OK, deleteResponseEntity.getStatusCode());
+
+        headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        LoginDTO body = new LoginDTO("twilson", "todpw");
+        ResponseEntity<AuthDTO> loginResponseEntity = restTemplate.exchange(
+            hostname + this.port + "/auth/login",
+            HttpMethod.POST,
+            new HttpEntity<LoginDTO>(body, headers),
+            AuthDTO.class);
+
+        assertEquals(HttpStatus.UNAUTHORIZED, loginResponseEntity.getStatusCode());
+    }
+
+    @Test
+    public void adminRequestUnauthorizedTest() {
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization", "Bearer " + auth.getAccessToken());
         ResponseEntity<UserDTO> responseEntity = restTemplate.exchange(
             hostname + port + "/admin",
             HttpMethod.GET,
-            entity,
+            new HttpEntity<>(headers),
             UserDTO.class);
         
         assertEquals(HttpStatus.UNAUTHORIZED, responseEntity.getStatusCode());

@@ -14,8 +14,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 import harmonize.DTOs.AuthDTO;
 import harmonize.DTOs.LoginDTO;
 import harmonize.DTOs.RegisterDTO;
@@ -30,33 +28,95 @@ public class AuthTest {
 	private TestRestTemplate restTemplate;
 
     private static String hostname = "http://localhost:";
-    private static ObjectMapper objectMapper = new ObjectMapper();
 
     @Test
-	public void loginTest() throws Exception {
+	public void loginOkTest() throws Exception {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
-        Object body = new LoginDTO("tbrown", "timpw");
+        RegisterDTO registerBody = new RegisterDTO("kyle", "davis", "kdavis", "kylepw");
+        restTemplate.exchange(
+            hostname + this.port + "/auth/register",
+            HttpMethod.POST,
+            new HttpEntity<RegisterDTO>(registerBody, headers),
+            AuthDTO.class);
+
+        headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        LoginDTO body = new LoginDTO("kdavis", "kylepw");
         ResponseEntity<AuthDTO> responseEntity = restTemplate.exchange(
             hostname + this.port + "/auth/login",
             HttpMethod.POST,
-            new HttpEntity<>(objectMapper.writeValueAsString(body), headers),
+            new HttpEntity<LoginDTO>(body, headers),
             AuthDTO.class);
 
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
 	}
 
     @Test
-    public void registerTest() throws Exception {
+	public void loginUnautorizedTest() throws Exception {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
-        Object body = new RegisterDTO("bill", "miller", "bmiller", "billpw");
+        LoginDTO body = new LoginDTO("tbrown", "NotTimPassword");
+        ResponseEntity<AuthDTO> responseEntity = restTemplate.exchange(
+            hostname + this.port + "/auth/login",
+            HttpMethod.POST,
+            new HttpEntity<LoginDTO>(body, headers),
+            AuthDTO.class);
+
+        assertEquals(HttpStatus.UNAUTHORIZED, responseEntity.getStatusCode());
+	}
+
+    @Test
+    public void registerOkTest() throws Exception {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        RegisterDTO body = new RegisterDTO("bill", "miller", "bmiller", "billpw");
         ResponseEntity<AuthDTO> responseEntity = restTemplate.exchange(
             hostname + this.port + "/auth/register",
             HttpMethod.POST,
-            new HttpEntity<>(objectMapper.writeValueAsString(body), headers),
+            new HttpEntity<RegisterDTO>(body, headers),
             AuthDTO.class);
 
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
+	}
+
+    @Test
+    public void registerUsernameTakenTest() throws Exception {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        RegisterDTO body = new RegisterDTO("kim", "jones", "kjones", "kimpw");
+        ResponseEntity<AuthDTO> responseEntity = restTemplate.exchange(
+            hostname + this.port + "/auth/register",
+            HttpMethod.POST,
+            new HttpEntity<RegisterDTO>(body, headers),
+            AuthDTO.class);
+
+        responseEntity = restTemplate.exchange(
+            hostname + this.port + "/auth/register",
+            HttpMethod.POST,
+            new HttpEntity<RegisterDTO>(body, headers),
+            AuthDTO.class);
+
+        assertEquals(HttpStatus.CONFLICT, responseEntity.getStatusCode());
+	}
+
+    @Test
+    public void registerUsernameEmptyTest() throws Exception {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        RegisterDTO body = new RegisterDTO("first", "last", "", "password");
+        ResponseEntity<AuthDTO> responseEntity = restTemplate.exchange(
+            hostname + this.port + "/auth/register",
+            HttpMethod.POST,
+            new HttpEntity<RegisterDTO>(body, headers),
+            AuthDTO.class);
+
+        responseEntity = restTemplate.exchange(
+            hostname + this.port + "/auth/register",
+            HttpMethod.POST,
+            new HttpEntity<RegisterDTO>(body, headers),
+            AuthDTO.class);
+
+        assertEquals(HttpStatus.BAD_REQUEST, responseEntity.getStatusCode());
 	}
 }

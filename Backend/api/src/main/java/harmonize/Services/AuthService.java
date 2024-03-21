@@ -63,7 +63,7 @@ public class AuthService {
     @NonNull
     public AuthDTO register(RegisterDTO user) {
         if (user.getUsername().isEmpty())
-            throw new UserInfoInvalidException("Username cannot be empty");
+            throw new UserInfoInvalidException("Username cannot be empty.");
         if (userRepository.findByUsername(user.getUsername()) != null)
             throw new UsernameTakenException(user.getUsername());
         

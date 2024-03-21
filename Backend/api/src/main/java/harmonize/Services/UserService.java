@@ -13,6 +13,7 @@ import harmonize.Entities.User;
 import harmonize.ErrorHandling.Exceptions.UserAlreadyFriendException;
 import harmonize.ErrorHandling.Exceptions.UserAlreadyInvitedException;
 import harmonize.ErrorHandling.Exceptions.UserFriendSelfException;
+import harmonize.ErrorHandling.Exceptions.UserInfoInvalidException;
 import harmonize.ErrorHandling.Exceptions.UserNotFoundException;
 import harmonize.ErrorHandling.Exceptions.UserNotFriendException;
 import harmonize.ErrorHandling.Exceptions.UsernameTakenException;
@@ -53,42 +54,33 @@ public class UserService {
     }
 
     @NonNull
-    public String updateUser(int id, UserDTO update){
+    public UserDTO updateUser(int id, UserDTO update){
         User user = userRepository.findReferenceById(id);
 
         if(user == null)
             throw new UserNotFoundException(id);
 
-        if(userRepository.findByUsername(update.getUsername()) != null)
+        if (update.getUsername().isEmpty())
+            throw new UserInfoInvalidException("Username cannot be empty.");
+
+        if(userRepository.findByUsername(update.getUsername()) != null && userRepository.findByUsername(update.getUsername()) != user)
             throw new UsernameTakenException(update.getUsername());
 
-        String nullUpdate = "Nothing was changed for user: " + id;
-        String response = "";
-
-        if(update.getFirstName() != null) {
-            response += new String(String.format("First name: \"%s\" was updated to \"%s.\"\n", user.getFirstName(), update.getFirstName()));
+        if(update.getFirstName() != null)
             user.setFirstName(update.getFirstName());
-        }
             
-        if(update.getLastName() != null) {
-            response += new String(String.format("Last name: \"%s\" was updated to \"%s.\"\n", user.getLastName(), update.getLastName()));
+        if(update.getLastName() != null)
             user.setLastName(update.getLastName());
-        }
 
-        if(update.getUsername() != null) {
-            response += new String(String.format("Username: \"%s\" was updated to \"%s.\"\n", user.getUsername(), update.getUsername()));
+        if(update.getUsername() != null)
             user.setUsername(update.getUsername());
-        }
 
-        if(update.getBio() != null) {
-            response += new String(String.format("Bio: \"%s\" was updated to \"%s.\"\n", user.getBio(), update.getBio()));
+        if(update.getBio() != null)
             user.setBio(update.getBio());
-        }
 
         userRepository.save(user);
-        response = response.trim();
         
-        return response.isEmpty() ? nullUpdate : response;
+        return new UserDTO(user);
     }
 
     @NonNull

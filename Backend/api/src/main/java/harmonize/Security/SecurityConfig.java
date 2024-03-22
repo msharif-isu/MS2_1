@@ -1,6 +1,7 @@
 package harmonize.Security;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -12,6 +13,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.client.RestTemplate;
 import org.springframework.web.socket.server.standard.ServerEndpointExporter;
 
 /**
@@ -78,5 +80,10 @@ public class SecurityConfig {
     @Bean
     public ChatCrypto chatCrypto() {
         return new ChatCrypto();
+    }
+
+    @Bean
+    public RestTemplate restTemplate(RestTemplateBuilder builder) {
+        return builder.build();
     }
 }

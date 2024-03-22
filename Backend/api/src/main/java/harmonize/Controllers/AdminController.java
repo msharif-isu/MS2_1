@@ -59,7 +59,7 @@ public class AdminController {
     }
 
     @PutMapping(path = "/users/{id}")
-    public ResponseEntity<String> updateUser(@PathVariable int id, @RequestBody UserDTO update){
+    public ResponseEntity<UserDTO> updateUser(@PathVariable int id, @RequestBody UserDTO update){
         return ResponseEntity.ok(userService.updateUser(id, update));
     }
 

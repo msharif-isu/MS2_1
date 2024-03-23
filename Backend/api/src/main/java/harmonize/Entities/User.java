@@ -71,7 +71,7 @@ public class User {
     private Set<Report> sentReports = new HashSet<>();
 
     @OneToMany(fetch = FetchType.EAGER)
-    private Set<Report> recievedReports = new HashSet<>();
+    private Set<Report> receivedReports = new HashSet<>();
 
     public User(String firstName, String lastName, String username, String password) {
         this.firstName = firstName;

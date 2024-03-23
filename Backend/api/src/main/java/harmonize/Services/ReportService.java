@@ -55,7 +55,7 @@ public class ReportService {
         report.setMessageText(reportDTO.getMessage().getText());
 
         message.getReports().add(report);
-        reported.getRecievedReports().add(report);
+        reported.getReceivedReports().add(report);
         reporter.getSentReports().add(report);
 
         reportRepository.save(report);
@@ -99,7 +99,7 @@ public class ReportService {
         User reporter = report.getReporter();
 
         message.getReports().remove(report);
-        reported.getRecievedReports().remove(report);
+        reported.getReceivedReports().remove(report);
         reporter.getSentReports().remove(report);
 
         messageRepository.save(message);

@@ -9,6 +9,7 @@ import jakarta.persistence.Table;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 
@@ -30,7 +31,7 @@ public class Role {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    @lombok.NonNull
+    @NonNull
     @Column(unique = true)
     private String name;
 

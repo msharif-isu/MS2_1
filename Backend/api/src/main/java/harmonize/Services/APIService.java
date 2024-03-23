@@ -19,9 +19,12 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import harmonize.DTOs.SearchDTO;
+import harmonize.ErrorHandling.Exceptions.InvalidSearchException;
+
 @Service
 public class APIService {
-    private JsonNode apiAuthentication;
+    private String apiAuthentication;
 
     private long apiExpiration;
 
@@ -39,13 +42,13 @@ public class APIService {
         this.apiExpiration = 0;
     }
 
-    public JsonNode getAPIToken() throws JsonMappingException, JsonProcessingException {
+    public String getAPIToken() throws JsonMappingException, JsonProcessingException {
+        if (apiExpiration > System.currentTimeMillis())
+            return apiAuthentication;
+
         final String url = "https://accounts.spotify.com/api/token";
         final String clientID = "d3eacb5996b54e6fbb79ae2c4902a417";
         final String clientSecret = "4838a780565949b6b02e6f4f97f4ba0b";
-
-        if (apiExpiration > System.currentTimeMillis())
-            return apiAuthentication;
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
@@ -61,28 +64,55 @@ public class APIService {
         JsonNode responseJson = objectMapper.readTree(response.getBody());
         this.apiExpiration = System.currentTimeMillis() + responseJson.get("expires_in").asInt() * 1000;
 
-        return (apiAuthentication = responseJson);
+        return (apiAuthentication = responseJson.get("access_token").toString().replaceAll("\"", ""));
     }
 
-    public JsonNode search(String search) throws JsonMappingException, JsonProcessingException {
+    public JsonNode search(SearchDTO search) throws JsonMappingException, JsonProcessingException {
         String urlEnd = "/search";
 
         HttpHeaders headers = new HttpHeaders();
         headers.set(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE);
-        headers.set("Authorization", "Bearer " + getAPIToken().get("access_token").toString().replaceAll("\"", ""));
-        HttpEntity<?> entity = new HttpEntity<>(headers);
+        headers.set("Authorization", "Bearer " + getAPIToken());
 
-        String url = UriComponentsBuilder.fromHttpUrl(apiURL + urlEnd)
-                        .queryParam("q", search)
-                        .queryParam("type", "album,track,artist")
-                        .queryParam("market", "US")
-                        .queryParam("limit", "3")
-                        .encode()
-                        .toUriString();
+        UriComponentsBuilder urlBuilder = UriComponentsBuilder.fromHttpUrl(apiURL + urlEnd)
+                        .queryParam("q", search.getQ())
+                        .queryParam("type", search.getType())
+                        .queryParam("market", "US");
 
-        ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.GET, entity, String.class);
+        if (search.getLimit() != null)
+            urlBuilder.queryParam("limit", search.getLimit());
 
-        JsonNode responseJson = objectMapper.readTree(response.getBody());
+        if (search.getOffset() != null)
+            urlBuilder.queryParam("offset", search.getOffset());
+
+        String url = urlBuilder.encode().toUriString();
+        JsonNode responseJson;
+
+        try {
+            ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.GET, new HttpEntity<>(headers), String.class);
+            responseJson = objectMapper.readTree(response.getBody());
+        } catch(Exception e) {
+            throw new InvalidSearchException("Invalid search");
+        }
+
+        return responseJson;
+    }
+
+    public JsonNode getTrack(String id) throws JsonMappingException, JsonProcessingException {
+        String urlEnd = "/tracks/" + id;
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.set(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE);
+        headers.set("Authorization", "Bearer " + getAPIToken());
+
+        JsonNode responseJson;
+
+        try {
+            ResponseEntity<String> response = restTemplate.exchange(apiURL + urlEnd, HttpMethod.GET, new HttpEntity<>(headers), String.class);
+            responseJson = objectMapper.readTree(response.getBody());
+        } catch(Exception e) {
+            throw new InvalidSearchException("Invalid track");
+        }
 
         return responseJson;
     }

@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 
 import harmonize.DTOs.ErrorDTO;
 import harmonize.ErrorHandling.Exceptions.InternalServerErrorException;
+import harmonize.ErrorHandling.Exceptions.InvalidSearchException;
 import harmonize.ErrorHandling.Exceptions.MessageNotFoundException;
 import harmonize.ErrorHandling.Exceptions.ReportNotFoundException;
 import harmonize.ErrorHandling.Exceptions.RoleNotFoundException;
@@ -91,5 +92,10 @@ public class ErrorHandler {
     @ExceptionHandler(UnauthorizedUserException.class)
     public ResponseEntity<ErrorDTO> handleUnauthorizedUserException(UnauthorizedUserException e) {
         return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new ErrorDTO(HttpStatus.FORBIDDEN, e.getMessage()));
+    }
+
+    @ExceptionHandler(InvalidSearchException.class)
+    public ResponseEntity<ErrorDTO> handleInvalidSearchException(InvalidSearchException e) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorDTO(HttpStatus.BAD_REQUEST, e.getMessage()));
     }
 }

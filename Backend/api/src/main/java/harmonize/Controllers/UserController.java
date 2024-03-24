@@ -82,5 +82,15 @@ public class UserController {
     public ResponseEntity<String> removeFriend(Principal principal, @PathVariable int id){
         return ResponseEntity.ok(userService.removeFriend(userService.getUser(principal.getName()).getId(), id));
     }
+
+    @PostMapping(path = "/songs/{id}")
+    public ResponseEntity<String> addSong(Principal principal, @PathVariable String id){
+        return ResponseEntity.ok(userService.addSong(userService.getUser(principal.getName()).getId(), id));
+    }
+
+    @DeleteMapping(path = "/songs/{id}")
+    public ResponseEntity<String> removeSong(Principal principal, @PathVariable String id){
+        return ResponseEntity.ok(userService.removeSong(userService.getUser(principal.getName()).getId(), id));
+    }
 }
 

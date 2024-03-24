@@ -48,7 +48,12 @@ public class User {
     private String privateKeyWrapped;
 
     @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(name = "user_roles", joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),
+    @JoinTable(name = "likedSongs", joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),
+                             inverseJoinColumns = @JoinColumn(name = "song_id", referencedColumnName = "id"))
+    private Set<Song> likedSongs = new HashSet<>();
+
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(name = "userRoles", joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),
                              inverseJoinColumns = @JoinColumn(name = "role_id", referencedColumnName = "id"))
     private Set<Role> roles = new HashSet<>();
 

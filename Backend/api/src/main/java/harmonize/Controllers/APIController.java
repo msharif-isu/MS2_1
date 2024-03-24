@@ -13,7 +13,6 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonNode;
 
 import harmonize.DTOs.SearchDTO;
-import harmonize.DTOs.UserDTO;
 import harmonize.Services.APIService;
 
 @RestController

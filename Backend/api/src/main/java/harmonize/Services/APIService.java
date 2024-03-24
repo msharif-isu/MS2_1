@@ -14,13 +14,13 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import harmonize.DTOs.SearchDTO;
+import harmonize.Entities.Song;
 import harmonize.ErrorHandling.Exceptions.InvalidSearchException;
+import harmonize.Repositories.SongRepository;
 
 @Service
 public class APIService {
@@ -34,15 +34,18 @@ public class APIService {
 
     private ObjectMapper objectMapper;
 
+    private SongRepository songRepository;
+
     @Autowired
-    public APIService(RestTemplate restTemplate) {
+    public APIService(RestTemplate restTemplate, SongRepository songRepository) {
         this.restTemplate = restTemplate;
         this.objectMapper = new ObjectMapper();
         this.apiURL = "https://api.spotify.com/v1";
         this.apiExpiration = 0;
+        this.songRepository = songRepository;
     }
 
-    public String getAPIToken() throws JsonMappingException, JsonProcessingException {
+    public String getAPIToken() {
         if (apiExpiration > System.currentTimeMillis())
             return apiAuthentication;
 
@@ -59,15 +62,22 @@ public class APIService {
         requestBody.add("grant_type", "client_credentials");
 
         HttpEntity<MultiValueMap<String, String>> requestEntity = new HttpEntity<>(requestBody, headers);
+        JsonNode responseJson;
 
-        ResponseEntity<String> response = restTemplate.postForEntity(url, requestEntity, String.class);
-        JsonNode responseJson = objectMapper.readTree(response.getBody());
+        try {
+            ResponseEntity<String> response = restTemplate.postForEntity(url, requestEntity, String.class);
+            responseJson = objectMapper.readTree(response.getBody());
+        }
+        catch(Exception e) {
+            throw new InvalidSearchException("Unable to retrieve token");
+        }
+
         this.apiExpiration = System.currentTimeMillis() + responseJson.get("expires_in").asInt() * 1000;
 
-        return (apiAuthentication = responseJson.get("access_token").toString().replaceAll("\"", ""));
+        return (apiAuthentication = responseJson.get("access_token").asText());
     }
 
-    public JsonNode search(SearchDTO search) throws JsonMappingException, JsonProcessingException {
+    public JsonNode search(SearchDTO search) {
         String urlEnd = "/search";
 
         HttpHeaders headers = new HttpHeaders();
@@ -98,7 +108,7 @@ public class APIService {
         return responseJson;
     }
 
-    public JsonNode getTrack(String id) throws JsonMappingException, JsonProcessingException {
+    public JsonNode getTrack(String id) {
         String urlEnd = "/tracks/" + id;
 
         HttpHeaders headers = new HttpHeaders();
@@ -113,6 +123,8 @@ public class APIService {
         } catch(Exception e) {
             throw new InvalidSearchException("Invalid track");
         }
+
+        songRepository.save(new Song(responseJson));
 
         return responseJson;
     }

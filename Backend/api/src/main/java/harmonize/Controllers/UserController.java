@@ -14,7 +14,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import harmonize.DTOs.ReportDTO;
 import harmonize.DTOs.UserDTO;
+import harmonize.Services.ReportService;
 import harmonize.Services.UserService;
 
 /**
@@ -27,10 +29,12 @@ import harmonize.Services.UserService;
 @RequestMapping("/users")
 public class UserController {
     private UserService userService;
+    private ReportService reportService;
 
     @Autowired
-    public UserController(UserService userService) {
+    public UserController(UserService userService, ReportService reportService) {
         this.userService = userService;
+        this.reportService = reportService;
     }
 
     @GetMapping(path = "")
@@ -81,6 +85,26 @@ public class UserController {
     @DeleteMapping(path = "/friends/{id}")
     public ResponseEntity<String> removeFriend(Principal principal, @PathVariable int id){
         return ResponseEntity.ok(userService.removeFriend(userService.getUser(principal.getName()).getId(), id));
+    }
+
+    @GetMapping(path = "/reports")
+    public ResponseEntity<List<ReportDTO>> getSentReports(Principal principal){
+        return ResponseEntity.ok(reportService.getSentReports(userService.getUser(principal.getName()).getId()));
+    }
+
+    @GetMapping(path = "/reports/{id}")
+    public ResponseEntity<ReportDTO> getSentReport(Principal principal, @PathVariable int id){
+        return ResponseEntity.ok(reportService.getSentReport(userService.getUser(principal.getName()).getId(), id));
+    }
+
+    @PostMapping(path = "/reports")
+    public ResponseEntity<ReportDTO> sendReport(Principal principal, @RequestBody ReportDTO report){
+        return ResponseEntity.ok(reportService.sendReport(userService.getUser(principal.getName()).getId(), report));
+    }
+
+    @DeleteMapping(path = "/reports/{id}")
+    public ResponseEntity<String> deleteSentReport(Principal principal, @PathVariable int id){
+        return ResponseEntity.ok(reportService.deleteSentReport(userService.getUser(principal.getName()).getId(), id));
     }
 }
 

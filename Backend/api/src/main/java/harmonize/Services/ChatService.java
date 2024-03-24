@@ -60,8 +60,6 @@ public class ChatService {
         User user = (User)session.getUserProperties().get("user");
         Keys keys = (Keys)session.getUserProperties().get("keys");
 
-        sessions.add(session);
-
         for (Conversation conversation : user.getConversations()) {
             send(session, new ConversationDTO(conversation));
             for (Message message : conversation.getMessages()) {
@@ -73,6 +71,8 @@ public class ChatService {
                 }   
             }
         }
+
+        sessions.add(session);
     }
 
     public void onMessage(Session session, String message) throws IOException {

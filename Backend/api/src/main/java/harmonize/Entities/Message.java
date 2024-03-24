@@ -2,7 +2,9 @@ package harmonize.Entities;
 
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
@@ -15,6 +17,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.MapKeyJoinColumn;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
@@ -39,6 +42,8 @@ public class Message {
     @JoinColumn(name = "sender_id", referencedColumnName = "id")
     private User sender;
 
+    private String hash;
+
     @ManyToOne
     @JoinColumn(name="conversation_id", referencedColumnName = "id")
     private Conversation conversation;
@@ -48,6 +53,9 @@ public class Message {
     @MapKeyJoinColumn(name="recipient_id", referencedColumnName = "id")
     @Column(name="encrypted_message", columnDefinition = "LONGTEXT")
     private Map<User, String> encryptions = new HashMap<>();
+
+    @OneToMany(mappedBy="message", fetch = FetchType.EAGER)
+    private Set<Report> reports = new HashSet<>();
 
     @Override
     public boolean equals(Object o) {

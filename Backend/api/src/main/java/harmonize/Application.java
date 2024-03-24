@@ -7,6 +7,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
 import harmonize.DTOs.RegisterDTO;
+import harmonize.ErrorHandling.Exceptions.RolePermissionException;
 import harmonize.ErrorHandling.Exceptions.UserAlreadyFriendException;
 import harmonize.ErrorHandling.Exceptions.UsernameTakenException;
 import harmonize.Services.AdminService;
@@ -48,7 +49,10 @@ public class Application {
                     userService.addFriend(adminService.getUser("tbrown").getId(), adminService.getUser("jsmith").getId());
                 } catch (UserAlreadyFriendException e) {}
             
-                adminService.updateRole(adminService.getUser("admin").getId(), "ADMIN");
+                try {
+                    adminService.updateRole(adminService.getUser("admin").getId(), "ADMIN");
+                } catch (RolePermissionException e) {}
+                
             } catch (Exception e) {
                 e.printStackTrace();
             }

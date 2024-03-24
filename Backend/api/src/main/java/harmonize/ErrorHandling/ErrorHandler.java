@@ -20,6 +20,7 @@ import harmonize.ErrorHandling.Exceptions.UserInfoInvalidException;
 import harmonize.ErrorHandling.Exceptions.UserNotFoundException;
 import harmonize.ErrorHandling.Exceptions.UserNotFriendException;
 import harmonize.ErrorHandling.Exceptions.UsernameTakenException;
+import harmonize.ErrorHandling.Exceptions.ReportInfoInvalidException;
 
 @ControllerAdvice
 public class ErrorHandler {
@@ -46,6 +47,11 @@ public class ErrorHandler {
     @ExceptionHandler(ReportNotFoundException.class)
     public ResponseEntity<ErrorDTO> handleReportNotFoundException(ReportNotFoundException e) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorDTO(HttpStatus.NOT_FOUND, e.getMessage()));
+    }
+
+    @ExceptionHandler(ReportInfoInvalidException.class)
+    public ResponseEntity<ErrorDTO> handleReportInfoInvalidException(ReportInfoInvalidException e) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorDTO(HttpStatus.BAD_REQUEST, e.getMessage()));
     }
     
     @ExceptionHandler(MessageNotFoundException.class)

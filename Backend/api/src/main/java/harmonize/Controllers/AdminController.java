@@ -99,12 +99,22 @@ public class AdminController {
 
     @GetMapping(path = "/reports")
     public ResponseEntity<List<ReportDTO>> getAllReports() {
-        return ResponseEntity.ok(reportService.getAllReports());
+        return ResponseEntity.ok(reportService.getReports());
     }
 
     @GetMapping(path = "/reports/{id}")
     public ResponseEntity<ReportDTO> getReport(@PathVariable int id) {
         return ResponseEntity.ok(reportService.getReport(id));
+    }
+
+    @GetMapping(path = "/reports/sent/{id}")
+    public ResponseEntity<List<ReportDTO>> getReports(@PathVariable int id) {
+        return ResponseEntity.ok(reportService.getSentReports(id));
+    }
+
+    @GetMapping(path = "/reports/received/{id}")
+    public ResponseEntity<List<ReportDTO>> getRecievedReports(@PathVariable int id) {
+        return ResponseEntity.ok(reportService.getRecievedReports(id));
     }
 
     @DeleteMapping(path = "/reports/{id}")

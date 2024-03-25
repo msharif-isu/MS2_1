@@ -54,7 +54,7 @@ public class ReportService {
         if (user == null)
             throw new UserNotFoundException(id);
         List<ReportDTO> result = new ArrayList<>();
-        for (Report report : user.getRecievedReports()) {
+        for (Report report : user.getReceivedReports()) {
             result.add(new ReportDTO(report));
         }
         return result;
@@ -77,7 +77,7 @@ public class ReportService {
         if (user == null)
             throw new UserNotFoundException(id);
         Report report = reportRepository.findReferenceById(reportID);
-        if (report == null || !user.getRecievedReports().contains(report))
+        if (report == null || !user.getReceivedReports().contains(report))
             throw new ReportNotFoundException(reportID);
         return new ReportDTO(report);
     }

@@ -87,16 +87,6 @@ public class UserController {
         return ResponseEntity.ok(userService.removeFriend(userService.getUser(principal.getName()).getId(), id));
     }
 
-<<<<<<< Backend/api/src/main/java/harmonize/Controllers/UserController.java
-    @PostMapping(path = "/songs/{id}")
-    public ResponseEntity<String> addSong(Principal principal, @PathVariable String id){
-        return ResponseEntity.ok(userService.addSong(userService.getUser(principal.getName()).getId(), id));
-    }
-
-    @DeleteMapping(path = "/songs/{id}")
-    public ResponseEntity<String> removeSong(Principal principal, @PathVariable String id){
-        return ResponseEntity.ok(userService.removeSong(userService.getUser(principal.getName()).getId(), id));
-=======
     @GetMapping(path = "/reports")
     public ResponseEntity<List<ReportDTO>> getSentReports(Principal principal){
         return ResponseEntity.ok(reportService.getSentReports(userService.getUser(principal.getName()).getId()));
@@ -115,7 +105,6 @@ public class UserController {
     @DeleteMapping(path = "/reports/{id}")
     public ResponseEntity<String> deleteSentReport(Principal principal, @PathVariable int id){
         return ResponseEntity.ok(reportService.deleteSentReport(userService.getUser(principal.getName()).getId(), id));
->>>>>>> Backend/api/src/main/java/harmonize/Controllers/UserController.java
     }
 
     @PostMapping(path = "/songs/{id}")

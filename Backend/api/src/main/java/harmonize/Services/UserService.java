@@ -233,7 +233,7 @@ public class UserService {
         if(user == null)
             throw new UserNotFoundException(id);
 
-        Song song = new Song(apiService.getTrack(songId));
+        Song song = new Song(apiService.getSong(songId));
 
         if(user.getLikedSongs().contains(song))
             throw new EntityAlreadyExistsException(song.getTitle() + " already added.");
@@ -251,7 +251,7 @@ public class UserService {
         if(user == null)
             throw new UserNotFoundException(id);
 
-        Song song = new Song(apiService.getTrack(songId));
+        Song song = new Song(apiService.getSong(songId));
 
         if(!user.getLikedSongs().contains(song))
             throw new EntityNotFoundException(song.getTitle() + " could not be found.");

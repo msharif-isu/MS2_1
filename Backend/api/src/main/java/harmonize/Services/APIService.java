@@ -108,7 +108,7 @@ public class APIService {
         return responseJson;
     }
 
-    public JsonNode getTrack(String id) {
+    public JsonNode getSong(String id) {
         String urlEnd = "/tracks/" + id;
 
         HttpHeaders headers = new HttpHeaders();
@@ -121,7 +121,7 @@ public class APIService {
             ResponseEntity<String> response = restTemplate.exchange(apiURL + urlEnd, HttpMethod.GET, new HttpEntity<>(headers), String.class);
             responseJson = objectMapper.readTree(response.getBody());
         } catch(Exception e) {
-            throw new InvalidSearchException("Invalid track");
+            throw new InvalidSearchException("Invalid song");
         }
 
         songRepository.save(new Song(responseJson));

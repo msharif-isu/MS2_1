@@ -30,8 +30,8 @@ public class APIController {
         return ResponseEntity.ok(apiService.search(search));
     }
 
-    @GetMapping(path = "/tracks/{id}")
-    public ResponseEntity<JsonNode> getTrack(@PathVariable String id) throws JsonMappingException, JsonProcessingException {
-        return ResponseEntity.ok(apiService.getTrack(id));
+    @GetMapping(path = "/songs/{id}")
+    public ResponseEntity<JsonNode> getSong(@PathVariable String id) throws JsonMappingException, JsonProcessingException {
+        return ResponseEntity.ok(apiService.getSong(id));
     }
 }

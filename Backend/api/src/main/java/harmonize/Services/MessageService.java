@@ -3,6 +3,7 @@ package harmonize.Services;
 import java.util.Date;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import harmonize.DTOs.ConversationDTO;
@@ -24,19 +25,22 @@ public class MessageService {
     private ConversationRepository conversationRepository;
     private ReportService reportService;
     private ChatCrypto chatCrypto;
+    private BCryptPasswordEncoder encoder;
 
     @Autowired
-    public MessageService(ConversationRepository conversationRepository, MessageRepository messageRepository, ReportService reportService, ChatCrypto chatCrypto) {
+    public MessageService(ConversationRepository conversationRepository, MessageRepository messageRepository, ReportService reportService, ChatCrypto chatCrypto, BCryptPasswordEncoder encoder) {
         this.conversationRepository = conversationRepository;
         this.messageRepository = messageRepository;
         this.reportService = reportService;
         this.chatCrypto = chatCrypto;
+        this.encoder = encoder;
     }
 
     public Message createMessage(User sender, Conversation conversation, String text, String privateKey) throws Exception {
         Message message = new Message();
         message.setTime(new Date());
         message.setSender(sender);
+        message.setHash(encoder.encode(text));
         message.setConversation(conversation);
         for (User user : conversation.getMembers())
             message.getEncryptions().put(user, chatCrypto.encrypt(privateKey, user.getPublicKey(), text));   

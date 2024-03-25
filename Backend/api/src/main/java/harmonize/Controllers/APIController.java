@@ -34,4 +34,9 @@ public class APIController {
     public ResponseEntity<JsonNode> getSong(@PathVariable String id) throws JsonMappingException, JsonProcessingException {
         return ResponseEntity.ok(apiService.getSong(id));
     }
+
+    @GetMapping(path = "/artists/{id}")
+    public ResponseEntity<JsonNode> getArtist(@PathVariable String id) throws JsonMappingException, JsonProcessingException {
+        return ResponseEntity.ok(apiService.getArtist(id));
+    }
 }

@@ -21,23 +21,26 @@ import harmonize.ErrorHandling.Exceptions.UserNotFoundException;
 import harmonize.ErrorHandling.Exceptions.UserNotFriendException;
 import harmonize.ErrorHandling.Exceptions.UsernameTakenException;
 import harmonize.Repositories.RoleRepository;
+import harmonize.Repositories.SongRepository;
 import harmonize.Repositories.UserRepository;
 
 @Service
 public class UserService {
     private UserRepository userRepository;
     private RoleRepository roleRepository;
+    private SongRepository songRepository;
 
     private ConversationService conversationService;
     private APIService apiService;
 
     @Autowired
-    public UserService(UserRepository userRepository, RoleRepository roleRepository, 
+    public UserService(UserRepository userRepository, RoleRepository roleRepository, SongRepository songRepository, 
                         ConversationService conversationService, APIService apiService) {
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
         this.conversationService = conversationService;
         this.apiService = apiService;
+        this.songRepository = songRepository;
     }
 
     @NonNull

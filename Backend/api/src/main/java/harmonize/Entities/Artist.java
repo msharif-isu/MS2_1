@@ -2,7 +2,6 @@ package harmonize.Entities;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
-import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
@@ -11,22 +10,18 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "songs")
+@Table(name = "artists")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class Song {
+public class Artist {
     @Id
     private String id;
 
-    @Column(unique = true)
-    private String title;
+    private String name;
 
-    private String artist;
-
-    public Song(JsonNode song) {
-        this.id = song.get("id").asText();
-        this.title = song.get("name").asText();
-        this.artist = song.get("artists").get(0).get("name").asText();
+    public Artist(JsonNode artist) {
+        this.id = artist.get("id").asText();
+        this.name = artist.get("name").asText();
     }
 }

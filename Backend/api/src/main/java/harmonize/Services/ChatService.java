@@ -165,9 +165,9 @@ public class ChatService {
         Keys keys = null;
 
         if (!session.getRequestParameterMap().containsKey("password"))
-            onError(session, new UnauthorizedException("Password feild in request parameters was empty."));
+            onError(session, new UnauthorizedException("Password field in request parameters was empty."));
         if (!session.getRequestParameterMap().containsKey("username"))
-            onError(session, new UnauthorizedException("Username feild in request parameters was empty."));
+            onError(session, new UnauthorizedException("Username field in request parameters was empty."));
 
         user = 
             session.getUserProperties().containsKey("user") ?
@@ -182,7 +182,7 @@ public class ChatService {
                 session.getRequestParameterMap().get("password").get(0);
         
         if (!encoder.matches(wrapperToken, user.getPassword()))
-            onError(session, new UnauthorizedException("Password feild in request parameters was invalid."));
+            onError(session, new UnauthorizedException("Password field in request parameters was invalid."));
 
         try {
             keys = 

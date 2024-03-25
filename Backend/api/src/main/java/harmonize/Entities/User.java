@@ -1,9 +1,13 @@
 package harmonize.Entities;
 
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
+import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
+import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -12,6 +16,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
+import jakarta.persistence.MapKeyColumn;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.Data;
@@ -51,6 +56,11 @@ public class User {
     @JoinTable(name = "likedSongs", joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),
                              inverseJoinColumns = @JoinColumn(name = "song_id", referencedColumnName = "id"))
     private Set<Song> likedSongs = new HashSet<>();
+
+    // @ManyToMany(fetch = FetchType.EAGER)
+    // @JoinTable(name = "likedSongs", joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),
+    //                          inverseJoinColumns = @JoinColumn(name = "song_id", referencedColumnName = "id"))
+    // private Map<Artist, Integer> topArtists = new HashMap<>();
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "userRoles", joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),

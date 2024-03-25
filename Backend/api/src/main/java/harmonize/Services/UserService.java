@@ -8,7 +8,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 
+import harmonize.DTOs.RoleDTO;
 import harmonize.DTOs.UserDTO;
+import harmonize.Entities.Role;
 import harmonize.Entities.Song;
 import harmonize.Entities.User;
 import harmonize.ErrorHandling.Exceptions.EntityAlreadyExistsException;
@@ -100,6 +102,21 @@ public class UserService {
         userRepository.delete(user);
         
         return new String(String.format("\"%s\" was deleted.", user.getUsername()));
+    }
+
+    @NonNull 
+    public List<RoleDTO> getRoles(int id) {
+        User user = userRepository.findReferenceById(id);
+
+        if(user == null)
+            throw new UserNotFoundException(id);
+
+        List<RoleDTO> roles = new ArrayList<RoleDTO>();
+
+        for (Role role : user.getRoles())
+            roles.add(new RoleDTO(role));
+
+        return roles;
     }
 
     @NonNull

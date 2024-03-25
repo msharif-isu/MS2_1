@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import harmonize.DTOs.ReportDTO;
+import harmonize.DTOs.RoleDTO;
 import harmonize.DTOs.UserDTO;
 import harmonize.Services.AdminService;
 import harmonize.Services.MessageService;
@@ -91,6 +92,11 @@ public class AdminController {
     @DeleteMapping(path = "/friends/{id1}/{id2}")
     public ResponseEntity<String> removeFriend(@PathVariable int id1, @PathVariable int id2) {
         return ResponseEntity.ok(userService.removeFriend(id1, id2));
+    }
+
+    @GetMapping(path = "/roles/{id}")
+    public ResponseEntity<List<RoleDTO>> getRoles(@PathVariable int id){
+        return ResponseEntity.ok(userService.getRoles(id));
     }
 
     @PutMapping(path = "/roles/{id}/{role}")

@@ -2,6 +2,7 @@ package harmonize.Entities;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
@@ -16,6 +17,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class Song {
     @Id
+    @Column(unique = true)
     private String id;
 
     private String title;

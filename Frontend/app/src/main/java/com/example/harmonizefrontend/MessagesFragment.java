@@ -1,7 +1,5 @@
 package com.example.harmonizefrontend;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -45,7 +43,7 @@ public class MessagesFragment extends Fragment implements WebSocketListener {
 
     private List<Message> list;
 
-    private String password, JWTtoken;
+    private String username, password, JWTtoken;
 
     private RequestQueue mQueue;
 
@@ -82,6 +80,7 @@ public class MessagesFragment extends Fragment implements WebSocketListener {
 
         navBar navBar = (navBar) getActivity();
         if (navBar != null) {
+            username = navBar.username;
             password = navBar.password;
             JWTtoken = navBar.jwtToken;
             mQueue = navBar.mQueue;
@@ -91,8 +90,8 @@ public class MessagesFragment extends Fragment implements WebSocketListener {
         }
 
         // Connect to websocket
-        String serverURL = "ws://coms-309-032.class.las.iastate.edu:8080/chats?password=" + password;
-
+        String serverURL = "ws://coms-309-032.class.las.iastate.edu:8080/chats?username=" + username + "&password=" + password;
+        Log.e("msg", "Before websocket connection");
         WebSocketManager.getInstance().connectWebSocket(serverURL, JWTtoken);
         WebSocketManager.getInstance().setWebSocketListener(this);
 
@@ -120,6 +119,9 @@ public class MessagesFragment extends Fragment implements WebSocketListener {
                     list.add(newmsg);
                     chatListAdapter.notifyItemChanged(chatListAdapter.getItemCount() + 1);
                     writeMsg.setText("");
+                    String returnMsg = "{\"type\":\"harmonize.DTOs.MessageDTO\",\"data\":{\"conversation\":{\"id\": 2},\"text\":\"Hello, World!\"}}";
+                    WebSocketManager.getInstance().sendMessage(returnMsg);
+
                 }
 
             }
@@ -128,7 +130,7 @@ public class MessagesFragment extends Fragment implements WebSocketListener {
         // Inflate the layout for this fragment
         return view;
 
-    }
+        }
 
 
 
@@ -158,9 +160,9 @@ public class MessagesFragment extends Fragment implements WebSocketListener {
         public void onWebSocketMessage(String message) {
 
         // Why does it not like runOnUiThread? Likely import statement issue?
-            runOnUiThread(() -> {
-                Log.e("msg", "onWebSocketOpen connected to server")
-            })
+//            runOnUiThread(() -> {
+//                Log.e("msg", "onWebSocketOpen connected to server")
+//            })
 
 
 

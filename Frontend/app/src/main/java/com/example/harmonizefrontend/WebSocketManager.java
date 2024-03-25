@@ -2,14 +2,10 @@ package com.example.harmonizefrontend;
 
 import android.util.Log;
 
-import com.google.gson.Gson;
-
 import org.java_websocket.client.WebSocketClient;
 import org.java_websocket.handshake.ServerHandshake;
 
 import java.net.URI;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Singleton WebSocketManager instance used for managing WebSocket connections
@@ -69,12 +65,16 @@ public class WebSocketManager{
     public void connectWebSocket(String serverUrl, String jwtToken) {
         try {
             URI serverUri = URI.create(serverUrl);
-            Map<String, String> headers = new HashMap<>();
-            headers.put("Authorization", "Bearer " + jwtToken);
+//            Map<String, String> headers = new HashMap<>();
+//            headers.put("Authorization", "Bearer " + jwtToken);
+            Log.e("msg", "jwtToken: " + jwtToken);
 
-            webSocketClient = new MyWebSocketClient(serverUri, headers);
+            webSocketClient = new MyWebSocketClient(serverUri);
             webSocketClient.connect();
+            Log.e("msg", "Connected to the websocket server");
+
         } catch (Exception e) {
+            Log.e("msg", "Error connecting to the websocket server");
             e.printStackTrace();
         }
     }
@@ -86,13 +86,13 @@ public class WebSocketManager{
      * the application to send a message to the server through the established WebSocket
      * connection.
      *
-     * @param messageDTO The message data to be sent to the WebSocket server.
+     * @param message The message data to be sent to the WebSocket server.
      */
-    public void sendMessage(MessageDTO messageDTO) {
+    public void sendMessage(String message) {
         if (webSocketClient != null && webSocketClient.isOpen()) {
-            Gson gson = new Gson();
-            String messageGson = gson.toJson(messageDTO);
-            webSocketClient.send(messageGson);
+//            Gson gson = new Gson();
+//            String messageGson = gson.toJson(messageDTO);
+            webSocketClient.send(message);
         }
     }
 
@@ -117,8 +117,8 @@ public class WebSocketManager{
 
         private String jwtToken;
 
-        private MyWebSocketClient(URI serverUri, Map<String, String> headers) {
-            super(serverUri, headers);
+        private MyWebSocketClient(URI serverUri) {
+            super(serverUri);
         }
 
         /**
@@ -137,31 +137,32 @@ public class WebSocketManager{
             }
         }
 
+
         /**
          * Called when a WebSocket message is received from the server. This method is
          * invoked to handle incoming WebSocket messages and allows the application to
          * process and respond to messages as needed.
          *
-         * @param packetDTO The WebSocket message received from the server as a string.
+         * @param message The WebSocket message received from the server as a string.
          */
         @Override
-        public void onMessage(packetDTO packetDTO) {
+        public void onMessage(String message) {
             Log.d("WebSocket", "Received message: ");
-            if (webSocketListener != null) {
-                Gson gson = new Gson();
-
-                if (packetDTO.getType().equals("harmonize.DTOs.MessageDTO")) {
-                    // Do something
-                }
-                else if (packetDTO.getType().equals("harmonize.DTOs.ConversationDTO")) {
-                    // Do something
-                }
-                else {
-                    Log.e("msg", "There is an error with the incoming packetDTO");
-                }
-                webSocketListener.onWebSocketMessage(packetDTO);
+//            if (webSocketListener != null) {
+//                Gson gson = new Gson();
+//
+//                if (packetDTO.getType().equals("harmonize.DTOs.MessageDTO")) {
+//                    // Do something
+//                }
+//                else if (packetDTO.getType().equals("harmonize.DTOs.ConversationDTO")) {
+//                    // Do something
+//                }
+//                else {
+//                    Log.e("msg", "There is an error with the incoming packetDTO");
+//                }
+//                webSocketListener.onWebSocketMessage(packetDTO);
             }
-        }
+
 
         /**
          * Called when the WebSocket connection is closed, either due to a client request

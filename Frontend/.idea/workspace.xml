@@ -62,10 +62,15 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="f485fb5a-e201-4eb6-becc-9a0087de82f8" name="Changes" comment="Added functionality to navbar which links to the Profile.">
+      <change beforePath="$PROJECT_DIR$/.gradle/8.2/executionHistory/executionHistory.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/8.2/executionHistory/executionHistory.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gradle/8.2/fileHashes/fileHashes.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/8.2/fileHashes/fileHashes.bin" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gradle/8.2/fileHashes/fileHashes.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/8.2/fileHashes/fileHashes.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/harmonizefrontend/ConversationDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/harmonizefrontend/ConversationDTO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/AndroidManifest.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/AndroidManifest.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/harmonizefrontend/MessagesFragment.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/harmonizefrontend/MessagesFragment.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/harmonizefrontend/WebSocketListener.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/harmonizefrontend/WebSocketListener.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/harmonizefrontend/WebSocketMainActivity.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/harmonizefrontend/WebSocketManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/harmonizefrontend/WebSocketManager.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -294,15 +299,6 @@
     <option name="LAST_COMMIT_MESSAGE" value="Added functionality to navbar which links to the Profile." />
   </component>
   <component name="XDebuggerManager">
-    <breakpoint-manager>
-      <breakpoints>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/app/src/main/java/com/example/harmonizefrontend/ChatListAdapter.java</url>
-          <line>51</line>
-          <option name="timeStamp" value="3" />
-        </line-breakpoint>
-      </breakpoints>
-    </breakpoint-manager>
     <watches-manager>
       <configuration name="AndroidRunConfigurationType">
         <watch expression="jsonObjReq" />

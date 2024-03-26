@@ -1,12 +1,10 @@
-name: backend
+name: backend-test
 
 services:
   harmonize-db:
     build: ./db
-    ports:
-      - "3306:3306"
     networks:
-      - harmonize-net
+      - harmonize-net-test
     environment:
       MYSQL_ROOT_PASSWORD: adminpw
       MYSQL_DATABASE: harmonize-db
@@ -17,19 +15,17 @@ services:
       interval: 5s
       timeout: 5s
       retries: 10
-    restart: always
 
   harmonize-api:
-    build: ./api
-    ports:
-      - "8080:8080"
+    build:
+      context: ./api
+      dockerfile: Dockerfile.test
     depends_on:
       harmonize-db:
         condition: service_healthy
     networks:
-      - harmonize-net
-    restart: always
+      - harmonize-net-test
 
 networks:
-  harmonize-net:
+  harmonize-net-test:
     driver: bridge

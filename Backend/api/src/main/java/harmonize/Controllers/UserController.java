@@ -53,7 +53,7 @@ public class UserController {
     }
 
     @PutMapping(path = "")
-    public ResponseEntity<String> updateUser(Principal principal, @RequestBody UserDTO update){
+    public ResponseEntity<UserDTO> updateUser(Principal principal, @RequestBody UserDTO update){
         return ResponseEntity.ok(userService.updateUser(userService.getUser(principal.getName()).getId(), update));
     }
 

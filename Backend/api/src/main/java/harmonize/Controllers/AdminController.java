@@ -59,7 +59,7 @@ public class AdminController {
     }
 
     @PutMapping(path = "/users/{id}")
-    public ResponseEntity<String> updateUser(@PathVariable int id, @RequestBody UserDTO update){
+    public ResponseEntity<UserDTO> updateUser(@PathVariable int id, @RequestBody UserDTO update){
         return ResponseEntity.ok(userService.updateUser(id, update));
     }
 
@@ -120,7 +120,7 @@ public class AdminController {
 
     @GetMapping(path = "/reports/received/{id}")
     public ResponseEntity<List<ReportDTO>> getRecievedReports(@PathVariable int id) {
-        return ResponseEntity.ok(reportService.getRecievedReports(id));
+        return ResponseEntity.ok(reportService.getReceivedReports(id));
     }
 
     @DeleteMapping(path = "/reports/{id}")

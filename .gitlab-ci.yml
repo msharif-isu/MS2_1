@@ -1,15 +1,30 @@
 stages:
+  - backendDockerTest
   - backendDockerDeploy
 
-backend-docker:
-  stage: backendDockerDeploy
+backend-docker-test:
+  stage: backendDockerTest
+  needs: []
   tags:
     - backend
   script:
     - cd Backend
-    - sudo docker compose down
-    - sudo docker compose build
-    - sudo docker compose up -d
+    - sudo docker-compose -f docker-compose.test.yml down
+    - sudo docker-compose -f docker-compose.test.yml build
+    - sudo docker-compose -f docker-compose.test.yml up --abort-on-container-exit
+    - sudo docker image prune -af
+    - sudo docker volume prune -af
+
+backend-docker-deploy:
+  stage: backendDockerDeploy
+  needs: []
+  tags:
+    - backend
+  script:
+    - cd Backend
+    - sudo docker-compose down
+    - sudo docker-compose build
+    - sudo docker-compose up -d
     - sudo docker image prune -af
     - sudo docker volume prune -af
   only:

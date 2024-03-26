@@ -4,6 +4,8 @@ public class UserSession {
     private static UserSession instance;
     private Member currentUser;
 
+    private String jwtToken;
+
     private UserSession() {
 
     }
@@ -21,5 +23,9 @@ public class UserSession {
 
     public void setCurrentUser(Member currentUser) {
         this.currentUser = currentUser;
+    }
+
+    public String getJwtToken() {
+        return jwtToken;
     }
 }

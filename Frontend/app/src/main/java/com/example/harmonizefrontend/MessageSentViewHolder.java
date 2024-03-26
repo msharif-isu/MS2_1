@@ -7,7 +7,7 @@ import android.widget.TextView;
 import androidx.recyclerview.widget.RecyclerView;
 
 public class MessageSentViewHolder extends RecyclerView.ViewHolder{
-    TextView messageText, timeText;
+    TextView messageText, timeText, dateText;
 
 //    android.view.View View;
 
@@ -15,6 +15,7 @@ public class MessageSentViewHolder extends RecyclerView.ViewHolder{
         super(itemView);
         messageText = itemView.findViewById(R.id.text_message_other);
         timeText = itemView.findViewById(R.id.text_timestamp_other);
+        dateText = itemView.findViewById(R.id.text_date_other);
 //        itemView = View;
     }
 

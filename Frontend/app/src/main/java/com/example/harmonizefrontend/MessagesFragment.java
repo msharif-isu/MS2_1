@@ -13,6 +13,9 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.android.volley.RequestQueue;
+import com.google.gson.Gson;
+
+import org.java_websocket.handshake.ServerHandshake;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -24,7 +27,7 @@ import java.util.List;
  * Use the {@link MessagesFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class MessagesFragment extends Fragment{
+public class MessagesFragment extends Fragment implements WebSocketListener{
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -42,7 +45,6 @@ public class MessagesFragment extends Fragment{
     private Button sendBtn;
 
     private List<MessageDTO> list;
-
 
     private String username, password, JWTtoken;
 
@@ -104,10 +106,10 @@ public class MessagesFragment extends Fragment{
         }
 
         // Connect to websocket
-        String serverURL = "ws://coms-309-032.class.las.iastate.edu:8080/chats?password=" + password;
-
-//        WebSocketManager.getInstance().connectWebSocket(serverURL, JWTtoken);
-//        WebSocketManager.getInstance().setWebSocketListener(this);
+        String serverURL = "ws://coms-309-032.class.las.iastate.edu:8080/chats?username=" + username + "&password=" + password;
+        Log.e("msg", "Before websocket connection");
+        WebSocketManager.getInstance().connectWebSocket(serverURL, JWTtoken);
+        WebSocketManager.getInstance().setWebSocketListener(this);
 
 
     }
@@ -125,61 +127,38 @@ public class MessagesFragment extends Fragment{
         recyclerView.setAdapter(chatListAdapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
-        // Connects the singleton websocket to the chat system
-        onResume();
-
         sendBtn.setOnClickListener(new View.OnClickListener() {
+            Gson gson = new Gson();
             @Override
             public void onClick(View v) {
                 if (writeMsg.getText().toString() != null) {
 //                    Message newmsg = new Message(0, writeMsg.getText().toString(), new User("Manasm", "blank"));
-//                    list.add(newmsg);
-//                    chatListAdapter.notifyItemChanged(chatListAdapter.getItemCount() + 1);
-//                    writeMsg.setText("");
-                    MessageDTO messageDTO = new MessageDTO(
+                    MessageDTO newMsg = new MessageDTO(
                             "harmonize.DTOs.MessageDTO",
-                            new MessageDTO.Data(1,
+                            new MessageDTO.Data(
+                                    1,
                                     System.currentTimeMillis(),
                                     currentMember,
                                     convo),
-                            writeMsg.getText().toString()
+                            writeMsg.getText().toString(
+                            )
                     );
-                    list.add(messageDTO);
+
+                    list.add(newMsg);
                     chatListAdapter.notifyItemChanged(chatListAdapter.getItemCount() + 1);
                     writeMsg.setText("");
-//                    Gson gson = new Gson();
-//                    String json = gson.toJson(messageDTO);
-//                    WebSocketManager.getInstance().sendMessage(json);
+                    String returnMsg = gson.toJson(newMsg);
+                    Log.e("msg", "Before sending message");
+                    WebSocketManager.getInstance().sendMessage(returnMsg);
                 }
 
             }
         });
+
         // Inflate the layout for this fragment
         return view;
     }
 
-    // Will need to create a WebSocketListener for okHttp3
-//    @Override
-//    public void onMessageSent(String message) {
-//
-//        getActivity().runOnUiThread(() -> {
-//
-//        });
-//
-//    }
-
-//    @Override
-//    public void onResume() {
-//        super.onResume();
-//        String serverURL = "ws://coms-309-032.class.las.iastate.edu:8080/chats?password=" + password;
-//        WebSocketManager.getInstance().connect(serverURL, JWTtoken);
-//    }
-//
-//    @Override
-//    public void onPause() {
-//        super.onPause();
-//        WebSocketManager.getInstance().close();
-//    }
 
 
 
@@ -209,4 +188,32 @@ public class MessagesFragment extends Fragment{
     }
 
 
+    @Override
+    public void onWebSocketOpen(ServerHandshake handshakedata) {
+
+    }
+
+    @Override
+    public void onWebSocketMessage(String message) {
+
+        this.getActivity().runOnUiThread( () -> {
+            Log.e("msg", "Recieved message in onWebSocketMessage, updating UI");
+            Gson gson = new Gson();
+            MessageDTO messageDTO = gson.fromJson(message, MessageDTO.class);
+            list.add(messageDTO);
+            chatListAdapter.notifyItemChanged(chatListAdapter.getItemCount() + 1);
+            Log.e("msg", "Updated UI with incoming message");
+        });
+
+    }
+
+    @Override
+    public void onWebSocketClose(int code, String reason, boolean remote) {
+
+    }
+
+    @Override
+    public void onWebSocketError(Exception ex) {
+
+    }
 }

@@ -8,6 +8,8 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.text.SimpleDateFormat;
+import java.time.Instant;
 import java.util.Date;
 import java.util.List;
 
@@ -56,17 +58,31 @@ public class ChatListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
         MessageDTO message = messageList.get(position);
-        Date date = new Date(message.getData().getDataUnixTime());
-        
+
+        Date dateUnix = new Date(message.getData().getDataUnixTime());
+
+        SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy");
+        SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm");
+
+        String date = dateFormat.format(dateUnix);
+        String time = timeFormat.format(dateUnix);
+
+
+
 
         if (getItemViewType(position) == 0) { // Sent message
             MessageSentViewHolder sentViewHolder = (MessageSentViewHolder) holder;
             sentViewHolder.messageText.setText(message.getText());
+            sentViewHolder.dateText.setText(date);
+            sentViewHolder.timeText.setText(time);
+
 //            sentViewHolder.timeText.setText(message.getSentAt()); // Assume Message has getTime()
         } else { // Received message
             MessageRecieveViewHolder recieveViewHolder = (MessageRecieveViewHolder) holder;
             recieveViewHolder.messageText.setText(message.getText());
             recieveViewHolder.nameText.setText(message.getData().getDataSender().getUsername());
+            recieveViewHolder.dateText.setText(date);
+            recieveViewHolder.timeText.setText(time);
 //            recieveViewHolder.timeText.setText(message.getSentAt());
 //            recieveViewHolder.pfpImage.setImageURI(message.getUser().profileURL);
 

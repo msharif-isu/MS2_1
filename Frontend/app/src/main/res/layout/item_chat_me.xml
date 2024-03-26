@@ -15,8 +15,7 @@
         android:paddingEnd="8dp"
         android:paddingBottom="4dp"
         android:text="June 10"
-        android:textColor="#C0C0C0"
-        app:layout_constraintEnd_toEndOf="parent"
+        android:textColor="@color/mint_cream"        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
     <androidx.cardview.widget.CardView
@@ -54,7 +53,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="10:00"
-        android:textColor="#C0C0C0"
+        android:textColor="@color/mint_cream"
         android:textSize="10sp"
         app:layout_constraintBottom_toBottomOf="@+id/card_message_other"
         app:layout_constraintEnd_toStartOf="@+id/card_message_other" />

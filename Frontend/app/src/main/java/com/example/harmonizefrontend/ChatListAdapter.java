@@ -2,27 +2,35 @@ package com.example.harmonizefrontend;
 
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.view.View;
-
-
+import java.text.SimpleDateFormat;
+import java.time.Instant;
+import java.util.Date;
 import java.util.List;
 
 public class ChatListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
-    private List<Message> messageList;
+    private List<MessageDTO> messageList;
 
-    protected ChatListAdapter(List<Message> messageList) {
+    protected ChatListAdapter(List<MessageDTO> messageList) {
         this.messageList = messageList;
     }
 
     @Override
     public int getItemViewType(int position) {
         // 0 is sent 1 is recieved
-        return messageList.get(position).getTypeMsg();
+        Member sender = messageList.get(position).getData().getDataSender();
+
+        if (sender.getUsername().equals(UserSession.getInstance().getCurrentUser().getUsername())) {
+            return 0;
+        }
+        else {
+            return 1;
+        }
     }
 
 
@@ -49,16 +57,32 @@ public class ChatListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
-        Message message = messageList.get(position);
+        MessageDTO message = messageList.get(position);
+
+        Date dateUnix = new Date(message.getData().getDataUnixTime());
+
+        SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy");
+        SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm");
+
+        String date = dateFormat.format(dateUnix);
+        String time = timeFormat.format(dateUnix);
+
+
+
 
         if (getItemViewType(position) == 0) { // Sent message
             MessageSentViewHolder sentViewHolder = (MessageSentViewHolder) holder;
-            sentViewHolder.messageText.setText(message.getMessage());
+            sentViewHolder.messageText.setText(message.getText());
+            sentViewHolder.dateText.setText(date);
+            sentViewHolder.timeText.setText(time);
+
 //            sentViewHolder.timeText.setText(message.getSentAt()); // Assume Message has getTime()
         } else { // Received message
             MessageRecieveViewHolder recieveViewHolder = (MessageRecieveViewHolder) holder;
-            recieveViewHolder.messageText.setText(message.getMessage());
-            recieveViewHolder.nameText.setText(message.getUser().getUsername());
+            recieveViewHolder.messageText.setText(message.getText());
+            recieveViewHolder.nameText.setText(message.getData().getDataSender().getUsername());
+            recieveViewHolder.dateText.setText(date);
+            recieveViewHolder.timeText.setText(time);
 //            recieveViewHolder.timeText.setText(message.getSentAt());
 //            recieveViewHolder.pfpImage.setImageURI(message.getUser().profileURL);
 

@@ -94,6 +94,9 @@ public class WebSocketManager{
 //            String messageGson = gson.toJson(messageDTO);
             webSocketClient.send(message);
         }
+        else {
+            Log.e("msg", "WebSocket connection is not open");
+        }
     }
 
     /**
@@ -114,8 +117,6 @@ public class WebSocketManager{
      * handling for WebSocket communication as needed by the application.
      */
     private class MyWebSocketClient extends WebSocketClient {
-
-        private String jwtToken;
 
         private MyWebSocketClient(URI serverUri) {
             super(serverUri);
@@ -148,20 +149,8 @@ public class WebSocketManager{
         @Override
         public void onMessage(String message) {
             Log.d("WebSocket", "Received message: ");
-//            if (webSocketListener != null) {
-//                Gson gson = new Gson();
-//
-//                if (packetDTO.getType().equals("harmonize.DTOs.MessageDTO")) {
-//                    // Do something
-//                }
-//                else if (packetDTO.getType().equals("harmonize.DTOs.ConversationDTO")) {
-//                    // Do something
-//                }
-//                else {
-//                    Log.e("msg", "There is an error with the incoming packetDTO");
-//                }
-//                webSocketListener.onWebSocketMessage(packetDTO);
-            }
+                webSocketListener.onWebSocketMessage(message);
+        }
 
 
         /**

@@ -19,7 +19,7 @@ public interface WebSocketListener {
     /**
      * Called when a WebSocket message is received.
      *
-     * @param packetDTO The received WebSocket message.
+     * @param message The received WebSocket message.
      */
     void onWebSocketMessage(String message);
 

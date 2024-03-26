@@ -9,6 +9,7 @@ import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 
 import harmonize.DTOs.RoleDTO;
+import harmonize.DTOs.SongDTO;
 import harmonize.DTOs.UserDTO;
 import harmonize.Entities.Role;
 import harmonize.Entities.Song;
@@ -24,27 +25,23 @@ import harmonize.ErrorHandling.Exceptions.UserNotFoundException;
 import harmonize.ErrorHandling.Exceptions.UserNotFriendException;
 import harmonize.ErrorHandling.Exceptions.UsernameTakenException;
 import harmonize.Repositories.RoleRepository;
-import harmonize.Repositories.SongRepository;
 import harmonize.Repositories.UserRepository;
-import jakarta.transaction.Transactional;
 
 @Service
 public class UserService {
     private UserRepository userRepository;
     private RoleRepository roleRepository;
-    private SongRepository songRepository;
 
     private ConversationService conversationService;
     private APIService apiService;
 
     @Autowired
-    public UserService(UserRepository userRepository, RoleRepository roleRepository, SongRepository songRepository, 
+    public UserService(UserRepository userRepository, RoleRepository roleRepository, 
                         ConversationService conversationService, APIService apiService) {
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
         this.conversationService = conversationService;
         this.apiService = apiService;
-        this.songRepository = songRepository;
     }
 
     @NonNull
@@ -246,6 +243,20 @@ public class UserService {
         userRepository.save(friend);
         userRepository.save(user);
         return new String(String.format("\"%s\" is no longer friends with \"%s\"", user.getUsername(), friend.getUsername()));
+    }
+
+    public List<SongDTO> getSongs(int id) {
+        User user = userRepository.findReferenceById(id);
+
+        if (user == null)
+            throw new UserNotFoundException(id);
+
+        List<SongDTO> songList = new ArrayList<>();
+
+        for(UserSong element : user.getLikedSongs())
+            songList.add(new SongDTO(element));
+
+        return songList;
     }
 
     @NonNull

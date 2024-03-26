@@ -1,6 +1,7 @@
 package harmonize;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -107,9 +108,14 @@ public class UserTest {
             new HttpEntity<LoginDTO>(loginBody, headers),
             AuthDTO.class);
         assertEquals(HttpStatus.OK, loginResponseEntity.getStatusCode());
-
+        
         headers = new HttpHeaders();
-        headers.set("Authorization", "Bearer " + loginResponseEntity.getBody().getAccessToken());
+        AuthDTO loginReponseBody = loginResponseEntity.getBody();
+        if (loginReponseBody == null) {
+            fail();
+            return;
+        }
+        headers.set("Authorization", "Bearer " + loginReponseBody.getAccessToken());
         ResponseEntity<UserDTO> getSelfResponseEntity = restTemplate.exchange(
             hostname + port + "/users",
             HttpMethod.GET,

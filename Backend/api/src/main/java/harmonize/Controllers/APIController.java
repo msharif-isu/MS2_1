@@ -8,8 +8,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonNode;
 
 import harmonize.DTOs.SearchDTO;
@@ -26,17 +24,17 @@ public class APIController {
     }
 
     @GetMapping(path = "/search")
-    public ResponseEntity<JsonNode> search(@RequestBody SearchDTO search) throws JsonMappingException, JsonProcessingException {
+    public ResponseEntity<JsonNode> search(@RequestBody SearchDTO search) {
         return ResponseEntity.ok(apiService.search(search));
     }
 
     @GetMapping(path = "/songs/{id}")
-    public ResponseEntity<JsonNode> getSong(@PathVariable String id) throws JsonMappingException, JsonProcessingException {
+    public ResponseEntity<JsonNode> getSong(@PathVariable String id) {
         return ResponseEntity.ok(apiService.getSong(id));
     }
 
     @GetMapping(path = "/artists/{id}")
-    public ResponseEntity<JsonNode> getArtist(@PathVariable String id) throws JsonMappingException, JsonProcessingException {
+    public ResponseEntity<JsonNode> getArtist(@PathVariable String id) {
         return ResponseEntity.ok(apiService.getArtist(id));
     }
 }

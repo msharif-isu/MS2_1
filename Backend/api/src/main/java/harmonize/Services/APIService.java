@@ -99,6 +99,7 @@ public class APIService {
         JsonNode responseJson;
 
         try {
+            @SuppressWarnings("null")
             ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.GET, new HttpEntity<>(headers), String.class);
             responseJson = objectMapper.readTree(response.getBody());
         } catch(Exception e) {
@@ -118,6 +119,7 @@ public class APIService {
         JsonNode responseJson;
 
         try {
+            @SuppressWarnings("null")
             ResponseEntity<String> response = restTemplate.exchange(apiURL + urlEnd, HttpMethod.GET, new HttpEntity<>(headers), String.class);
             responseJson = objectMapper.readTree(response.getBody());
         } catch(Exception e) {
@@ -139,6 +141,7 @@ public class APIService {
         JsonNode responseJson;
 
         try {
+            @SuppressWarnings("null")
             ResponseEntity<String> response = restTemplate.exchange(apiURL + urlEnd, HttpMethod.GET, new HttpEntity<>(headers), String.class);
             responseJson = objectMapper.readTree(response.getBody());
         } catch(Exception e) {

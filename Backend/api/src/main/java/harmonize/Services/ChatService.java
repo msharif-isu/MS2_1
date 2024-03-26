@@ -173,8 +173,10 @@ public class ChatService {
             session.getUserProperties().containsKey("user") ?
                 (User)session.getUserProperties().get("user") :
                 userRepository.findByUsername(session.getRequestParameterMap().get("username").get(0));
-        if (user == null)
+        if (user == null) {
             onError(session, new UserNotFoundException(session.getRequestParameterMap().get("username").get(0)));
+            return;
+        }
 
         wrapperToken = 
             session.getUserProperties().containsKey("wrapperToken") ? 

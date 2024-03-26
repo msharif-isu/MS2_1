@@ -20,7 +20,7 @@ public class Song {
     @Column(unique = true)
     private String id;
 
-    private String artistid;
+    private String artistId;
 
     private String title;
 
@@ -29,7 +29,7 @@ public class Song {
     public Song(JsonNode song) {
         this.id = song.get("id").asText();
         this.title = song.get("name").asText();
-        this.artistid = song.get("artists").get(0).get("id").asText();
+        this.artistId = song.get("artists").get(0).get("id").asText();
         this.artist = song.get("artists").get(0).get("name").asText();
     }
 }

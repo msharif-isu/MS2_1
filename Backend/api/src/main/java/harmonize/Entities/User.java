@@ -17,7 +17,6 @@ import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
-import jakarta.transaction.Transactional;
 import lombok.Data;
 
 /**
@@ -38,6 +37,7 @@ public class User {
 
     private String lastName;
 
+    @Column(unique = true)
     private String username;
 
     private String password;

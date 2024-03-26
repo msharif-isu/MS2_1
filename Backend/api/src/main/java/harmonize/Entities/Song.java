@@ -17,6 +17,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class Song {
     @Id
+    @Column(unique = true)
     private String id;
 
     private String artistid;

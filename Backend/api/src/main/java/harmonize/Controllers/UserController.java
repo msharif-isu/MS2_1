@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import harmonize.DTOs.ReportDTO;
+import harmonize.DTOs.RoleDTO;
 import harmonize.DTOs.UserDTO;
 import harmonize.Services.ReportService;
 import harmonize.Services.UserService;
@@ -61,6 +62,11 @@ public class UserController {
     @DeleteMapping(path = "")
     public ResponseEntity<String> deleteUser(Principal principal){
         return ResponseEntity.ok(userService.deleteUser(userService.getUser(principal.getName()).getId()));
+    }
+
+    @GetMapping(path = "/roles")
+    public ResponseEntity<List<RoleDTO>> getRoles(Principal principal){
+        return ResponseEntity.ok(userService.getRoles(userService.getUser(principal.getName()).getId()));
     }
 
     @GetMapping(path = "/friends")

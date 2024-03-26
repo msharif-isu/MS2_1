@@ -7,8 +7,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.test.web.server.LocalServerPort;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
@@ -25,11 +23,9 @@ public class WelcomeTest {
 
 	@Test
 	public void welcomeTest() throws Exception {
-		ResponseEntity<String> responseEntity = restTemplate.exchange(
-            hostname + this.port + "/",
-            HttpMethod.GET,
-            new HttpEntity<>(null),
-            String.class);
+		ResponseEntity<String> responseEntity = restTemplate.getForEntity(
+			hostname + this.port + "/",
+			String.class);
 		assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
 	}
 

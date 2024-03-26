@@ -126,7 +126,7 @@ public class AdminController {
 
     @GetMapping(path = "/reports/received/{id}")
     public ResponseEntity<List<ReportDTO>> getRecievedReports(@PathVariable int id) {
-        return ResponseEntity.ok(reportService.getRecievedReports(id));
+        return ResponseEntity.ok(reportService.getReceivedReports(id));
     }
 
     @DeleteMapping(path = "/reports/{id}")

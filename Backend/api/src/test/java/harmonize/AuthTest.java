@@ -1,6 +1,7 @@
 package harmonize;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,6 +51,7 @@ public class AuthTest {
             AuthDTO.class);
 
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
+        assertNotNull(responseEntity.getBody());
 	}
 
     @Test
@@ -78,6 +80,7 @@ public class AuthTest {
             AuthDTO.class);
 
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
+        assertNotNull(responseEntity.getBody());
 	}
 
     @Test
@@ -106,12 +109,6 @@ public class AuthTest {
         headers.setContentType(MediaType.APPLICATION_JSON);
         RegisterDTO body = new RegisterDTO("first", "last", "", "password");
         ResponseEntity<AuthDTO> responseEntity = restTemplate.exchange(
-            hostname + this.port + "/auth/register",
-            HttpMethod.POST,
-            new HttpEntity<RegisterDTO>(body, headers),
-            AuthDTO.class);
-
-        responseEntity = restTemplate.exchange(
             hostname + this.port + "/auth/register",
             HttpMethod.POST,
             new HttpEntity<RegisterDTO>(body, headers),

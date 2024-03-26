@@ -49,7 +49,7 @@ public class ReportService {
     }
 
     @NonNull
-    public List<ReportDTO> getRecievedReports(int id) {
+    public List<ReportDTO> getReceivedReports(int id) {
         User user = userRepository.findReferenceById(id);
         if (user == null)
             throw new UserNotFoundException(id);
@@ -72,7 +72,7 @@ public class ReportService {
     }
 
     @NonNull
-    public ReportDTO getRecievedReport(int id, int reportID) {
+    public ReportDTO getReceivedReport(int id, int reportID) {
         User user = userRepository.findReferenceById(id);
         if (user == null)
             throw new UserNotFoundException(id);

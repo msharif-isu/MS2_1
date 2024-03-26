@@ -19,7 +19,8 @@ public class Song {
     @Id
     private String id;
 
-    @Column(unique = true)
+    private String artistid;
+
     private String title;
 
     private String artist;
@@ -27,6 +28,7 @@ public class Song {
     public Song(JsonNode song) {
         this.id = song.get("id").asText();
         this.title = song.get("name").asText();
+        this.artistid = song.get("artists").get(0).get("id").asText();
         this.artist = song.get("artists").get(0).get("name").asText();
     }
 }

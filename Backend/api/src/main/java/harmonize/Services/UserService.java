@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import harmonize.DTOs.UserDTO;
 import harmonize.Entities.Song;
 import harmonize.Entities.User;
+import harmonize.Entities.UserSong;
 import harmonize.ErrorHandling.Exceptions.EntityAlreadyExistsException;
 import harmonize.ErrorHandling.Exceptions.EntityNotFoundException;
 import harmonize.ErrorHandling.Exceptions.UserAlreadyFriendException;
@@ -23,6 +24,7 @@ import harmonize.ErrorHandling.Exceptions.UsernameTakenException;
 import harmonize.Repositories.RoleRepository;
 import harmonize.Repositories.SongRepository;
 import harmonize.Repositories.UserRepository;
+import jakarta.transaction.Transactional;
 
 @Service
 public class UserService {
@@ -238,10 +240,12 @@ public class UserService {
 
         Song song = new Song(apiService.getSong(songId));
 
-        if(user.getLikedSongs().contains(song))
+        UserSong connection = new UserSong(user, song);
+
+        if(user.getLikedSongs().contains(connection))
             throw new EntityAlreadyExistsException(song.getTitle() + " already added.");
 
-        user.getLikedSongs().add(song);
+        user.getLikedSongs().add(connection);
         userRepository.save(user);
         
         return new String(String.format("\"%s\" favorited \"%s\"", user.getUsername(), song.getTitle()));
@@ -256,10 +260,12 @@ public class UserService {
 
         Song song = new Song(apiService.getSong(songId));
 
-        if(!user.getLikedSongs().contains(song))
+        UserSong connection = new UserSong(user, song);
+
+        if(!user.getLikedSongs().contains(connection))
             throw new EntityNotFoundException(song.getTitle() + " could not be found.");
 
-        user.getLikedSongs().remove(song);
+        user.getLikedSongs().remove(connection);
         userRepository.save(user);
         
         return new String(String.format("\"%s\" removed \"%s\"", user.getUsername(), song.getTitle()));

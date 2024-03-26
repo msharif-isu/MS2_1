@@ -18,6 +18,7 @@ import harmonize.DTOs.ReportDTO;
 import harmonize.DTOs.UserDTO;
 import harmonize.Services.ReportService;
 import harmonize.Services.UserService;
+import jakarta.transaction.Transactional;
 
 /**
  * 

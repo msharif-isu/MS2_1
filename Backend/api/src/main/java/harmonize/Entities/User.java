@@ -1,13 +1,12 @@
 package harmonize.Entities;
 
-import java.util.HashMap;
+import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.Map;
+import java.util.List;
 import java.util.Set;
 
-import jakarta.persistence.CollectionTable;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
-import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -16,9 +15,9 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
-import jakarta.persistence.MapKeyColumn;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import jakarta.transaction.Transactional;
 import lombok.Data;
 
 /**
@@ -52,15 +51,11 @@ public class User {
     @Column(columnDefinition = "TEXT")
     private String privateKeyWrapped;
 
-    @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(name = "likedSongs", joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),
-                             inverseJoinColumns = @JoinColumn(name = "song_id", referencedColumnName = "id"))
-    private Set<Song> likedSongs = new HashSet<>();
+    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER, 
+                cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<UserSong> likedSongs = new HashSet<>();
 
-    // @ManyToMany(fetch = FetchType.EAGER)
-    // @JoinTable(name = "likedSongs", joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),
-    //                          inverseJoinColumns = @JoinColumn(name = "song_id", referencedColumnName = "id"))
-    // private Map<Artist, Integer> topArtists = new HashMap<>();
+    private List<String> topArtists = new ArrayList<>();
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "userRoles", joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),

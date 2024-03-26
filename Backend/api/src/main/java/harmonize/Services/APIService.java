@@ -3,8 +3,6 @@ package harmonize.Services;
 import java.util.Base64;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -20,10 +18,8 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import harmonize.DTOs.SearchDTO;
-import harmonize.Entities.Artist;
 import harmonize.Entities.Song;
 import harmonize.ErrorHandling.Exceptions.InvalidSearchException;
-import harmonize.Repositories.ArtistRepository;
 import harmonize.Repositories.SongRepository;
 
 @Service
@@ -40,16 +36,13 @@ public class APIService {
 
     private SongRepository songRepository;
 
-    private ArtistRepository artistRepository;
-
     @Autowired
-    public APIService(RestTemplate restTemplate, SongRepository songRepository, ArtistRepository artistRepository) {
+    public APIService(RestTemplate restTemplate, SongRepository songRepository) {
         this.restTemplate = restTemplate;
         this.objectMapper = new ObjectMapper();
         this.apiURL = "https://api.spotify.com/v1";
         this.apiExpiration = 0;
         this.songRepository = songRepository;
-        this.artistRepository = artistRepository;
     }
 
     public String getAPIToken() {
@@ -151,8 +144,6 @@ public class APIService {
         } catch(Exception e) {
             throw new InvalidSearchException("Invalid artist");
         }
-
-        artistRepository.save(new Artist(responseJson));
 
         return responseJson;
     }

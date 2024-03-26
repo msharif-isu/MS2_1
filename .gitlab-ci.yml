@@ -6,7 +6,7 @@ backend-docker-test:
   stage: backendDockerTest
   needs: []
   tags:
-    - backendTest
+    - backend
   script:
     - cd Backend
     - sudo docker-compose -f docker-compose.test.yml down
@@ -19,7 +19,7 @@ backend-docker-deploy:
   stage: backendDockerDeploy
   needs: []
   tags:
-    - backendDeploy
+    - backend
   script:
     - cd Backend
     - sudo docker-compose down

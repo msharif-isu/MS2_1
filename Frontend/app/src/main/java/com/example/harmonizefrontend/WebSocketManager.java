@@ -62,12 +62,9 @@ public class WebSocketManager{
      *
      * @param serverUrl The URL of the WebSocket server to connect to.
      */
-    public void connectWebSocket(String serverUrl, String jwtToken) {
+    public void connectWebSocket(String serverUrl) {
         try {
             URI serverUri = URI.create(serverUrl);
-//            Map<String, String> headers = new HashMap<>();
-//            headers.put("Authorization", "Bearer " + jwtToken);
-            Log.e("msg", "jwtToken: " + jwtToken);
 
             webSocketClient = new MyWebSocketClient(serverUri);
             webSocketClient.connect();

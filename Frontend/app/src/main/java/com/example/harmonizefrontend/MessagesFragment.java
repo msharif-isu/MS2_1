@@ -108,7 +108,7 @@ public class MessagesFragment extends Fragment implements WebSocketListener{
         // Connect to websocket
         String serverURL = "ws://coms-309-032.class.las.iastate.edu:8080/chats?username=" + username + "&password=" + password;
         Log.e("msg", "Before websocket connection");
-        WebSocketManager.getInstance().connectWebSocket(serverURL, JWTtoken);
+        WebSocketManager.getInstance().connectWebSocket(serverURL);
         WebSocketManager.getInstance().setWebSocketListener(this);
 
 
@@ -132,7 +132,6 @@ public class MessagesFragment extends Fragment implements WebSocketListener{
             @Override
             public void onClick(View v) {
                 if (writeMsg.getText().toString() != null) {
-//                    Message newmsg = new Message(0, writeMsg.getText().toString(), new User("Manasm", "blank"));
                     MessageDTO newMsg = new MessageDTO(
                             "harmonize.DTOs.MessageDTO",
                             new MessageDTO.Data(
@@ -164,15 +163,15 @@ public class MessagesFragment extends Fragment implements WebSocketListener{
 
     private List<MessageDTO> getMessages() {
         List<MessageDTO> list = new ArrayList<>();
-        list.add(new MessageDTO(
-                "harmonize.DTOs.MessageDTO",
-                new MessageDTO.Data(1,
-                        System.currentTimeMillis(),
-                        currentMember,
-                        convo),
-                "Hello!"
-                )
-        );
+//        list.add(new MessageDTO(
+//                "harmonize.DTOs.MessageDTO",
+//                new MessageDTO.Data(1,
+//                        System.currentTimeMillis(),
+//                        currentMember,
+//                        convo),
+//                "Hello!"
+//                )
+//        );
 
         list.add(new MessageDTO(
                 "harmonize.DTOs.MessageDTO",
@@ -190,6 +189,7 @@ public class MessagesFragment extends Fragment implements WebSocketListener{
 
     @Override
     public void onWebSocketOpen(ServerHandshake handshakedata) {
+        Log.e("msg", "Websocket opened");
 
     }
 
@@ -209,11 +209,13 @@ public class MessagesFragment extends Fragment implements WebSocketListener{
 
     @Override
     public void onWebSocketClose(int code, String reason, boolean remote) {
+        Log.e("msg", "Websocket closed");
 
     }
 
     @Override
     public void onWebSocketError(Exception ex) {
+        Log.e("msg", "Websocket error");
 
     }
 }

@@ -23,9 +23,11 @@ public class ChatListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     @Override
     public int getItemViewType(int position) {
         // 0 is sent 1 is recieved
-        Member sender = messageList.get(position).getData().getDataSender();
+        String senderUsername = messageList.get(position).getData().getDataSender().getUsername();
+        String currentUsername = UserSession.getInstance().getCurrentUser().getUsername();
+        Log.e("msg", "current username: " + currentUsername);
 
-        if (sender.getUsername().equals(UserSession.getInstance().getCurrentUser().getUsername())) {
+        if (senderUsername.equals(currentUsername)) {
             return 0;
         }
         else {

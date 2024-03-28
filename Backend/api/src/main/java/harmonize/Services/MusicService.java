@@ -23,7 +23,7 @@ import harmonize.ErrorHandling.Exceptions.InvalidSearchException;
 import harmonize.Repositories.SongRepository;
 
 @Service
-public class APIService {
+public class MusicService {
     private String apiAuthentication;
 
     private long apiExpiration;
@@ -37,7 +37,7 @@ public class APIService {
     private SongRepository songRepository;
 
     @Autowired
-    public APIService(RestTemplate restTemplate, SongRepository songRepository) {
+    public MusicService(RestTemplate restTemplate, SongRepository songRepository) {
         this.restTemplate = restTemplate;
         this.objectMapper = new ObjectMapper();
         this.apiURL = "https://api.spotify.com/v1";

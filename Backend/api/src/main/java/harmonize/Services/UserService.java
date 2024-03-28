@@ -33,15 +33,15 @@ public class UserService {
     private RoleRepository roleRepository;
 
     private ConversationService conversationService;
-    private APIService apiService;
+    private MusicService musicService;
 
     @Autowired
     public UserService(UserRepository userRepository, RoleRepository roleRepository, 
-                        ConversationService conversationService, APIService apiService) {
+                        ConversationService conversationService, MusicService musicService) {
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
         this.conversationService = conversationService;
-        this.apiService = apiService;
+        this.musicService = musicService;
     }
 
     @NonNull
@@ -266,7 +266,7 @@ public class UserService {
         if(user == null)
             throw new UserNotFoundException(id);
 
-        Song song = new Song(apiService.getSong(songId));
+        Song song = new Song(musicService.getSong(songId));
 
         UserSong connection = new UserSong(user, song);
 
@@ -286,7 +286,7 @@ public class UserService {
         if(user == null)
             throw new UserNotFoundException(id);
 
-        Song song = new Song(apiService.getSong(songId));
+        Song song = new Song(musicService.getSong(songId));
 
         UserSong connection = new UserSong(user, song);
 

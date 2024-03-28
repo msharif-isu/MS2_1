@@ -11,15 +11,15 @@ import org.springframework.web.bind.annotation.RestController;
 import com.fasterxml.jackson.databind.JsonNode;
 
 import harmonize.DTOs.SearchDTO;
-import harmonize.Services.APIService;
+import harmonize.Services.MusicService;
 
 @RestController
-@RequestMapping("/api")
-public class APIController {
-    private APIService apiService;
+@RequestMapping("/music")
+public class MusicController {
+    private MusicService apiService;
 
     @Autowired
-    public APIController(APIService apiService) {
+    public MusicController(MusicService apiService) {
         this.apiService = apiService;
     }
 

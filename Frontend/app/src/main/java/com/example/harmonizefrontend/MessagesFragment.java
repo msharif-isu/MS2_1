@@ -56,6 +56,9 @@ public class MessagesFragment extends Fragment {
     private String jwtToken;
     private static final String TAG = FindFragment.class.getSimpleName();
 
+    /**
+     * Required empty public constructor
+     */
     public MessagesFragment() {
         // Required empty public constructor
     }
@@ -78,6 +81,11 @@ public class MessagesFragment extends Fragment {
         return fragment;
     }
 
+    /**
+     * Executes when fragment is created.
+     * @param savedInstanceState If the fragment is being re-created from
+     * a previous saved state, this is the state.
+     */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -86,6 +94,19 @@ public class MessagesFragment extends Fragment {
         jwtToken = "Bearer " + "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ0ZXN0MSIsImV4cCI6MTcwOTQwOTIwNn0.60NflM9v-M-yWIQhuG7646xYY8pe9rZ4Uk9VE_PvMUtZszhNx_7GjdnwxhtnaIodNjx-jh7RC9pi_wO05ixe4Q";
     }
 
+    /**
+     * An inflater takes an XML layout file as an input and builds the view object from it at runtime.
+     * A ViewGroup is a View that can contain other views. (In our case, we are using a LinearView)
+     * @param inflater The LayoutInflater object that can be used to inflate
+     * any views in the fragment,
+     * @param container If non-null, this is the parent view that the fragment's
+     * UI should be attached to.  The fragment should not add the view itself,
+     * but this can be used to generate the LayoutParams of the view.
+     * @param savedInstanceState If non-null, this fragment is being re-constructed
+     * from a previous saved state as given here.
+     *
+     * @return
+     */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -96,6 +117,12 @@ public class MessagesFragment extends Fragment {
         return rootView;
     }
 
+    /**
+     * method used for debugging. calls fetchFriendList()
+     * @param view The View returned by {@link #onCreateView(LayoutInflater, ViewGroup, Bundle)}.
+     * @param savedInstanceState If non-null, this fragment is being re-constructed
+     * from a previous saved state as given here.
+     */
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
 
         super.onViewCreated(view, savedInstanceState);
@@ -104,11 +131,18 @@ public class MessagesFragment extends Fragment {
 
     }
 
+    /**
+     * Creates a json array request to list friends of the user.
+     */
     public void fetchFriendList() {
 
         String url = "http://coms-309-032.class.las.iastate.edu:8080/users/friends";
 
         JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(Request.Method.GET, url, null, new Response.Listener<JSONArray>() {
+            /**
+             * on response, take the response and add to friendList.
+             * @param response
+             */
             @Override
             public void onResponse(JSONArray response) {
 
@@ -137,6 +171,10 @@ public class MessagesFragment extends Fragment {
             }
             // the comma here is used to separate the parameters being passed to the constructor.
         }, new Response.ErrorListener() {
+            /**
+             * On error response, execute this.
+             * @param error
+             */
             @Override
             public void onErrorResponse(VolleyError error) {
 
@@ -144,6 +182,11 @@ public class MessagesFragment extends Fragment {
 
             }
         }) {
+            /**
+             * Checks authorization
+             * @return
+             * @throws AuthFailureError
+             */
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
                 Map<String, String> params = new HashMap<String, String>();
@@ -157,6 +200,9 @@ public class MessagesFragment extends Fragment {
 
     }
 
+    /**
+     * Fills the fragment with friend_items that are populated with user data.
+     */
     private void populateFriendItems() {
 
         if (friendList != null) {
@@ -175,6 +221,10 @@ public class MessagesFragment extends Fragment {
                 friendUsernameTextView.setText(friend.getUsername());
 
                 removeFriendButton.setOnClickListener(new View.OnClickListener() {
+                    /**
+                     * on click, remove the user as a friend.
+                     * @param v The view that was clicked.
+                     */
                     @Override
                     public void onClick(View v) {
 
@@ -202,12 +252,20 @@ public class MessagesFragment extends Fragment {
         StringRequest stringRequest = new StringRequest(Request.Method.DELETE,
                 url,
                 new Response.Listener<String>() {
+                    /**
+                     * on response, create a toast the displays response
+                     * @param response
+                     */
                     @Override
                     public void onResponse(String response) {
                         Toast.makeText(getActivity(), response, Toast.LENGTH_SHORT).show();
                     }
                 },
                 new Response.ErrorListener() {
+                    /**
+                     * on error response, create toast to display error
+                     * @param error
+                     */
                     @Override
                     public void onErrorResponse(VolleyError error) {
 
@@ -215,6 +273,11 @@ public class MessagesFragment extends Fragment {
 
                     }
                 }) {
+            /**
+             * checks authorization
+             * @return
+             * @throws AuthFailureError
+             */
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
                 Map<String, String> params = new HashMap<String, String>();

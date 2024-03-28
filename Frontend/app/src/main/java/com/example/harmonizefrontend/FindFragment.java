@@ -75,6 +75,9 @@ public class FindFragment extends Fragment {
         return fragment;
     }
 
+    /**
+     * Executes when fragment is created.
+     */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -84,9 +87,21 @@ public class FindFragment extends Fragment {
 
     }
 
+
+    /**
+     * An inflater takes an XML layout file as an input and builds the view object from it at runtime.
+     * A ViewGroup is a View that can contain other views. (In our case, we are using a LinearView)
+     * @param inflater The LayoutInflater object that can be used to inflate
+     * any views in the fragment,
+     * @param container If non-null, this is the parent view that the fragment's
+     * UI should be attached to.  The fragment should not add the view itself,
+     * but this can be used to generate the LayoutParams of the view.
+     * @param savedInstanceState If non-null, this fragment is being re-constructed
+     * from a previous saved state as given here.
+     *
+     * @return
+     */
     @Override
-//    An inflater takes an XML layout file as an input and builds the view object from it at runtime.
-//    A ViewGroup is a View that can contain other views. (In our case, we are using a LinearView)
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
@@ -99,31 +114,9 @@ public class FindFragment extends Fragment {
         return rootView;
     }
 
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-
-        super.onViewCreated(view, savedInstanceState);
-
-//        userList.add(new User(1, "James"));
-//        userList.add(new User(2, "Jessie"));
-//        userList.add(new User(4, "Bobby"));
-//        userList.add(new User(6, "Ash"));
-//        userList.add(new User(14, "Misty"));
-//        userList.add(new User(15, "Brock"));
-//        userList.add(new User(16, "Dr. Oak"));
-//        userList.add(new User(17, "Gary"));
-//        userList.add(new User(18, "Mewtwo"));
-//        userList.add(new User(19, "Bulbasaur"));
-//        userList.add(new User(20, "Butterfree"));
-//        userList.add(new User(21, "Charmander"));
-//        userList.add(new User(22, "Mr. Mime"));
-//        userList.add(new User(23, "Mew"));
-//        userList.add(new User(24, "Pidgeot"));
-//        userList.add(new User(25, "Pikachu"));
-//
-//        populateUserItems();
-
-    }
-
+    /**
+     * Creates a json array request for recommended friends of the user.
+     */
     private void fetchUserList() {
 
         String url = "http://coms-309-032.class.las.iastate.edu:8080/users/friends/recommended";
@@ -135,11 +128,13 @@ public class FindFragment extends Fragment {
 //        'null' is the request body. This is a GET request, so there is no request body.
 //        'Response.Listener<JSONArray>()' is a listener that is triggered when the response is successfully received. It expects a JSONArray as a response.
         JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(Request.Method.GET, url, null, new Response.Listener<JSONArray>() {
+            /**
+             * on response, take the response and add to userList.
+             * @param response
+             */
             @Override
             public void onResponse(JSONArray response) {
 
-//                String jsonString = response.toString();
-//                Log.d(TAG, jsonString);
                 try {
 
                     for (int i = 0; i < response.length(); i++) {
@@ -163,6 +158,10 @@ public class FindFragment extends Fragment {
             }
         // the comma here is used to separate the parameters being passed to the constructor.
         }, new Response.ErrorListener() {
+            /**
+             * On error response, execute this.
+             * @param error
+             */
             @Override
             public void onErrorResponse(VolleyError error) {
 
@@ -170,6 +169,11 @@ public class FindFragment extends Fragment {
 
             }
         }) {
+            /**
+             * Checks authorization
+             * @return
+             * @throws AuthFailureError
+             */
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
                 Map<String, String> params = new HashMap<String, String>();
@@ -183,6 +187,9 @@ public class FindFragment extends Fragment {
 
     }
 
+    /**
+     * Fills the fragment with user_items that are populated with user data.
+     */
     private void populateUserItems() {
 
         if (userList != null) {
@@ -201,6 +208,10 @@ public class FindFragment extends Fragment {
                 usernameTextView.setText(user.getUsername());
 
                 addFriendButton.setOnClickListener(new View.OnClickListener() {
+                    /**
+                     * on click, send a friend request to the user
+                     * @param v The view that was clicked.
+                     */
                     @Override
                     public void onClick(View v) {
 
@@ -218,6 +229,10 @@ public class FindFragment extends Fragment {
 
     }
 
+    /**
+     * Create an API request that will send a user a friend request.
+     * @param userId
+     */
     private void addFriend(int userId) {
 
         // Makes API requests to add friend
@@ -228,12 +243,20 @@ public class FindFragment extends Fragment {
         StringRequest stringRequest = new StringRequest(Request.Method.POST,
                 url,
                 new Response.Listener<String>() {
+                    /**
+                     * on response, create a toast (a small notification)
+                     * @param response
+                     */
                     @Override
                     public void onResponse(String response) {
                         Toast.makeText(getActivity(), response, Toast.LENGTH_SHORT).show();
                     }
                 },
                 new Response.ErrorListener() {
+                    /**
+                     * on error response, create a toast saying "request failed"
+                     * @param error
+                     */
                     @Override
                     public void onErrorResponse(VolleyError error) {
 
@@ -241,6 +264,11 @@ public class FindFragment extends Fragment {
 
                     }
                 }) {
+            /**
+             * checks authorization
+             * @return
+             * @throws AuthFailureError
+             */
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
                 Map<String, String> params = new HashMap<String, String>();

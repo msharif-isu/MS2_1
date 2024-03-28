@@ -9,7 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 /**
- * A simple {@link Fragment} subclass.
+ * Fragment that houses the main feed. Will display new music releases
  * Use the {@link HomeFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
@@ -24,6 +24,9 @@ public class HomeFragment extends Fragment {
     private String mParam1;
     private String mParam2;
 
+    /**
+     * required empty constructor
+     */
     public HomeFragment() {
         // Required empty public constructor
     }

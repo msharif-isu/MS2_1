@@ -24,10 +24,10 @@ import java.util.List;
 
 /**
  * A simple {@link Fragment} subclass.
- * Use the {@link MessagesFragment#newInstance} factory method to
+ * Use the {@link ConversationFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class MessagesFragment extends Fragment implements WebSocketListener{
+public class ConversationFragment extends Fragment implements WebSocketListener{
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -64,7 +64,7 @@ public class MessagesFragment extends Fragment implements WebSocketListener{
             ); // For testing purposes, later on we can have multiple conversations
 
 
-    public MessagesFragment() {
+    public ConversationFragment() {
         // Required empty public constructor
     }
 
@@ -77,8 +77,8 @@ public class MessagesFragment extends Fragment implements WebSocketListener{
      * @return A new instance of fragment MessagesFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static MessagesFragment newInstance(String param1, String param2) {
-        MessagesFragment fragment = new MessagesFragment();
+    public static ConversationFragment newInstance(String param1, String param2) {
+        ConversationFragment fragment = new ConversationFragment();
 //        Bundle args = new Bundle();
 //        args.putString(ARG_PARAM1, param1);
 //        args.putString(ARG_PARAM2, param2);

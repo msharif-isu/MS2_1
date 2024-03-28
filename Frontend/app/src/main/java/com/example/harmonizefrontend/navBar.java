@@ -37,7 +37,7 @@ public class navBar extends AppCompatActivity {
                 loadFragment(new FindFragment());
 
             } else if (item.getItemId() == R.id.navigation_messages) {
-                loadFragment(new MessagesFragment());
+                loadFragment(new ConversationFragment());
             } else if (item.getItemId() == R.id.navigation_profile) {
                 loadFragment(new AccountPreferencesFragment());
             }
@@ -83,7 +83,7 @@ public class navBar extends AppCompatActivity {
                         loadFragment(new FindFragment());
                         break;
                     case "messages":
-                        loadFragment(new MessagesFragment());
+                        loadFragment(new ConversationFragment());
                         break;
                     case "profile":
                         loadFragment(new AccountPreferencesFragment());

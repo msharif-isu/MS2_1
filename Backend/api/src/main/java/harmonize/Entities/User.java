@@ -1,19 +1,19 @@
-package harmonize.Users;
+package harmonize.Entities;
 
 import java.util.HashSet;
 import java.util.Set;
 
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
-import javax.persistence.Table;
-
-import harmonize.Roles.Role;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
 import lombok.Data;
 
 /**
@@ -26,10 +26,6 @@ import lombok.Data;
 @Table(name = "users")
 @Data
 public class User {
-     /* 
-     * The annotation @ID marks the field below as the primary key for the table created by springboot
-     * The @GeneratedValue generates a value if not already present, The strategy in this case is to start from 1 and increment for each table
-     */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
@@ -42,14 +38,21 @@ public class User {
 
     private String password;
 
+    @Column(columnDefinition = "LONGTEXT")
     private String bio;
+
+    @Column(columnDefinition = "TEXT")
+    private String publicKey;
+
+    @Column(columnDefinition = "TEXT")
+    private String privateKeyWrapped;
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "user_roles", joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),
                              inverseJoinColumns = @JoinColumn(name = "role_id", referencedColumnName = "id"))
     private Set<Role> roles = new HashSet<>();
 
-    @ManyToMany(fetch = FetchType.LAZY)
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "friends", joinColumns = @JoinColumn(name = "user_id",   referencedColumnName = "id"),
                           inverseJoinColumns = @JoinColumn(name = "friend_id", referencedColumnName = "id"))
     private Set<User> friends = new HashSet<>();
@@ -58,6 +61,17 @@ public class User {
     @JoinTable(name = "friendInvites", joinColumns = @JoinColumn(name = "user_id",    referencedColumnName = "id"),
                                 inverseJoinColumns = @JoinColumn(name = "inviter_id", referencedColumnName = "id"))
     private Set<User> friendInvites = new HashSet<>();
+
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(name = "conversation_members", joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),
+                                       inverseJoinColumns = @JoinColumn(name = "conversation_id", referencedColumnName = "id"))
+    private Set<Conversation> conversations = new HashSet<>();
+
+    @OneToMany(fetch = FetchType.EAGER)
+    private Set<Report> sentReports = new HashSet<>();
+
+    @OneToMany(fetch = FetchType.EAGER)
+    private Set<Report> recievedReports = new HashSet<>();
 
     public User(String firstName, String lastName, String username, String password) {
         this.firstName = firstName;

@@ -1,6 +1,10 @@
+name: backend
+
 services:
   harmonize-db:
     build: ./db
+    ports:
+      - "3306:3306"
     networks:
       - harmonize-net
     environment:

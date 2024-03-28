@@ -34,6 +34,8 @@ import java.util.Map;
  * Use the {@link AccountPreferencesFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
+
+// Fragment for the Account Preferences screen which allows users to see their info
 public class AccountPreferencesFragment extends Fragment {
 
     // TODO: Rename parameter arguments, choose names that match
@@ -63,6 +65,7 @@ public class AccountPreferencesFragment extends Fragment {
 
     private String URL = "http://coms-309-032.class.las.iastate.edu:8080";
 
+    // Empty Constructor for the fragment
     public AccountPreferencesFragment() {
         // Required empty public constructor
     }

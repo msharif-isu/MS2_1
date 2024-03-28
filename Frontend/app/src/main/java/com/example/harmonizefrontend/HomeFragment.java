@@ -50,8 +50,7 @@ public class HomeFragment extends Fragment {
     }
 
     /**
-     * @param savedInstanceState If the fragment is being re-created from
-     * a previous saved state, this is the state.
+     * Executes when fragment is created. Runs any initiation code that is not related to the interface.
      */
     @Override
     public void onCreate(Bundle savedInstanceState) {

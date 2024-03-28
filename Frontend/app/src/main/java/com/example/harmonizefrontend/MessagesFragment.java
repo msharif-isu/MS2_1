@@ -35,7 +35,8 @@ import java.util.ArrayList;
 import java.util.Objects;
 
 /**
- * A simple {@link Fragment} subclass.
+ * This fragment will display all friends to the user. The user can click on the friends
+ * to enter their conversation.
  * Use the {@link MessagesFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
@@ -82,7 +83,7 @@ public class MessagesFragment extends Fragment {
     }
 
     /**
-     * Executes when fragment is created.
+     * Executes when fragment is created. Runs any initiation code that is not related to the interface.
      * @param savedInstanceState If the fragment is being re-created from
      * a previous saved state, this is the state.
      */
@@ -242,6 +243,10 @@ public class MessagesFragment extends Fragment {
 
     }
 
+    /**
+     * This method will remove a user from another user's friend list.
+     * @param userId
+     */
     private void removeFriend(int userId) {
 
         // Makes API requests to remove friend

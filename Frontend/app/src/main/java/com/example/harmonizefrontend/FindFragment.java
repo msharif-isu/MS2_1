@@ -35,7 +35,7 @@ import java.util.ArrayList;
 import java.util.Objects;
 
 /**
- * A simple {@link Fragment} subclass.
+ * This fragment will display all recommended friends to the user. Users will have the option to add them as friends.
  * Use the {@link FindFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
@@ -76,7 +76,7 @@ public class FindFragment extends Fragment {
     }
 
     /**
-     * Executes when fragment is created.
+     * Executes when fragment is created. Runs any initiation code that is not related to the interface.
      */
     @Override
     public void onCreate(Bundle savedInstanceState) {

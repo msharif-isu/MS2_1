@@ -62,6 +62,7 @@ public class HomeFragment extends Fragment {
     }
 
     /**
+     * Inflates the layout for this fragment
      * @param inflater The LayoutInflater object that can be used to inflate
      * any views in the fragment,
      * @param container If non-null, this is the parent view that the fragment's

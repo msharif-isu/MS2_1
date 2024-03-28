@@ -89,6 +89,7 @@ public class FindFragment extends Fragment {
 
 
     /**
+     * Inflates the layout for this fragment.
      * An inflater takes an XML layout file as an input and builds the view object from it at runtime.
      * A ViewGroup is a View that can contain other views. (In our case, we are using a LinearView)
      * @param inflater The LayoutInflater object that can be used to inflate

@@ -39,6 +39,9 @@ import org.json.JSONObject;
 
 import java.util.regex.*;
 
+/**
+ * A Registration screen that allows users to enter the application by creating an account.
+ */
 public class RegistrationScreen extends AppCompatActivity implements OnClickListener {
 
 //    private AppBarConfiguration appBarConfiguration;
@@ -162,6 +165,12 @@ public class RegistrationScreen extends AppCompatActivity implements OnClickList
         }
     }
 
+    /**
+     * Method which takes in user entered information and attempts to create an account
+     * @param username
+     * @param password
+     * @param callback
+     */
     private void
     register(String username, String password, final VolleyCallBack callback) {
 

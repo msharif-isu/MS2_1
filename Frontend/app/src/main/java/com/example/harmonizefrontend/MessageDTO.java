@@ -1,5 +1,8 @@
 package com.example.harmonizefrontend;
 
+/**
+ * DTO for message data incoming/outgoing from the server
+ */
 public class MessageDTO {
     private String type;
     private Data data;
@@ -11,6 +14,13 @@ public class MessageDTO {
         private Member sender;
         private ConversationDTO convo;
 
+        /**
+         * Constructor for the message data
+         * @param id
+         * @param unixTime
+         * @param sender
+         * @param convo
+         */
         Data(int id, long unixTime, Member sender, ConversationDTO convo) {
             this.id = id;
             this.unixTime = unixTime;
@@ -18,6 +28,9 @@ public class MessageDTO {
             this.convo = convo;
         }
 
+        /**
+         * Getters
+         */
         protected int getDataId() {
             return id;
         }
@@ -35,6 +48,13 @@ public class MessageDTO {
         }
     }
 
+
+    /**
+     * Constructor for the message DTO
+     * @param type
+     * @param data
+     * @param text
+     */
     MessageDTO(String type, Data data, String text) {
         this.type = type;
         this.data = data;

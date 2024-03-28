@@ -1,5 +1,8 @@
 package com.example.harmonizefrontend;
 
+/**
+ * Class which holds data about the current user using the application
+ */
 public class UserSession {
     private static UserSession instance;
     private Member currentUser;
@@ -10,6 +13,10 @@ public class UserSession {
 
     }
 
+    /**
+     * Get the instance of the user session
+     * @return
+     */
     public static synchronized UserSession getInstance() {
         if (instance == null) {
             instance = new UserSession();

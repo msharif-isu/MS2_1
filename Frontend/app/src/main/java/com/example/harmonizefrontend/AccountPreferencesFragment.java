@@ -30,7 +30,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * A simple {@link Fragment} subclass.
+ * A simple {@link Fragment} subclass that allows users to see their info.
  * Use the {@link AccountPreferencesFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
@@ -65,7 +65,9 @@ public class AccountPreferencesFragment extends Fragment {
 
     private String URL = "http://coms-309-032.class.las.iastate.edu:8080";
 
-    // Empty Constructor for the fragment
+    /**
+     * Creates a new instance of the Account Preferences fragment
+     */
     public AccountPreferencesFragment() {
         // Required empty public constructor
     }
@@ -146,7 +148,9 @@ public class AccountPreferencesFragment extends Fragment {
         // Get the rest of the user details from server
         Log.e("JWT", "Running getUserDetails");
 
-
+/**
+ * Syncronous call to get user details
+ */
         getUserDetails(new VolleyCallBack() {
 
             @Override
@@ -275,6 +279,10 @@ public class AccountPreferencesFragment extends Fragment {
         return rootView;
     }
 
+    /**
+     * Sends a request to change current users profile details
+     * @param callBackDetails
+     */
     private void updateUserDetails(final VolleyCallBack callBackDetails) {
 
         JSONObject jsonBody = new JSONObject();
@@ -340,6 +348,10 @@ public class AccountPreferencesFragment extends Fragment {
 
     };
 
+    /**
+     * Sends a request to delete the current user
+     * @param delUserCallBack
+     */
     private void deleteUser(final VolleyCallBack delUserCallBack) {
 
         JsonObjectRequest jsonObjReq = new JsonObjectRequest(
@@ -392,6 +404,9 @@ public class AccountPreferencesFragment extends Fragment {
     }
 
 
+    /**
+     * Request to get user details
+     */
     private void getUserDetails(final VolleyCallBack callBack) {
 
         Log.e("JWT", "inside the method");

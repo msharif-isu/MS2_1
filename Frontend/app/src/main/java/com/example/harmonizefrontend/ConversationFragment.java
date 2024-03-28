@@ -23,7 +23,7 @@ import java.util.List;
 
 
 /**
- * A simple {@link Fragment} subclass.
+ * A simple {@link Fragment} subclass that allows users to see a specific conversation with another user.
  * Use the {@link ConversationFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
@@ -64,6 +64,9 @@ public class ConversationFragment extends Fragment implements WebSocketListener{
             ); // For testing purposes, later on we can have multiple conversations
 
 
+    /**
+     * Default constructor for the ConversationFragment
+     */
     public ConversationFragment() {
         // Required empty public constructor
     }
@@ -86,6 +89,10 @@ public class ConversationFragment extends Fragment implements WebSocketListener{
         return fragment;
     }
 
+    /**
+     * Called when the fragment is created
+     * @param savedInstanceState
+     */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -114,6 +121,18 @@ public class ConversationFragment extends Fragment implements WebSocketListener{
 
     }
 
+    /**
+     * Called when the fragment is created, runs all interface related code
+     * @param inflater The LayoutInflater object that can be used to inflate
+     * any views in the fragment,
+     * @param container If non-null, this is the parent view that the fragment's
+     * UI should be attached to.  The fragment should not add the view itself,
+     * but this can be used to generate the LayoutParams of the view.
+     * @param savedInstanceState If non-null, this fragment is being re-constructed
+     * from a previous saved state as given here.
+     *
+     * @return
+     */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -159,8 +178,10 @@ public class ConversationFragment extends Fragment implements WebSocketListener{
     }
 
 
-
-
+    /**
+     * Gets generated messages, used for testing purposes
+     * @return
+     */
     private List<MessageDTO> getMessages() {
         List<MessageDTO> list = new ArrayList<>();
 //        list.add(new MessageDTO(
@@ -187,12 +208,20 @@ public class ConversationFragment extends Fragment implements WebSocketListener{
     }
 
 
+    /**
+     * Called when the websocket is opened
+     * @param handshakedata Information about the server handshake.
+     */
     @Override
     public void onWebSocketOpen(ServerHandshake handshakedata) {
         Log.e("msg", "Websocket opened");
 
     }
 
+    /**
+     * Called when a WebSocket message is received.
+     * @param message The received WebSocket message.
+     */
     @Override
     public void onWebSocketMessage(String message) {
 
@@ -207,12 +236,22 @@ public class ConversationFragment extends Fragment implements WebSocketListener{
 
     }
 
+    /**
+     * Called when the WebSocket connection is closed.
+     * @param code   The status code indicating the reason for closure.
+     * @param reason A human-readable explanation for the closure.
+     * @param remote Indicates whether the closure was initiated by the remote endpoint.
+     */
     @Override
     public void onWebSocketClose(int code, String reason, boolean remote) {
         Log.e("msg", "Websocket closed");
 
     }
 
+    /**
+     * Called when an error occurs in the WebSocket communication.
+     * @param ex The exception that describes the error.
+     */
     @Override
     public void onWebSocketError(Exception ex) {
         Log.e("msg", "Websocket error");

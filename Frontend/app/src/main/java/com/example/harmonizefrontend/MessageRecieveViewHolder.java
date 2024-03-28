@@ -6,11 +6,18 @@ import android.widget.TextView;
 
 import androidx.recyclerview.widget.RecyclerView;
 
+/**
+ * View holder for the recieve message in conversations
+ */
 public class MessageRecieveViewHolder extends RecyclerView.ViewHolder{
     TextView messageText, timeText, nameText, dateText;
     ImageView pfpImage;
 //    android.view.View View;
 
+    /**
+     * Constructor for the recieve message view holder
+     * @param itemView
+     */
     MessageRecieveViewHolder(View itemView) {
         super(itemView);
         messageText = itemView.findViewById(R.id.text_message_other);

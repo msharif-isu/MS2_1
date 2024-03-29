@@ -16,25 +16,25 @@ import harmonize.Services.MusicService;
 @RestController
 @RequestMapping("/music")
 public class MusicController {
-    private MusicService apiService;
+    private MusicService musicService;
 
     @Autowired
-    public MusicController(MusicService apiService) {
-        this.apiService = apiService;
+    public MusicController(MusicService musicService) {
+        this.musicService = musicService;
     }
 
     @GetMapping(path = "/search")
     public ResponseEntity<JsonNode> search(@RequestBody SearchDTO search) {
-        return ResponseEntity.ok(apiService.search(search));
+        return ResponseEntity.ok(musicService.search(search));
     }
 
     @GetMapping(path = "/songs/{id}")
     public ResponseEntity<JsonNode> getSong(@PathVariable String id) {
-        return ResponseEntity.ok(apiService.getSong(id));
+        return ResponseEntity.ok(musicService.getSong(id));
     }
 
     @GetMapping(path = "/artists/{id}")
     public ResponseEntity<JsonNode> getArtist(@PathVariable String id) {
-        return ResponseEntity.ok(apiService.getArtist(id));
+        return ResponseEntity.ok(musicService.getArtist(id));
     }
 }

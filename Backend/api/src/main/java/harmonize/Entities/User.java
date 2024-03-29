@@ -6,7 +6,9 @@ import java.util.List;
 import java.util.Set;
 
 import jakarta.persistence.CascadeType;
+import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
+import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -16,6 +18,8 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.OrderBy;
+import jakarta.persistence.OrderColumn;
 import jakarta.persistence.Table;
 import lombok.Data;
 
@@ -53,8 +57,13 @@ public class User {
 
     @OneToMany(mappedBy = "user", fetch = FetchType.EAGER, 
                 cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<UserSong> likedSongs = new HashSet<>();
+    @OrderBy("time DESC")
+    private List<UserSong> likedSongs = new ArrayList<>();
 
+    @ElementCollection
+    @CollectionTable(name = "user_top_artists", joinColumns = @JoinColumn(name = "user_id"))
+    @Column(name = "artist_id")
+    @OrderColumn(name = "top_artist_index")
     private List<String> topArtists = new ArrayList<>();
 
     @ManyToMany(fetch = FetchType.EAGER)

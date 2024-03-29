@@ -7,9 +7,14 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import com.google.gson.Gson;
+
+import org.java_websocket.handshake.ServerHandshake;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,7 +24,7 @@ import java.util.List;
  * Use the {@link HomeFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class HomeFragment extends Fragment {
+public class HomeFragment extends Fragment implements WebSocketListener {
 
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
@@ -58,7 +63,15 @@ public class HomeFragment extends Fragment {
      */
     @Override
     public void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
+
+        // get necessary data (jwt token and crap)
+
+        //connect to websocket
+        // String url = "";
+        //WebSocketManager.getInstance().connectWebSocket(url);
+        //WebSocketManager.getInstance().setWebSocketListener(this);
     }
 
     /**
@@ -95,4 +108,48 @@ public class HomeFragment extends Fragment {
         // get feed item stuff
 
     }
+
+    @Override
+    public void onWebSocketOpen(ServerHandshake handshakedata) {
+
+        Log.d("WebSocket", "WebSocket opened");
+
+    }
+
+    @Override
+    public void onWebSocketMessage(String message) {
+
+        getActivity().runOnUiThread(() -> {
+
+            Log.d("WebSocket", "Received message: " + message);
+            Gson gson = new Gson();
+            //FeedResponse feedResponse = gson.fromJson(message, FeedResponse.class);
+            //updateFeedItems(feedResponse);
+
+        });
+    }
+
+    @Override
+    public void onWebSocketClose(int code, String reason, boolean remote) {
+        Log.d("WebSocket", "WebSocket closed");
+    }
+
+    @Override
+    public void onWebSocketError(Exception ex) {
+        Log.e("WebSocket", "WebSocket error", ex);
+    }
+
+    /**
+     *
+     * @param feedResponse
+
+    private void updateFeedItems(FeedResponse feedResponse) {
+        List<FeedItem> newItems = feedResponse.getItems();
+        int oldSize = feedItems.size();
+        feedItems.addAll(newItems);
+        feedAdapter.notifyItemRangeInserted(oldSize, newItems.size());
+        currentPage = feedResponse.getNextPage();
+        hasMore = feedResponse.isHasMore();
+    }
+    */
 }

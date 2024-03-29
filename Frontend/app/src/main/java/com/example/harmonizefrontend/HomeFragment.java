@@ -2,11 +2,17 @@ package com.example.harmonizefrontend;
 
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Fragment that houses the main feed. Will display new music releases
@@ -15,14 +21,13 @@ import android.view.ViewGroup;
  */
 public class HomeFragment extends Fragment {
 
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
 
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
+
+    private RecyclerView feedRecyclerView;
+    private FeedAdapter feedAdapter;
+    private List<FeedItem> feedItems;
 
     /**
      * required empty constructor
@@ -39,7 +44,6 @@ public class HomeFragment extends Fragment {
      * @param param2 Parameter 2.
      * @return A new instance of fragment HomeFragment.
      */
-    // TODO: Rename and change types and number of parameters
     public static HomeFragment newInstance(String param1, String param2) {
         HomeFragment fragment = new HomeFragment();
         Bundle args = new Bundle();
@@ -55,10 +59,6 @@ public class HomeFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
     }
 
     /**
@@ -78,5 +78,21 @@ public class HomeFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_home, container, false);
+    }
+
+    public void onViewCreated(@NonNull View view, @NonNull Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        feedRecyclerView = view.findViewById(R.id.feedRecyclerView);
+        feedItems = new ArrayList<>();
+        feedAdapter = new FeedAdapter(feedItems);
+        feedRecyclerView.setAdapter(feedAdapter);
+        feedRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+    }
+
+    public void fetchFeedItem() {
+
+        // get feed item stuff
+
     }
 }

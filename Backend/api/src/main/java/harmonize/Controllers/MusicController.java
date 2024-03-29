@@ -37,4 +37,9 @@ public class MusicController {
     public ResponseEntity<JsonNode> getArtist(@PathVariable String id) {
         return ResponseEntity.ok(musicService.getArtist(id));
     }
+
+    @GetMapping(path = "/artists/albums")
+    public ResponseEntity<JsonNode> getArtistAlbums(@RequestBody SearchDTO search) {
+        return ResponseEntity.ok(musicService.getArtistAlbums(search));
+    }
 }

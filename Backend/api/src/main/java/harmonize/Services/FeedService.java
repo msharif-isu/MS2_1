@@ -10,8 +10,10 @@ import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
+import harmonize.DTOs.RecommendationDTO;
 import harmonize.DTOs.SearchDTO;
 import harmonize.Entities.Song;
+import harmonize.Entities.User;
 import jakarta.websocket.Session;
 
 @Service
@@ -82,5 +84,18 @@ public class FeedService {
         } while(album.get("items").size() == limit);
 
         return songs;
+    }
+
+    private JsonNode getRecommendedSongs(User user) {
+        List<String> artistIds = new ArrayList<>();
+        List<String> songIds = new ArrayList<>();
+
+        for(int i = 0; i < 3; i++)
+            artistIds.add(user.getTopArtists().get(i));
+
+        for(int i = 0; i < 2; i++)
+            songIds.add(user.getLikedSongs().get(i).getSong().getId());
+        
+        return musicService.getRecommendations(new RecommendationDTO(Integer.toString(100), artistIds, songIds));
     }
 }

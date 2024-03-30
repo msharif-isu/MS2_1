@@ -17,6 +17,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import harmonize.DTOs.RecommendationDTO;
 import harmonize.DTOs.SearchDTO;
 import harmonize.Entities.Song;
 import harmonize.ErrorHandling.Exceptions.InvalidSearchException;
@@ -189,6 +190,33 @@ public class MusicService {
                         .queryParam("market", "US")
                         .queryParam("limit", search.getLimit())
                         .queryParam("offset", search.getOffset())
+                        .encode().toUriString();
+
+        JsonNode responseJson;
+
+        try {
+            @SuppressWarnings("null")
+            ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.GET, new HttpEntity<>(headers), String.class);
+            responseJson = objectMapper.readTree(response.getBody());
+        } catch(Exception e) {
+            throw new InvalidSearchException("Invalid search");
+        }
+
+        return responseJson;
+    }
+
+    public JsonNode getRecommendations(RecommendationDTO recommendation) {
+        String urlEnd = "/recommendations";
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.set(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE);
+        headers.set("Authorization", "Bearer " + getAPIToken());
+
+        String url = UriComponentsBuilder.fromHttpUrl(apiURL + urlEnd)
+                        .queryParam("limit", recommendation.getLimit())
+                        .queryParam("market", "US")
+                        .queryParam("seed_artists", recommendation.getArtistIds())
+                        .queryParam("seed_tracks", recommendation.getSongIds())
                         .encode().toUriString();
 
         JsonNode responseJson;

@@ -13,8 +13,13 @@ import lombok.RequiredArgsConstructor;
 public class SearchDTO {
     @NonNull
     private String q;
-    @NonNull
     private String type;
     private String limit;
     private String offset;
+
+    public SearchDTO(String q, String limit, String offset) {
+        this.q = q;
+        this.offset = offset;
+        this.limit = limit;
+    }
 }

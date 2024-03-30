@@ -159,7 +159,33 @@ public class MusicService {
         headers.set("Authorization", "Bearer " + getAPIToken());
 
         String url = UriComponentsBuilder.fromHttpUrl(apiURL + urlEnd)
-                        .queryParam("include_groups", "album,single")
+                        .queryParam("include_groups", search.getType())
+                        .queryParam("market", "US")
+                        .queryParam("limit", search.getLimit())
+                        .queryParam("offset", search.getOffset())
+                        .encode().toUriString();
+
+        JsonNode responseJson;
+
+        try {
+            @SuppressWarnings("null")
+            ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.GET, new HttpEntity<>(headers), String.class);
+            responseJson = objectMapper.readTree(response.getBody());
+        } catch(Exception e) {
+            throw new InvalidSearchException("Invalid search");
+        }
+
+        return responseJson;
+    }
+
+    public JsonNode getAlbumSongs(SearchDTO search) {
+        String urlEnd = "/albums/" + search.getQ() + "/tracks";
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.set(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE);
+        headers.set("Authorization", "Bearer " + getAPIToken());
+
+        String url = UriComponentsBuilder.fromHttpUrl(apiURL + urlEnd)
                         .queryParam("market", "US")
                         .queryParam("limit", search.getLimit())
                         .queryParam("offset", search.getOffset())

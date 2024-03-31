@@ -2,8 +2,6 @@ package harmonize.DTOs;
 
 import java.util.List;
 
-import org.springframework.web.client.HttpServerErrorException.InternalServerError;
-
 import harmonize.ErrorHandling.Exceptions.InternalServerErrorException;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -22,7 +20,7 @@ public class RecommendationDTO {
     private String songIds;
 
     public RecommendationDTO(String limit, List<String> artistIds, List<String> songIds) {
-        if (artistIds.size() + songIds.size() > 5)
+        if(artistIds.size() + songIds.size() > 5)
             throw new InternalServerErrorException("Combined size of artistIds and songIds must be equal to or less than 5");
 
         this.limit = limit;

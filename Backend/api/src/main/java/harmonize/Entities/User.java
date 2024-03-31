@@ -29,98 +29,103 @@ import lombok.Data;
  * 
  */ 
 
-@Entity
-@Table(name = "users")
-@Data
-public class User {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    @Entity
+    @Table(name = "users")
+    @Data
+    public class User {
+        @Id
+        @GeneratedValue(strategy = GenerationType.IDENTITY)
+        private int id;
 
-    private String firstName;
+        private String firstName;
 
-    private String lastName;
+        private String lastName;
 
-    @Column(unique = true)
-    private String username;
+        @Column(unique = true)
+        private String username;
 
-    private String password;
+        private String password;
 
-    @Column(columnDefinition = "LONGTEXT")
-    private String bio;
+        @Column(columnDefinition = "LONGTEXT")
+        private String bio;
 
-    @Column(columnDefinition = "TEXT")
-    private String publicKey;
+        @Column(columnDefinition = "TEXT")
+        private String publicKey;
 
-    @Column(columnDefinition = "TEXT")
-    private String privateKeyWrapped;
+        @Column(columnDefinition = "TEXT")
+        private String privateKeyWrapped;
 
-    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER, 
-                cascade = CascadeType.ALL, orphanRemoval = true)
-    @OrderBy("time DESC")
-    private List<UserSong> likedSongs = new ArrayList<>();
+        @OneToMany(mappedBy = "user", fetch = FetchType.EAGER, 
+                    cascade = CascadeType.ALL, orphanRemoval = true)
+        @OrderBy("time DESC")
+        private List<UserSong> likedSongs = new ArrayList<>();
 
-    @ElementCollection
-    @CollectionTable(name = "user_top_artists", joinColumns = @JoinColumn(name = "user_id"))
-    @Column(name = "artist_id")
-    @OrderColumn(name = "top_artist_index")
-    private List<String> topArtists = new ArrayList<>();
+        @ElementCollection(fetch = FetchType.EAGER)
+        @CollectionTable(name = "user_top_artists", joinColumns = @JoinColumn(name = "user_id"))
+        @Column(name = "artist_id")
+        @OrderColumn(name = "top_artist_index")
+        private List<String> topArtists = new ArrayList<>();
 
-    @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(name = "userRoles", joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),
-                             inverseJoinColumns = @JoinColumn(name = "role_id", referencedColumnName = "id"))
-    private Set<Role> roles = new HashSet<>();
+        @ManyToMany(fetch = FetchType.EAGER)
+        @JoinTable(name = "userRoles", joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),
+                                inverseJoinColumns = @JoinColumn(name = "role_id", referencedColumnName = "id"))
+        private Set<Role> roles = new HashSet<>();
 
-    @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(name = "friends", joinColumns = @JoinColumn(name = "user_id",   referencedColumnName = "id"),
-                          inverseJoinColumns = @JoinColumn(name = "friend_id", referencedColumnName = "id"))
-    private Set<User> friends = new HashSet<>();
+        @ManyToMany(fetch = FetchType.EAGER)
+        @JoinTable(name = "friends", joinColumns = @JoinColumn(name = "user_id",   referencedColumnName = "id"),
+                            inverseJoinColumns = @JoinColumn(name = "friend_id", referencedColumnName = "id"))
+        private Set<User> friends = new HashSet<>();
 
-    @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(name = "friendInvites", joinColumns = @JoinColumn(name = "user_id",    referencedColumnName = "id"),
-                                inverseJoinColumns = @JoinColumn(name = "inviter_id", referencedColumnName = "id"))
-    private Set<User> friendInvites = new HashSet<>();
+        @ManyToMany(fetch = FetchType.EAGER)
+        @JoinTable(name = "friendInvites", joinColumns = @JoinColumn(name = "user_id",    referencedColumnName = "id"),
+                                    inverseJoinColumns = @JoinColumn(name = "inviter_id", referencedColumnName = "id"))
+        private Set<User> friendInvites = new HashSet<>();
 
-    @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(name = "conversation_members", joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),
-                                       inverseJoinColumns = @JoinColumn(name = "conversation_id", referencedColumnName = "id"))
-    private Set<Conversation> conversations = new HashSet<>();
+        @ManyToMany(fetch = FetchType.EAGER)
+        @JoinTable(name = "conversation_members", joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),
+                                        inverseJoinColumns = @JoinColumn(name = "conversation_id", referencedColumnName = "id"))
+        private Set<Conversation> conversations = new HashSet<>();
 
-    @OneToMany(fetch = FetchType.EAGER)
-    private Set<Report> sentReports = new HashSet<>();
+        @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+        @JoinTable(name = "user_feed", joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),
+                                    inverseJoinColumns = @JoinColumn(name = "feedItem_id", referencedColumnName = "id"))
+        private Set<FeedItem> seen_feed_items = new HashSet<>();
 
-    @OneToMany(fetch = FetchType.EAGER)
-    private Set<Report> receivedReports = new HashSet<>();
+        @OneToMany(fetch = FetchType.EAGER)
+        private Set<Report> sentReports = new HashSet<>();
 
-    public User(String firstName, String lastName, String username, String password) {
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.username = username;
-        this.password = password;
-        this.bio = "";
+        @OneToMany(fetch = FetchType.EAGER)
+        private Set<Report> receivedReports = new HashSet<>();
+
+        public User(String firstName, String lastName, String username, String password) {
+            this.firstName = firstName;
+            this.lastName = lastName;
+            this.username = username;
+            this.password = password;
+            this.bio = "";
+        }
+
+        public User(String username, String password) {
+            this.firstName = "";
+            this.lastName = "";
+            this.username = username;
+            this.password = password;
+            this.bio = "";
+        }
+
+        public User() {}
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || this.getClass() != o.getClass()) return false;
+            User user = (User) o;
+            return user.id == this.id;
+        }
+
+        @Override
+        public int hashCode() {
+            return id;
+        }
     }
-
-    public User(String username, String password) {
-        this.firstName = "";
-        this.lastName = "";
-        this.username = username;
-        this.password = password;
-        this.bio = "";
-    }
-
-    public User() {}
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || this.getClass() != o.getClass()) return false;
-        User user = (User) o;
-        return user.id == this.id;
-    }
-
-    @Override
-    public int hashCode() {
-        return id;
-    }
-}
 

@@ -3,34 +3,69 @@ package harmonize.Services;
 import java.io.IOException;
 import java.time.Year;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import harmonize.DTOs.RecommendationDTO;
 import harmonize.DTOs.SearchDTO;
+import harmonize.Entities.FeedItem;
 import harmonize.Entities.Song;
+import harmonize.Entities.SongFeedItem;
 import harmonize.Entities.User;
+import harmonize.Repositories.FeedRepository;
+import harmonize.Repositories.UserRepository;
+import jakarta.transaction.Transactional;
 import jakarta.websocket.Session;
 
 @Service
 public class FeedService {
+    private static Set<Session> sessions = new HashSet<>();
+
     private MusicService musicService;
+    private UserRepository userRepository;
+    private FeedRepository feedRepository;
+    private ObjectMapper mapper;
 
     @Autowired
-    public FeedService(MusicService musicService) {
+    public FeedService(MusicService musicService, UserRepository userRepository, FeedRepository feedRepository, ObjectMapper mapper) {
         this.musicService = musicService;
+        this.userRepository = userRepository;
+        this.feedRepository = feedRepository;
+        this.mapper = mapper;
     }
 
     public void onOpen(Session session) throws IOException {
+        loadFeed(session);
+        List<FeedItem> feed = ((List<?>)session.getUserProperties().get("feed")).stream().map(FeedItem.class::cast).collect(Collectors.toList());
 
+        System.out.println(session.getUserPrincipal().getName());
+
+        for(int i = 0; i < feed.size(); i++) {
+            System.out.println(((SongFeedItem)feed.get(i)).getSong().getTitle());
+        }
+
+        sessions.add(session);
     }
 
     public void onMessage(Session session, String message) throws IOException {
+        loadFeed(session);
+        List<FeedItem> feed = ((List<?>)session.getUserProperties().get("feed")).stream().map(FeedItem.class::cast).collect(Collectors.toList());
 
+        for(int i = 0; i < 5; i++) {
+            session.getBasicRemote().sendText(mapper.writeValueAsString(feed.get(i)));
+            feed.remove(i);
+        }
+
+        session.getUserProperties().put("feed", feed);
     }
 
     public void onClose(Session session) throws IOException {
@@ -86,16 +121,53 @@ public class FeedService {
         return songs;
     }
 
-    private JsonNode getRecommendedSongs(User user) {
+    private List<Song> getRecommendedSongs(User user) {
+        List<Song> songRec = new ArrayList<>();
         List<String> artistIds = new ArrayList<>();
         List<String> songIds = new ArrayList<>();
 
-        for(int i = 0; i < 3; i++)
+        for(int i = 0; i < user.getTopArtists().size() && i < 3; i++)
             artistIds.add(user.getTopArtists().get(i));
 
-        for(int i = 0; i < 2; i++)
+        for(int i = 0; i < user.getLikedSongs().size() && i < 2; i++)
             songIds.add(user.getLikedSongs().get(i).getSong().getId());
+
+        JsonNode recommendations = musicService.getRecommendations(new RecommendationDTO(Integer.toString(100), artistIds, songIds));
         
-        return musicService.getRecommendations(new RecommendationDTO(Integer.toString(100), artistIds, songIds));
+        for(int i = 0; i < recommendations.get("tracks").size(); i++)
+            songRec.add(new Song(recommendations.get("tracks").get(i)));
+
+        return songRec;
+    }
+
+    private void loadFeed(Session session) {
+        List<FeedItem> feed;
+        User user = userRepository.findByUsername(session.getUserPrincipal().getName());
+
+        feed = session.getUserProperties().containsKey("feed") ? 
+                    ((List<?>)session.getUserProperties().get("feed")).stream().map(FeedItem.class::cast).collect(Collectors.toList()) : 
+                    generateFeed(user);
+
+        session.getUserProperties().put("user", user);
+        session.getUserProperties().put("feed", feed);
+    }
+
+    @Transactional
+    private List<FeedItem> generateFeed(User user) {
+        List<FeedItem> feed = new ArrayList<>();
+
+        for(String artistId : user.getTopArtists()) {
+            for(Song song : getNewReleases(artistId)) {
+                feed.add(new SongFeedItem("new_release", song));
+            }
+        }
+
+        for(Song song : getRecommendedSongs(user)) {
+            feed.add(new SongFeedItem("recommendation", song));
+        }
+
+        Collections.shuffle(feed);
+
+        return feed;
     }
 }

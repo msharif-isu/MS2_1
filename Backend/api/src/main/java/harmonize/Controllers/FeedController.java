@@ -12,20 +12,26 @@ import jakarta.websocket.server.ServerEndpoint;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import harmonize.Services.FeedService;
+
 @ServerEndpoint(value = "/feed")
 @Component
 public class FeedController {
+    private static FeedService feedService;
 
     @Autowired
-    public void setFeedService() {
+    public void setFeedService(FeedService feedService) {
+        FeedController.feedService = feedService;
     }
 
     @OnOpen
     public void onOpen(Session session) throws IOException {
+        feedService.onOpen(session);
     }
 
     @OnMessage
     public void onMessage(Session session, String message) throws IOException {
+        feedService.onMessage(session, message);
     }
 
     @OnClose

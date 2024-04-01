@@ -4,8 +4,11 @@ import java.io.IOException;
 import java.time.Year;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -17,12 +20,15 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import harmonize.DTOs.RecommendationDTO;
 import harmonize.DTOs.SearchDTO;
-import harmonize.Entities.FeedItem;
+import harmonize.DTOs.TransmissionDTO;
 import harmonize.Entities.Song;
-import harmonize.Entities.SongFeedItem;
 import harmonize.Entities.User;
-import harmonize.Repositories.FeedRepository;
+import harmonize.Entities.FeedItems.AbstractFeedItem;
+import harmonize.Entities.FeedItems.SongFeedItem;
+import harmonize.ErrorHandling.Exceptions.UserNotFoundException;
 import harmonize.Repositories.UserRepository;
+import harmonize.Repositories.FeedRepositories.AbstractFeedRepository;
+import harmonize.Repositories.FeedRepositories.SongFeedRepository;
 import jakarta.transaction.Transactional;
 import jakarta.websocket.Session;
 
@@ -30,50 +36,82 @@ import jakarta.websocket.Session;
 public class FeedService {
     private static Set<Session> sessions = new HashSet<>();
 
+    private Map<Class<? extends AbstractFeedItem>, AbstractFeedRepository> feedRepositories;
+
     private MusicService musicService;
     private UserRepository userRepository;
-    private FeedRepository feedRepository;
     private ObjectMapper mapper;
 
     @Autowired
-    public FeedService(MusicService musicService, UserRepository userRepository, FeedRepository feedRepository, ObjectMapper mapper) {
+    public FeedService(MusicService musicService, UserRepository userRepository, SongFeedRepository songFeedRepository, ObjectMapper mapper) {
         this.musicService = musicService;
         this.userRepository = userRepository;
-        this.feedRepository = feedRepository;
         this.mapper = mapper;
+
+        this.feedRepositories = new HashMap<>();
+        this.feedRepositories.put(SongFeedItem.class, songFeedRepository);
     }
 
     public void onOpen(Session session) throws IOException {
         loadFeed(session);
-        List<FeedItem> feed = ((List<?>)session.getUserProperties().get("feed")).stream().map(FeedItem.class::cast).collect(Collectors.toList());
-
-        System.out.println(session.getUserPrincipal().getName());
-
-        for(int i = 0; i < feed.size(); i++) {
-            System.out.println(((SongFeedItem)feed.get(i)).getSong().getTitle());
-        }
-
         sessions.add(session);
     }
 
     public void onMessage(Session session, String message) throws IOException {
         loadFeed(session);
-        List<FeedItem> feed = ((List<?>)session.getUserProperties().get("feed")).stream().map(FeedItem.class::cast).collect(Collectors.toList());
+        List<AbstractFeedItem> feed = ((List<?>)session.getUserProperties().get("feed")).stream().map(AbstractFeedItem.class::cast).collect(Collectors.toList());
+        User user = (User)session.getUserProperties().get("user");
 
-        for(int i = 0; i < 5; i++) {
-            session.getBasicRemote().sendText(mapper.writeValueAsString(feed.get(i)));
-            feed.remove(i);
+        Iterator<AbstractFeedItem> iterator = feed.iterator();
+        for(int i = 0; iterator.hasNext() && i < 5; i++) {
+            AbstractFeedItem item = iterator.next();
+
+            if(item instanceof SongFeedItem)
+                musicService.getSong(((SongFeedItem)item).getSong().getId());
+
+            if (!user.getSeenFeed().contains(item)) {
+                // If not, save the feed item and add it to seenFeed set
+                feedRepositories.get(item.getClass()).save(item);
+                user.getSeenFeed().add(item);
+            }
+            send(session, item);
+            
+            iterator.remove();
+        }
+
+        iterator = user.getSeenFeed().iterator();
+        for(int i = 0; iterator.hasNext(); i++) {
+            System.out.println(i + ": " + ((SongFeedItem)iterator.next()).getSong().getTitle());
         }
 
         session.getUserProperties().put("feed", feed);
     }
 
     public void onClose(Session session) throws IOException {
-
+        loadFeed(session);
+        User user = (User)session.getUserProperties().get("user");
+        if(user != null)
+            userRepository.save(user);
+        sessions.remove(session);
     }
 
     public void onError(Session session, Throwable throwable) {
+        onError(session, throwable, true);
+    }
 
+    public void onError(Session session, Throwable throwable, Boolean closeSession) {
+        throwable.printStackTrace();
+        try {
+            send(session, throwable);
+            if (closeSession)
+                session.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void send(Session session, Object obj) throws IOException {
+        session.getBasicRemote().sendText(mapper.writeValueAsString(new TransmissionDTO(obj.getClass(), obj)));
     }
 
     private List<Song> getNewReleases(String artistId) {
@@ -141,20 +179,26 @@ public class FeedService {
     }
 
     private void loadFeed(Session session) {
-        List<FeedItem> feed;
-        User user = userRepository.findByUsername(session.getUserPrincipal().getName());
+        User user = session.getUserProperties().containsKey("user") ?
+                        (User)session.getUserProperties().get("user") :
+                        userRepository.findByUsername(session.getUserPrincipal().getName());
 
-        feed = session.getUserProperties().containsKey("feed") ? 
-                    ((List<?>)session.getUserProperties().get("feed")).stream().map(FeedItem.class::cast).collect(Collectors.toList()) : 
-                    generateFeed(user);
+        if(user == null) {
+            onError(session, new UserNotFoundException(session.getUserPrincipal().getName()), true);
+            return;
+        }
+
+        List<AbstractFeedItem> feed = session.getUserProperties().containsKey("feed") ? 
+                                ((List<?>)session.getUserProperties().get("feed")).stream().map(AbstractFeedItem.class::cast).collect(Collectors.toList()) : 
+                                generateFeed(user);
 
         session.getUserProperties().put("user", user);
         session.getUserProperties().put("feed", feed);
     }
 
     @Transactional
-    private List<FeedItem> generateFeed(User user) {
-        List<FeedItem> feed = new ArrayList<>();
+    private List<AbstractFeedItem> generateFeed(User user) {
+        List<AbstractFeedItem> feed = new ArrayList<>();
 
         for(String artistId : user.getTopArtists()) {
             for(Song song : getNewReleases(artistId)) {
@@ -166,6 +210,7 @@ public class FeedService {
             feed.add(new SongFeedItem("recommendation", song));
         }
 
+        feed.removeAll(user.getSeenFeed());
         Collections.shuffle(feed);
 
         return feed;

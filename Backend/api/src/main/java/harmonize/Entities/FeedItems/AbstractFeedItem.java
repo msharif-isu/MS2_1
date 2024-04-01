@@ -1,4 +1,4 @@
-package harmonize.Entities;
+package harmonize.Entities.FeedItems;
 
 import java.util.Date;
 
@@ -27,10 +27,10 @@ import lombok.Data;
     name = "feed_item_type",
     discriminatorType = DiscriminatorType.STRING
 )
-@Table(name = "feedItems")
+@Table(name = "seen_feed_items")
 @AllArgsConstructor
 @Data
-public abstract class FeedItem {
+public abstract class AbstractFeedItem {
     public static final long ITEM_EXPIRATION_DATE_MS = 86400 * 1000;
 
     @Id
@@ -40,7 +40,20 @@ public abstract class FeedItem {
     @Column(name = "expiration")
     private Date expiration;
 
-    public FeedItem() {
+    public AbstractFeedItem() {
         expiration = new Date(System.currentTimeMillis() + ITEM_EXPIRATION_DATE_MS);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+        AbstractFeedItem feedItem = (AbstractFeedItem) obj;
+        return this.id == feedItem.getId();
+    }
+    
+    @Override
+    public int hashCode() {
+        return this.id;
     }
 }   

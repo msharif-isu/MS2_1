@@ -36,9 +36,11 @@ public class FeedController {
 
     @OnClose
     public void onClose(Session session) throws IOException {
+        feedService.onClose(session);
     }
 
     @OnError
     public void onError(Session session, Throwable throwable) {
+        feedService.onError(session, throwable);
     }
 }

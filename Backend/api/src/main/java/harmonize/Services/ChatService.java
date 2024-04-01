@@ -13,6 +13,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import harmonize.DTOs.ConversationDTO;
 import harmonize.DTOs.MessageDTO;
+import harmonize.DTOs.TransmissionDTO;
 import harmonize.Entities.Conversation;
 import harmonize.Entities.Message;
 import harmonize.Entities.User;
@@ -24,8 +25,6 @@ import harmonize.Repositories.UserRepository;
 import harmonize.Security.ChatCrypto;
 import harmonize.Security.ChatCrypto.Keys;
 import jakarta.websocket.Session;
-import lombok.AllArgsConstructor;
-import lombok.Data;
 
 @Service
 public class ChatService {
@@ -37,13 +36,6 @@ public class ChatService {
     private BCryptPasswordEncoder encoder;
     private ChatCrypto chatCrypto;
     private ObjectMapper mapper;
-    
-    @Data
-    @AllArgsConstructor
-    private class Transmition {
-        Class<? extends Object> type;
-        Object data;
-    }
 
     @Autowired
     public ChatService(UserRepository userRepository, ConversationRepository conversationRepository, MessageService messageService, BCryptPasswordEncoder encoder, ChatCrypto chatCrypto) {
@@ -156,7 +148,7 @@ public class ChatService {
     }
 
     private void send(Session session, Object obj) throws IOException {
-        session.getBasicRemote().sendText(mapper.writeValueAsString(new Transmition(obj.getClass(), obj)));
+        session.getBasicRemote().sendText(mapper.writeValueAsString(new TransmissionDTO(obj.getClass(), obj)));
     }
 
     private void loadProperties(Session session) {

@@ -100,7 +100,6 @@ public class ChatService {
     }
 
     public void onError(Session session, Throwable throwable, Boolean closeSession) {
-        throwable.printStackTrace();
         try {
             send(session, throwable);
             if (closeSession)

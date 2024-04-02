@@ -278,7 +278,6 @@ public class UserService {
         user.getLikedSongs().add(connection);
         userRepository.save(user);
         updateTopArtist(user);
-        userRepository.save(user);
 
         return new String(String.format("\"%s\" favorited \"%s\"", user.getUsername(), song.getTitle()));
     }
@@ -299,19 +298,18 @@ public class UserService {
         user.getLikedSongs().remove(connection);
         userRepository.save(user);
         updateTopArtist(user);
-        userRepository.save(user);
         
         return new String(String.format("\"%s\" removed \"%s\"", user.getUsername(), song.getTitle()));
     }
 
     private void updateTopArtist(User user) {
         List<String> topArtists = songRepository.findTopArtists(user.getLikedSongs());
-        int i;
 
-        for(i = 0; i < user.getTopArtists().size() && i < topArtists.size(); i++)
-            user.getTopArtists().set(i, topArtists.get(i));
+        user.getTopArtists().clear();
 
-        for(; i < topArtists.size(); i++)
-            user.getTopArtists().add(i, topArtists.get(i));
+        for(int i = 0; i < topArtists.size(); i++)
+            user.getTopArtists().add(topArtists.get(i));
+
+        userRepository.save(user);
     }
 }

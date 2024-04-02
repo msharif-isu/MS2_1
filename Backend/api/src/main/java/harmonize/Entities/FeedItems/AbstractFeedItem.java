@@ -41,7 +41,7 @@ import lombok.Data;
 @AllArgsConstructor
 @Data
 public abstract class AbstractFeedItem {
-    public static final long ITEM_EXPIRATION_DATE_MS = 10000;//86400 * 1000;
+    public static final long ITEM_EXPIRATION_DATE_MS = 86400 * 1000;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

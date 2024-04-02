@@ -85,26 +85,27 @@ public class FeedService {
 
         if(jsonMessage.at("/body/requestType").asInt() == FeedEnum.REFRESH.ordinal()) {
             session.getUserProperties().remove("feed");
+            session.getUserProperties().remove("user");
             loadFeed(session);
             return;
         }
 
         if(jsonMessage.at("/body/requestType").asInt() == FeedEnum.NEW_PAGE.ordinal()) {  
-            int page = jsonMessage.at("/body/data/page").asInt();
+            int offset = jsonMessage.at("/body/data/offset").asInt();
             int limit = jsonMessage.at("/body/data/limit").asInt();
 
-            if(limit <= 0 || page < 0) {
+            if(limit <= 0 || offset < 0) {
                 onError(session, new IndexOutOfBoundsException("Page and limit must be positive"), false);
                 return;
             }
 
-            if(page * limit >= feed.size() || limit >= feed.size()) {
+            if(offset >= feed.size() || limit > feed.size()) {
                 onError(session, new IndexOutOfBoundsException("Requested item is out of bounds"), false);
                 return;
             }
 
-            int start = page * limit;
-            int end = Math.min(feed.size(), (page + 1) * limit);
+            int start = offset;
+            int end = Math.min(feed.size(), offset + limit);
 
             List<AbstractFeedItem> feedPage = feed.subList(start, end);
             for(int i = start; i < end; i++) {
@@ -135,17 +136,18 @@ public class FeedService {
     }
 
     public void onError(Session session, Throwable throwable, Boolean closeSession) {
-        throwable.printStackTrace();
         try {
             send(session, throwable);
-            if (closeSession)
+            if (closeSession) {
+                onClose(session);
                 session.close();
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    @Scheduled(cron="0 0 0 * * ?")
+    @Scheduled(cron="0 0 0 * * ?") //Midnight
     public void removeExpiredFeedItems() {
         List<AbstractFeedItem> list = feedRepository.getExpiredFeedItems();
 
@@ -245,7 +247,6 @@ public class FeedService {
         session.getUserProperties().put("feed", feed);
     }
 
-    @Transactional
     private List<AbstractFeedItem> generateFeed(User user) {
         List<AbstractFeedItem> feed = new ArrayList<>();
 

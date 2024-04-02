@@ -1,7 +1,5 @@
 package harmonize.Entities.FeedItems;
 
-import java.util.Objects;
-
 import harmonize.Entities.Song;
 import harmonize.Entities.User;
 import harmonize.Enum.FeedEnum;
@@ -11,9 +9,11 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 @Data
 @Entity
+@EqualsAndHashCode(callSuper = true)
 @DiscriminatorValue(value = "song")
 public class SongFeedItem extends AbstractFeedItem {
     @ManyToOne(fetch = FetchType.EAGER)
@@ -27,18 +27,5 @@ public class SongFeedItem extends AbstractFeedItem {
     public SongFeedItem(FeedEnum type, Song song, User user) {
         super(type, user);
         this.song = song;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        SongFeedItem feedItem = (SongFeedItem) o;
-        return Objects.equals(getType(), feedItem.getType()) && Objects.equals(song, feedItem.song);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(getType(), song);
     }
 }

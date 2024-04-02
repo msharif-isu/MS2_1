@@ -33,7 +33,7 @@ public class MessageDTO {
         /**
          * Getters
          */
-        protected int getDataId() {
+        public int getDataId() {
             return id;
         }
 

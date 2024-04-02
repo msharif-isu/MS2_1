@@ -26,6 +26,7 @@ import Connections.WebSocketListener;
 import Connections.WebSocketManagerChat;
 import Conversations.ChatListAdapter;
 import Conversations.ClickListener;
+import Conversations.ReportMessageFragment;
 import DTO.ConversationDTO;
 import DTO.MessageDTO;
 import UserInfo.Member;
@@ -119,7 +120,7 @@ public class ConversationFragment extends Fragment implements WebSocketListener 
             @Override
             public void click(int index) {
                 Toast.makeText(navBar, "Report test", Toast.LENGTH_LONG).show();
-//                this.getActivity().loadfragment(new );
+                ((navBar) getActivity()).loadFragmentPopout(new ReportMessageFragment());
             }
         };
 

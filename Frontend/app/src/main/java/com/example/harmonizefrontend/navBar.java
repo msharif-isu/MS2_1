@@ -127,4 +127,14 @@ public class navBar extends AppCompatActivity {
         fragmentTransaction.replace(R.id.frame_layout, fragment);
         fragmentTransaction.commit();
     }
+
+    // This is for the popout fragment, currently protected, is that a good idea?
+    protected void loadFragmentPopout(Fragment fragment) {
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        fragmentTransaction.replace(R.id.popout_frame_layout, fragment);
+        fragmentTransaction.addToBackStack(null); // Important for adding multiple fragments to the same container
+        // The order which we add fragments to the backstack is the order in which they are popped off
+        fragmentTransaction.commit();
+    }
 }

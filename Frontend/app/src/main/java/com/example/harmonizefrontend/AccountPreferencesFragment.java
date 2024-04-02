@@ -103,6 +103,8 @@ public class AccountPreferencesFragment extends Fragment {
         }
 
 
+
+
     }
 
     @Override
@@ -170,6 +172,8 @@ public class AccountPreferencesFragment extends Fragment {
 
                 Member currentUser = new Member(99999, firstName, lastName, username, bio);
                 UserSession.getInstance().setCurrentUser(currentUser);
+                UserSession.getInstance().setPassword(password);
+                UserSession.getInstance().setJwtToken(jwtToken);
                 Log.e("msg", currentUser.getUsername() + " " + currentUser.getFirstName() + " " + currentUser.getLastName() + " " + currentUser.getBio());
             }
 
@@ -269,6 +273,8 @@ public class AccountPreferencesFragment extends Fragment {
 
                             currentUser = new Member(99999, firstName, lastName, username, bio);
                             UserSession.getInstance().setCurrentUser(currentUser);
+                            UserSession.getInstance().setPassword(password);
+                            UserSession.getInstance().setJwtToken(jwtToken);
                             Log.e("msg", currentUser.getUsername() + " " + currentUser.getFirstName() + " " + currentUser.getLastName() + " " + currentUser.getBio());
                             // SET ID TO MAX BECAUSE CURRENTLY DO NOT HAVE A REQUEST TO GET ID
                         }

@@ -7,7 +7,7 @@ public class UserSession {
     private static UserSession instance;
     private Member currentUser;
 
-    private String jwtToken;
+    private String jwtToken, password;
 
     private UserSession() {
 
@@ -34,5 +34,17 @@ public class UserSession {
 
     public String getJwtToken() {
         return jwtToken;
+    }
+
+    public void setJwtToken(String jwtToken) {
+        this.jwtToken = jwtToken;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+        }
+
+    public String getPassword() {
+        return password;
     }
 }

@@ -43,11 +43,12 @@ public class Application {
                     authService.register(new RegisterDTO("first", "last", "mod", "modpw"));
                     authService.register(new RegisterDTO("john", "smith", "john", "johnpw"));
                     authService.register(new RegisterDTO("tim", "brown", "tim", "timpw"));
+                    authService.register(new RegisterDTO("Manas", "Mathur", "manasmathur2023", "Dbackup890!"));
                 } catch (EntityAlreadyExistsException e) {}
                 
                 try {
-                    userService.addFriend(adminService.getUser("jsmith").getId(), adminService.getUser("tbrown").getId());
-                    userService.addFriend(adminService.getUser("tbrown").getId(), adminService.getUser("jsmith").getId());
+                    userService.addFriend(adminService.getUser("john").getId(), adminService.getUser("tim").getId());
+                    userService.addFriend(adminService.getUser("tim").getId(), adminService.getUser("john").getId());
                 } catch (EntityAlreadyExistsException e) {}
             
                 try {

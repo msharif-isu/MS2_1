@@ -82,7 +82,7 @@ public class ChatService {
         Keys keys = (Keys)session.getUserProperties().get("keys");
 
         JsonNode map = mapper.readTree(message);
-        if (map.at("/type").isEmpty()) {
+        if (map.at("/type").textValue().isEmpty()) {
             onError(session, new InvalidArgumentException("Expected type field in message."), false);
             return;
         }
@@ -90,7 +90,7 @@ public class ChatService {
             onError(session, new InternalServerErrorException("Could not parse message."), false);
             return;
         }
-        if (user.getConversations().contains(conversationRepository.findReferenceById(map.at("/data/conversation/id").asInt()))) {
+        if (!user.getConversations().contains(conversationRepository.findReferenceById(map.at("/data/conversation/id").asInt()))) {
             onError(session, new UnauthorizedException("You are not a member of that conversation."), false);
             return;
         }

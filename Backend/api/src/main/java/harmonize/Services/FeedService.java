@@ -16,11 +16,13 @@ import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import harmonize.DTOs.FeedDTO;
 import harmonize.DTOs.RecommendationDTO;
 import harmonize.DTOs.SearchDTO;
 import harmonize.DTOs.TransmissionDTO;
+import harmonize.Entities.LikedSong;
 import harmonize.Entities.Song;
 import harmonize.Entities.User;
 import harmonize.Entities.FeedItems.AbstractFeedItem;
@@ -63,15 +65,22 @@ public class FeedService {
         loadFeed(session);
         List<AbstractFeedItem> feed = ((List<?>)session.getUserProperties().get("feed")).stream().map(AbstractFeedItem.class::cast).collect(Collectors.toList());
         User user = (User)session.getUserProperties().get("user");
+
+        if(feed.isEmpty()) {
+            send(session, FeedEnum.NO_DATA);
+            return;
+        }
         
         JsonNode jsonMessage = mapper.readTree(message);
+
         if (!jsonMessage.at("/type").textValue().equals(FeedDTO.class.getName())) {
             onError(session, new InternalServerErrorException("Could not parse message."), false);
             return;
         }
 
-        if(feed.isEmpty()) {
-            send(session, FeedEnum.NO_DATA);
+        if(jsonMessage.at("/body/requestType").asInt() == FeedEnum.REFRESH.ordinal()) {
+            session.getUserProperties().remove("feed");
+            loadFeed(session);
             return;
         }
 
@@ -79,7 +88,17 @@ public class FeedService {
             int page = jsonMessage.at("/body/data/page").asInt();
             int limit = jsonMessage.at("/body/data/limit").asInt();
 
-            for(AbstractFeedItem item : feed.subList((page - 1) * limit, page * limit)) {
+            if(limit <= 0 || page <= 0) {
+                onError(session, new IndexOutOfBoundsException("Page and limit must be positive"), false);
+                return;
+            }
+
+            if((page - 1) * limit >= feed.size() || limit >= feed.size() - 1) {
+                onError(session, new IndexOutOfBoundsException("Requested item is out of bounds"), false);
+                return;
+            }
+
+            for(AbstractFeedItem item : feed.subList((page - 1) * limit, Math.min(feed.size(), page * limit))) {
                 if(item instanceof SongFeedItem)
                     musicService.getSong(((SongFeedItem)item).getSong().getId());
 
@@ -194,9 +213,15 @@ public class FeedService {
             return;
         }
 
-        List<AbstractFeedItem> feed = session.getUserProperties().containsKey("feed") ? 
-                                ((List<?>)session.getUserProperties().get("feed")).stream().map(AbstractFeedItem.class::cast).collect(Collectors.toList()) : 
-                                generateFeed(user);
+        List<AbstractFeedItem> feed;
+        if(session.getUserProperties().containsKey("feed")) 
+            feed = ((List<?>)session.getUserProperties().get("feed")).stream().map(AbstractFeedItem.class::cast).collect(Collectors.toList());
+        else {
+            feed = generateFeed(user);
+            ObjectNode node = mapper.createObjectNode();
+            node.put("size", feed.size());
+            send(session, node);
+        }
 
         session.getUserProperties().put("user", user);
         session.getUserProperties().put("feed", feed);
@@ -212,11 +237,15 @@ public class FeedService {
 
         for(String artistId : user.getTopArtists()) {
             for(Song song : getNewReleases(artistId)) {
+                if(user.getLikedSongs().contains(new LikedSong(user, song)))
+                    continue;
                 feed.add(new SongFeedItem(FeedEnum.NEW_RELEASE, song));
             }
         }
 
         for(Song song : getRecommendedSongs(user)) {
+            if(user.getLikedSongs().contains(new LikedSong(user, song)))
+                continue;
             feed.add(new SongFeedItem(FeedEnum.RECOMMENDATION, song));
         }
 

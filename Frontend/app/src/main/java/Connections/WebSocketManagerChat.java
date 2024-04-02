@@ -14,14 +14,14 @@ import java.net.URI;
  * This instance ensures that there is only one WebSocketManager throughout
  * the application's lifecycle, allowing for centralized WebSocket handling.
  */
-public class WebSocketManager{
+public class WebSocketManagerChat {
 
-    private static WebSocketManager instance;
+    private static WebSocketManagerChat instance;
     private MyWebSocketClient webSocketClient;
     private WebSocketListener webSocketListener;
 
 
-    private WebSocketManager() {}
+    private WebSocketManagerChat() {}
 
     /**
      * Retrieves a synchronized instance of the WebSocketManager, ensuring that
@@ -30,9 +30,9 @@ public class WebSocketManager{
      *
      * @return A synchronized instance of WebSocketManager.
      */
-    public static synchronized WebSocketManager getInstance() {
+    public static synchronized WebSocketManagerChat getInstance() {
         if (instance == null) {
-            instance = new WebSocketManager();
+            instance = new WebSocketManagerChat();
         }
         return instance;
     }
@@ -89,6 +89,7 @@ public class WebSocketManager{
         if (webSocketClient != null && webSocketClient.isOpen()) {
 //            Gson gson = new Gson();
 //            String messageGson = gson.toJson(messageDTO);
+
             webSocketClient.send(message);
         }
         else {

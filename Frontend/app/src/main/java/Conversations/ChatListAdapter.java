@@ -23,8 +23,11 @@ import UserInfo.UserSession;
 public class ChatListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
     private List<MessageDTO> messageList;
 
-    public ChatListAdapter(List<MessageDTO> messageList) {
+    private ClickListener clickListener;
+
+    public ChatListAdapter(List<MessageDTO> messageList, ClickListener clickListener) {
         this.messageList = messageList;
+        this.clickListener = clickListener;
     }
 
     /**
@@ -94,11 +97,14 @@ public class ChatListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         String date = dateFormat.format(dateUnix);
         String time = timeFormat.format(dateUnix);
 
+
+        final int index = holder.getAdapterPosition();
         if (getItemViewType(position) == 0) { // Sent message
             MessageSentViewHolder sentViewHolder = (MessageSentViewHolder) holder;
             sentViewHolder.messageText.setText(message.getText());
             sentViewHolder.dateText.setText(date);
             sentViewHolder.timeText.setText(time);
+
 
 //            sentViewHolder.timeText.setText(message.getSentAt()); // Assume Message has getTime()
         } else { // Received message
@@ -107,6 +113,13 @@ public class ChatListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             recieveViewHolder.nameText.setText(message.getData().getDataSender().getUsername());
             recieveViewHolder.dateText.setText(date);
             recieveViewHolder.timeText.setText(time);
+
+            recieveViewHolder.View.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    clickListener.click(index);
+                }
+            });
 //            recieveViewHolder.timeText.setText(message.getSentAt());
 //            recieveViewHolder.pfpImage.setImageURI(message.getUser().profileURL);
 

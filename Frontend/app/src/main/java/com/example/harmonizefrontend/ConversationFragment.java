@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -22,8 +23,9 @@ import java.util.Arrays;
 import java.util.List;
 
 import Connections.WebSocketListener;
-import Connections.WebSocketManager;
+import Connections.WebSocketManagerChat;
 import Conversations.ChatListAdapter;
+import Conversations.ClickListener;
 import DTO.ConversationDTO;
 import DTO.MessageDTO;
 import UserInfo.Member;
@@ -48,6 +50,8 @@ public class ConversationFragment extends Fragment implements WebSocketListener 
 
     private ChatListAdapter chatListAdapter;
     private RecyclerView recyclerView;
+
+    private ClickListener clickListener;
 
     private EditText writeMsg;
     private Button sendBtn;
@@ -89,12 +93,7 @@ public class ConversationFragment extends Fragment implements WebSocketListener 
      */
     // TODO: Rename and change types and number of parameters
     public static ConversationFragment newInstance(String param1, String param2) {
-        ConversationFragment fragment = new ConversationFragment();
-//        Bundle args = new Bundle();
-//        args.putString(ARG_PARAM1, param1);
-//        args.putString(ARG_PARAM2, param2);
-//        fragment.setArguments(args);
-        return fragment;
+        return new ConversationFragment();
     }
 
     /**
@@ -104,10 +103,6 @@ public class ConversationFragment extends Fragment implements WebSocketListener 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-//        if (getArguments() != null) {
-//            mParam1 = getArguments().getString(ARG_PARAM1);
-//            mParam2 = getArguments().getString(ARG_PARAM2);
-//        }
 
         navBar navBar = (navBar) getActivity();
         if (navBar != null) {
@@ -120,11 +115,19 @@ public class ConversationFragment extends Fragment implements WebSocketListener 
             Log.e("msg", "navBar is null, JWT token not set");
         }
 
-        // Connect to websocket
-        String serverURL = "ws://coms-309-032.class.las.iastate.edu:8080/chats?username=" + username + "&password=" + password;
-        Log.e("msg", "Before websocket connection");
-        WebSocketManager.getInstance().connectWebSocket(serverURL);
-        WebSocketManager.getInstance().setWebSocketListener(this);
+        clickListener = new ClickListener() {
+            @Override
+            public void click(int index) {
+                Toast.makeText(navBar, "Report test", Toast.LENGTH_LONG).show();
+//                this.getActivity().loadfragment(new );
+            }
+        };
+
+        // Connect to websocket, currently working locally
+//        String serverURL = "ws://coms-309-032.class.las.iastate.edu:8080/chats?username=" + username + "&password=" + password;
+//        Log.e("msg", "Before websocket connection");
+//        WebSocketManager.getInstance().connectWebSocket(serverURL);
+//        WebSocketManager.getInstance().setWebSocketListener(this);
 
 
     }
@@ -150,7 +153,7 @@ public class ConversationFragment extends Fragment implements WebSocketListener 
         sendBtn = view.findViewById(R.id.button_send);
         recyclerView = view.findViewById(R.id.recycler);
         list = getMessages();
-        chatListAdapter = new ChatListAdapter(list);
+        chatListAdapter = new ChatListAdapter(list, clickListener);
         recyclerView.setAdapter(chatListAdapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
@@ -170,12 +173,15 @@ public class ConversationFragment extends Fragment implements WebSocketListener 
                             )
                     );
 
+
+
                     list.add(newMsg);
                     chatListAdapter.notifyItemChanged(chatListAdapter.getItemCount() + 1);
                     writeMsg.setText("");
                     String returnMsg = gson.toJson(newMsg);
-                    Log.e("msg", "Before sending message");
-                    WebSocketManager.getInstance().sendMessage(returnMsg);
+                    Log.e("msg", "Before sending message: " );
+                    String testMsg = "{\"type\": \"harmonize.DTOs.MessageDTO\",\"data\": {\"conversation\": {\"id\": 1},\"text\": \"Hello, World!\"}}\n";
+                    WebSocketManagerChat.getInstance().sendMessage(testMsg);
                 }
 
             }
@@ -265,4 +271,6 @@ public class ConversationFragment extends Fragment implements WebSocketListener 
         Log.e("msg", "Websocket error");
 
     }
+
+
 }

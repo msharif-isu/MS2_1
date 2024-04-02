@@ -14,7 +14,7 @@ import com.example.harmonizefrontend.R;
 public class MessageRecieveViewHolder extends RecyclerView.ViewHolder{
     TextView messageText, timeText, nameText, dateText;
     ImageView pfpImage;
-//    android.view.View View;
+    android.view.View View;
 
     /**
      * Constructor for the recieve message view holder
@@ -27,7 +27,7 @@ public class MessageRecieveViewHolder extends RecyclerView.ViewHolder{
         nameText = itemView.findViewById(R.id.text_user_other);
         dateText = itemView.findViewById(R.id.text_date_other);
         pfpImage = itemView.findViewById(R.id.image_profile_other);
-//        itemView = View;
+        View = itemView;
     }
 
 }

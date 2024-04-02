@@ -192,7 +192,7 @@ public class ChatService {
                     (Keys)session.getUserProperties().get("keys") :
                     chatCrypto.new Keys(user.getPublicKey(), chatCrypto.unwrap(wrapperToken, user.getPrivateKeyWrapped()));
         } catch (Exception e) {
-            onError(session, new InternalServerErrorException("Internal Server Error"));
+            onError(session, new InternalServerErrorException("Could not unwrap keys."));
         }
 
         session.getUserProperties().put("user", user);

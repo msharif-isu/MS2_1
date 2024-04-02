@@ -9,8 +9,8 @@ import org.springframework.stereotype.Service;
 
 import harmonize.DTOs.UserDTO;
 import harmonize.Entities.User;
+import harmonize.ErrorHandling.Exceptions.EntityNotFoundException;
 import harmonize.ErrorHandling.Exceptions.UnauthorizedException;
-import harmonize.ErrorHandling.Exceptions.UserNotFoundException;
 import harmonize.Repositories.RoleRepository;
 import harmonize.Repositories.UserRepository;
 
@@ -45,7 +45,7 @@ public class ModeratorService {
             (!user.getRoles().contains(roleRepository.findByName("USER")) && 
              !user.getRoles().contains(roleRepository.findByName("MODERATOR")))
             )
-            throw new UserNotFoundException(id);
+            throw new EntityNotFoundException("User " + id + " not found.");
             
         return new UserDTO(user);
     }
@@ -58,7 +58,7 @@ public class ModeratorService {
             (!user.getRoles().contains(roleRepository.findByName("USER")) && 
              !user.getRoles().contains(roleRepository.findByName("MODERATOR")))
             )
-            throw new UserNotFoundException(username);
+            throw new EntityNotFoundException("User " + username + " not found.");
             
         return new UserDTO(user);
     }
@@ -71,7 +71,7 @@ public class ModeratorService {
             (!user.getRoles().contains(roleRepository.findByName("USER")) && 
              !user.getRoles().contains(roleRepository.findByName("MODERATOR")))
             )
-            throw new UserNotFoundException(id);
+            throw new EntityNotFoundException("User " + id + " not found.");
         if (user.getRoles().contains(roleRepository.findByName("MODERATOR")))
             throw new UnauthorizedException("Moderators may not delete other moderators.");
 

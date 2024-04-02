@@ -12,11 +12,9 @@ import harmonize.DTOs.ReportDTO;
 import harmonize.Entities.Message;
 import harmonize.Entities.Report;
 import harmonize.Entities.User;
-import harmonize.ErrorHandling.Exceptions.MessageNotFoundException;
-import harmonize.ErrorHandling.Exceptions.ReportInfoInvalidException;
-import harmonize.ErrorHandling.Exceptions.ReportNotFoundException;
+import harmonize.ErrorHandling.Exceptions.EntityNotFoundException;
+import harmonize.ErrorHandling.Exceptions.InvalidArgumentException;
 import harmonize.ErrorHandling.Exceptions.UnauthorizedException;
-import harmonize.ErrorHandling.Exceptions.UserNotFoundException;
 import harmonize.Repositories.MessageRepository;
 import harmonize.Repositories.ReportRepository;
 import harmonize.Repositories.UserRepository;
@@ -40,7 +38,7 @@ public class ReportService {
     public List<ReportDTO> getSentReports(int id) {
         User user = userRepository.findReferenceById(id);
         if (user == null)
-            throw new UserNotFoundException(id);
+            throw new EntityNotFoundException("User " + id + " not found.");
         List<ReportDTO> result = new ArrayList<>();
         for (Report report : user.getSentReports()) {
             result.add(new ReportDTO(report));
@@ -52,7 +50,7 @@ public class ReportService {
     public List<ReportDTO> getReceivedReports(int id) {
         User user = userRepository.findReferenceById(id);
         if (user == null)
-            throw new UserNotFoundException(id);
+            throw new EntityNotFoundException("User " + id + " not found.");
         List<ReportDTO> result = new ArrayList<>();
         for (Report report : user.getReceivedReports()) {
             result.add(new ReportDTO(report));
@@ -64,10 +62,10 @@ public class ReportService {
     public ReportDTO getSentReport(int id, int reportID) {
         User user = userRepository.findReferenceById(id);
         if (user == null)
-            throw new UserNotFoundException(id);
+            throw new EntityNotFoundException("User " + id + " not found.");
         Report report = reportRepository.findReferenceById(reportID);
         if (report == null || !user.getSentReports().contains(report))
-            throw new ReportNotFoundException(reportID);
+            throw new EntityNotFoundException("Report" + reportID + " not found.");
         return new ReportDTO(report);
     }
 
@@ -75,10 +73,10 @@ public class ReportService {
     public ReportDTO getReceivedReport(int id, int reportID) {
         User user = userRepository.findReferenceById(id);
         if (user == null)
-            throw new UserNotFoundException(id);
+            throw new EntityNotFoundException("User " + id + " not found.");
         Report report = reportRepository.findReferenceById(reportID);
         if (report == null || !user.getReceivedReports().contains(report))
-            throw new ReportNotFoundException(reportID);
+            throw new EntityNotFoundException("Report" + reportID + " not found.");
         return new ReportDTO(report);
     }
 
@@ -86,18 +84,18 @@ public class ReportService {
     public ReportDTO sendReport(int id, ReportDTO reportDTO) {
         User reporter = userRepository.findReferenceById(id);
         if (reporter == null)
-            throw new UserNotFoundException(id);
+            throw new EntityNotFoundException("User " + id + " not found.");
         Report report = new Report();
         if (reportDTO.getMessage() == null)
-            throw new MessageNotFoundException("No message field provided.");
+            throw new InvalidArgumentException("No message field provided.");
         Message message = messageRepository.findReferenceById(reportDTO.getMessage().getId());
         if (message == null)
-            throw new MessageNotFoundException(reportDTO.getMessage().getId());
+            throw new EntityNotFoundException("Message " + reportDTO.getMessage().getId() + " not found.");
         User reported = message.getSender();
         if (!message.getConversation().getMembers().contains(reporter))
             throw new UnauthorizedException("User " + reporter.getId() + " does not have access to message " + message.getId());
         if (!encoder.matches(reportDTO.getMessage().getText(), message.getHash()))
-            throw new ReportInfoInvalidException("Message text is incorrect.");
+            throw new InvalidArgumentException("Message text is incorrect.");
 
         report.setMessage(message);
         report.setReported(reported);
@@ -121,10 +119,10 @@ public class ReportService {
     public String deleteSentReport(int id, int reportID) {
         User user = userRepository.findReferenceById(id);
         if (user == null)
-            throw new UserNotFoundException(id);
+            throw new EntityNotFoundException("User " + id + " not found.");
         Report report = reportRepository.findReferenceById(reportID);
         if (report == null || !user.getSentReports().contains(report))
-            throw new ReportNotFoundException(reportID);
+            throw new EntityNotFoundException("Report" + reportID + " not found.");
         deleteReport(report);
         return new String(String.format("Report %d was deleted.", report.getId()));
     }
@@ -142,7 +140,7 @@ public class ReportService {
     public ReportDTO getReport(int id) {
         Report report = reportRepository.findReferenceById(id);
         if (report == null)
-            throw new ReportNotFoundException(id);
+            throw new EntityNotFoundException("Report" + id + " not found.");
         return new ReportDTO(report);
     }
 
@@ -150,7 +148,7 @@ public class ReportService {
     public String deleteReport(int id) {
         Report report = reportRepository.findReferenceById(id);
         if (report == null)
-            throw new ReportNotFoundException(id);
+            throw new EntityNotFoundException("Report" + id + " not found.");
         deleteReport(report);
 
         return new String(String.format("Report %d was deleted.", report.getId()));

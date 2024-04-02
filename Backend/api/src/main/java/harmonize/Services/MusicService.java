@@ -19,7 +19,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import harmonize.DTOs.SearchDTO;
 import harmonize.Entities.Song;
-import harmonize.ErrorHandling.Exceptions.InvalidSearchException;
+import harmonize.ErrorHandling.Exceptions.InvalidArgumentException;
 import harmonize.Repositories.SongRepository;
 
 @Service
@@ -69,7 +69,7 @@ public class MusicService {
             responseJson = objectMapper.readTree(response.getBody());
         }
         catch(Exception e) {
-            throw new InvalidSearchException("Unable to retrieve token");
+            throw new InvalidArgumentException("Unable to retrieve token.");
         }
 
         this.apiExpiration = System.currentTimeMillis() + responseJson.get("expires_in").asInt() * 1000;
@@ -103,7 +103,7 @@ public class MusicService {
             ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.GET, new HttpEntity<>(headers), String.class);
             responseJson = objectMapper.readTree(response.getBody());
         } catch(Exception e) {
-            throw new InvalidSearchException("Invalid search");
+            throw new InvalidArgumentException("Invalid search.");
         }
 
         return responseJson;
@@ -123,7 +123,7 @@ public class MusicService {
             ResponseEntity<String> response = restTemplate.exchange(apiURL + urlEnd, HttpMethod.GET, new HttpEntity<>(headers), String.class);
             responseJson = objectMapper.readTree(response.getBody());
         } catch(Exception e) {
-            throw new InvalidSearchException("Invalid song");
+            throw new InvalidArgumentException("Invalid song.");
         }
 
         songRepository.save(new Song(responseJson));
@@ -145,7 +145,7 @@ public class MusicService {
             ResponseEntity<String> response = restTemplate.exchange(apiURL + urlEnd, HttpMethod.GET, new HttpEntity<>(headers), String.class);
             responseJson = objectMapper.readTree(response.getBody());
         } catch(Exception e) {
-            throw new InvalidSearchException("Invalid artist");
+            throw new InvalidArgumentException("Invalid artist.");
         }
 
         return responseJson;

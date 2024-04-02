@@ -9,9 +9,14 @@ import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 
 import harmonize.DTOs.RoleDTO;
+import harmonize.DTOs.SongDTO;
 import harmonize.DTOs.UserDTO;
 import harmonize.Entities.Role;
+import harmonize.Entities.Song;
 import harmonize.Entities.User;
+import harmonize.Entities.LikedSong;
+import harmonize.ErrorHandling.Exceptions.EntityAlreadyExistsException;
+import harmonize.ErrorHandling.Exceptions.EntityNotFoundException;
 import harmonize.ErrorHandling.Exceptions.UserAlreadyFriendException;
 import harmonize.ErrorHandling.Exceptions.UserAlreadyInvitedException;
 import harmonize.ErrorHandling.Exceptions.UserFriendSelfException;
@@ -26,13 +31,17 @@ import harmonize.Repositories.UserRepository;
 public class UserService {
     private UserRepository userRepository;
     private RoleRepository roleRepository;
+
     private ConversationService conversationService;
+    private MusicService musicService;
 
     @Autowired
-    public UserService(UserRepository userRepository, RoleRepository roleRepository, ConversationService conversationService) {
+    public UserService(UserRepository userRepository, RoleRepository roleRepository, 
+                        ConversationService conversationService, MusicService musicService) {
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
         this.conversationService = conversationService;
+        this.musicService = musicService;
     }
 
     @NonNull
@@ -236,4 +245,55 @@ public class UserService {
         return new String(String.format("\"%s\" is no longer friends with \"%s\"", user.getUsername(), friend.getUsername()));
     }
 
+    public List<SongDTO> getSongs(int id) {
+        User user = userRepository.findReferenceById(id);
+
+        if (user == null)
+            throw new UserNotFoundException(id);
+
+        List<SongDTO> songList = new ArrayList<>();
+
+        for(LikedSong element : user.getLikedSongs())
+            songList.add(new SongDTO(element));
+
+        return songList;
+    }
+
+    public String addSong(int id, String songId) {
+        User user = userRepository.findReferenceById(id);
+
+        if(user == null)
+            throw new UserNotFoundException(id);
+
+        Song song = new Song(musicService.getSong(songId));
+
+        LikedSong connection = new LikedSong(user, song);
+
+        if(user.getLikedSongs().contains(connection))
+            throw new EntityAlreadyExistsException(song.getTitle() + " already added.");
+
+        user.getLikedSongs().add(connection);
+        userRepository.save(user);
+        
+        return new String(String.format("\"%s\" favorited \"%s\"", user.getUsername(), song.getTitle()));
+    }
+
+    public String removeSong(int id, String songId) {
+        User user = userRepository.findReferenceById(id);
+
+        if(user == null)
+            throw new UserNotFoundException(id);
+
+        Song song = new Song(musicService.getSong(songId));
+
+        LikedSong connection = new LikedSong(user, song);
+
+        if(!user.getLikedSongs().contains(connection))
+            throw new EntityNotFoundException(song.getTitle() + " could not be found.");
+
+        user.getLikedSongs().remove(connection);
+        userRepository.save(user);
+        
+        return new String(String.format("\"%s\" removed \"%s\"", user.getUsername(), song.getTitle()));
+    }
 }

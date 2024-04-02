@@ -38,7 +38,7 @@ public class Song {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Song song = (Song) o;
-        return this.id == song.id;
+        return this.id.equals(song.id);
     }
     
     @Override

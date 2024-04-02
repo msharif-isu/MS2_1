@@ -25,8 +25,6 @@ public class SongDTO {
     @Deprecated
     private String artist;
 
-    private Date time;
-
     public SongDTO(Song song) {
         this.id = song.getId();
         this.artistid = song.getArtistId();
@@ -39,6 +37,5 @@ public class SongDTO {
         this.artistid = connection.getSong().getArtistId();
         this.title = connection.getSong().getTitle();
         this.artist = connection.getSong().getArtist();
-        this.time = connection.getTime();
     }
 }

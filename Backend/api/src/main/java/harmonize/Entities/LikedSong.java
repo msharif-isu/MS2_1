@@ -47,7 +47,7 @@ public class LikedSong {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         LikedSong likedSong = (LikedSong) o;
-        return this.user.getId() == likedSong.user.getId() && this.song.getId().hashCode() == likedSong.song.getId().hashCode();
+        return Objects.equals(user, likedSong.user) && Objects.equals(song, likedSong.song);
     }
     
     @Override

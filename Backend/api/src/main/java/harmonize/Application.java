@@ -49,6 +49,7 @@ public class Application {
                 try {
                     userService.addFriend(adminService.getUser("john").getId(), adminService.getUser("tim").getId());
                     userService.addFriend(adminService.getUser("tim").getId(), adminService.getUser("john").getId());
+                    userService.addFriend(adminService.getUser("manasmathur2023").getId(), adminService.getUser("john").getId());
                 } catch (EntityAlreadyExistsException e) {}
             
                 try {

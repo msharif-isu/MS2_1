@@ -14,7 +14,7 @@
   <parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>3.1.4</version>
+		<version>3.1.5</version>
 		<relativePath/>
 	</parent>
 
@@ -29,7 +29,6 @@
 
 
   <dependencies>
-
     <!-- Spring Boot Web dependencies -->
     <dependency>
       <groupId>org.springframework.boot</groupId>
@@ -98,6 +97,18 @@
         <scope>test</scope>
       </dependency>
 
+      <!-- https://mvnrepository.com/artifact/org.springdoc/springdoc-openapi-starter-webmvc-ui -->
+      <dependency>
+          <groupId>org.springdoc</groupId>
+          <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+          <version>2.4.0</version>
+      </dependency>
+
+      <dependency>
+          <groupId>org.springdoc</groupId>
+          <artifactId>springdoc-openapi-starter-webflux-ui</artifactId>
+          <version>2.1.0</version>
+      </dependency>
   </dependencies>
 
   <build>

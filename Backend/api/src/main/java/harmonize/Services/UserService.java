@@ -17,13 +17,8 @@ import harmonize.Entities.User;
 import harmonize.Entities.LikedSong;
 import harmonize.ErrorHandling.Exceptions.EntityAlreadyExistsException;
 import harmonize.ErrorHandling.Exceptions.EntityNotFoundException;
-import harmonize.ErrorHandling.Exceptions.UserAlreadyFriendException;
-import harmonize.ErrorHandling.Exceptions.UserAlreadyInvitedException;
-import harmonize.ErrorHandling.Exceptions.UserFriendSelfException;
-import harmonize.ErrorHandling.Exceptions.UserInfoInvalidException;
-import harmonize.ErrorHandling.Exceptions.UserNotFoundException;
+import harmonize.ErrorHandling.Exceptions.InvalidArgumentException;
 import harmonize.ErrorHandling.Exceptions.UserNotFriendException;
-import harmonize.ErrorHandling.Exceptions.UsernameTakenException;
 import harmonize.Repositories.RoleRepository;
 import harmonize.Repositories.SongRepository;
 import harmonize.Repositories.UserRepository;
@@ -52,7 +47,7 @@ public class UserService {
         User user = userRepository.findReferenceById(id);
 
         if(user == null || !user.getRoles().contains(roleRepository.findByName("USER")))
-            throw new UserNotFoundException(id);
+            throw new EntityNotFoundException("User " + id + " not found.");
 
         return new UserDTO(user);
     }
@@ -62,7 +57,7 @@ public class UserService {
         User user = userRepository.findByUsername(username);
         
         if(user == null || !user.getRoles().contains(roleRepository.findByName("USER")))
-            throw new UserNotFoundException(username);
+            throw new EntityNotFoundException("User " + username + " not found.");
 
         return new UserDTO(user);
     }
@@ -72,13 +67,13 @@ public class UserService {
         User user = userRepository.findReferenceById(id);
 
         if(user == null)
-            throw new UserNotFoundException(id);
+            throw new EntityNotFoundException("User " + id + " not found.");
 
         if (update.getUsername().isEmpty())
-            throw new UserInfoInvalidException("Username cannot be empty.");
+            throw new InvalidArgumentException("Username cannot be empty.");
 
         if(userRepository.findByUsername(update.getUsername()) != null && userRepository.findByUsername(update.getUsername()) != user)
-            throw new UsernameTakenException(update.getUsername());
+            throw new EntityAlreadyExistsException("Username" + user.getUsername() + " already taken.");
 
         if(update.getFirstName() != null)
             user.setFirstName(update.getFirstName());
@@ -102,7 +97,7 @@ public class UserService {
         User user = userRepository.findReferenceById(id);
 
         if(user == null)
-            throw new UserNotFoundException(id);
+            throw new EntityNotFoundException("User " + id + " not found.");
             
         userRepository.delete(user);
         
@@ -114,7 +109,7 @@ public class UserService {
         User user = userRepository.findReferenceById(id);
 
         if(user == null)
-            throw new UserNotFoundException(id);
+            throw new EntityNotFoundException("User " + id + " not found.");
 
         List<RoleDTO> roles = new ArrayList<RoleDTO>();
 
@@ -129,7 +124,7 @@ public class UserService {
         User user = userRepository.findReferenceById(id);
 
         if(user == null)
-            throw new UserNotFoundException(id);
+            throw new EntityNotFoundException("User " + id + " not found.");
 
         List<UserDTO> recommendedFriends = new ArrayList<UserDTO>();
 
@@ -152,7 +147,7 @@ public class UserService {
         User user = userRepository.findReferenceById(id);
 
         if(user == null)
-            throw new UserNotFoundException(id);
+            throw new EntityNotFoundException("User " + id + " not found.");
 
         List<UserDTO> friends = new ArrayList<UserDTO>();
 
@@ -167,7 +162,7 @@ public class UserService {
         User user = userRepository.findReferenceById(id);
 
         if(user == null)
-            throw new UserNotFoundException(id);
+            throw new EntityNotFoundException("User " + id + " not found.");
 
         List<UserDTO> inviters = new ArrayList<UserDTO>();
 
@@ -183,18 +178,18 @@ public class UserService {
         User friend = userRepository.findReferenceById(idFriend);
 
         if(user == null)
-            throw new UserNotFoundException(id);
+            throw new EntityNotFoundException("User " + id + " not found.");
         if (friend == null)
-            throw new UserNotFoundException(id);
+            throw new EntityNotFoundException("User " + id + " not found.");
             
         if (user == friend)
-            throw new UserFriendSelfException(user.getUsername());
+            throw new InvalidArgumentException("User cannot friend self.");
 
         if (user.getFriends().contains(friend))
-            throw new UserAlreadyFriendException(user.getUsername(), friend.getUsername());
+            throw new EntityAlreadyExistsException("User " + user.getUsername() + " already friends with " + friend.getUsername() + ".");
         
         if (friend.getFriendInvites().contains(user))
-            throw new UserAlreadyInvitedException(user.getUsername(), friend.getUsername());
+            throw new EntityAlreadyExistsException("User " + user.getUsername() + " already sent friend invite to " + friend.getUsername() + ".");
 
         if (!user.getFriendInvites().contains(friend)) {
             friend.getFriendInvites().add(user);
@@ -219,10 +214,10 @@ public class UserService {
         User friend = userRepository.findReferenceById(idFriend);
 
         if (user == null)
-            throw new UserNotFoundException(id);
+            throw new EntityNotFoundException("User " + id + " not found.");
 
         if (friend == null)
-            throw new UserNotFoundException(idFriend);
+            throw new EntityNotFoundException("User " + id + " not found.");
 
         if (friend.getFriendInvites().contains(user)) {
             friend.getFriendInvites().remove(user);
@@ -252,7 +247,7 @@ public class UserService {
         User user = userRepository.findReferenceById(id);
 
         if (user == null)
-            throw new UserNotFoundException(id);
+            throw new EntityNotFoundException("User " + id + " not found.");
 
         List<SongDTO> songList = new ArrayList<>();
 
@@ -266,7 +261,7 @@ public class UserService {
         User user = userRepository.findReferenceById(id);
 
         if(user == null)
-            throw new UserNotFoundException(id);
+            throw new EntityNotFoundException("User " + id + " not found.");
 
         Song song = new Song(musicService.getSong(songId));
 
@@ -286,7 +281,7 @@ public class UserService {
         User user = userRepository.findReferenceById(id);
 
         if(user == null)
-            throw new UserNotFoundException(id);
+            throw new EntityNotFoundException("User " + id + " not found.");
 
         Song song = new Song(musicService.getSong(songId));
 

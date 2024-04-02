@@ -29,8 +29,8 @@ import harmonize.Entities.User;
 import harmonize.Entities.FeedItems.AbstractFeedItem;
 import harmonize.Entities.FeedItems.SongFeedItem;
 import harmonize.Enum.FeedEnum;
+import harmonize.ErrorHandling.Exceptions.EntityNotFoundException;
 import harmonize.ErrorHandling.Exceptions.InternalServerErrorException;
-import harmonize.ErrorHandling.Exceptions.UserNotFoundException;
 import harmonize.Repositories.UserRepository;
 import harmonize.Repositories.FeedRepositories.FeedRepository;
 import harmonize.Repositories.FeedRepositories.SongFeedRepository;
@@ -229,7 +229,7 @@ public class FeedService {
                         userRepository.findByUsername(session.getUserPrincipal().getName());
 
         if(user == null) {
-            onError(session, new UserNotFoundException(session.getUserPrincipal().getName()), true);
+            onError(session, new EntityNotFoundException(session.getUserPrincipal().getName()), true);
             return;
         }
 

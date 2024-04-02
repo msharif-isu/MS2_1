@@ -39,6 +39,11 @@ public class UserController {
         this.reportService = reportService;
     }
 
+    /**
+     * Get all users
+     * @param principal
+     * @return
+     */
     @GetMapping(path = "")
     public ResponseEntity<UserDTO> getSelf(Principal principal){
         return ResponseEntity.ok(userService.getUser(userService.getUser(principal.getName()).getId()));

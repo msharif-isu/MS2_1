@@ -7,9 +7,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
 import harmonize.DTOs.RegisterDTO;
-import harmonize.ErrorHandling.Exceptions.RolePermissionException;
-import harmonize.ErrorHandling.Exceptions.UserAlreadyFriendException;
-import harmonize.ErrorHandling.Exceptions.UsernameTakenException;
+import harmonize.ErrorHandling.Exceptions.EntityAlreadyExistsException;
 import harmonize.Services.AdminService;
 import harmonize.Services.AuthService;
 import harmonize.Services.RoleService;
@@ -43,21 +41,24 @@ public class Application {
                 try {
                     authService.register(new RegisterDTO("first", "last", "admin", "adminpw"));
                     authService.register(new RegisterDTO("first", "last", "mod", "modpw"));
-                    authService.register(new RegisterDTO("john", "smith", "jsmith", "johnpw"));
-                    authService.register(new RegisterDTO("tim", "brown", "tbrown", "timpw"));
-                } catch (UsernameTakenException e) {}
+                    authService.register(new RegisterDTO("John", "Smith", "john", "johnpw"));
+                    authService.register(new RegisterDTO("Tim", "Brown", "tim", "timpw"));
+                    authService.register(new RegisterDTO("Manas", "Mathur", "manasmathur2023", "Backup890!"));
+                } catch (EntityAlreadyExistsException e) {}
                 
                 try {
-                    userService.addFriend(adminService.getUser("jsmith").getId(), adminService.getUser("tbrown").getId());
-                    userService.addFriend(adminService.getUser("tbrown").getId(), adminService.getUser("jsmith").getId());
-                } catch (UserAlreadyFriendException e) {}
+                    userService.addFriend(adminService.getUser("john").getId(), adminService.getUser("tim").getId());
+                    userService.addFriend(adminService.getUser("tim").getId(), adminService.getUser("john").getId());
+                    userService.addFriend(adminService.getUser("manasmathur2023").getId(), adminService.getUser("john").getId());
+                    userService.addFriend(adminService.getUser("john").getId(), adminService.getUser("manasmathur2023").getId());
+                } catch (EntityAlreadyExistsException e) {}
             
                 try {
                     adminService.updateRole(adminService.getUser("admin").getId(), "ADMIN");
                     adminService.updateRole(adminService.getUser("mod").getId(), "MODERATOR");
                     adminService.deleteRole(adminService.getUser("admin").getId(), "USER");
                     adminService.deleteRole(adminService.getUser("mod").getId(), "USER");
-                } catch (RolePermissionException e) {}
+                } catch (EntityAlreadyExistsException e) {}
                 
             } catch (Exception e) {
                 e.printStackTrace();

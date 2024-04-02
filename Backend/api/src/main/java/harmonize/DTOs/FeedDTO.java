@@ -1,12 +1,12 @@
 package harmonize.DTOs;
 
-import harmonize.Enum.FeedEnum;
+import harmonize.Entities.FeedItems.AbstractFeedItem;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
 @Data
 @AllArgsConstructor
 public class FeedDTO {
-    private FeedEnum requestType;
-    private Object data;
+    private int index;
+    private AbstractFeedItem item;
 }

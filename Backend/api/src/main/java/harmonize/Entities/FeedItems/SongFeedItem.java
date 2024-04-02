@@ -3,6 +3,7 @@ package harmonize.Entities.FeedItems;
 import java.util.Objects;
 
 import harmonize.Entities.Song;
+import harmonize.Entities.User;
 import harmonize.Enum.FeedEnum;
 import jakarta.persistence.DiscriminatorValue;
 import jakarta.persistence.Entity;
@@ -23,8 +24,8 @@ public class SongFeedItem extends AbstractFeedItem {
         super();
     }
 
-    public SongFeedItem(FeedEnum type, Song song) {
-        super(type);
+    public SongFeedItem(FeedEnum type, Song song, User user) {
+        super(type, user);
         this.song = song;
     }
 

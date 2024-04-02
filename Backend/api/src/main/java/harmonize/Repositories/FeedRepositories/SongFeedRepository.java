@@ -10,6 +10,6 @@ import org.springframework.stereotype.Repository;
  */ 
 
 @Repository
-public interface SongFeedRepository extends AbstractFeedRepository {
-    
+public interface SongFeedRepository extends FeedRepository {
+
 }

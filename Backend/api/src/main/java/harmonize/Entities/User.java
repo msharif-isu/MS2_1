@@ -87,7 +87,7 @@ public class User {
                                     inverseJoinColumns = @JoinColumn(name = "conversation_id", referencedColumnName = "id"))
     private Set<Conversation> conversations = new HashSet<>();
 
-    @OneToMany(fetch = FetchType.EAGER)
+    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinTable(name = "user_seen_feed", joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),
                                 inverseJoinColumns = @JoinColumn(name = "feed_item_id", referencedColumnName = "id"))
     private Set<AbstractFeedItem> seenFeed = new HashSet<>();

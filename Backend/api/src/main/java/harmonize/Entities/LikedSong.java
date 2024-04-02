@@ -51,9 +51,6 @@ public class LikedSong {
     
     @Override
     public int hashCode() {
-        int result = 17;
-        result = 31 * result + this.user.getId();
-        result = 31 * result + this.song.getId().hashCode();
-        return result;
+        return 31 * this.user.getId() + this.song.getId().hashCode();
     }
 }

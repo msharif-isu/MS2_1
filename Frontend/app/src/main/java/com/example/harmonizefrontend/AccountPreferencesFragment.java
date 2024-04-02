@@ -142,7 +142,7 @@ public class AccountPreferencesFragment extends Fragment {
             username = navBar.username;
             password = navBar.password;
             jwtToken = navBar.jwtToken;
-            mQueue = navBar.mQueue;
+            mQueue = navBar.getQueue();
         }
 
         Log.e("JWT", "username: " + username);

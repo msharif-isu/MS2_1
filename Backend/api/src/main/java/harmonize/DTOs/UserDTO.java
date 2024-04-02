@@ -1,8 +1,12 @@
 package harmonize.DTOs;
 
+import java.util.HashSet;
+import java.util.Set;
+
+import harmonize.Entities.Role;
 import harmonize.Entities.User;
-import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 
 /**
@@ -13,13 +17,22 @@ import lombok.RequiredArgsConstructor;
 
 @Data
 @RequiredArgsConstructor
-@AllArgsConstructor
 public class UserDTO {
-    private int id;
+    private final int id;
+
+    @NonNull
     private String firstName;
+
+    @NonNull
     private String lastName;
+
+    @NonNull
     private String username;
+
+    @NonNull
     private String bio;
+
+    private Set<RoleDTO> roles = new HashSet<>();
 
     public UserDTO(User user) {
         this.id = user.getId();
@@ -27,5 +40,8 @@ public class UserDTO {
         this.lastName = user.getLastName();
         this.username = user.getUsername();
         this.bio = user.getBio();
+        for (Role role : user.getRoles()) {
+            this.roles.add(new RoleDTO(role));
+        }
     }
 }

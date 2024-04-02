@@ -1,7 +1,5 @@
 package harmonize.Entities;
 
-import java.util.Objects;
-
 import com.fasterxml.jackson.databind.JsonNode;
 
 import jakarta.persistence.Column;
@@ -38,13 +36,13 @@ public class Song {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || this.getClass() != o.getClass()) return false;
+        if (o == null || getClass() != o.getClass()) return false;
         Song song = (Song) o;
-        return song.id.equals(this.id);
+        return this.id == song.id;
     }
-
+    
     @Override
     public int hashCode() {
-        return Objects.hash(id);
+        return id.hashCode();
     }
 }

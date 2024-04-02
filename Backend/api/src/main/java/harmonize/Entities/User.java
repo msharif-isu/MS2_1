@@ -59,7 +59,7 @@ public class User {
     @OneToMany(mappedBy = "user", fetch = FetchType.EAGER, 
                 cascade = CascadeType.ALL, orphanRemoval = true)
     @OrderBy("time DESC")
-    private List<UserSong> likedSongs = new ArrayList<>();
+    private List<LikedSong> likedSongs = new ArrayList<>();
 
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "user_top_artists", joinColumns = @JoinColumn(name = "user_id"))

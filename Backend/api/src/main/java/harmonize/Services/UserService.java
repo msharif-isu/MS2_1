@@ -14,7 +14,7 @@ import harmonize.DTOs.UserDTO;
 import harmonize.Entities.Role;
 import harmonize.Entities.Song;
 import harmonize.Entities.User;
-import harmonize.Entities.UserSong;
+import harmonize.Entities.LikedSong;
 import harmonize.ErrorHandling.Exceptions.EntityAlreadyExistsException;
 import harmonize.ErrorHandling.Exceptions.EntityNotFoundException;
 import harmonize.ErrorHandling.Exceptions.UserAlreadyFriendException;
@@ -256,13 +256,12 @@ public class UserService {
 
         List<SongDTO> songList = new ArrayList<>();
 
-        for(UserSong element : user.getLikedSongs())
+        for(LikedSong element : user.getLikedSongs())
             songList.add(new SongDTO(element));
 
         return songList;
     }
 
-    @NonNull
     public String addSong(int id, String songId) {
         User user = userRepository.findReferenceById(id);
 
@@ -271,7 +270,7 @@ public class UserService {
 
         Song song = new Song(musicService.getSong(songId));
 
-        UserSong connection = new UserSong(user, song);
+        LikedSong connection = new LikedSong(user, song);
 
         if(user.getLikedSongs().contains(connection))
             throw new EntityAlreadyExistsException(song.getTitle() + " already added.");
@@ -284,7 +283,6 @@ public class UserService {
         return new String(String.format("\"%s\" favorited \"%s\"", user.getUsername(), song.getTitle()));
     }
 
-    @NonNull
     public String removeSong(int id, String songId) {
         User user = userRepository.findReferenceById(id);
 
@@ -293,7 +291,7 @@ public class UserService {
 
         Song song = new Song(musicService.getSong(songId));
 
-        UserSong connection = new UserSong(user, song);
+        LikedSong connection = new LikedSong(user, song);
 
         if(!user.getLikedSongs().contains(connection))
             throw new EntityNotFoundException(song.getTitle() + " could not be found.");

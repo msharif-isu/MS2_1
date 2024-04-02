@@ -23,7 +23,7 @@ public class MusicController {
         this.musicService = musicService;
     }
 
-    @GetMapping(path = "/search")
+    @GetMapping(path = "")
     public ResponseEntity<JsonNode> search(@RequestBody SearchDTO search) {
         return ResponseEntity.ok(musicService.search(search));
     }

@@ -123,7 +123,11 @@ public class UserTest {
             UserDTO.class);
 
         assertEquals(HttpStatus.OK, getSelfResponseEntity.getStatusCode());
-        assertEquals(body, getSelfResponseEntity.getBody());
+
+        assertEquals(body.getUsername(), getSelfResponseEntity.getBody().getUsername());
+        assertEquals(body.getFirstName(), getSelfResponseEntity.getBody().getFirstName());
+        assertEquals(body.getLastName(), getSelfResponseEntity.getBody().getLastName());
+        assertEquals(body.getBio(), getSelfResponseEntity.getBody().getBio());
     }
 
     @Test

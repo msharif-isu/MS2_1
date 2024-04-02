@@ -165,16 +165,18 @@ public class ChatService {
         Keys keys = null;
 
         if (!session.getRequestParameterMap().containsKey("password"))
-            onError(session, new UnauthorizedException("Password feild in request parameters was empty."));
+            onError(session, new UnauthorizedException("Password field in request parameters was empty."));
         if (!session.getRequestParameterMap().containsKey("username"))
-            onError(session, new UnauthorizedException("Username feild in request parameters was empty."));
+            onError(session, new UnauthorizedException("Username field in request parameters was empty."));
 
         user = 
             session.getUserProperties().containsKey("user") ?
                 (User)session.getUserProperties().get("user") :
                 userRepository.findByUsername(session.getRequestParameterMap().get("username").get(0));
-        if (user == null)
+        if (user == null) {
             onError(session, new UserNotFoundException(session.getRequestParameterMap().get("username").get(0)));
+            return;
+        }
 
         wrapperToken = 
             session.getUserProperties().containsKey("wrapperToken") ? 
@@ -182,7 +184,7 @@ public class ChatService {
                 session.getRequestParameterMap().get("password").get(0);
         
         if (!encoder.matches(wrapperToken, user.getPassword()))
-            onError(session, new UnauthorizedException("Password feild in request parameters was invalid."));
+            onError(session, new UnauthorizedException("Password field in request parameters was invalid."));
 
         try {
             keys = 

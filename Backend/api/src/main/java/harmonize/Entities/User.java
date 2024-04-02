@@ -1,8 +1,11 @@
 package harmonize.Entities;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -34,6 +37,7 @@ public class User {
 
     private String lastName;
 
+    @Column(unique = true)
     private String username;
 
     private String password;
@@ -47,8 +51,14 @@ public class User {
     @Column(columnDefinition = "TEXT")
     private String privateKeyWrapped;
 
+    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER, 
+                cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<LikedSong> likedSongs = new HashSet<>();
+
+    private List<String> topArtists = new ArrayList<>();
+
     @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(name = "user_roles", joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),
+    @JoinTable(name = "userRoles", joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),
                              inverseJoinColumns = @JoinColumn(name = "role_id", referencedColumnName = "id"))
     private Set<Role> roles = new HashSet<>();
 
@@ -71,7 +81,7 @@ public class User {
     private Set<Report> sentReports = new HashSet<>();
 
     @OneToMany(fetch = FetchType.EAGER)
-    private Set<Report> recievedReports = new HashSet<>();
+    private Set<Report> receivedReports = new HashSet<>();
 
     public User(String firstName, String lastName, String username, String password) {
         this.firstName = firstName;

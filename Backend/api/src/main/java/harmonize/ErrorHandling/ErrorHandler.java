@@ -6,7 +6,10 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
 import harmonize.DTOs.ErrorDTO;
+import harmonize.ErrorHandling.Exceptions.EntityAlreadyExistsException;
+import harmonize.ErrorHandling.Exceptions.EntityNotFoundException;
 import harmonize.ErrorHandling.Exceptions.InternalServerErrorException;
+import harmonize.ErrorHandling.Exceptions.InvalidSearchException;
 import harmonize.ErrorHandling.Exceptions.MessageNotFoundException;
 import harmonize.ErrorHandling.Exceptions.ReportNotFoundException;
 import harmonize.ErrorHandling.Exceptions.RoleNotFoundException;
@@ -97,5 +100,20 @@ public class ErrorHandler {
     @ExceptionHandler(UnauthorizedUserException.class)
     public ResponseEntity<ErrorDTO> handleUnauthorizedUserException(UnauthorizedUserException e) {
         return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new ErrorDTO(HttpStatus.FORBIDDEN, e.getMessage()));
+    }
+
+    @ExceptionHandler(InvalidSearchException.class)
+    public ResponseEntity<ErrorDTO> handleInvalidSearchException(InvalidSearchException e) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorDTO(HttpStatus.BAD_REQUEST, e.getMessage()));
+    }
+
+    @ExceptionHandler(EntityNotFoundException.class)
+    public ResponseEntity<ErrorDTO> handleEntityNotFoundException(EntityNotFoundException e) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorDTO(HttpStatus.NOT_FOUND, e.getMessage()));
+    }
+
+    @ExceptionHandler(EntityAlreadyExistsException.class)
+    public ResponseEntity<ErrorDTO> handleEntityAlreadyExistsException(EntityAlreadyExistsException e) {
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(new ErrorDTO(HttpStatus.CONFLICT, e.getMessage()));
     }
 }

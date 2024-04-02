@@ -1,7 +1,5 @@
 package harmonize.DTOs;
 
-import java.util.Date;
-
 import harmonize.Entities.Song;
 import harmonize.Entities.LikedSong;
 import lombok.AllArgsConstructor;
@@ -22,6 +20,7 @@ public class SongDTO {
     @NonNull
     private String title;
 
+    //For testing
     @Deprecated
     private String artist;
 

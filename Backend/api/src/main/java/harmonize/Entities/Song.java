@@ -24,6 +24,7 @@ public class Song {
 
     private String title;
 
+    //For testing
     private String artist;
 
     public Song(JsonNode song) {

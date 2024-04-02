@@ -27,7 +27,7 @@ public class navBar extends AppCompatActivity {
 
     protected String username;
     protected String password;
-    protected String jwtToken;
+    public String jwtToken;
 
     protected RequestQueue mQueue;
 
@@ -136,5 +136,9 @@ public class navBar extends AppCompatActivity {
         fragmentTransaction.addToBackStack(null); // Important for adding multiple fragments to the same container
         // The order which we add fragments to the backstack is the order in which they are popped off
         fragmentTransaction.commit();
+    }
+
+    public RequestQueue getQueue() {
+        return mQueue;
     }
 }

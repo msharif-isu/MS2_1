@@ -119,7 +119,6 @@ public class ConversationFragment extends Fragment implements WebSocketListener 
         clickListener = new ClickListener() {
             @Override
             public void click(int index) {
-                Toast.makeText(navBar, "Report test", Toast.LENGTH_LONG).show();
                 ((navBar) getActivity()).loadFragmentPopout(new ReportMessageFragment());
             }
         };

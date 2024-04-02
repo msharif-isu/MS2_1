@@ -1,4 +1,6 @@
-package com.example.harmonizefrontend;
+package DTO;
+
+import UserInfo.Member;
 
 import java.util.List;
 
@@ -10,7 +12,7 @@ public class ConversationDTO {
     private String type;
     private Data data;
 
-    static class Data {
+    public static class Data {
         private int id;
         private List<Member> members;
 
@@ -19,7 +21,7 @@ public class ConversationDTO {
          * @param id
          * @param members
          */
-        Data(int id, List<Member> members) {
+        public Data(int id, List<Member> members) {
             this.id = id;
             this.members = members;
         }
@@ -30,7 +32,7 @@ public class ConversationDTO {
      * @param type
      * @param data
      */
-    ConversationDTO(String type, Data data) {
+    public ConversationDTO(String type, Data data) {
         this.type = type;
         this.data = data;
     }

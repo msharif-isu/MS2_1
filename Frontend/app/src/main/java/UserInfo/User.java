@@ -1,4 +1,4 @@
-package com.example.harmonizefrontend;
+package UserInfo;
 
 /**
  * class to create a user, used to populate user_item

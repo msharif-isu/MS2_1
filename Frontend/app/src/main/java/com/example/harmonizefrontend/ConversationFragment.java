@@ -21,13 +21,21 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import Connections.WebSocketListener;
+import Connections.WebSocketManager;
+import Conversations.ChatListAdapter;
+import DTO.ConversationDTO;
+import DTO.MessageDTO;
+import UserInfo.Member;
+import UserInfo.UserSession;
+
 
 /**
  * A simple {@link Fragment} subclass that allows users to see a specific conversation with another user.
  * Use the {@link ConversationFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class ConversationFragment extends Fragment implements WebSocketListener{
+public class ConversationFragment extends Fragment implements WebSocketListener {
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER

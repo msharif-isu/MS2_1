@@ -1,4 +1,4 @@
-package com.example.harmonizefrontend;
+package Connections;
 
 import android.content.Context;
 

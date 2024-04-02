@@ -1,4 +1,4 @@
-package com.example.harmonizefrontend;
+package UserInfo;
 
 /**
  * Class which holds data for any member who is a part of the application
@@ -19,7 +19,7 @@ public class Member {
      * @param username
      * @param bio
      */
-    Member(int id, String firstName, String lastName, String username, String bio) {
+    public Member(int id, String firstName, String lastName, String username, String bio) {
         this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;
@@ -28,23 +28,23 @@ public class Member {
     }
 
     // Getters
-    protected int getid() {
+    public int getid() {
         return id;
     }
 
-    protected String getFirstName() {
+    public String getFirstName() {
         return firstName;
     }
 
-    protected String getLastName() {
+    public String getLastName() {
         return lastName;
     }
 
-    protected String getUsername() {
+    public String getUsername() {
         return username;
     }
 
-    protected String getBio() {
+    public String getBio() {
         return bio;
     }
 }

@@ -32,7 +32,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 import java.util.ArrayList;
-import java.util.Objects;
+
+import Connections.VolleySingleton;
+import UserInfo.User;
 
 /**
  * This fragment will display all friends to the user. The user can click on the friends

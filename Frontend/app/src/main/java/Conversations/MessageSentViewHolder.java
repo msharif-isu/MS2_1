@@ -1,10 +1,13 @@
-package com.example.harmonizefrontend;
+package Conversations;
 
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.example.harmonizefrontend.R;
+
 /**
  * View holder for the sent message in conversations
  */

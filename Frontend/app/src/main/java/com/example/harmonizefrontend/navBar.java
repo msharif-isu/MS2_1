@@ -13,8 +13,9 @@ import com.android.volley.RequestQueue;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationBarView;
 
-import android.util.Log;
 import android.view.MenuItem;
+
+import Connections.VolleySingleton;
 
 /**
  * Controls the navigation bar at the bottom of the screen. If the user clicks on an icon on the
@@ -99,7 +100,8 @@ public class navBar extends AppCompatActivity {
                         loadFragment(new FindFragment());
                         break;
                     case "messages":
-                        loadFragment(new MessagesFragment());
+//                        loadFragment(new MessagesFragment());
+                        loadFragment(new ConversationFragment());
                         break;
                     case "profile":
                         loadFragment(new AccountPreferencesFragment());

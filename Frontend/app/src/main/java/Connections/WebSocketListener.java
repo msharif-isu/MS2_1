@@ -1,4 +1,4 @@
-package com.example.harmonizefrontend;
+package Connections;
 
 import org.java_websocket.handshake.ServerHandshake;
 

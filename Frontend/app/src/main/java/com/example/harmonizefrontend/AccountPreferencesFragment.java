@@ -29,6 +29,10 @@ import org.json.JSONObject;
 import java.util.HashMap;
 import java.util.Map;
 
+import Connections.VolleyCallBack;
+import UserInfo.Member;
+import UserInfo.UserSession;
+
 /**
  * A simple {@link Fragment} subclass that allows users to see their info.
  * Use the {@link AccountPreferencesFragment#newInstance} factory method to

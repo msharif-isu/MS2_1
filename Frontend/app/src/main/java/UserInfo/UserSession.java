@@ -1,4 +1,4 @@
-package com.example.harmonizefrontend;
+package UserInfo;
 
 /**
  * Class which holds data about the current user using the application

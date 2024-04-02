@@ -1,4 +1,4 @@
-package com.example.harmonizefrontend;
+package Conversations;
 
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -8,10 +8,14 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.harmonizefrontend.R;
+
 import java.text.SimpleDateFormat;
-import java.time.Instant;
 import java.util.Date;
 import java.util.List;
+
+import DTO.MessageDTO;
+import UserInfo.UserSession;
 
 /**
  * Adapter for the chat recycler view
@@ -19,7 +23,7 @@ import java.util.List;
 public class ChatListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
     private List<MessageDTO> messageList;
 
-    protected ChatListAdapter(List<MessageDTO> messageList) {
+    public ChatListAdapter(List<MessageDTO> messageList) {
         this.messageList = messageList;
     }
 
@@ -90,9 +94,6 @@ public class ChatListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         String date = dateFormat.format(dateUnix);
         String time = timeFormat.format(dateUnix);
 
-
-
-
         if (getItemViewType(position) == 0) { // Sent message
             MessageSentViewHolder sentViewHolder = (MessageSentViewHolder) holder;
             sentViewHolder.messageText.setText(message.getText());
@@ -112,7 +113,6 @@ public class ChatListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         }
 
     }
-
 
     /**
      * Returns the total number of items in the data set held by the adapter.

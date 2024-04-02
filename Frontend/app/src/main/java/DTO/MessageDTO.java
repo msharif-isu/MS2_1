@@ -1,4 +1,6 @@
-package com.example.harmonizefrontend;
+package DTO;
+
+import UserInfo.Member;
 
 /**
  * DTO for message data incoming/outgoing from the server
@@ -21,7 +23,7 @@ public class MessageDTO {
          * @param sender
          * @param convo
          */
-        Data(int id, long unixTime, Member sender, ConversationDTO convo) {
+        public Data(int id, long unixTime, Member sender, ConversationDTO convo) {
             this.id = id;
             this.unixTime = unixTime;
             this.sender = sender;
@@ -35,11 +37,11 @@ public class MessageDTO {
             return id;
         }
 
-        protected long getDataUnixTime() {
+        public long getDataUnixTime() {
             return unixTime;
         }
 
-        protected Member getDataSender() {
+        public Member getDataSender() {
             return sender;
         }
 
@@ -55,7 +57,7 @@ public class MessageDTO {
      * @param data
      * @param text
      */
-    MessageDTO(String type, Data data, String text) {
+    public MessageDTO(String type, Data data, String text) {
         this.type = type;
         this.data = data;
         this.text = text;
@@ -66,11 +68,11 @@ public class MessageDTO {
         return type;
     }
 
-    protected Data getData() {
+    public Data getData() {
         return data;
     }
 
-    protected String getText() {
+    public String getText() {
         return text;
     }
 

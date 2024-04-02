@@ -1,7 +1,5 @@
 package harmonize.DTOs;
 
-import java.util.Date;
-
 import harmonize.Entities.Song;
 import harmonize.Entities.LikedSong;
 import lombok.AllArgsConstructor;
@@ -22,10 +20,9 @@ public class SongDTO {
     @NonNull
     private String title;
 
+    //For Testing
     @Deprecated
     private String artist;
-
-    private Date time;
 
     public SongDTO(Song song) {
         this.id = song.getId();
@@ -39,6 +36,5 @@ public class SongDTO {
         this.artistid = connection.getSong().getArtistId();
         this.title = connection.getSong().getTitle();
         this.artist = connection.getSong().getArtist();
-        this.time = connection.getTime();
     }
 }

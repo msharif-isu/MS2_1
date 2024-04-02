@@ -24,6 +24,7 @@ public class Song {
 
     private String title;
 
+    //For testing
     private String artist;
 
     public Song(JsonNode song) {
@@ -38,7 +39,7 @@ public class Song {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Song song = (Song) o;
-        return this.id == song.id;
+        return this.id.equals(song.id);
     }
     
     @Override

@@ -2,10 +2,13 @@ package harmonize.Entities.FeedItems;
 
 import java.util.Date;
 
+import harmonize.Enum.FeedEnum;
 import jakarta.persistence.Column;
 import jakarta.persistence.DiscriminatorColumn;
 import jakarta.persistence.DiscriminatorType;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -37,10 +40,19 @@ public abstract class AbstractFeedItem {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "type")
+    private FeedEnum type;
+
     @Column(name = "expiration")
     private Date expiration;
 
     public AbstractFeedItem() {
+        expiration = new Date(System.currentTimeMillis() + ITEM_EXPIRATION_DATE_MS);
+    }
+
+    public AbstractFeedItem(FeedEnum type) {
+        this.type = type;
         expiration = new Date(System.currentTimeMillis() + ITEM_EXPIRATION_DATE_MS);
     }
 

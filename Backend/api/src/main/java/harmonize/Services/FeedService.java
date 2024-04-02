@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -18,6 +17,7 @@ import org.springframework.stereotype.Service;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import harmonize.DTOs.FeedDTO;
 import harmonize.DTOs.RecommendationDTO;
 import harmonize.DTOs.SearchDTO;
 import harmonize.DTOs.TransmissionDTO;
@@ -25,6 +25,8 @@ import harmonize.Entities.Song;
 import harmonize.Entities.User;
 import harmonize.Entities.FeedItems.AbstractFeedItem;
 import harmonize.Entities.FeedItems.SongFeedItem;
+import harmonize.Enum.FeedEnum;
+import harmonize.ErrorHandling.Exceptions.InternalServerErrorException;
 import harmonize.ErrorHandling.Exceptions.UserNotFoundException;
 import harmonize.Repositories.UserRepository;
 import harmonize.Repositories.FeedRepositories.AbstractFeedRepository;
@@ -61,27 +63,31 @@ public class FeedService {
         loadFeed(session);
         List<AbstractFeedItem> feed = ((List<?>)session.getUserProperties().get("feed")).stream().map(AbstractFeedItem.class::cast).collect(Collectors.toList());
         User user = (User)session.getUserProperties().get("user");
-
-        Iterator<AbstractFeedItem> iterator = feed.iterator();
-        for(int i = 0; iterator.hasNext() && i < 5; i++) {
-            AbstractFeedItem item = iterator.next();
-
-            if(item instanceof SongFeedItem)
-                musicService.getSong(((SongFeedItem)item).getSong().getId());
-
-            if (!user.getSeenFeed().contains(item)) {
-                // If not, save the feed item and add it to seenFeed set
-                feedRepositories.get(item.getClass()).save(item);
-                user.getSeenFeed().add(item);
-            }
-            send(session, item);
-            
-            iterator.remove();
+        
+        JsonNode jsonMessage = mapper.readTree(message);
+        if (!jsonMessage.at("/type").textValue().equals(FeedDTO.class.getName())) {
+            onError(session, new InternalServerErrorException("Could not parse message."), false);
+            return;
         }
 
-        iterator = user.getSeenFeed().iterator();
-        for(int i = 0; iterator.hasNext(); i++) {
-            System.out.println(i + ": " + ((SongFeedItem)iterator.next()).getSong().getTitle());
+        if(feed.isEmpty()) {
+            send(session, FeedEnum.NO_DATA);
+            return;
+        }
+
+        if(jsonMessage.at("/body/requestType").asInt() == FeedEnum.NEW_PAGE.ordinal()) {  
+            int page = jsonMessage.at("/body/data/page").asInt();
+            int limit = jsonMessage.at("/body/data/limit").asInt();
+
+            for(AbstractFeedItem item : feed.subList((page - 1) * limit, page * limit)) {
+                if(item instanceof SongFeedItem)
+                    musicService.getSong(((SongFeedItem)item).getSong().getId());
+
+                feedRepositories.get(item.getClass()).save(item);
+                user.getSeenFeed().add(item);
+
+                send(session, item);
+            }
         }
 
         session.getUserProperties().put("feed", feed);
@@ -178,7 +184,7 @@ public class FeedService {
         return songRec;
     }
 
-    private void loadFeed(Session session) {
+    private void loadFeed(Session session) throws IOException {
         User user = session.getUserProperties().containsKey("user") ?
                         (User)session.getUserProperties().get("user") :
                         userRepository.findByUsername(session.getUserPrincipal().getName());
@@ -200,14 +206,18 @@ public class FeedService {
     private List<AbstractFeedItem> generateFeed(User user) {
         List<AbstractFeedItem> feed = new ArrayList<>();
 
+        if(user.getLikedSongs().isEmpty()) {
+            return feed;
+        }
+
         for(String artistId : user.getTopArtists()) {
             for(Song song : getNewReleases(artistId)) {
-                feed.add(new SongFeedItem("new_release", song));
+                feed.add(new SongFeedItem(FeedEnum.NEW_RELEASE, song));
             }
         }
 
         for(Song song : getRecommendedSongs(user)) {
-            feed.add(new SongFeedItem("recommendation", song));
+            feed.add(new SongFeedItem(FeedEnum.RECOMMENDATION, song));
         }
 
         feed.removeAll(user.getSeenFeed());

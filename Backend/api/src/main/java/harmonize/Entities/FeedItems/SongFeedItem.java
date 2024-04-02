@@ -3,7 +3,7 @@ package harmonize.Entities.FeedItems;
 import java.util.Objects;
 
 import harmonize.Entities.Song;
-import jakarta.persistence.Column;
+import harmonize.Enum.FeedEnum;
 import jakarta.persistence.DiscriminatorValue;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -15,9 +15,6 @@ import lombok.Data;
 @Entity
 @DiscriminatorValue(value = "song")
 public class SongFeedItem extends AbstractFeedItem {
-    @Column(name = "song_type")
-    private String songType;
-
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "song_id", referencedColumnName = "id")    
     private Song song;
@@ -26,9 +23,8 @@ public class SongFeedItem extends AbstractFeedItem {
         super();
     }
 
-    public SongFeedItem(String songType, Song song) {
-        super();
-        this.songType = songType;
+    public SongFeedItem(FeedEnum type, Song song) {
+        super(type);
         this.song = song;
     }
 
@@ -37,11 +33,11 @@ public class SongFeedItem extends AbstractFeedItem {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         SongFeedItem feedItem = (SongFeedItem) o;
-        return Objects.equals(songType, feedItem.songType) && Objects.equals(song, feedItem.song);
+        return Objects.equals(getType(), feedItem.getType()) && Objects.equals(song, feedItem.song);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(songType, song);
+        return Objects.hash(getType(), song);
     }
 }

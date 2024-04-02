@@ -53,7 +53,7 @@ public class User {
 
     @OneToMany(mappedBy = "user", fetch = FetchType.EAGER, 
                 cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<UserSong> likedSongs = new HashSet<>();
+    private Set<LikedSong> likedSongs = new HashSet<>();
 
     private List<String> topArtists = new ArrayList<>();
 

@@ -1,7 +1,6 @@
 package harmonize.Entities;
 
 import java.util.Date;
-import java.util.Objects;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -16,11 +15,11 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "user_song")
-@Data
+@Table(name = "liked_songs")
+@Data   
 @AllArgsConstructor
 @NoArgsConstructor
-public class UserSong {
+public class LikedSong {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
@@ -36,7 +35,7 @@ public class UserSong {
     @Column(name = "time")
     private Date time;
 
-    public UserSong(User user, Song song) {
+    public LikedSong(User user, Song song) {
         this.user = user;
         this.song = song;
         this.time = new Date(System.currentTimeMillis());
@@ -46,11 +45,15 @@ public class UserSong {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        UserSong userSong = (UserSong) o;
-        return Objects.equals(user, userSong.user) && Objects.equals(song, userSong.song);
+        LikedSong likedSong = (LikedSong) o;
+        return this.user.getId() == likedSong.user.getId() && this.song.getId().hashCode() == likedSong.song.getId().hashCode();
     }
+    
     @Override
     public int hashCode() {
-        return Objects.hash(user, song);
+        int result = 17;
+        result = 31 * result + this.user.getId();
+        result = 31 * result + this.song.getId().hashCode();
+        return result;
     }
 }

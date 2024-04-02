@@ -89,6 +89,7 @@ public class WebSocketManager{
         if (webSocketClient != null && webSocketClient.isOpen()) {
 //            Gson gson = new Gson();
 //            String messageGson = gson.toJson(messageDTO);
+            Log.e("msg", "Sending message: " + message);
             webSocketClient.send(message);
         }
         else {

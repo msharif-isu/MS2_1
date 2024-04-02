@@ -111,7 +111,6 @@ public class ConversationFragment extends Fragment implements WebSocketListener{
         WebSocketManager.getInstance().connectWebSocket(serverURL);
         WebSocketManager.getInstance().setWebSocketListener(this);
 
-
     }
 
     @Override
@@ -131,7 +130,8 @@ public class ConversationFragment extends Fragment implements WebSocketListener{
             Gson gson = new Gson();
             @Override
             public void onClick(View v) {
-                if (writeMsg.getText().toString() != null) {
+                Log.e("msg","Send button clicked");
+                if (!writeMsg.getText().toString().equals("")) {
                     MessageDTO newMsg = new MessageDTO(
                             "harmonize.DTOs.MessageDTO",
                             new MessageDTO.Data(
@@ -142,12 +142,12 @@ public class ConversationFragment extends Fragment implements WebSocketListener{
                             writeMsg.getText().toString(
                             )
                     );
-
+                    Log.e("msg","New message created");
                     list.add(newMsg);
                     chatListAdapter.notifyItemChanged(chatListAdapter.getItemCount() + 1);
                     writeMsg.setText("");
                     String returnMsg = gson.toJson(newMsg);
-                    Log.e("msg", "Before sending message");
+                    Log.e("msg", "\n\n"+returnMsg+"\n\n");
                     WebSocketManager.getInstance().sendMessage(returnMsg);
                 }
 

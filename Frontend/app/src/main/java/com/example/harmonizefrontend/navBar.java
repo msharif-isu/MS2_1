@@ -34,12 +34,12 @@ public class navBar extends AppCompatActivity {
 
             if (item.getItemId() == R.id.navigation_home) {
                 loadFragment(new HomeFragment());
-
             } else if (item.getItemId() == R.id.navigation_findUser) {
                 loadFragment(new FindFragment());
 
             } else if (item.getItemId() == R.id.navigation_messages) {
-                loadFragment(new MessagesFragment());
+//                loadFragment(new MessagesFragment());
+                loadFragment(new ConversationFragment());
             } else if (item.getItemId() == R.id.navigation_profile) {
                 loadFragment(new AccountPreferencesFragment());
             }
@@ -86,7 +86,8 @@ public class navBar extends AppCompatActivity {
                         loadFragment(new FindFragment());
                         break;
                     case "messages":
-                        loadFragment(new MessagesFragment());
+//                        loadFragment(new MessagesFragment());
+                        loadFragment(new ConversationFragment());
                         break;
                     case "profile":
                         loadFragment(new AccountPreferencesFragment());

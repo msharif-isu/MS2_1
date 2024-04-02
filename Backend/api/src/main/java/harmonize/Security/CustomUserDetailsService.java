@@ -12,9 +12,9 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import harmonize.Roles.Role;
-import harmonize.Users.User;
-import harmonize.Users.UserRepository;
+import harmonize.Entities.Role;
+import harmonize.Entities.User;
+import harmonize.Repositories.UserRepository;
 
 /**
  * 

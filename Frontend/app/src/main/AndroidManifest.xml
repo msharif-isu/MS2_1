@@ -18,7 +18,7 @@
         <activity
             android:name=".navBar"
             android:exported="true"
-            android:label="@string/title_activity_navbar_placeholder"
+            android:label="@string/title_activity_login_screen"
             android:theme="@style/Theme.HarmonizeFrontend">
         </activity>
         <activity

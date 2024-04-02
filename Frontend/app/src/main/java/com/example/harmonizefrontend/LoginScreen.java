@@ -44,7 +44,9 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import java.util.HashMap;
 import java.util.Map;
 
-
+/**
+ * A login screen that allows users to enter via username/password.
+ */
 public class LoginScreen extends AppCompatActivity implements OnClickListener {
 
 //    private AppBarConfiguration appBarConfiguration;
@@ -63,6 +65,7 @@ public class LoginScreen extends AppCompatActivity implements OnClickListener {
     private RequestQueue mQueue;
 
     private String jwtToken = null;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -172,7 +175,12 @@ public class LoginScreen extends AppCompatActivity implements OnClickListener {
     }
 
 
-
+    /**
+     * Used to check if user entered credentials is valid
+     * @param username
+     * @param password
+     * @param callback
+     */
     private void checkCredentials(String username, String password, final VolleyCallBack callback) {
 
         // Connect to backend in order to check if credentials are valid

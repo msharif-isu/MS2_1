@@ -29,12 +29,12 @@ public class AuthController {
     }
 
     @PostMapping(path = "/login")
-    public ResponseEntity<AuthDTO> login(@RequestBody LoginDTO user) {    
+    public ResponseEntity<AuthDTO> login(@RequestBody LoginDTO user) {
         return ResponseEntity.ok(authService.login(user));
     }
 
     @PostMapping(path = "/register")
-    public ResponseEntity<AuthDTO> registerUser(@RequestBody RegisterDTO user) {
-        return ResponseEntity.ok(authService.registerUser(user));
+    public ResponseEntity<AuthDTO> register(@RequestBody RegisterDTO user) {
+        return ResponseEntity.ok(authService.register(user));
     }
 }

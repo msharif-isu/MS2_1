@@ -11,12 +11,15 @@ import org.springframework.boot.web.servlet.server.ServletWebServerFactory;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
-import harmonize.Roles.Role;
-import harmonize.Roles.RoleRepository;
-import harmonize.Users.User;
-import harmonize.Users.UserRepository;
+import harmonize.DTOs.RegisterDTO;
+import harmonize.ErrorHandling.Exceptions.RolePermissionException;
+import harmonize.ErrorHandling.Exceptions.UserAlreadyFriendException;
+import harmonize.ErrorHandling.Exceptions.UsernameTakenException;
+import harmonize.Services.AdminService;
+import harmonize.Services.AuthService;
+import harmonize.Services.RoleService;
+import harmonize.Services.UserService;
 
 /**
  * Harmonize Spring Boot Application.
@@ -33,20 +36,37 @@ public class Application {
     }
 
     @Bean
-    public CommandLineRunner initUser(RoleRepository roleRepository, UserRepository userRepository, BCryptPasswordEncoder encoder) {
+    public CommandLineRunner initUser(AuthService authService, RoleService roleService, AdminService adminService, UserService userService) {
         return args -> {
             try {
-                Role adminRole = new Role("ADMIN");
-                Role userRole = new Role("USER");
-                User adminUser = new User("admin", encoder.encode("adminpw"));
-
-                roleRepository.save(adminRole);
-                roleRepository.save(userRole);
-                adminUser.getRoles().add(adminRole);
-                adminUser.getRoles().add(userRole);
-                userRepository.save(adminUser);
+                if (roleService.getRole("ADMIN") == null)
+                    roleService.createRole("ADMIN");
+                if (roleService.getRole("MODERATOR") == null)
+                    roleService.createRole("MODERATOR");
+                if (roleService.getRole("USER") == null)
+                    roleService.createRole("USER");
+                
+                try {
+                    authService.register(new RegisterDTO("first", "last", "admin", "adminpw"));
+                    authService.register(new RegisterDTO("first", "last", "mod", "modpw"));
+                    authService.register(new RegisterDTO("john", "smith", "jsmith", "johnpw"));
+                    authService.register(new RegisterDTO("tim", "brown", "tbrown", "timpw"));
+                } catch (UsernameTakenException e) {}
+                
+                try {
+                    userService.addFriend(adminService.getUser("jsmith").getId(), adminService.getUser("tbrown").getId());
+                    userService.addFriend(adminService.getUser("tbrown").getId(), adminService.getUser("jsmith").getId());
+                } catch (UserAlreadyFriendException e) {}
+            
+                try {
+                    adminService.updateRole(adminService.getUser("admin").getId(), "ADMIN");
+                    adminService.updateRole(adminService.getUser("mod").getId(), "MODERATOR");
+                    adminService.deleteRole(adminService.getUser("admin").getId(), "USER");
+                    adminService.deleteRole(adminService.getUser("mod").getId(), "USER");
+                } catch (RolePermissionException e) {}
+                
             } catch (Exception e) {
-                System.out.println(e.getMessage());
+                e.printStackTrace();
             }
         };
     }

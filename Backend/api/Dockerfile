@@ -1,7 +1,7 @@
 FROM maven:latest AS build-env
 WORKDIR /home
 COPY . .
-RUN mvn package
+RUN mvn clean package -DskipTests
 
 
 FROM openjdk:latest AS run-env

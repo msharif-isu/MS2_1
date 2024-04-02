@@ -41,10 +41,9 @@ public class Application {
                 try {
                     authService.register(new RegisterDTO("first", "last", "admin", "adminpw"));
                     authService.register(new RegisterDTO("first", "last", "mod", "modpw"));
-                    authService.register(new RegisterDTO("john", "smith", "jsmith", "johnpw"));
-                    authService.register(new RegisterDTO("tim", "brown", "tbrown", "timpw"));
+                    authService.register(new RegisterDTO("john", "smith", "john", "johnpw"));
+                    authService.register(new RegisterDTO("tim", "brown", "tim", "timpw"));
                 } catch (EntityAlreadyExistsException e) {}
-                
                 
                 try {
                     userService.addFriend(adminService.getUser("jsmith").getId(), adminService.getUser("tbrown").getId());

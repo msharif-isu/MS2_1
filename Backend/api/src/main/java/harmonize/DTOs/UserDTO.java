@@ -6,7 +6,6 @@ import java.util.Set;
 import harmonize.Entities.Role;
 import harmonize.Entities.User;
 import lombok.Data;
-import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 
 /**
@@ -19,18 +18,10 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class UserDTO {
     private final int id;
-
-    @NonNull
-    private String firstName;
-
-    @NonNull
-    private String lastName;
-
-    @NonNull
-    private String username;
-
-    @NonNull
-    private String bio;
+    private final String firstName;
+    private final String lastName;
+    private final String username;
+    private final String bio;
 
     private Set<RoleDTO> roles = new HashSet<>();
 

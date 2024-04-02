@@ -16,9 +16,9 @@ import harmonize.DTOs.MessageDTO;
 import harmonize.Entities.Conversation;
 import harmonize.Entities.Message;
 import harmonize.Entities.User;
+import harmonize.ErrorHandling.Exceptions.EntityNotFoundException;
 import harmonize.ErrorHandling.Exceptions.InternalServerErrorException;
 import harmonize.ErrorHandling.Exceptions.UnauthorizedException;
-import harmonize.ErrorHandling.Exceptions.UserNotFoundException;
 import harmonize.Repositories.ConversationRepository;
 import harmonize.Repositories.UserRepository;
 import harmonize.Security.ChatCrypto;
@@ -174,7 +174,7 @@ public class ChatService {
                 (User)session.getUserProperties().get("user") :
                 userRepository.findByUsername(session.getRequestParameterMap().get("username").get(0));
         if (user == null) {
-            onError(session, new UserNotFoundException(session.getRequestParameterMap().get("username").get(0)));
+            onError(session, new EntityNotFoundException("User " + session.getRequestParameterMap().get("username").get(0) + " not found."));
             return;
         }
 

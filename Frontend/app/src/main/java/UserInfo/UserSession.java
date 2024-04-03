@@ -16,7 +16,7 @@ public class UserSession {
     private Map<Integer, ConversationDTO> conversations;
 
     private UserSession() {
-
+        conversations = new java.util.HashMap<>();
     }
 
     /**

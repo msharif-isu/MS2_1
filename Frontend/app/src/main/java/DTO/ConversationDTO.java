@@ -1,5 +1,7 @@
 package DTO;
 
+import android.util.Log;
+
 import UserInfo.Member;
 
 import java.util.ArrayList;
@@ -27,6 +29,23 @@ public class ConversationDTO{
         public Data(int id, List<Member> members) {
             this.id = id;
             this.members = members;
+
+        }
+
+        public int getDataId() {
+            return id;
+        }
+
+        public List<Member> getMembers() {
+            return members;
+        }
+
+        /**
+         * Initializes the members list because gson automatically sets it to null
+         */
+        public void ArrayListInitializer() {
+            members = new ArrayList<Member>();
+
         }
     }
 
@@ -41,6 +60,7 @@ public class ConversationDTO{
     }
 
     public void addMessage(MessageDTO message) {
+        Log.e("msg", "Adding message to conversation");
         messageList.add(message);
     }
 
@@ -49,7 +69,16 @@ public class ConversationDTO{
     }
 
     public int getDataId() {
-        return data.id;
+        return this.data.getDataId();
+    }
+
+    /**
+     * Initializes the members list because gson automatically sets it to null
+     */
+    public void ArrayListInitializer() {
+        messageList = new ArrayList<MessageDTO>();
+        this.data.ArrayListInitializer();
+
     }
 
 

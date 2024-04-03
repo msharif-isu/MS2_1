@@ -17,6 +17,7 @@ import com.android.volley.RequestQueue;
 import com.google.gson.Gson;
 
 import org.java_websocket.handshake.ServerHandshake;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
@@ -32,6 +33,7 @@ import Conversations.ReportMessageFragment;
 import DTO.ConversationDTO;
 import DTO.MessageDTO;
 import UserInfo.Member;
+import UserInfo.User;
 import UserInfo.UserSession;
 
 
@@ -67,16 +69,16 @@ public class ConversationFragment extends Fragment implements WebSocketListener 
 
     private Member currentMember = UserSession.getInstance().getCurrentUser(); // For testing purposes
     private Member secondMember = new Member(2, "jon", "jon", "jon", ""); // For testing purposes
-    private ConversationDTO convo = new ConversationDTO(
-            "harmonize.DTOs.ConversationDTO",
-            new ConversationDTO.Data(
-                    1,
-                    Arrays.asList(
-                            UserSession.getInstance().getCurrentUser(),
-                            secondMember)
-
-            )
-            ); // For testing purposes, later on we can have multiple conversations
+//    private ConversationDTO convo = new ConversationDTO(
+//            "harmonize.DTOs.ConversationDTO",
+//            new ConversationDTO.Data(
+//                    1,
+//                    Arrays.asList(
+//                            UserSession.getInstance().getCurrentUser(),
+//                            secondMember)
+//
+//            )
+//            ); // For testing purposes, later on we can have multiple conversations
 
 
     /**
@@ -163,28 +165,28 @@ public class ConversationFragment extends Fragment implements WebSocketListener 
             Gson gson = new Gson();
             @Override
             public void onClick(View v) {
-                if (writeMsg.getText().toString() != null) {
-                    MessageDTO newMsg = new MessageDTO(
-                            "harmonize.DTOs.MessageDTO",
-                            new MessageDTO.Data(
-                                    1,
-                                    System.currentTimeMillis(),
-                                    currentMember,
-                                    convo),
-                            writeMsg.getText().toString(
-                            )
-                    );
-
-
-
-                    list.add(newMsg);
-                    chatListAdapter.notifyItemChanged(chatListAdapter.getItemCount() + 1);
-                    writeMsg.setText("");
-                    String returnMsg = gson.toJson(newMsg);
-                    Log.e("msg", "Before sending message: " );
-                    String testMsg = "{\"type\": \"harmonize.DTOs.MessageDTO\",\"data\": {\"conversation\": {\"id\": 1},\"text\": \"Hello, World!\"}}\n";
-                    WebSocketManagerChat.getInstance().sendMessage(testMsg);
-                }
+//                if (writeMsg.getText().toString() != null) {
+//                    MessageDTO newMsg = new MessageDTO(
+//                            "harmonize.DTOs.MessageDTO",
+//                            new MessageDTO.Data(
+//                                    1,
+//                                    System.currentTimeMillis(),
+//                                    currentMember,
+//                                    convo),
+//                            writeMsg.getText().toString(
+//                            )
+//                    );
+//
+//
+//
+//                    list.add(newMsg);
+//                    chatListAdapter.notifyItemChanged(chatListAdapter.getItemCount() + 1);
+//                    writeMsg.setText("");
+//                    String returnMsg = gson.toJson(newMsg);
+//                    Log.e("msg", "Before sending message: " );
+//                    String testMsg = "{\"type\": \"harmonize.DTOs.MessageDTO\",\"data\": {\"conversation\": {\"id\": 1},\"text\": \"Hello, World!\"}}\n";
+//                    WebSocketManagerChat.getInstance().sendMessage(testMsg);
+//                }
 
             }
         });
@@ -200,25 +202,16 @@ public class ConversationFragment extends Fragment implements WebSocketListener 
      */
     private List<MessageDTO> getMessages() {
         List<MessageDTO> list = new ArrayList<>();
+
 //        list.add(new MessageDTO(
 //                "harmonize.DTOs.MessageDTO",
-//                new MessageDTO.Data(1,
+//                new MessageDTO.Data(2,
 //                        System.currentTimeMillis(),
-//                        currentMember,
+//                        secondMember,
 //                        convo),
-//                "Hello!"
+//                "Hi! How are you?"
 //                )
 //        );
-
-        list.add(new MessageDTO(
-                "harmonize.DTOs.MessageDTO",
-                new MessageDTO.Data(2,
-                        System.currentTimeMillis(),
-                        secondMember,
-                        convo),
-                "Hi! How are you?"
-                )
-        );
 
         return list;
     }
@@ -239,13 +232,31 @@ public class ConversationFragment extends Fragment implements WebSocketListener 
      * @param message The received WebSocket message.
      */
     @Override
-    public void onWebSocketMessage(String message) {
+    public void onWebSocketMessage(String message) throws JSONException {
 
         Log.e("msg", "Recieved Message: " + message);
         Gson gson = new Gson();
 
-//        JSONObject jsonObject = new JSONObject(message);
-//        String type = jsonObject.getString("type");
+        JSONObject jsonObject = new JSONObject(message);
+        String type = jsonObject.getString("type");
+        Log.e("msg", "Type: " + type);
+
+        if (type.equals("harmonize.DTOs.ConversationDTO")) {
+            ConversationDTO conversationDTO = gson.fromJson(message, ConversationDTO.class);
+            // Must initialize the arraylist because gson sets it to null
+            conversationDTO.ArrayListInitializer();
+            Log.e("msg", "New Conversation created");
+            UserSession.getInstance().addConversation(conversationDTO);
+        }
+        else if (type.equals("harmonize.DTOs.MessageDTO")) {
+            MessageDTO messageDTO = gson.fromJson(message, MessageDTO.class);
+            int conversationId = messageDTO.getData().getDataConversation().getDataId();
+            Log.e("msg", "New Message for conversationid :"+ conversationId);
+            UserSession.getInstance().getConversation(conversationId).addMessage(messageDTO);
+        }
+        else {
+            Log.e("msg", "Unknown type");
+        }
 
 //        this.getActivity().runOnUiThread( () -> {
 //            Log.e("msg", "Recieved message in onWebSocketMessage, updating UI");
@@ -276,7 +287,7 @@ public class ConversationFragment extends Fragment implements WebSocketListener 
      */
     @Override
     public void onWebSocketError(Exception ex) {
-        Log.e("msg", "Websocket error");
+        Log.e("msg", "Websocket error: " + ex.toString());
 
     }
 

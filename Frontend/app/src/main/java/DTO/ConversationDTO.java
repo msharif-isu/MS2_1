@@ -8,7 +8,7 @@ import java.util.List;
 /**
  * DTO for conversation data incoming/outgoing from the server
  */
-public class ConversationDTO {
+public class ConversationDTO{
 
     private String type;
     private Data data;

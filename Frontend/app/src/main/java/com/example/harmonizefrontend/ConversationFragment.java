@@ -17,10 +17,12 @@ import com.android.volley.RequestQueue;
 import com.google.gson.Gson;
 
 import org.java_websocket.handshake.ServerHandshake;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Scanner;
 
 import Connections.WebSocketListener;
 import Connections.WebSocketManagerChat;
@@ -239,14 +241,20 @@ public class ConversationFragment extends Fragment implements WebSocketListener 
     @Override
     public void onWebSocketMessage(String message) {
 
-        this.getActivity().runOnUiThread( () -> {
-            Log.e("msg", "Recieved message in onWebSocketMessage, updating UI");
-            Gson gson = new Gson();
-            MessageDTO messageDTO = gson.fromJson(message, MessageDTO.class);
-            list.add(messageDTO);
-            chatListAdapter.notifyItemChanged(chatListAdapter.getItemCount() + 1);
-            Log.e("msg", "Updated UI with incoming message");
-        });
+        Log.e("msg", "Recieved Message: " + message);
+        Gson gson = new Gson();
+
+//        JSONObject jsonObject = new JSONObject(message);
+//        String type = jsonObject.getString("type");
+
+//        this.getActivity().runOnUiThread( () -> {
+//            Log.e("msg", "Recieved message in onWebSocketMessage, updating UI");
+//            Gson gson = new Gson();
+//            MessageDTO messageDTO = gson.fromJson(message, MessageDTO.class);
+//            list.add(messageDTO);
+//            chatListAdapter.notifyItemChanged(chatListAdapter.getItemCount() + 1);
+//            Log.e("msg", "Updated UI with incoming message");
+//        });
 
     }
 

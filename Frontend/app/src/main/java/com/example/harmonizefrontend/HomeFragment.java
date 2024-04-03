@@ -9,7 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 /**
- * A simple {@link Fragment} subclass.
+ * Fragment that houses the main feed. Will display new music releases
  * Use the {@link HomeFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
@@ -24,6 +24,9 @@ public class HomeFragment extends Fragment {
     private String mParam1;
     private String mParam2;
 
+    /**
+     * required empty constructor
+     */
     public HomeFragment() {
         // Required empty public constructor
     }
@@ -46,6 +49,9 @@ public class HomeFragment extends Fragment {
         return fragment;
     }
 
+    /**
+     * Executes when fragment is created. Runs any initiation code that is not related to the interface.
+     */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -55,6 +61,18 @@ public class HomeFragment extends Fragment {
         }
     }
 
+    /**
+     * Inflates the layout for this fragment
+     * @param inflater The LayoutInflater object that can be used to inflate
+     * any views in the fragment,
+     * @param container If non-null, this is the parent view that the fragment's
+     * UI should be attached to.  The fragment should not add the view itself,
+     * but this can be used to generate the LayoutParams of the view.
+     * @param savedInstanceState If non-null, this fragment is being re-constructed
+     * from a previous saved state as given here.
+     *
+     * @return
+     */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {

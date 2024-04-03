@@ -29,11 +29,17 @@ import org.json.JSONObject;
 import java.util.HashMap;
 import java.util.Map;
 
+import Connections.VolleyCallBack;
+import UserInfo.Member;
+import UserInfo.UserSession;
+
 /**
- * A simple {@link Fragment} subclass.
+ * A simple {@link Fragment} subclass that allows users to see their info.
  * Use the {@link AccountPreferencesFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
+
+// Fragment for the Account Preferences screen which allows users to see their info
 public class AccountPreferencesFragment extends Fragment {
 
     // TODO: Rename parameter arguments, choose names that match
@@ -63,6 +69,9 @@ public class AccountPreferencesFragment extends Fragment {
 
     private String URL = "http://coms-309-032.class.las.iastate.edu:8080";
 
+    /**
+     * Creates a new instance of the Account Preferences fragment
+     */
     public AccountPreferencesFragment() {
         // Required empty public constructor
     }
@@ -92,6 +101,8 @@ public class AccountPreferencesFragment extends Fragment {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
+
+
 
 
     }
@@ -131,7 +142,7 @@ public class AccountPreferencesFragment extends Fragment {
             username = navBar.username;
             password = navBar.password;
             jwtToken = navBar.jwtToken;
-            mQueue = navBar.mQueue;
+            mQueue = navBar.getQueue();
         }
 
         Log.e("JWT", "username: " + username);
@@ -143,7 +154,9 @@ public class AccountPreferencesFragment extends Fragment {
         // Get the rest of the user details from server
         Log.e("JWT", "Running getUserDetails");
 
-
+/**
+ * Syncronous call to get user details
+ */
         getUserDetails(new VolleyCallBack() {
 
             @Override
@@ -159,6 +172,8 @@ public class AccountPreferencesFragment extends Fragment {
 
                 Member currentUser = new Member(99999, firstName, lastName, username, bio);
                 UserSession.getInstance().setCurrentUser(currentUser);
+                UserSession.getInstance().setPassword(password);
+                UserSession.getInstance().setJwtToken(jwtToken);
                 Log.e("msg", currentUser.getUsername() + " " + currentUser.getFirstName() + " " + currentUser.getLastName() + " " + currentUser.getBio());
             }
 
@@ -258,6 +273,8 @@ public class AccountPreferencesFragment extends Fragment {
 
                             currentUser = new Member(99999, firstName, lastName, username, bio);
                             UserSession.getInstance().setCurrentUser(currentUser);
+                            UserSession.getInstance().setPassword(password);
+                            UserSession.getInstance().setJwtToken(jwtToken);
                             Log.e("msg", currentUser.getUsername() + " " + currentUser.getFirstName() + " " + currentUser.getLastName() + " " + currentUser.getBio());
                             // SET ID TO MAX BECAUSE CURRENTLY DO NOT HAVE A REQUEST TO GET ID
                         }
@@ -272,6 +289,10 @@ public class AccountPreferencesFragment extends Fragment {
         return rootView;
     }
 
+    /**
+     * Sends a request to change current users profile details
+     * @param callBackDetails
+     */
     private void updateUserDetails(final VolleyCallBack callBackDetails) {
 
         JSONObject jsonBody = new JSONObject();
@@ -337,6 +358,10 @@ public class AccountPreferencesFragment extends Fragment {
 
     };
 
+    /**
+     * Sends a request to delete the current user
+     * @param delUserCallBack
+     */
     private void deleteUser(final VolleyCallBack delUserCallBack) {
 
         JsonObjectRequest jsonObjReq = new JsonObjectRequest(
@@ -389,6 +414,9 @@ public class AccountPreferencesFragment extends Fragment {
     }
 
 
+    /**
+     * Request to get user details
+     */
     private void getUserDetails(final VolleyCallBack callBack) {
 
         Log.e("JWT", "inside the method");

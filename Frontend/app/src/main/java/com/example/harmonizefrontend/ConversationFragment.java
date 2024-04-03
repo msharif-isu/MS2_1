@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -21,13 +22,23 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import Connections.WebSocketListener;
+import Connections.WebSocketManagerChat;
+import Conversations.ChatListAdapter;
+import Conversations.ClickListener;
+import Conversations.ReportMessageFragment;
+import DTO.ConversationDTO;
+import DTO.MessageDTO;
+import UserInfo.Member;
+import UserInfo.UserSession;
+
 
 /**
- * A simple {@link Fragment} subclass.
+ * A simple {@link Fragment} subclass that allows users to see a specific conversation with another user.
  * Use the {@link ConversationFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class ConversationFragment extends Fragment implements WebSocketListener{
+public class ConversationFragment extends Fragment implements WebSocketListener {
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -40,6 +51,8 @@ public class ConversationFragment extends Fragment implements WebSocketListener{
 
     private ChatListAdapter chatListAdapter;
     private RecyclerView recyclerView;
+
+    private ClickListener clickListener;
 
     private EditText writeMsg;
     private Button sendBtn;
@@ -64,6 +77,9 @@ public class ConversationFragment extends Fragment implements WebSocketListener{
             ); // For testing purposes, later on we can have multiple conversations
 
 
+    /**
+     * Default constructor for the ConversationFragment
+     */
     public ConversationFragment() {
         // Required empty public constructor
     }
@@ -78,21 +94,16 @@ public class ConversationFragment extends Fragment implements WebSocketListener{
      */
     // TODO: Rename and change types and number of parameters
     public static ConversationFragment newInstance(String param1, String param2) {
-        ConversationFragment fragment = new ConversationFragment();
-//        Bundle args = new Bundle();
-//        args.putString(ARG_PARAM1, param1);
-//        args.putString(ARG_PARAM2, param2);
-//        fragment.setArguments(args);
-        return fragment;
+        return new ConversationFragment();
     }
 
+    /**
+     * Called when the fragment is created
+     * @param savedInstanceState
+     */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-//        if (getArguments() != null) {
-//            mParam1 = getArguments().getString(ARG_PARAM1);
-//            mParam2 = getArguments().getString(ARG_PARAM2);
-//        }
 
         navBar navBar = (navBar) getActivity();
         if (navBar != null) {
@@ -105,14 +116,34 @@ public class ConversationFragment extends Fragment implements WebSocketListener{
             Log.e("msg", "navBar is null, JWT token not set");
         }
 
-        // Connect to websocket
+        clickListener = new ClickListener() {
+            @Override
+            public void click(int index) {
+                ((navBar) getActivity()).loadFragmentPopout(new ReportMessageFragment());
+            }
+        };
+
+        // Connect to websocket, currently working locally
         String serverURL = "ws://coms-309-032.class.las.iastate.edu:8080/chats?username=" + username + "&password=" + password;
         Log.e("msg", "Before websocket connection");
-        WebSocketManager.getInstance().connectWebSocket(serverURL);
-        WebSocketManager.getInstance().setWebSocketListener(this);
+        WebSocketManagerChat.getInstance().connectWebSocket(serverURL);
+        WebSocketManagerChat.getInstance().setWebSocketListener(this);
+
 
     }
 
+    /**
+     * Called when the fragment is created, runs all interface related code
+     * @param inflater The LayoutInflater object that can be used to inflate
+     * any views in the fragment,
+     * @param container If non-null, this is the parent view that the fragment's
+     * UI should be attached to.  The fragment should not add the view itself,
+     * but this can be used to generate the LayoutParams of the view.
+     * @param savedInstanceState If non-null, this fragment is being re-constructed
+     * from a previous saved state as given here.
+     *
+     * @return
+     */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -122,7 +153,7 @@ public class ConversationFragment extends Fragment implements WebSocketListener{
         sendBtn = view.findViewById(R.id.button_send);
         recyclerView = view.findViewById(R.id.recycler);
         list = getMessages();
-        chatListAdapter = new ChatListAdapter(list);
+        chatListAdapter = new ChatListAdapter(list, clickListener);
         recyclerView.setAdapter(chatListAdapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
@@ -130,8 +161,7 @@ public class ConversationFragment extends Fragment implements WebSocketListener{
             Gson gson = new Gson();
             @Override
             public void onClick(View v) {
-                Log.e("msg","Send button clicked");
-                if (!writeMsg.getText().toString().equals("")) {
+                if (writeMsg.getText().toString() != null) {
                     MessageDTO newMsg = new MessageDTO(
                             "harmonize.DTOs.MessageDTO",
                             new MessageDTO.Data(
@@ -142,13 +172,16 @@ public class ConversationFragment extends Fragment implements WebSocketListener{
                             writeMsg.getText().toString(
                             )
                     );
-                    Log.e("msg","New message created");
+
+
+
                     list.add(newMsg);
                     chatListAdapter.notifyItemChanged(chatListAdapter.getItemCount() + 1);
                     writeMsg.setText("");
                     String returnMsg = gson.toJson(newMsg);
-                    Log.e("msg", "\n\n"+returnMsg+"\n\n");
-                    WebSocketManager.getInstance().sendMessage(returnMsg);
+                    Log.e("msg", "Before sending message: " );
+                    String testMsg = "{\"type\": \"harmonize.DTOs.MessageDTO\",\"data\": {\"conversation\": {\"id\": 1},\"text\": \"Hello, World!\"}}\n";
+                    WebSocketManagerChat.getInstance().sendMessage(testMsg);
                 }
 
             }
@@ -159,8 +192,10 @@ public class ConversationFragment extends Fragment implements WebSocketListener{
     }
 
 
-
-
+    /**
+     * Gets generated messages, used for testing purposes
+     * @return
+     */
     private List<MessageDTO> getMessages() {
         List<MessageDTO> list = new ArrayList<>();
 //        list.add(new MessageDTO(
@@ -187,12 +222,20 @@ public class ConversationFragment extends Fragment implements WebSocketListener{
     }
 
 
+    /**
+     * Called when the websocket is opened
+     * @param handshakedata Information about the server handshake.
+     */
     @Override
     public void onWebSocketOpen(ServerHandshake handshakedata) {
         Log.e("msg", "Websocket opened");
 
     }
 
+    /**
+     * Called when a WebSocket message is received.
+     * @param message The received WebSocket message.
+     */
     @Override
     public void onWebSocketMessage(String message) {
 
@@ -207,15 +250,27 @@ public class ConversationFragment extends Fragment implements WebSocketListener{
 
     }
 
+    /**
+     * Called when the WebSocket connection is closed.
+     * @param code   The status code indicating the reason for closure.
+     * @param reason A human-readable explanation for the closure.
+     * @param remote Indicates whether the closure was initiated by the remote endpoint.
+     */
     @Override
     public void onWebSocketClose(int code, String reason, boolean remote) {
         Log.e("msg", "Websocket closed");
 
     }
 
+    /**
+     * Called when an error occurs in the WebSocket communication.
+     * @param ex The exception that describes the error.
+     */
     @Override
     public void onWebSocketError(Exception ex) {
         Log.e("msg", "Websocket error");
 
     }
+
+
 }

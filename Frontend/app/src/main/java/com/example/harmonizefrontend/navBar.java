@@ -13,20 +13,27 @@ import com.android.volley.RequestQueue;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationBarView;
 
-import android.util.Log;
 import android.view.MenuItem;
 
+import Connections.VolleySingleton;
 
+/**
+ * Controls the navigation bar at the bottom of the screen. If the user clicks on an icon on the
+ * menu, it should load the fragment that they selected.
+ */
 public class navBar extends AppCompatActivity {
 
     private String fragment;
 
     protected String username;
     protected String password;
-    protected String jwtToken;
+    public String jwtToken;
 
     protected RequestQueue mQueue;
 
+    /**
+     * Listens to which item the user selects on the nav bar. Then loads the fragment.
+     */
     NavigationBarView.OnItemSelectedListener navListener = new BottomNavigationView.OnItemSelectedListener() {
         @Override
         public boolean onNavigationItemSelected(@NonNull MenuItem item) {
@@ -50,6 +57,13 @@ public class navBar extends AppCompatActivity {
     };
 
 
+    /**
+     * Creates the bottomNavigationView.
+     *
+     * @param savedInstanceState If the activity is being re-initialized after
+     *     previously being shut down then this Bundle contains the data it most
+     *     recently supplied in {@link #onSaveInstanceState}.  <b><i>Note: Otherwise it is null.</i></b>
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -102,10 +116,28 @@ public class navBar extends AppCompatActivity {
 
     }
 
+    /**
+     * loads the fragment passed into the method.
+     * @param fragment
+     */
     private void loadFragment(Fragment fragment) {
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         fragmentTransaction.replace(R.id.frame_layout, fragment);
         fragmentTransaction.commit();
+    }
+
+    // This is for the popout fragment, currently protected, is that a good idea?
+    protected void loadFragmentPopout(Fragment fragment) {
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        fragmentTransaction.replace(R.id.popout_frame_layout, fragment);
+        fragmentTransaction.addToBackStack(null); // Important for adding multiple fragments to the same container
+        // The order which we add fragments to the backstack is the order in which they are popped off
+        fragmentTransaction.commit();
+    }
+
+    public RequestQueue getQueue() {
+        return mQueue;
     }
 }

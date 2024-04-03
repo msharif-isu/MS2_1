@@ -16,9 +16,10 @@ import harmonize.DTOs.MessageDTO;
 import harmonize.Entities.Conversation;
 import harmonize.Entities.Message;
 import harmonize.Entities.User;
+import harmonize.ErrorHandling.Exceptions.EntityNotFoundException;
 import harmonize.ErrorHandling.Exceptions.InternalServerErrorException;
+import harmonize.ErrorHandling.Exceptions.InvalidArgumentException;
 import harmonize.ErrorHandling.Exceptions.UnauthorizedException;
-import harmonize.ErrorHandling.Exceptions.UserNotFoundException;
 import harmonize.Repositories.ConversationRepository;
 import harmonize.Repositories.UserRepository;
 import harmonize.Security.ChatCrypto;
@@ -81,8 +82,16 @@ public class ChatService {
         Keys keys = (Keys)session.getUserProperties().get("keys");
 
         JsonNode map = mapper.readTree(message);
+        if (map.at("/type").textValue().isEmpty()) {
+            onError(session, new InvalidArgumentException("Expected type field in message."), false);
+            return;
+        }
         if (!map.at("/type").textValue().equals(MessageDTO.class.getName())) {
             onError(session, new InternalServerErrorException("Could not parse message."), false);
+            return;
+        }
+        if (!user.getConversations().contains(conversationRepository.findReferenceById(map.at("/data/conversation/id").asInt()))) {
+            onError(session, new UnauthorizedException("You are not a member of that conversation."), false);
             return;
         }
         
@@ -165,16 +174,18 @@ public class ChatService {
         Keys keys = null;
 
         if (!session.getRequestParameterMap().containsKey("password"))
-            onError(session, new UnauthorizedException("Password feild in request parameters was empty."));
+            onError(session, new UnauthorizedException("Password field in request parameters was empty."));
         if (!session.getRequestParameterMap().containsKey("username"))
-            onError(session, new UnauthorizedException("Username feild in request parameters was empty."));
+            onError(session, new UnauthorizedException("Username field in request parameters was empty."));
 
         user = 
             session.getUserProperties().containsKey("user") ?
                 (User)session.getUserProperties().get("user") :
                 userRepository.findByUsername(session.getRequestParameterMap().get("username").get(0));
-        if (user == null)
-            onError(session, new UserNotFoundException(session.getRequestParameterMap().get("username").get(0)));
+        if (user == null) {
+            onError(session, new EntityNotFoundException("User " + session.getRequestParameterMap().get("username").get(0) + " not found."));
+            return;
+        }
 
         wrapperToken = 
             session.getUserProperties().containsKey("wrapperToken") ? 
@@ -182,7 +193,7 @@ public class ChatService {
                 session.getRequestParameterMap().get("password").get(0);
         
         if (!encoder.matches(wrapperToken, user.getPassword()))
-            onError(session, new UnauthorizedException("Password feild in request parameters was invalid."));
+            onError(session, new UnauthorizedException("Password field in request parameters was invalid."));
 
         try {
             keys = 
@@ -190,7 +201,7 @@ public class ChatService {
                     (Keys)session.getUserProperties().get("keys") :
                     chatCrypto.new Keys(user.getPublicKey(), chatCrypto.unwrap(wrapperToken, user.getPrivateKeyWrapped()));
         } catch (Exception e) {
-            onError(session, new InternalServerErrorException("Internal Server Error"));
+            onError(session, new InternalServerErrorException("Could not unwrap keys."));
         }
 
         session.getUserProperties().put("user", user);

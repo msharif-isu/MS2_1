@@ -1,4 +1,4 @@
-package Conversations;
+package messaging.chat;
 
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -14,6 +14,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
+import messaging.ClickListener;
 import DTO.MessageDTO;
 import UserInfo.UserSession;
 

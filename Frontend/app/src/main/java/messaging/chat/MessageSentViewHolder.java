@@ -1,7 +1,6 @@
-package Conversations;
+package messaging.chat;
 
 import android.view.View;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.recyclerview.widget.RecyclerView;
@@ -12,7 +11,7 @@ import com.example.harmonizefrontend.R;
  * View holder for the sent message in conversations
  */
 public class MessageSentViewHolder extends RecyclerView.ViewHolder{
-    TextView messageText, timeText, dateText;
+    protected TextView messageText, timeText, dateText;
 
 //    android.view.View View;
 
@@ -26,6 +25,21 @@ public class MessageSentViewHolder extends RecyclerView.ViewHolder{
         timeText = itemView.findViewById(R.id.text_timestamp_other);
         dateText = itemView.findViewById(R.id.text_date_other);
 //        itemView = View;
+    }
+
+
+
+    // getters
+    public TextView getMessageText() {
+        return messageText;
+    }
+
+    public TextView getTimeText() {
+        return timeText;
+    }
+
+    public TextView getDateText() {
+        return dateText;
     }
 
 }

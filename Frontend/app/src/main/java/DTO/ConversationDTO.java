@@ -2,6 +2,8 @@ package DTO;
 
 import android.util.Log;
 
+import com.google.gson.annotations.SerializedName;
+
 import UserInfo.Member;
 
 import java.util.ArrayList;
@@ -19,6 +21,7 @@ public class ConversationDTO{
 
     public static class Data {
         private int id;
+        @SerializedName("members")
         private List<Member> members;
 
         /**
@@ -40,13 +43,6 @@ public class ConversationDTO{
             return members;
         }
 
-        /**
-         * Initializes the members list because gson automatically sets it to null
-         */
-        public void ArrayListInitializer() {
-            members = new ArrayList<Member>();
-
-        }
     }
 
     /**
@@ -77,8 +73,12 @@ public class ConversationDTO{
      */
     public void ArrayListInitializer() {
         messageList = new ArrayList<MessageDTO>();
-        this.data.ArrayListInitializer();
+//        this.data.ArrayListInitializer();
 
+    }
+
+    public Member getFriend() {
+        return this.data.getMembers().get(0);
     }
 
 

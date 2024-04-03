@@ -7,7 +7,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -21,28 +20,25 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.Scanner;
 
 import Connections.WebSocketListener;
 import Connections.WebSocketManagerChat;
-import Conversations.ChatListAdapter;
-import Conversations.ClickListener;
-import Conversations.ReportMessageFragment;
+import messaging.chat.ChatListAdapter;
+import messaging.ClickListener;
+import messaging.chat.ReportMessageFragment;
 import DTO.ConversationDTO;
 import DTO.MessageDTO;
 import UserInfo.Member;
-import UserInfo.User;
 import UserInfo.UserSession;
 
 
 /**
  * A simple {@link Fragment} subclass that allows users to see a specific conversation with another user.
- * Use the {@link ConversationFragment#newInstance} factory method to
+ * Use the {@link MessageFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class ConversationFragment extends Fragment implements WebSocketListener {
+public class MessageFragment extends Fragment implements WebSocketListener {
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -65,26 +61,12 @@ public class ConversationFragment extends Fragment implements WebSocketListener 
 
     private String username, password, JWTtoken;
 
-    private RequestQueue mQueue;
-
-    private Member currentMember = UserSession.getInstance().getCurrentUser(); // For testing purposes
-    private Member secondMember = new Member(2, "jon", "jon", "jon", ""); // For testing purposes
-//    private ConversationDTO convo = new ConversationDTO(
-//            "harmonize.DTOs.ConversationDTO",
-//            new ConversationDTO.Data(
-//                    1,
-//                    Arrays.asList(
-//                            UserSession.getInstance().getCurrentUser(),
-//                            secondMember)
-//
-//            )
-//            ); // For testing purposes, later on we can have multiple conversations
 
 
     /**
      * Default constructor for the ConversationFragment
      */
-    public ConversationFragment() {
+    public MessageFragment() {
         // Required empty public constructor
     }
 
@@ -97,8 +79,8 @@ public class ConversationFragment extends Fragment implements WebSocketListener 
      * @return A new instance of fragment MessagesFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static ConversationFragment newInstance(String param1, String param2) {
-        return new ConversationFragment();
+    public static MessageFragment newInstance(String param1, String param2) {
+        return new MessageFragment();
     }
 
     /**
@@ -114,7 +96,6 @@ public class ConversationFragment extends Fragment implements WebSocketListener 
             username = navBar.username;
             password = navBar.password;
             JWTtoken = navBar.jwtToken;
-            mQueue = navBar.mQueue;
         }
         else {
             Log.e("msg", "navBar is null, JWT token not set");
@@ -127,7 +108,6 @@ public class ConversationFragment extends Fragment implements WebSocketListener 
             }
         };
 
-        // Connect to websocket, currently working locally
         String serverURL = "ws://coms-309-032.class.las.iastate.edu:8080/chats?username=" + username + "&password=" + password;
         Log.e("msg", "Before websocket connection");
         WebSocketManagerChat.getInstance().connectWebSocket(serverURL);
@@ -278,6 +258,8 @@ public class ConversationFragment extends Fragment implements WebSocketListener 
     @Override
     public void onWebSocketClose(int code, String reason, boolean remote) {
         Log.e("msg", "Websocket closed");
+
+        // TODO: Consider possibility of adding duplicate data after it closes and reopens
 
     }
 

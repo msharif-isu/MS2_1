@@ -1,4 +1,4 @@
-package Conversations;
+package messaging.chat;
 
 import android.view.View;
 import android.widget.ImageView;

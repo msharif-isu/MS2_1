@@ -1,5 +1,7 @@
 package UserInfo;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import DTO.ConversationDTO;
@@ -56,6 +58,14 @@ public class UserSession {
 
     public void addConversation(ConversationDTO conversation) {
         conversations.put(conversation.getDataId(), conversation);
+    }
+
+    public List<ConversationDTO> getConversations() {
+        List<ConversationDTO> convos = new ArrayList<>();
+        for (Integer key : conversations.keySet()) {
+            convos.add(conversations.get(key));
+        }
+        return convos;
     }
 
     public ConversationDTO getConversation(int id) {

@@ -45,8 +45,8 @@ public class navBar extends AppCompatActivity {
                 loadFragment(new FindFragment());
 
             } else if (item.getItemId() == R.id.navigation_messages) {
-//                loadFragment(new MessagesFragment());
-                loadFragment(new ConversationFragment());
+//                loadFragment(new MessageFragment());
+                loadFragment(new ConversationsFragment());
             } else if (item.getItemId() == R.id.navigation_profile) {
                 loadFragment(new AccountPreferencesFragment());
             }
@@ -100,8 +100,8 @@ public class navBar extends AppCompatActivity {
                         loadFragment(new FindFragment());
                         break;
                     case "messages":
-//                        loadFragment(new MessagesFragment());
-                        loadFragment(new ConversationFragment());
+//                        loadFragment(new MessageFragment());
+                        loadFragment(new ConversationsFragment());
                         break;
                     case "profile":
                         loadFragment(new AccountPreferencesFragment());
@@ -120,7 +120,7 @@ public class navBar extends AppCompatActivity {
      * loads the fragment passed into the method.
      * @param fragment
      */
-    private void loadFragment(Fragment fragment) {
+    void loadFragment(Fragment fragment) {
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         fragmentTransaction.replace(R.id.frame_layout, fragment);

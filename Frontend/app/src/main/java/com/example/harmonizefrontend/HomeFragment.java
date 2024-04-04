@@ -6,6 +6,7 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -26,12 +27,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Fragment that houses the main feed. Will display new music releases
+ * A fragment that displays the main feed, showing music news for the usser.
+ * Uses a WebSocket connection to receive feed data from the server.
  * Use the {@link HomeFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
 public class HomeFragment extends Fragment implements WebSocketListener {
     private RecyclerView feedRecyclerView;
+    private SwipeRefreshLayout swipeRefreshLayout;
     private FeedAdapter feedAdapter;
     private List<FeedDTO> feedItems;
     private WebSocket webSocket;
@@ -66,7 +69,11 @@ public class HomeFragment extends Fragment implements WebSocketListener {
     }
 
     /**
-     * Executes when fragment is created. Runs any initiation code that is not related to the interface.
+     * Called when the fragment is created.
+     * Initializes the WebSocket connection and sets the WebSocket listener.
+     *
+     * @param savedInstanceState If non-null, this fragment is being re-constructed
+     *                           from a previous saved state as given here.
      */
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -90,16 +97,12 @@ public class HomeFragment extends Fragment implements WebSocketListener {
     }
 
     /**
-     * Inflates the layout for this fragment
-     * @param inflater The LayoutInflater object that can be used to inflate
-     * any views in the fragment,
-     * @param container If non-null, this is the parent view that the fragment's
-     * UI should be attached to.  The fragment should not add the view itself,
-     * but this can be used to generate the LayoutParams of the view.
-     * @param savedInstanceState If non-null, this fragment is being re-constructed
-     * from a previous saved state as given here.
+     * Called to inflate the layout for this fragment.
      *
-     * @return
+     * @param inflater The LayoutInflater object that can be used to inflate any views in the fragment.
+     * @param container If non-null, this is the parent view that the fragment's UI should be attached to.
+     * @param savedInstanceState If non-null, this fragment is being re-constructed from a previous saved state as given here.
+     * @return The View for the fragment's UI, or null.
      */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -113,6 +116,14 @@ public class HomeFragment extends Fragment implements WebSocketListener {
         feedRecyclerView.setAdapter(feedAdapter);
         feedRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
+        swipeRefreshLayout = view.findViewById(R.id.swipeRefreshLayout);
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                refreshFeed();
+            }
+        });
+
         feedRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
@@ -124,7 +135,7 @@ public class HomeFragment extends Fragment implements WebSocketListener {
                 int firstVisibleItemPosition = layoutManager.findFirstVisibleItemPosition();
 
                 if (!isLoading && hasMore && (visibleItemCount + firstVisibleItemPosition) >= totalItemCountLoaded) {
-                    //loadMoreItems();
+                    loadMoreItems();
                 }
             }
         });
@@ -132,6 +143,38 @@ public class HomeFragment extends Fragment implements WebSocketListener {
         return view;
     }
 
+    /**
+     * Loads more feed items when the user scrolls to the end of the list.
+     */
+    private void loadMoreItems() {
+
+        isLoading = true;
+        offset += LIMIT;
+        sendWebSocketRequest(3, LIMIT, offset);
+
+    }
+
+    /**
+     * Sends a WebSocket request to fetch feed items.
+     *
+     * @param requestType The type of the request (3 for fetching feed items, 4 for refreshing the feed).
+     * @param limit       The maximum number of items to fetch.
+     * @param offset      The offset from which to start fetching items.
+     */
+    private void sendWebSocketRequest(int requestType, int limit, int offset) {
+
+        Gson gson = new Gson();
+        FeedRequest request = new FeedRequest(requestType, new FeedData(limit, offset));
+        String requestJson = gson.toJson(request);
+        WebSocketManager.getInstance().sendMessage(requestJson);
+
+    }
+
+    /**
+     * Called when the WebSocket connection is opened.
+     *
+     * @param handshakedata The handshake data received from the server.
+     */
     @Override
     public void onWebSocketOpen(ServerHandshake handshakedata) {
 
@@ -139,6 +182,11 @@ public class HomeFragment extends Fragment implements WebSocketListener {
 
     }
 
+    /**
+     * Called when a message is received from the WebSocket server.
+     *
+     * @param message The message received from the server.
+     */
     @Override
     public void onWebSocketMessage(String message) {
 
@@ -152,11 +200,12 @@ public class HomeFragment extends Fragment implements WebSocketListener {
             if (messageType.equals("com.fasterxml.jackson.databind.node.ObjectNode")) {
 
                 feedSize = jsonObject.getAsJsonObject("data").get("size").getAsInt();
+                loadInitialItems();
 
             } else if (messageType.equals("harmonize.DTOs.FeedDTO")) {
 
                 FeedDTO feedDTO = gson.fromJson(jsonObject, FeedDTO.class);
-                //yada yada
+                updateFeedItems(feedDTO);
 
             } else {
 
@@ -166,11 +215,71 @@ public class HomeFragment extends Fragment implements WebSocketListener {
         });
     }
 
+    /**
+     * Loads the initial set of feed items.
+     */
+    public void loadInitialItems() {
+
+        isLoading = true;
+        offset = 0;
+        sendWebSocketRequest(3, LIMIT, offset);
+
+    }
+
+    /**
+     * Updates the feed items with the received FeedDTO data.
+     *
+     * @param feedDTO The FeedDTO object containing the feed data.
+     */
+    public void updateFeedItems(FeedDTO feedDTO) {
+
+        if (offset == 0) {
+
+            feedItems.clear();
+
+        }
+
+        if (feedDTO.getData() != null && feedDTO.getData().getItem() != null) {
+
+            feedItems.add(feedDTO);
+            feedAdapter.notifyDataSetChanged();
+
+        }
+
+        offset += 1;
+        isLoading = false;
+        hasMore = offset < feedSize;
+
+    }
+
+    /**
+     * Refreshes the feed by clearing the existing items and fetching new ones.
+     */
+    private void refreshFeed() {
+
+        isLoading = true;
+        offset = 0;
+        sendWebSocketRequest(4, LIMIT, offset);
+
+    }
+
+    /**
+     * Called when the WebSocket connection is closed.
+     *
+     * @param code   The status code indicating the reason for closure.
+     * @param reason The reason for the closure.
+     * @param remote Whether the closure was initiated by the remote endpoint.
+     */
     @Override
     public void onWebSocketClose(int code, String reason, boolean remote) {
         Log.d("WebSocket", "WebSocket closed");
     }
 
+    /**
+     * Called when an error occurs in the WebSocket communication.
+     *
+     * @param ex The exception representing the error.
+     */
     @Override
     public void onWebSocketError(Exception ex) {
         Log.e("WebSocket", "WebSocket error", ex);

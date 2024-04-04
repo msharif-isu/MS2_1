@@ -22,8 +22,6 @@ import Connections.WebSocketListener;
 import Connections.WebSocketManagerChat;
 import DTO.MessageDTO;
 import UserInfo.UserSession;
-import messaging.ClickListener;
-import messaging.chat.ReportMessageFragment;
 import messaging.conversations.ConversationListAdapter;
 
 import DTO.ConversationDTO;
@@ -111,20 +109,11 @@ public class ConversationsFragment extends Fragment implements WebSocketListener
     }
 
     private List<ConversationDTO> getConversations() {
-//        String convo1 = "{\"type\":\"harmonize.DTOs.ConversationDTO\",\"data\":{\"id\":2,\"members\":[{\"id\":3,\"firstName\":\"John\",\"lastName\":\"Smith\",\"username\":\"john\",\"bio\":\"\",\"roles\":[{\"id\":3,\"name\":\"USER\"}]},{\"id\":5,\"firstName\":\"Manas\",\"lastName\":\"Mathur\",\"username\":\"manasmathur2023\",\"bio\":\"\",\"roles\":[{\"id\":3,\"name\":\"USER\"}]}]}}";
-//        String convo2 = "{\"type\":\"harmonize.DTOs.ConversationDTO\",\"data\":{\"id\":3,\"members\":[{\"id\":4,\"firstName\":\"Tim\",\"lastName\":\"Brown\",\"username\":\"tim\",\"bio\":\"\",\"roles\":[{\"id\":3,\"name\":\"USER\"}]},{\"id\":5,\"firstName\":\"Manas\",\"lastName\":\"Mathur\",\"username\":\"manasmathur2023\",\"bio\":\"\",\"roles\":[{\"id\":3,\"name\":\"USER\"}]}]}}";
-//        Gson gson = new Gson();
-//
-//        ConversationDTO conversationDTO1 = gson.fromJson(convo1, ConversationDTO.class);
-//        ConversationDTO conversationDTO2 = gson.fromJson(convo2, ConversationDTO.class);
-//        conversationDTO1.ArrayListInitializer();
-//        conversationDTO2.ArrayListInitializer();
-//
-//        UserSession.getInstance().addConversation(conversationDTO1);
-//        UserSession.getInstance().addConversation(conversationDTO2);
+        List<ConversationDTO> conversations = new ArrayList<ConversationDTO>();
+        conversations = UserSession.getInstance().getConversations();
 
-//        return UserSession.getInstance().getConversations();
-        return new ArrayList<ConversationDTO>();
+
+        return conversations;
     }
 
 

@@ -15,7 +15,7 @@ import java.util.Date;
 import java.util.List;
 
 import DTO.ConversationDTO;
-import messaging.ClickListener;
+import com.example.harmonizefrontend.ClickListener;
 
 public class ConversationListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
 

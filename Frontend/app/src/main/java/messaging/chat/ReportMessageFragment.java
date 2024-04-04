@@ -93,7 +93,7 @@ public class ReportMessageFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        View view = inflater.inflate(R.layout.report_message, container, false);
+        View view = inflater.inflate(R.layout.report_message_popup, container, false);
 
         backBtn = view.findViewById(R.id.Back_button);
         sendBtn = view.findViewById(R.id.button_send);

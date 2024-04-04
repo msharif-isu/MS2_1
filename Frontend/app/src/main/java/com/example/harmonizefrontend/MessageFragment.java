@@ -13,7 +13,6 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.android.volley.RequestQueue;
 import com.google.gson.Gson;
 
 import org.java_websocket.handshake.ServerHandshake;
@@ -27,11 +26,9 @@ import Connections.WebSocketListener;
 import Connections.WebSocketManagerChat;
 import DTO.SendDTO;
 import messaging.chat.ChatListAdapter;
-import messaging.ClickListener;
 import messaging.chat.ReportMessageFragment;
 import DTO.ConversationDTO;
 import DTO.MessageDTO;
-import UserInfo.Member;
 import UserInfo.UserSession;
 
 

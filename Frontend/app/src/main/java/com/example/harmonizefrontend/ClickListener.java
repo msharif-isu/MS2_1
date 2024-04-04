@@ -1,4 +1,4 @@
-package messaging;
+package com.example.harmonizefrontend;
 
 public abstract class ClickListener {
 

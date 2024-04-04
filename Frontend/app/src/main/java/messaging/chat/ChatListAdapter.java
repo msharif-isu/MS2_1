@@ -14,7 +14,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
-import messaging.ClickListener;
+import com.example.harmonizefrontend.ClickListener;
 import DTO.MessageDTO;
 import UserInfo.UserSession;
 

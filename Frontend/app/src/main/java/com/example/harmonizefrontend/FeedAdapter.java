@@ -14,13 +14,13 @@ import java.util.List;
  */
 public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.FeedViewHolder> {
 
-    private List<FeedItem> feedItems;
+    private List<FeedDTO> feedItems;
 
     /**
      * Constructor of the FeedAdapter class. Takes a List<FeedItem> parameter and assigns it to the feedItems instance variable.
      * @param feedItems
      */
-    public FeedAdapter(List<FeedItem> feedItems) {
+    public FeedAdapter(List<FeedDTO> feedItems) {
         this.feedItems = feedItems;
     }
 
@@ -49,7 +49,7 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.FeedViewHolder
      */
     @Override
     public void onBindViewHolder(@NonNull FeedViewHolder holder, int position) {
-        FeedItem feedItem = feedItems.get(position);
+        FeedDTO feedItem = feedItems.get(position);
 
         //Bind the data to the views
     }

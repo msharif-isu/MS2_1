@@ -12,10 +12,16 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.android.volley.RequestQueue;
 import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 
+import org.java_websocket.WebSocket;
+import org.java_websocket.client.WebSocketClient;
 import org.java_websocket.handshake.ServerHandshake;
 
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,15 +31,18 @@ import java.util.List;
  * create an instance of this fragment.
  */
 public class HomeFragment extends Fragment implements WebSocketListener {
-
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
-
-
     private RecyclerView feedRecyclerView;
     private FeedAdapter feedAdapter;
-    private List<FeedItem> feedItems;
-
+    private List<FeedDTO> feedItems;
+    private WebSocket webSocket;
+    private static final String WEB_SOCKET_URL = "ws://coms-309-032.class.las.iastate.edu:8080/feed";
+    private String username, password, JWTtoken;
+    private RequestQueue mQueue;
+    private static final int LIMIT = 5;
+    private int offset = 0;
+    private int feedSize;
+    private boolean isLoading = false;
+    private boolean hasMore = true;
     /**
      * required empty constructor
      */
@@ -52,8 +61,6 @@ public class HomeFragment extends Fragment implements WebSocketListener {
     public static HomeFragment newInstance(String param1, String param2) {
         HomeFragment fragment = new HomeFragment();
         Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
         fragment.setArguments(args);
         return fragment;
     }
@@ -63,15 +70,23 @@ public class HomeFragment extends Fragment implements WebSocketListener {
      */
     @Override
     public void onCreate(Bundle savedInstanceState) {
-
         super.onCreate(savedInstanceState);
 
-        // get necessary data (jwt token and crap)
+        navBar navBar = (navBar) getActivity();
+        if (navBar != null) {
+            username = navBar.username;
+            password = navBar.password;
+            JWTtoken = navBar.jwtToken;
+            mQueue = navBar.mQueue;
+        } else {
+            Log.e("msg", "navBar is null, JWT token not set");
+        }
 
-        //connect to websocket
-        // String url = "";
-        //WebSocketManager.getInstance().connectWebSocket(url);
-        //WebSocketManager.getInstance().setWebSocketListener(this);
+        // Connect to WebSocket
+        String serverURL = WEB_SOCKET_URL + "?username=" + username + "&password=" + password;
+        Log.e("msg", "Before WebSocket connection");
+        WebSocketManager.getInstance().connectWebSocket(serverURL);
+        WebSocketManager.getInstance().setWebSocketListener(this);
     }
 
     /**
@@ -89,24 +104,32 @@ public class HomeFragment extends Fragment implements WebSocketListener {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_home, container, false);
-    }
 
-    public void onViewCreated(@NonNull View view, @NonNull Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
+        View view = inflater.inflate(R.layout.fragment_home, container, false);
 
         feedRecyclerView = view.findViewById(R.id.feedRecyclerView);
         feedItems = new ArrayList<>();
         feedAdapter = new FeedAdapter(feedItems);
         feedRecyclerView.setAdapter(feedAdapter);
         feedRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-    }
 
-    public void fetchFeedItem() {
+        feedRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
 
-        // get feed item stuff
+                LinearLayoutManager layoutManager = (LinearLayoutManager) recyclerView.getLayoutManager();
+                int visibleItemCount = layoutManager.getChildCount();
+                int totalItemCountLoaded = layoutManager.getItemCount();
+                int firstVisibleItemPosition = layoutManager.findFirstVisibleItemPosition();
 
+                if (!isLoading && hasMore && (visibleItemCount + firstVisibleItemPosition) >= totalItemCountLoaded) {
+                    //loadMoreItems();
+                }
+            }
+        });
+
+        return view;
     }
 
     @Override
@@ -123,9 +146,23 @@ public class HomeFragment extends Fragment implements WebSocketListener {
 
             Log.d("WebSocket", "Received message: " + message);
             Gson gson = new Gson();
-            //FeedResponse feedResponse = gson.fromJson(message, FeedResponse.class);
-            //updateFeedItems(feedResponse);
+            JsonObject jsonObject = gson.fromJson(message, JsonObject.class);
+            String messageType = jsonObject.get("type").getAsString();
 
+            if (messageType.equals("com.fasterxml.jackson.databind.node.ObjectNode")) {
+
+                feedSize = jsonObject.getAsJsonObject("data").get("size").getAsInt();
+
+            } else if (messageType.equals("harmonize.DTOs.FeedDTO")) {
+
+                FeedDTO feedDTO = gson.fromJson(jsonObject, FeedDTO.class);
+                //yada yada
+
+            } else {
+
+                Log.e("WebSocket", "Unknown message type: " + messageType);
+
+            }
         });
     }
 
@@ -139,17 +176,4 @@ public class HomeFragment extends Fragment implements WebSocketListener {
         Log.e("WebSocket", "WebSocket error", ex);
     }
 
-    /**
-     *
-     * @param feedResponse
-
-    private void updateFeedItems(FeedResponse feedResponse) {
-        List<FeedItem> newItems = feedResponse.getItems();
-        int oldSize = feedItems.size();
-        feedItems.addAll(newItems);
-        feedAdapter.notifyItemRangeInserted(oldSize, newItems.size());
-        currentPage = feedResponse.getNextPage();
-        hasMore = feedResponse.isHasMore();
-    }
-    */
 }

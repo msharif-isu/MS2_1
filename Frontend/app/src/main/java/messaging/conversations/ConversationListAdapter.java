@@ -93,4 +93,8 @@ public class ConversationListAdapter extends RecyclerView.Adapter<RecyclerView.V
     public void onAttachedToRecyclerView(RecyclerView recyclerView) {
         super.onAttachedToRecyclerView(recyclerView);
     }
+
+    public ConversationDTO getItem(int index) {
+        return conversationList.get(index);
+    }
 }

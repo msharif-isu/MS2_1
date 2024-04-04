@@ -17,6 +17,8 @@ public class UserSession {
 
     private Map<Integer, ConversationDTO> conversations;
 
+    private ConversationDTO currentConversation;
+
     private UserSession() {
         conversations = new java.util.HashMap<>();
     }
@@ -70,5 +72,13 @@ public class UserSession {
 
     public ConversationDTO getConversation(int id) {
         return conversations.get(id);
+    }
+
+    public void setcurrentConversation(ConversationDTO convo) {
+        currentConversation = convo;
+    }
+
+    public ConversationDTO getCurrentConversation() {
+        return currentConversation;
     }
 }

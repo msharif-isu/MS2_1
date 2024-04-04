@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -24,6 +25,7 @@ import java.util.List;
 
 import Connections.WebSocketListener;
 import Connections.WebSocketManagerChat;
+import DTO.SendDTO;
 import messaging.chat.ChatListAdapter;
 import messaging.ClickListener;
 import messaging.chat.ReportMessageFragment;
@@ -60,6 +62,8 @@ public class MessageFragment extends Fragment implements WebSocketListener {
     private List<MessageDTO> list;
 
     private String username, password, JWTtoken;
+
+    private TextView friendUsername;
 
 
 
@@ -136,26 +140,36 @@ public class MessageFragment extends Fragment implements WebSocketListener {
         writeMsg = view.findViewById(R.id.edit_message);
         sendBtn = view.findViewById(R.id.button_send);
         recyclerView = view.findViewById(R.id.recycler);
+        friendUsername = view.findViewById(R.id.friendUsername);
         list = getMessages();
         chatListAdapter = new ChatListAdapter(list, clickListener);
         recyclerView.setAdapter(chatListAdapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
+        friendUsername.setText(UserSession.getInstance().getCurrentConversation().getFriend().getUsername());
+
         sendBtn.setOnClickListener(new View.OnClickListener() {
             Gson gson = new Gson();
             @Override
             public void onClick(View v) {
-//                if (writeMsg.getText().toString() != null) {
-//                    MessageDTO newMsg = new MessageDTO(
-//                            "harmonize.DTOs.MessageDTO",
-//                            new MessageDTO.Data(
-//                                    1,
-//                                    System.currentTimeMillis(),
-//                                    currentMember,
-//                                    convo),
-//                            writeMsg.getText().toString(
-//                            )
-//                    );
+                if (writeMsg.getText().toString() != null) {
+                    SendDTO sentMessage = new SendDTO(
+                            "harmonize.DTOs.MessageDTO",
+                            new SendDTO.Data(
+                                    new SendDTO.Data.Conversation(
+                                            UserSession.getInstance().getCurrentConversation().getDataId()
+                                    ),
+                                    writeMsg.getText().toString()
+                            )
+                    );
+
+                    Gson gson = new Gson();
+                    String sentMessageString = gson.toJson(sentMessage);
+                    Log.e("msg", sentMessageString);
+                    writeMsg.setText("");
+                    WebSocketManagerChat.getInstance().sendMessage(sentMessageString);
+                }
+
 //
 //
 //
@@ -182,6 +196,7 @@ public class MessageFragment extends Fragment implements WebSocketListener {
      */
     private List<MessageDTO> getMessages() {
         List<MessageDTO> list = new ArrayList<>();
+        list = UserSession.getInstance().getCurrentConversation().getMessageList();
 
 //        list.add(new MessageDTO(
 //                "harmonize.DTOs.MessageDTO",
@@ -233,6 +248,22 @@ public class MessageFragment extends Fragment implements WebSocketListener {
             int conversationId = messageDTO.getData().getDataConversation().getDataId();
             Log.e("msg", "New Message for conversationid :"+ conversationId);
             UserSession.getInstance().getConversation(conversationId).addMessage(messageDTO);
+
+            this.getActivity().runOnUiThread( () -> {
+                Log.e("msg", "Recieved message in onWebSocketMessage, updating UI");
+                Log.e("msg", "Current conversationId: " + UserSession.getInstance().getCurrentConversation().getDataId());
+                if (conversationId == UserSession.getInstance().getCurrentConversation().getDataId()) {
+                    list = getMessages();
+                    Log.e("msg", "message Size: " + list.size());
+                    int newItemPosition = chatListAdapter.getItemCount() + 1;
+                    chatListAdapter.notifyItemInserted(newItemPosition);
+                    recyclerView.scrollToPosition(newItemPosition);
+
+
+//                    chatListAdapter.notifyItemChanged(chatListAdapter.getItemCount() + 1);
+                }
+                Log.e("msg", "Updated UI with incoming message");
+            });
         }
         else {
             Log.e("msg", "Unknown type");

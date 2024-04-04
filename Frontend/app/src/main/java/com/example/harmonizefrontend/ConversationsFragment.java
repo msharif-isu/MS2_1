@@ -67,6 +67,12 @@ public class ConversationsFragment extends Fragment implements WebSocketListener
             @Override
             public void click(int index) {
                 // TODO: Open the chat fragment AND GIVE IT THE CORRECT CONVERSATION DATA
+                ConversationDTO currentConvo = conversationListAdapter.getItem(index);
+                int convoId = currentConvo.getDataId();
+                int messageNum = currentConvo.getMessageList().size();
+                Log.e("msg", "Conversation Id: " + convoId);
+                Log.e("msg", "num of messages: " + messageNum);
+                UserSession.getInstance().setcurrentConversation(currentConvo);
                 ((navBar) getActivity()).loadFragment(new MessageFragment());
             }
         };
@@ -156,19 +162,21 @@ public class ConversationsFragment extends Fragment implements WebSocketListener
             conversationDTO.ArrayListInitializer();
             Log.e("msg", "New Conversation created");
             UserSession.getInstance().addConversation(conversationDTO);
-
-            this.getActivity().runOnUiThread( () -> {
-            Log.e("msg", "Recieved message in onWebSocketMessage, updating UI");
             conversations.add(conversationDTO);
-            conversationListAdapter.notifyItemChanged(conversationListAdapter.getItemCount() + 1);
-            Log.e("msg", "Updated UI with incoming message");
-        });
+
+
         }
         else if (type.equals("harmonize.DTOs.MessageDTO")) {
             MessageDTO messageDTO = gson.fromJson(message, MessageDTO.class);
             int conversationId = messageDTO.getData().getDataConversation().getDataId();
             Log.e("msg", "New Message for conversationid :"+ conversationId);
             UserSession.getInstance().getConversation(conversationId).addMessage(messageDTO);
+
+            this.getActivity().runOnUiThread( () -> {
+                Log.e("msg", "Recieved message in onWebSocketMessage, updating UI");
+                conversationListAdapter.notifyItemChanged(conversationListAdapter.getItemCount() + 1);
+                Log.e("msg", "Updated UI with incoming message");
+            });
         }
         else {
             Log.e("msg", "Unknown type");

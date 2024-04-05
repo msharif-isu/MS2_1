@@ -13,6 +13,7 @@ import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -31,6 +32,7 @@ import harmonize.Entities.FeedItems.SongFeedItem;
 import harmonize.Enum.FeedEnum;
 import harmonize.ErrorHandling.Exceptions.EntityNotFoundException;
 import harmonize.ErrorHandling.Exceptions.InternalServerErrorException;
+import harmonize.ErrorHandling.Exceptions.UnauthorizedException;
 import harmonize.Repositories.UserRepository;
 import harmonize.Repositories.FeedRepositories.FeedRepository;
 import harmonize.Repositories.FeedRepositories.SongFeedRepository;
@@ -47,12 +49,15 @@ public class FeedService {
     private MusicService musicService;
     private UserRepository userRepository;
     private ObjectMapper mapper;
+    private BCryptPasswordEncoder encoder;
 
     @Autowired
-    public FeedService(MusicService musicService, UserRepository userRepository, SongFeedRepository songFeedRepository, FeedRepository feedRepository, ObjectMapper mapper) {
+    public FeedService(MusicService musicService, UserRepository userRepository, SongFeedRepository songFeedRepository, FeedRepository feedRepository, 
+                            BCryptPasswordEncoder encoder, ObjectMapper mapper) {
         this.musicService = musicService;
         this.userRepository = userRepository;
         this.mapper = mapper;
+        this.encoder = encoder;
 
         this.feedRepository = feedRepository;
 
@@ -136,10 +141,10 @@ public class FeedService {
     }
 
     public void onError(Session session, Throwable throwable, Boolean closeSession) {
+        throwable.printStackTrace();
         try {
             send(session, throwable);
             if (closeSession) {
-                onClose(session);
                 session.close();
             }
         } catch (IOException e) {
@@ -224,14 +229,32 @@ public class FeedService {
     }
 
     private void loadFeed(Session session) throws IOException {
-        User user = session.getUserProperties().containsKey("user") ?
-                        (User)session.getUserProperties().get("user") :
-                        userRepository.findByUsername(session.getUserPrincipal().getName());
+        User user;
+        String password;
 
-        if(user == null) {
-            onError(session, new EntityNotFoundException(session.getUserPrincipal().getName()), true);
+        if (!session.getRequestParameterMap().containsKey("password"))
+            onError(session, new UnauthorizedException("Password field in request parameters was empty."));
+        
+        if (!session.getRequestParameterMap().containsKey("username"))
+            onError(session, new UnauthorizedException("Username field in request parameters was empty."));
+
+        user = 
+            session.getUserProperties().containsKey("user") ?
+                (User)session.getUserProperties().get("user") :
+                userRepository.findByUsername(session.getRequestParameterMap().get("username").get(0));
+            
+        if (user == null) {
+            onError(session, new EntityNotFoundException("User " + session.getRequestParameterMap().get("username").get(0) + " not found."));
             return;
         }
+
+        password = 
+            session.getUserProperties().containsKey("password") ? 
+                (String)session.getUserProperties().get("password") : 
+                session.getRequestParameterMap().get("password").get(0);
+        
+        if (!encoder.matches(password, user.getPassword()))
+            onError(session, new UnauthorizedException("Password field in request parameters was invalid."));
 
         List<AbstractFeedItem> feed;
         if(session.getUserProperties().containsKey("feed")) 
@@ -244,6 +267,7 @@ public class FeedService {
         }
 
         session.getUserProperties().put("user", user);
+        session.getUserProperties().put("password", password);
         session.getUserProperties().put("feed", feed);
     }
 

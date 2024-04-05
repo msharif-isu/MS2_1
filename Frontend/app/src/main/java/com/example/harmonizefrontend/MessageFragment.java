@@ -111,7 +111,10 @@ public class MessageFragment extends Fragment implements WebSocketListener {
         clickListener = new ClickListener() {
             @Override
             public void click(int index) {
-                chatListAdapter.getItemId(index);
+                MessageDTO reportedMessage = list.get(index);
+                UserSession.getInstance().setReportedMessage(reportedMessage);
+                Log.e("msg", "Reported Message: " + UserSession.getInstance().getReportedMessage().getData().getText());
+
                 ((navBar) getActivity()).loadFragmentPopout(new ReportMessageFragment());
             }
         };

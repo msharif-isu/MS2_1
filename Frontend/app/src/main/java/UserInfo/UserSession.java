@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import DTO.ConversationDTO;
+import DTO.MessageDTO;
 
 /**
  * Class which holds data about the current user using the application
@@ -16,6 +17,8 @@ public class UserSession {
     private String jwtToken, password;
 
     private Map<Integer, ConversationDTO> conversations;
+
+    private MessageDTO messagedReportedTemp;
 
     private ConversationDTO currentConversation;
 
@@ -80,5 +83,17 @@ public class UserSession {
 
     public ConversationDTO getCurrentConversation() {
         return currentConversation;
+    }
+
+    public void setReportedMessage(MessageDTO messageDTO) {
+        this.messagedReportedTemp = messageDTO;
+    }
+
+    public MessageDTO getReportedMessage() {
+        return messagedReportedTemp;
+    }
+
+    public void clearReportedMessage(MessageDTO messageDTO) {
+        this.messagedReportedTemp = null;
     }
 }

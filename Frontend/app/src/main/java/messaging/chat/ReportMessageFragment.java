@@ -83,10 +83,7 @@ public class ReportMessageFragment extends Fragment {
             Log.e("Reporting", "Error getting mQueue from navbar");
         }
 
-
-
-
-
+        reportedMessage = UserSession.getInstance().getReportedMessage();
     }
 
     @Override

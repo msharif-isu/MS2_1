@@ -8,13 +8,15 @@ import UserInfo.Member;
 public class MessageDTO {
     private String type;
     private Data data;
-    private String text;
+
 
     public static class Data {
         private int id;
         private long unixTime;
         private Member sender;
-        private ConversationDTO convo;
+        private ConversationDTO.Data conversation;
+
+        private String text;
 
         /**
          * Constructor for the message data
@@ -23,11 +25,12 @@ public class MessageDTO {
          * @param sender
          * @param convo
          */
-        public Data(int id, long unixTime, Member sender, ConversationDTO convo) {
+        public Data(int id, long unixTime, Member sender, ConversationDTO.Data conversation, String text) {
             this.id = id;
             this.unixTime = unixTime;
             this.sender = sender;
-            this.convo = convo;
+            this.conversation = conversation;
+            this.text = text;
         }
 
         /**
@@ -45,8 +48,12 @@ public class MessageDTO {
             return sender;
         }
 
-        protected ConversationDTO getDataConversationDTO() {
-            return convo;
+        public ConversationDTO.Data getDataConversation() {
+            return conversation;
+        }
+
+        public String getText() {
+            return text;
         }
     }
 
@@ -55,16 +62,14 @@ public class MessageDTO {
      * Constructor for the message DTO
      * @param type
      * @param data
-     * @param text
      */
-    public MessageDTO(String type, Data data, String text) {
+    public MessageDTO(String type, Data data) {
         this.type = type;
         this.data = data;
-        this.text = text;
     }
 
     // Getters
-    protected String getType() {
+    public String getType() {
         return type;
     }
 
@@ -73,13 +78,7 @@ public class MessageDTO {
     }
 
     public String getText() {
-        return text;
+        return this.getData().getText();
     }
-
-
-
-
-
-
 
 }

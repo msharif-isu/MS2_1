@@ -1,5 +1,12 @@
 package UserInfo;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
+import DTO.ConversationDTO;
+import DTO.MessageDTO;
+
 /**
  * Class which holds data about the current user using the application
  */
@@ -9,8 +16,14 @@ public class UserSession {
 
     private String jwtToken, password;
 
-    private UserSession() {
+    private Map<Integer, ConversationDTO> conversations;
 
+    private MessageDTO messagedReportedTemp;
+
+    private ConversationDTO currentConversation;
+
+    private UserSession() {
+        conversations = new java.util.HashMap<>();
     }
 
     /**
@@ -46,5 +59,41 @@ public class UserSession {
 
     public String getPassword() {
         return password;
+    }
+
+    public void addConversation(ConversationDTO conversation) {
+        conversations.put(conversation.getDataId(), conversation);
+    }
+
+    public List<ConversationDTO> getConversations() {
+        List<ConversationDTO> convos = new ArrayList<>();
+        for (Integer key : conversations.keySet()) {
+            convos.add(conversations.get(key));
+        }
+        return convos;
+    }
+
+    public ConversationDTO getConversation(int id) {
+        return conversations.get(id);
+    }
+
+    public void setcurrentConversation(ConversationDTO convo) {
+        currentConversation = convo;
+    }
+
+    public ConversationDTO getCurrentConversation() {
+        return currentConversation;
+    }
+
+    public void setReportedMessage(MessageDTO messageDTO) {
+        this.messagedReportedTemp = messageDTO;
+    }
+
+    public MessageDTO getReportedMessage() {
+        return messagedReportedTemp;
+    }
+
+    public void clearReportedMessage(MessageDTO messageDTO) {
+        this.messagedReportedTemp = null;
     }
 }

@@ -1,4 +1,4 @@
-package Conversations;
+package messaging.chat;
 
 import android.os.Bundle;
 
@@ -83,17 +83,14 @@ public class ReportMessageFragment extends Fragment {
             Log.e("Reporting", "Error getting mQueue from navbar");
         }
 
-
-
-
-
+        reportedMessage = UserSession.getInstance().getReportedMessage();
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        View view = inflater.inflate(R.layout.report_message, container, false);
+        View view = inflater.inflate(R.layout.report_message_popup, container, false);
 
         backBtn = view.findViewById(R.id.Back_button);
         sendBtn = view.findViewById(R.id.button_send);
@@ -148,6 +145,8 @@ public class ReportMessageFragment extends Fragment {
             messageObject.put("text", reportedMessage.getText());
             jsonBody.put("message", messageObject);
             jsonBody.put("reportText", inputReport.getText().toString());
+
+            Log.e("reporting", jsonBody.toString());
 
         } catch (Exception e) {
             e.printStackTrace();

@@ -166,21 +166,10 @@ public class MessageFragment extends Fragment implements WebSocketListener {
                     writeMsg.setText("");
                     WebSocketManagerChat.getInstance().sendMessage(sentMessageString);
                 }
-
-//
-//
-//
-//                    list.add(newMsg);
-//                    chatListAdapter.notifyItemChanged(chatListAdapter.getItemCount() + 1);
-//                    writeMsg.setText("");
-//                    String returnMsg = gson.toJson(newMsg);
-//                    Log.e("msg", "Before sending message: " );
-//                    String testMsg = "{\"type\": \"harmonize.DTOs.MessageDTO\",\"data\": {\"conversation\": {\"id\": 1},\"text\": \"Hello, World!\"}}\n";
-//                    WebSocketManagerChat.getInstance().sendMessage(testMsg);
-//                }
-
             }
         });
+
+        chatListAdapter.notifyDataSetChanged();
 
         // Inflate the layout for this fragment
         return view;
@@ -250,9 +239,9 @@ public class MessageFragment extends Fragment implements WebSocketListener {
                 Log.e("msg", "Recieved message in onWebSocketMessage, updating UI");
                 Log.e("msg", "Current conversationId: " + UserSession.getInstance().getCurrentConversation().getDataId());
                 if (conversationId == UserSession.getInstance().getCurrentConversation().getDataId()) {
-                    list = getMessages();
+                    list.add(messageDTO);
                     Log.e("msg", "Last message: " + list.get(list.size() - 1).toString());
-                    int newItemPosition = chatListAdapter.getItemCount() + 1;
+                    int newItemPosition = list.size() - 1;
                     chatListAdapter.notifyItemInserted(newItemPosition);
                     recyclerView.scrollToPosition(newItemPosition);
 

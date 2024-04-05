@@ -27,7 +27,6 @@ import com.android.volley.toolbox.JsonObjectRequest;
 
 import org.json.JSONObject;
 
-import java.sql.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -35,7 +34,6 @@ import java.util.Map;
 
 import Connections.VolleyCallBack;
 import UserInfo.Member;
-import UserInfo.User;
 import UserInfo.UserSession;
 
 /**
@@ -45,7 +43,7 @@ import UserInfo.UserSession;
  */
 
 // Fragment for the Account Preferences screen which allows users to see their info
-public class AccountPreferencesFragment extends Fragment {
+public class ModeratorAccountPreferencesFragment extends Fragment {
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -62,7 +60,7 @@ public class AccountPreferencesFragment extends Fragment {
     private TextView passwordView;
     private boolean hidden = true;
     private boolean allowEdit = false;
-    private Button updatePrefsBtn, logoutBtn, delAccBtn;
+    private Button updatePrefsBtn, logoutBtn, delAccBtn, seeReportsBtn;
 
     private ImageButton changePicBtn, editInfoBtn, unhidePass;
 
@@ -77,7 +75,7 @@ public class AccountPreferencesFragment extends Fragment {
     /**
      * Creates a new instance of the Account Preferences fragment
      */
-    public AccountPreferencesFragment() {
+    public ModeratorAccountPreferencesFragment() {
         // Required empty public constructor
     }
 
@@ -116,7 +114,7 @@ public class AccountPreferencesFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        View rootView = inflater.inflate(R.layout.fragment_account_preferences, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_moderator_account_preferences, container, false);
 
         profilePicture = rootView.findViewById(R.id.profile_Picture);
 
@@ -135,6 +133,7 @@ public class AccountPreferencesFragment extends Fragment {
         delAccBtn = rootView.findViewById(R.id.delAccount);
         changePicBtn = rootView.findViewById(R.id.changePicture);
         editInfoBtn = rootView.findViewById(R.id.editInfo);
+        seeReportsBtn = rootView.findViewById(R.id.seeReports);
 
         usernameText.setEnabled(allowEdit);
         firstNameText.setEnabled(allowEdit);
@@ -210,6 +209,13 @@ public class AccountPreferencesFragment extends Fragment {
 //                // Send PUT request to server
 //            }
 //        });
+
+        seeReportsBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ((navBar) getActivity()).loadFragment(new SeeReportsFragment());
+            }
+        });
 
         // When logout is clicked, change intent to login screen
         logoutBtn.setOnClickListener(new View.OnClickListener() {
@@ -449,10 +455,10 @@ public class AccountPreferencesFragment extends Fragment {
 
                             callBack.onSuccess();
 
-                    }
-                    catch (Exception e) {
-                        e.printStackTrace();
-                    }
+                        }
+                        catch (Exception e) {
+                            e.printStackTrace();
+                        }
                     }
                 },
                 new Response.ErrorListener() {
@@ -489,21 +495,21 @@ public class AccountPreferencesFragment extends Fragment {
                 URL + "/users/roles",
                 null, // Pass null as the request body since it's a GET request
                 response -> {
-                        try {
-                            List<String> roles = new ArrayList<>();
-                            for (int i = 0; i < response.length(); i++) {
-                                JSONObject roleObject = response.getJSONObject(i);
-                                String role = roleObject.getString("name");
-                                Log.e("roles", "User has role: " + role);
-                                roles.add(role);
-                            }
-                            UserSession.getInstance().setRoles(roles);
+                    try {
+                        List<String> roles = new ArrayList<>();
+                        for (int i = 0; i < response.length(); i++) {
+                            JSONObject roleObject = response.getJSONObject(i);
+                            String role = roleObject.getString("name");
+                            Log.e("roles", "User has role: " + role);
+                            roles.add(role);
                         }
-                        catch (Exception e) {
-                            e.printStackTrace();
-                        }
-                    },
-                    error -> Log.e("report", error.toString())
+                        UserSession.getInstance().setRoles(roles);
+                    }
+                    catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                },
+                error -> Log.e("report", error.toString())
         ) {
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {

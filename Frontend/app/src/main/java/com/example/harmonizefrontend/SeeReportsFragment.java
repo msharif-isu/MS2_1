@@ -116,10 +116,10 @@ public class SeeReportsFragment extends Fragment {
                         Log.e("report", "Accessed all reports");
                         for (int i = 0; i < response.length(); i++) {
                             JSONObject reportObject = response.getJSONObject(i);
-                            Report report = parseReport(reportObject); // Implement this method based on your Report class
+                            Report report = parseReport(reportObject);
                             reportList.add(report);
                         }
-                        volleyCallBack.onSuccess(); // Adjust your callback interface to accept the parsed reports
+                        volleyCallBack.onSuccess();
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -130,7 +130,7 @@ public class SeeReportsFragment extends Fragment {
             public Map<String, String> getHeaders() throws AuthFailureError {
                 HashMap<String, String> headers = new HashMap<>();
                 Log.e("report", "jwt bandaid TEMPORARY");
-                headers.put("Authorization", "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJqb2huIiwiZXhwIjoxNzEyMzk0NTAzfQ.U7vhqwReBPune-g_Zg6M69PPB3J8cL29-DCsAs3hXuzB12IOhRja5v2fpeTd1uhJusPyabHvOFMbvQzoWMGRCA");
+                headers.put("Authorization", UserSession.getInstance().getJwtToken());
                 return headers;
             }
         };

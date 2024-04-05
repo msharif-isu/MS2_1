@@ -138,6 +138,7 @@ public class LoginScreen extends AppCompatActivity implements OnClickListener {
                         intent.putExtra("password", password);
                         intent.putExtra("jwtToken", jwtToken);
                         intent.putExtra("fragment", "profile");
+
                         startActivity(intent);
                     }
                 });

@@ -53,7 +53,7 @@ public class MessageService {
     public MessageDTO readMessage(User reciever, Message message, String privateKey) throws Exception {
         return new MessageDTO(
             message.getId(),
-            message.getTime(),
+            message.getTime().getTime(),
             new UserDTO(message.getSender()),
             new ConversationDTO(message.getConversation()),
             chatCrypto.decrypt(privateKey, message.getSender().getPublicKey(), message.getEncryptions().get(reciever))

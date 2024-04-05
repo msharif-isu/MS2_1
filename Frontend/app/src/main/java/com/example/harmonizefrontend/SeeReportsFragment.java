@@ -87,21 +87,20 @@ public class SeeReportsFragment extends Fragment {
             public void onSuccess() {
                 // I have no clue if this would work tbh
                 Log.e("report", "Report List size: " + reportList.size());
+                int newItemPosition;
+                for (int i = 0; i < reportList.size(); i++) {
+                    newItemPosition = i;
+                    reportedListAdapter.notifyItemInserted(newItemPosition);
+                    recyclerView.scrollToPosition(newItemPosition);
+                }
+
+//                int newItemPosition = list.size() - 1;
+//                chatListAdapter.notifyItemInserted(newItemPosition);
+//                recyclerView.scrollToPosition(newItemPosition);
 //                reportedListAdapter.notifyItemRangeInserted(reportedListAdapter.getItemCount(), reportList.size());
 
             }
         });
-//        String reportSingle = "{\"id\":1,\"message\":{\"id\":1,\"time\":\"2024-03-16T16:08:54.909+00:00\",\"sender\":{\"id\":2,\"firstName\":\"john\",\"lastName\":\"smith\",\"username\":\"jsmith\",\"bio\":\"\"},\"conversation\":{\"id\":1,\"members\":[{\"id\":3,\"firstName\":\"tim\",\"lastName\":\"brown\",\"username\":\"tbrown\",\"bio\":\"\"},{\"id\":2,\"firstName\":\"john\",\"lastName\":\"smith\",\"username\":\"jsmith\",\"bio\":\"\"}]},\"text\":\"Hello,World!\"},\"reporter\":{\"id\":3,\"firstName\":\"tim\",\"lastName\":\"brown\",\"username\":\"tbrown\",\"bio\":\"\"},\"reported\":{\"id\":2,\"firstName\":\"john\",\"lastName\":\"smith\",\"username\":\"jsmith\",\"bio\":\"\"},\"reportText\":\"Ifounditoffensive.\"}";
-//        try {
-//            JSONObject jsonObject = new JSONObject(reportSingle);
-//            Report report = parseReport(jsonObject);
-//            Log.e("report", "report created!!!");
-//        } catch (JSONException e) {
-//            throw new RuntimeException(e);
-//        }
-
-
-
 
         return rootView;
     }
@@ -130,8 +129,8 @@ public class SeeReportsFragment extends Fragment {
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
                 HashMap<String, String> headers = new HashMap<>();
-                Log.e("report", "CHECKING TO SEE IF THERE'S AN ISSUE WITH AUTHENTICATING");
-                headers.put("Authorization", UserSession.getInstance().getJwtToken());
+                Log.e("report", "jwt bandaid TEMPORARY");
+                headers.put("Authorization", "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJqb2huIiwiZXhwIjoxNzEyMzk0NTAzfQ.U7vhqwReBPune-g_Zg6M69PPB3J8cL29-DCsAs3hXuzB12IOhRja5v2fpeTd1uhJusPyabHvOFMbvQzoWMGRCA");
                 return headers;
             }
         };

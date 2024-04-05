@@ -57,11 +57,9 @@ public class HomeFragment extends Fragment implements WebSocketListener {
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
      *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
      * @return A new instance of fragment HomeFragment.
      */
-    public static HomeFragment newInstance(String param1, String param2) {
+    public static HomeFragment newInstance() {
         HomeFragment fragment = new HomeFragment();
         Bundle args = new Bundle();
         fragment.setArguments(args);
@@ -150,21 +148,20 @@ public class HomeFragment extends Fragment implements WebSocketListener {
 
         isLoading = true;
         offset += LIMIT;
-        sendWebSocketRequest(3, LIMIT, offset);
+        FeedData data = new FeedData(LIMIT, offset);
+        FeedRequest request = new FeedRequest(FeedRequest.RequestType.FEED_ITEMS, data);
+        sendWebSocketRequest(request);
 
     }
 
     /**
      * Sends a WebSocket request to fetch feed items.
      *
-     * @param requestType The type of the request (3 for fetching feed items, 4 for refreshing the feed).
-     * @param limit       The maximum number of items to fetch.
-     * @param offset      The offset from which to start fetching items.
+     * @param request
      */
-    private void sendWebSocketRequest(int requestType, int limit, int offset) {
+    private void sendWebSocketRequest(FeedRequest request) {
 
         Gson gson = new Gson();
-        FeedRequest request = new FeedRequest(requestType, new FeedData(limit, offset));
         String requestJson = gson.toJson(request);
         WebSocketManager.getInstance().sendMessage(requestJson);
 
@@ -222,7 +219,9 @@ public class HomeFragment extends Fragment implements WebSocketListener {
 
         isLoading = true;
         offset = 0;
-        sendWebSocketRequest(3, LIMIT, offset);
+        FeedData data = new FeedData(LIMIT, offset);
+        FeedRequest request = new FeedRequest(FeedRequest.RequestType.FEED_ITEMS, data);
+        sendWebSocketRequest(request);
 
     }
 
@@ -249,6 +248,7 @@ public class HomeFragment extends Fragment implements WebSocketListener {
         offset += 1;
         isLoading = false;
         hasMore = offset < feedSize;
+        swipeRefreshLayout.setRefreshing(false);
 
     }
 
@@ -259,7 +259,9 @@ public class HomeFragment extends Fragment implements WebSocketListener {
 
         isLoading = true;
         offset = 0;
-        sendWebSocketRequest(4, LIMIT, offset);
+        FeedData data = new FeedData(LIMIT, offset);
+        FeedRequest request = new FeedRequest(FeedRequest.RequestType.REFRESH_FEED, data);
+        sendWebSocketRequest(request);
 
     }
 

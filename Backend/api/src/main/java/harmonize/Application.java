@@ -7,9 +7,14 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
 import harmonize.DTOs.RegisterDTO;
+import harmonize.Entities.Conversation;
+import harmonize.Entities.User;
 import harmonize.ErrorHandling.Exceptions.EntityAlreadyExistsException;
+import harmonize.Repositories.UserRepository;
+import harmonize.Security.ChatCrypto;
 import harmonize.Services.AdminService;
 import harmonize.Services.AuthService;
+import harmonize.Services.MessageService;
 import harmonize.Services.RoleService;
 import harmonize.Services.UserService;
 
@@ -28,7 +33,7 @@ public class Application {
     }
 
     @Bean
-    public CommandLineRunner initUser(AuthService authService, RoleService roleService, AdminService adminService, UserService userService) {
+    public CommandLineRunner initUser(AuthService authService, RoleService roleService, AdminService adminService, UserService userService, MessageService messageService, ChatCrypto chatCrypto, UserRepository userRepository) {
         return args -> {
             try {
                 if (roleService.getRole("ADMIN") == null)
@@ -46,12 +51,35 @@ public class Application {
                     authService.register(new RegisterDTO("Manas", "Mathur", "manasmathur2023", "Backup890!"));
                 } catch (EntityAlreadyExistsException e) {}
                 
+                User john = userRepository.findByUsername("john");
+                User tim = userRepository.findByUsername("tim");
+                User manas = userRepository.findByUsername("manasmathur2023");
+
                 try {
-                    userService.addFriend(adminService.getUser("john").getId(), adminService.getUser("tim").getId());
-                    userService.addFriend(adminService.getUser("tim").getId(), adminService.getUser("john").getId());
-                    userService.addFriend(adminService.getUser("manasmathur2023").getId(), adminService.getUser("john").getId());
-                    userService.addFriend(adminService.getUser("john").getId(), adminService.getUser("manasmathur2023").getId());
+                    userService.addFriend(john.getId(), tim.getId());
+                    userService.addFriend(tim.getId(), john.getId());
+                    userService.addFriend(manas.getId(), john.getId());
+                    userService.addFriend(john.getId(), manas.getId());
+                    userService.addFriend(manas.getId(), tim.getId());
+                    userService.addFriend(tim.getId(), manas.getId());
                 } catch (EntityAlreadyExistsException e) {}
+
+                john = userRepository.findByUsername("john");
+                tim = userRepository.findByUsername("tim");
+                manas = userRepository.findByUsername("manasmathur2023");
+
+                Conversation conversation = null;
+                for (Conversation convo : john.getConversations()) {
+                    if (convo.getMembers().contains(manas))
+                        conversation = convo;
+                }
+                messageService.createMessage(john, conversation, "Wassup", chatCrypto.unwrap("johnpw", john.getPrivateKeyWrapped()));
+
+                for (Conversation convo : tim.getConversations()) {
+                    if (convo.getMembers().contains(manas))
+                        conversation = convo;
+                }
+                messageService.createMessage(tim, conversation, "Hii", chatCrypto.unwrap("timpw", tim.getPrivateKeyWrapped()));
             
                 try {
                     adminService.updateRole(adminService.getUser("admin").getId(), "ADMIN");

@@ -4,6 +4,7 @@ import android.util.Log;
 
 import org.java_websocket.client.WebSocketClient;
 import org.java_websocket.handshake.ServerHandshake;
+import org.json.JSONException;
 
 import java.net.URI;
 
@@ -147,7 +148,11 @@ public class WebSocketManagerChat {
         @Override
         public void onMessage(String message) {
             Log.d("WebSocket", "Received message: ");
+            try {
                 webSocketListener.onWebSocketMessage(message);
+            } catch (JSONException e) {
+                throw new RuntimeException(e);
+            }
         }
 
 

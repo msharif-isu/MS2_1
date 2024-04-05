@@ -190,7 +190,7 @@ public class LoginScreen extends AppCompatActivity implements OnClickListener {
                     @Override
                     public void onResponse(JSONObject response) {
                         try {
-                                Toast.makeText(LoginScreen.this, "Login Successful", Toast.LENGTH_LONG).show();
+                                Toast.makeText(LoginScreen.this, "Login Successful", Toast.LENGTH_SHORT).show();
 //                                Log.e("JWT", response.getString("tokenType") + response.getString("accessToken"));
                                 jwtToken = response.getString("tokenType") + response.getString("accessToken");
 

@@ -1,6 +1,7 @@
 package Connections;
 
 import org.java_websocket.handshake.ServerHandshake;
+import org.json.JSONException;
 
 /**
  * Interface defining methods for handling WebSocket events.
@@ -21,7 +22,7 @@ public interface WebSocketListener {
      *
      * @param message The received WebSocket message.
      */
-    void onWebSocketMessage(String message);
+    void onWebSocketMessage(String message) throws JSONException;
 
     /**
      * Called when the WebSocket connection is closed.

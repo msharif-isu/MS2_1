@@ -1,9 +1,11 @@
-package Conversations;
+package messaging.chat;
 
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -14,6 +16,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
+import com.example.harmonizefrontend.ClickListener;
 import DTO.MessageDTO;
 import UserInfo.UserSession;
 
@@ -143,5 +146,70 @@ public class ChatListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     @Override
     public void onAttachedToRecyclerView(RecyclerView recyclerView) {
         super.onAttachedToRecyclerView(recyclerView);
+    }
+
+    public class MessageRecieveViewHolder extends RecyclerView.ViewHolder{
+        TextView messageText, timeText, nameText, dateText;
+        ImageView pfpImage;
+        android.view.View View;
+
+        /**
+         * Constructor for the recieve message view holder
+         * @param itemView
+         */
+        MessageRecieveViewHolder(View itemView) {
+            super(itemView);
+            messageText = itemView.findViewById(R.id.text_message_other);
+            timeText = itemView.findViewById(R.id.text_timestamp_other);
+            nameText = itemView.findViewById(R.id.text_user_other);
+            dateText = itemView.findViewById(R.id.text_date_other);
+            pfpImage = itemView.findViewById(R.id.image_profile_other);
+            View = itemView;
+
+//            itemView.setOnClickListener(new View.OnClickListener() {
+//                @Override
+//                public void onClick(android.view.View v) {
+//                    int position = getAdapterPosition();
+//                    if (clickListener != null && position != RecyclerView.NO_POSITION) {
+//                        clickListener.click(position);
+//                    }
+//                }
+//            });
+        }
+
+    }
+
+    public class MessageSentViewHolder extends RecyclerView.ViewHolder{
+        protected TextView messageText, timeText, dateText;
+
+//    android.view.View View;
+
+        /**
+         * Constructor for the sent message view holder
+         * @param itemView
+         */
+        MessageSentViewHolder(View itemView) {
+            super(itemView);
+            messageText = itemView.findViewById(R.id.text_message_other);
+            timeText = itemView.findViewById(R.id.text_timestamp_other);
+            dateText = itemView.findViewById(R.id.text_date_other);
+//        itemView = View;
+        }
+
+
+
+        // getters
+        public TextView getMessageText() {
+            return messageText;
+        }
+
+        public TextView getTimeText() {
+            return timeText;
+        }
+
+        public TextView getDateText() {
+            return dateText;
+        }
+
     }
 }

@@ -73,7 +73,7 @@ public class ReportedListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
      */
     @Override
     public int getItemCount() {
-        return reportList.size();
+        return reportList.size()    ;
     }
 
     public Report getItem(int index) {

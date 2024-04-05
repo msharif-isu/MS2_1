@@ -251,7 +251,7 @@ public class MessageFragment extends Fragment implements WebSocketListener {
                 Log.e("msg", "Current conversationId: " + UserSession.getInstance().getCurrentConversation().getDataId());
                 if (conversationId == UserSession.getInstance().getCurrentConversation().getDataId()) {
                     list = getMessages();
-                    Log.e("msg", "message Size: " + list.size());
+                    Log.e("msg", "Last message: " + list.get(list.size() - 1).toString());
                     int newItemPosition = chatListAdapter.getItemCount() + 1;
                     chatListAdapter.notifyItemInserted(newItemPosition);
                     recyclerView.scrollToPosition(newItemPosition);

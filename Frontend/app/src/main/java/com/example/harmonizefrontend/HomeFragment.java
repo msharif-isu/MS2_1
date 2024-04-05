@@ -26,6 +26,9 @@ import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 
+import Connections.WebSocketListener;
+import Connections.WebSocketManagerFeed;
+
 /**
  * A fragment that displays the main feed, showing music news for the usser.
  * Uses a WebSocket connection to receive feed data from the server.
@@ -90,8 +93,8 @@ public class HomeFragment extends Fragment implements WebSocketListener {
         // Connect to WebSocket
         String serverURL = WEB_SOCKET_URL + "?username=" + username + "&password=" + password;
         Log.e("msg", "Before WebSocket connection");
-        WebSocketManager.getInstance().connectWebSocket(serverURL);
-        WebSocketManager.getInstance().setWebSocketListener(this);
+        WebSocketManagerFeed.getInstance().connectWebSocket(serverURL);
+        WebSocketManagerFeed.getInstance().setWebSocketListener(this);
     }
 
     /**
@@ -163,7 +166,7 @@ public class HomeFragment extends Fragment implements WebSocketListener {
 
         Gson gson = new Gson();
         String requestJson = gson.toJson(request);
-        WebSocketManager.getInstance().sendMessage(requestJson);
+        WebSocketManagerFeed.getInstance().sendMessage(requestJson);
 
     }
 

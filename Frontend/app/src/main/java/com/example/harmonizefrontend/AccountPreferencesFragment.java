@@ -203,14 +203,14 @@ public class AccountPreferencesFragment extends Fragment {
         updatePrefsBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                loadFragment(new SearchFragment());
+                loadFragment(new LikedSongsFragment());
             }
         });
 
         addSongsBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                loadFragment(new LikedSongsFragment());
+                loadFragment(new SearchFragment());
             }
         });
 

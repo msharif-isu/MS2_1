@@ -86,10 +86,22 @@ public class SeeReportsFragment extends Fragment {
             @Override
             public void onSuccess() {
                 // I have no clue if this would work tbh
-                reportedListAdapter.notifyItemRangeInserted(reportedListAdapter.getItemCount(), reportList.size());
+                Log.e("report", "Report List size: " + reportList.size());
+//                reportedListAdapter.notifyItemRangeInserted(reportedListAdapter.getItemCount(), reportList.size());
 
             }
         });
+//        String reportSingle = "{\"id\":1,\"message\":{\"id\":1,\"time\":\"2024-03-16T16:08:54.909+00:00\",\"sender\":{\"id\":2,\"firstName\":\"john\",\"lastName\":\"smith\",\"username\":\"jsmith\",\"bio\":\"\"},\"conversation\":{\"id\":1,\"members\":[{\"id\":3,\"firstName\":\"tim\",\"lastName\":\"brown\",\"username\":\"tbrown\",\"bio\":\"\"},{\"id\":2,\"firstName\":\"john\",\"lastName\":\"smith\",\"username\":\"jsmith\",\"bio\":\"\"}]},\"text\":\"Hello,World!\"},\"reporter\":{\"id\":3,\"firstName\":\"tim\",\"lastName\":\"brown\",\"username\":\"tbrown\",\"bio\":\"\"},\"reported\":{\"id\":2,\"firstName\":\"john\",\"lastName\":\"smith\",\"username\":\"jsmith\",\"bio\":\"\"},\"reportText\":\"Ifounditoffensive.\"}";
+//        try {
+//            JSONObject jsonObject = new JSONObject(reportSingle);
+//            Report report = parseReport(jsonObject);
+//            Log.e("report", "report created!!!");
+//        } catch (JSONException e) {
+//            throw new RuntimeException(e);
+//        }
+
+
+
 
         return rootView;
     }
@@ -132,15 +144,15 @@ public class SeeReportsFragment extends Fragment {
         Log.e("report", "ReportedMember: " + JSONreportedMember.toString());
         Member reportedMember = gson.fromJson(JSONreportedMember.toString(), Member.class);
 
-        String reportedMessage = reportObject.getString("text");
+        JSONObject reportedMessage = reportObject.getJSONObject("message");
+        String reportedTextMessage = reportedMessage.getString("text");
         String reportedReason = reportObject.getString("reportText");
 
-        JSONObject JSONmessage = reportObject.getJSONObject("message");
-        String reportedTime = JSONmessage.getString("time");
+        String reportedTime = reportedMessage.getString("time");
 
         return new Report(
                 reportedMember,
-                reportedMessage,
+                reportedTextMessage,
                 reportedReason,
                 reportedTime
         );

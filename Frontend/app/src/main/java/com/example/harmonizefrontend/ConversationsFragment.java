@@ -16,7 +16,9 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import Connections.WebSocketListener;
 import Connections.WebSocketManagerChat;
@@ -38,6 +40,7 @@ public class ConversationsFragment extends Fragment implements WebSocketListener
     private RecyclerView recyclerView;
     private ClickListener clickListener;
     private List<ConversationDTO> conversations;
+    private Map<Integer, ConversationDTO> listConversations;
 
     public ConversationsFragment() {
         // Required empty public constructor
@@ -50,6 +53,8 @@ public class ConversationsFragment extends Fragment implements WebSocketListener
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        listConversations = new HashMap<>();
 
         navBar navBar = (navBar) getActivity();
         if (navBar != null) {
@@ -112,6 +117,15 @@ public class ConversationsFragment extends Fragment implements WebSocketListener
         List<ConversationDTO> conversations = new ArrayList<ConversationDTO>();
         conversations = UserSession.getInstance().getConversations();
 
+        for (ConversationDTO convo : conversations) {
+            int id = convo.getDataId();
+            if (!listConversations.containsKey(id)) {
+                listConversations.put(id, convo);
+            }
+        }
+
+
+
 
         return conversations;
     }
@@ -151,7 +165,17 @@ public class ConversationsFragment extends Fragment implements WebSocketListener
             conversationDTO.ArrayListInitializer();
             Log.e("msg", "New Conversation created");
             UserSession.getInstance().addConversation(conversationDTO);
-            conversations.add(conversationDTO);
+
+            this.getActivity().runOnUiThread( () -> {
+                Log.e("msg", "Recieved message in onWebSocketMessage, updating UI");
+                if (!listConversations.containsKey(conversationDTO.getDataId())) {
+                    conversations.add(conversationDTO);
+                    int newItemPosition = conversations.size() - 1;
+                    conversationListAdapter.notifyItemChanged(newItemPosition);
+                    recyclerView.scrollToPosition(newItemPosition);
+                    Log.e("msg", "Updated UI with incoming message");
+                }
+            });
 
 
         }
@@ -161,11 +185,6 @@ public class ConversationsFragment extends Fragment implements WebSocketListener
             Log.e("msg", "New Message for conversationid :"+ conversationId);
             UserSession.getInstance().getConversation(conversationId).addMessage(messageDTO);
 
-            this.getActivity().runOnUiThread( () -> {
-                Log.e("msg", "Recieved message in onWebSocketMessage, updating UI");
-                conversationListAdapter.notifyItemChanged(conversationListAdapter.getItemCount() + 1);
-                Log.e("msg", "Updated UI with incoming message");
-            });
         }
         else {
             Log.e("msg", "Unknown type");

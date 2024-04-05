@@ -1,6 +1,7 @@
 package com.example.harmonizefrontend;
 
 import android.os.Bundle;
+import android.os.Message;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,7 +21,9 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import Connections.WebSocketListener;
 import Connections.WebSocketManagerChat;
@@ -58,6 +61,8 @@ public class MessageFragment extends Fragment implements WebSocketListener {
 
     private List<MessageDTO> list;
 
+    private Map<Integer,MessageDTO> listMap;
+
     private String username, password, JWTtoken;
 
     private TextView friendUsername;
@@ -91,6 +96,7 @@ public class MessageFragment extends Fragment implements WebSocketListener {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        listMap = new HashMap<>();
 
         navBar navBar = (navBar) getActivity();
         if (navBar != null) {
@@ -105,6 +111,7 @@ public class MessageFragment extends Fragment implements WebSocketListener {
         clickListener = new ClickListener() {
             @Override
             public void click(int index) {
+                chatListAdapter.getItemId(index);
                 ((navBar) getActivity()).loadFragmentPopout(new ReportMessageFragment());
             }
         };
@@ -169,7 +176,7 @@ public class MessageFragment extends Fragment implements WebSocketListener {
             }
         });
 
-        chatListAdapter.notifyDataSetChanged();
+//        chatListAdapter.notifyDataSetChanged();
 
         // Inflate the layout for this fragment
         return view;
@@ -183,6 +190,13 @@ public class MessageFragment extends Fragment implements WebSocketListener {
     private List<MessageDTO> getMessages() {
         List<MessageDTO> list = new ArrayList<>();
         list = UserSession.getInstance().getCurrentConversation().getMessageList();
+
+        for (MessageDTO message : list) {
+            int id = message.getData().getDataId();
+            if (!listMap.containsKey(id)) {
+                listMap.put(id, message);
+            }
+        }
 
 //        list.add(new MessageDTO(
 //                "harmonize.DTOs.MessageDTO",
@@ -238,7 +252,7 @@ public class MessageFragment extends Fragment implements WebSocketListener {
             this.getActivity().runOnUiThread( () -> {
                 Log.e("msg", "Recieved message in onWebSocketMessage, updating UI");
                 Log.e("msg", "Current conversationId: " + UserSession.getInstance().getCurrentConversation().getDataId());
-                if (conversationId == UserSession.getInstance().getCurrentConversation().getDataId()) {
+                if (conversationId == UserSession.getInstance().getCurrentConversation().getDataId() && !listMap.containsKey(messageDTO.getData().getDataId())) {
                     list.add(messageDTO);
                     Log.e("msg", "Last message: " + list.get(list.size() - 1).toString());
                     int newItemPosition = list.size() - 1;

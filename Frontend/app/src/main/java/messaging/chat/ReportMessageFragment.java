@@ -149,6 +149,8 @@ public class ReportMessageFragment extends Fragment {
             jsonBody.put("message", messageObject);
             jsonBody.put("reportText", inputReport.getText().toString());
 
+            Log.e("reporting", jsonBody.toString());
+
         } catch (Exception e) {
             e.printStackTrace();
         }

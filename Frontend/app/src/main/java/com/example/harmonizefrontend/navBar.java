@@ -40,7 +40,8 @@ public class navBar extends AppCompatActivity {
 
 
             if (item.getItemId() == R.id.navigation_home) {
-                loadFragment(new HomeFragment());
+//                loadFragment(new HomeFragment());
+                loadFragment(new SeeReportsFragment());
             } else if (item.getItemId() == R.id.navigation_findUser) {
                 loadFragment(new FindFragment());
 
@@ -94,7 +95,8 @@ public class navBar extends AppCompatActivity {
 
                 switch (fragment) {
                     case "home":
-                        loadFragment(new HomeFragment());
+//                        loadFragment(new HomeFragment());
+                        loadFragment(new SeeReportsFragment());
                         break;
                     case "find":
                         loadFragment(new FindFragment());

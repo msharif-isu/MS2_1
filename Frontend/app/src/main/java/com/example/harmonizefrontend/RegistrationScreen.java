@@ -1,6 +1,5 @@
 package com.example.harmonizefrontend;
 
-import android.content.Context;
 import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
@@ -11,33 +10,21 @@ import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
-import com.google.android.material.snackbar.Snackbar;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
-import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.Toast;
-import android.content.SharedPreferences;
 
-
-import androidx.core.view.WindowCompat;
-import androidx.navigation.NavController;
-import androidx.navigation.Navigation;
-import androidx.navigation.ui.AppBarConfiguration;
-import androidx.navigation.ui.NavigationUI;
-
-import com.example.harmonizefrontend.databinding.ActivityLoginScreenBinding;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.regex.*;
+import Connections.VolleyCallBack;
+import Connections.VolleySingleton;
 
 /**
  * A Registration screen that allows users to enter the application by creating an account.

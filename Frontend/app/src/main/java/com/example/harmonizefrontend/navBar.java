@@ -13,8 +13,9 @@ import com.android.volley.RequestQueue;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationBarView;
 
-import android.util.Log;
 import android.view.MenuItem;
+
+import Connections.VolleySingleton;
 
 /**
  * Controls the navigation bar at the bottom of the screen. If the user clicks on an icon on the
@@ -26,7 +27,7 @@ public class navBar extends AppCompatActivity {
 
     protected String username;
     protected String password;
-    protected String jwtToken;
+    public String jwtToken;
 
     protected RequestQueue mQueue;
 
@@ -39,13 +40,14 @@ public class navBar extends AppCompatActivity {
 
 
             if (item.getItemId() == R.id.navigation_home) {
-                loadFragment(new HomeFragment());
-
+//                loadFragment(new HomeFragment());
+                loadFragment(new SeeReportsFragment());
             } else if (item.getItemId() == R.id.navigation_findUser) {
                 loadFragment(new FindFragment());
 
             } else if (item.getItemId() == R.id.navigation_messages) {
-                loadFragment(new MessagesFragment());
+//                loadFragment(new MessageFragment());
+                loadFragment(new ConversationsFragment());
             } else if (item.getItemId() == R.id.navigation_profile) {
                 loadFragment(new AccountPreferencesFragment());
             }
@@ -93,13 +95,15 @@ public class navBar extends AppCompatActivity {
 
                 switch (fragment) {
                     case "home":
-                        loadFragment(new HomeFragment());
+//                        loadFragment(new HomeFragment());
+                        loadFragment(new SeeReportsFragment());
                         break;
                     case "find":
                         loadFragment(new FindFragment());
                         break;
                     case "messages":
-                        loadFragment(new MessagesFragment());
+//                        loadFragment(new MessageFragment());
+                        loadFragment(new ConversationsFragment());
                         break;
                     case "profile":
                         loadFragment(new AccountPreferencesFragment());
@@ -118,10 +122,24 @@ public class navBar extends AppCompatActivity {
      * loads the fragment passed into the method.
      * @param fragment
      */
-    private void loadFragment(Fragment fragment) {
+    void loadFragment(Fragment fragment) {
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         fragmentTransaction.replace(R.id.frame_layout, fragment);
         fragmentTransaction.commit();
+    }
+
+    // This is for the popout fragment, currently protected, is that a good idea?
+    protected void loadFragmentPopout(Fragment fragment) {
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        fragmentTransaction.replace(R.id.popout_frame_layout, fragment);
+        fragmentTransaction.addToBackStack(null); // Important for adding multiple fragments to the same container
+        // The order which we add fragments to the backstack is the order in which they are popped off
+        fragmentTransaction.commit();
+    }
+
+    public RequestQueue getQueue() {
+        return mQueue;
     }
 }

@@ -7,12 +7,9 @@ import android.graphics.Color;
 import android.os.Bundle;
 
 import com.android.volley.RequestQueue;
-import com.android.volley.toolbox.StringRequest;
-import com.google.android.material.snackbar.Snackbar;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.inputmethod.InputMethodManager;
@@ -23,26 +20,16 @@ import android.widget.Toast;
 import android.content.SharedPreferences;
 
 
-import androidx.core.view.WindowCompat;
-import androidx.navigation.NavController;
-import androidx.navigation.Navigation;
-import androidx.navigation.ui.AppBarConfiguration;
-import androidx.navigation.ui.NavigationUI;
-
-import com.example.harmonizefrontend.databinding.ActivityLoginScreenBinding;
-
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
-import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.JsonObjectRequest;
 
-import java.util.HashMap;
-import java.util.Map;
+import Connections.VolleyCallBack;
+import Connections.VolleySingleton;
 
 /**
  * A login screen that allows users to enter via username/password.
@@ -203,7 +190,7 @@ public class LoginScreen extends AppCompatActivity implements OnClickListener {
                     @Override
                     public void onResponse(JSONObject response) {
                         try {
-                                Toast.makeText(LoginScreen.this, "Login Successful", Toast.LENGTH_LONG).show();
+                                Toast.makeText(LoginScreen.this, "Login Successful", Toast.LENGTH_SHORT).show();
 //                                Log.e("JWT", response.getString("tokenType") + response.getString("accessToken"));
                                 jwtToken = response.getString("tokenType") + response.getString("accessToken");
 

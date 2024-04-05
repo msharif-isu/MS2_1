@@ -10,9 +10,8 @@ import org.springframework.stereotype.Service;
 import harmonize.DTOs.UserDTO;
 import harmonize.Entities.Role;
 import harmonize.Entities.User;
-import harmonize.ErrorHandling.Exceptions.RoleNotFoundException;
-import harmonize.ErrorHandling.Exceptions.RolePermissionException;
-import harmonize.ErrorHandling.Exceptions.UserNotFoundException;
+import harmonize.ErrorHandling.Exceptions.EntityAlreadyExistsException;
+import harmonize.ErrorHandling.Exceptions.EntityNotFoundException;
 import harmonize.Repositories.RoleRepository;
 import harmonize.Repositories.UserRepository;
 
@@ -41,7 +40,7 @@ public class AdminService {
         User user = userRepository.findReferenceById(id);
 
         if (user == null)
-            throw new UserNotFoundException(id);
+            throw new EntityNotFoundException("User " + id + " not found.");
             
         return new UserDTO(user);
     }
@@ -51,7 +50,7 @@ public class AdminService {
         User user = userRepository.findByUsername(username);
 
         if (user == null)
-            throw new UserNotFoundException(username);
+            throw new EntityNotFoundException("User " + username + " not found.");
             
         return new UserDTO(user);
     }
@@ -62,13 +61,13 @@ public class AdminService {
         Role newRole = roleRepository.findByName(role);
 
         if(user == null)
-            throw new UserNotFoundException(id);
+            throw new EntityNotFoundException("User " + id + " not found.");
 
         if(newRole == null)
-            throw new RoleNotFoundException(role);
+            throw new EntityNotFoundException("Role " + role + " not found.");
 
         if(user.getRoles().contains(newRole))
-            throw new RolePermissionException(role);
+            throw new EntityAlreadyExistsException("User " + id + " already has " + role + " role.");
 
         user.getRoles().add(newRole);
         userRepository.save(user);
@@ -82,13 +81,13 @@ public class AdminService {
         Role newRole = roleRepository.findByName(role);
 
         if(user == null)
-            throw new UserNotFoundException(id);
+            throw new EntityNotFoundException("User " + id + " not found.");
 
         if(newRole == null)
-            throw new RoleNotFoundException(role);
+            throw new EntityNotFoundException("Role " + role + " not found.");
 
         if(!user.getRoles().contains(newRole))
-            throw new RolePermissionException(role);
+            throw new EntityNotFoundException("User " + id + " did not have " + role + " role.");
 
         user.getRoles().remove(newRole);
         userRepository.save(user);

@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import harmonize.DTOs.ReportDTO;
 import harmonize.DTOs.RoleDTO;
+import harmonize.DTOs.SongDTO;
 import harmonize.DTOs.UserDTO;
 import harmonize.Services.ReportService;
 import harmonize.Services.UserService;
@@ -116,6 +117,21 @@ public class UserController {
     @DeleteMapping(path = "/reports/{id}")
     public ResponseEntity<String> deleteSentReport(Principal principal, @PathVariable int id){
         return ResponseEntity.ok(reportService.deleteSentReport(userService.getUser(principal.getName()).getId(), id));
+    }
+
+    @GetMapping(path = "/songs")
+    public ResponseEntity<List<SongDTO>> getSongs(Principal principal){
+        return ResponseEntity.ok(userService.getSongs(userService.getUser(principal.getName()).getId()));
+    }
+
+    @PostMapping(path = "/songs/{id}")
+    public ResponseEntity<String> addSong(Principal principal, @PathVariable String id){
+        return ResponseEntity.ok(userService.addSong(userService.getUser(principal.getName()).getId(), id));
+    }
+
+    @DeleteMapping(path = "/songs/{id}")
+    public ResponseEntity<String> removeSong(Principal principal, @PathVariable String id){
+        return ResponseEntity.ok(userService.removeSong(userService.getUser(principal.getName()).getId(), id));
     }
 }
 

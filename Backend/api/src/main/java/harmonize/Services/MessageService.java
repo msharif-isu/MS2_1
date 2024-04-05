@@ -13,7 +13,7 @@ import harmonize.Entities.Conversation;
 import harmonize.Entities.Message;
 import harmonize.Entities.Report;
 import harmonize.Entities.User;
-import harmonize.ErrorHandling.Exceptions.MessageNotFoundException;
+import harmonize.ErrorHandling.Exceptions.EntityNotFoundException;
 import harmonize.Repositories.ConversationRepository;
 import harmonize.Repositories.MessageRepository;
 import harmonize.Security.ChatCrypto;
@@ -53,7 +53,7 @@ public class MessageService {
     public MessageDTO readMessage(User reciever, Message message, String privateKey) throws Exception {
         return new MessageDTO(
             message.getId(),
-            message.getTime(),
+            message.getTime().getTime(),
             new UserDTO(message.getSender()),
             new ConversationDTO(message.getConversation()),
             chatCrypto.decrypt(privateKey, message.getSender().getPublicKey(), message.getEncryptions().get(reciever))
@@ -63,7 +63,7 @@ public class MessageService {
     public String deleteMessage(int id) {
         Message message = messageRepository.findReferenceById(id);
         if (message == null)
-            throw new MessageNotFoundException(id);
+            throw new EntityNotFoundException("Message " + id + " not found.");
         Conversation conversation = message.getConversation();
         
         conversation.getMessages().remove(message);

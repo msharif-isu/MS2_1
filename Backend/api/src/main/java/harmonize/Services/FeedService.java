@@ -1,7 +1,6 @@
 package harmonize.Services;
 
 import java.io.IOException;
-import java.time.Year;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -21,8 +20,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import harmonize.DTOs.FeedDTO;
-import harmonize.DTOs.RecommendationDTO;
-import harmonize.DTOs.SearchDTO;
 import harmonize.DTOs.TransmissionDTO;
 import harmonize.Entities.LikedSong;
 import harmonize.Entities.Song;
@@ -36,7 +33,6 @@ import harmonize.ErrorHandling.Exceptions.UnauthorizedException;
 import harmonize.Repositories.UserRepository;
 import harmonize.Repositories.FeedRepositories.FeedRepository;
 import harmonize.Repositories.FeedRepositories.SongFeedRepository;
-import jakarta.transaction.Transactional;
 import jakarta.websocket.Session;
 
 @Service
@@ -65,14 +61,13 @@ public class FeedService {
         this.feedRepositories.put(SongFeedItem.class, songFeedRepository);
     }
 
-    @Transactional
     public void onOpen(Session session) throws IOException {
-        loadFeed(session);
+        loadProperties(session);
         sessions.add(session);
     }
 
     public void onMessage(Session session, String message) throws IOException {
-        loadFeed(session);
+        loadProperties(session);
         List<AbstractFeedItem> feed = ((List<?>)session.getUserProperties().get("feed")).stream().map(AbstractFeedItem.class::cast).collect(Collectors.toList());
         User user = (User)session.getUserProperties().get("user");
 
@@ -91,7 +86,7 @@ public class FeedService {
         if(jsonMessage.at("/body/requestType").asInt() == FeedEnum.REFRESH.ordinal()) {
             session.getUserProperties().remove("feed");
             session.getUserProperties().remove("user");
-            loadFeed(session);
+            loadProperties(session);
             return;
         }
 
@@ -129,7 +124,7 @@ public class FeedService {
     }
 
     public void onClose(Session session) throws IOException {
-        loadFeed(session);
+        loadProperties(session);
         User user = (User)session.getUserProperties().get("user");
         if(user != null)
             userRepository.save(user);
@@ -164,71 +159,7 @@ public class FeedService {
         session.getBasicRemote().sendText(mapper.writeValueAsString(new TransmissionDTO(obj.getClass(), obj)));
     }
 
-    private List<Song> getNewReleases(String artistId) {
-        int limit = 50;
-        int offset = 0;
-        List<Song> newReleases = new ArrayList<>();
-        JsonNode albums;
-
-        do {
-            SearchDTO search = new SearchDTO(artistId, "album,single", Integer.toString(limit), Integer.toString(offset));
-            albums = musicService.getArtistAlbums(search);
-
-            for(int i = 0; i < albums.get("items").size(); i++) {
-                String releaseDate = albums.get("items").get(i).get("release_date").asText();
-                String releaseYear = releaseDate.substring(0, 4);
-
-                if(Integer.parseInt(releaseYear) != Year.now().getValue())
-                    break;
-                    
-                newReleases.addAll(getAlbumSongs(albums.get("items").get(i).get("id").asText()));
-            }
-
-            offset += limit;
-        } while(albums.get("items").size() == limit);
-
-        return newReleases;
-    }
-
-    private List<Song> getAlbumSongs(String albumId) {
-        int limit = 50;
-        int offset = 0;
-        List<Song> songs = new ArrayList<>();
-        JsonNode album;
-
-        do {
-            SearchDTO search = new SearchDTO(albumId, Integer.toString(limit), Integer.toString(offset));
-            album = musicService.getAlbumSongs(search);
-
-            for(int i = 0; i < album.get("items").size(); i++)
-                songs.add(new Song(album.get("items").get(i)));
-
-            offset += limit;
-        } while(album.get("items").size() == limit);
-
-        return songs;
-    }
-
-    private List<Song> getRecommendedSongs(User user) {
-        List<Song> songRec = new ArrayList<>();
-        List<String> artistIds = new ArrayList<>();
-        List<String> songIds = new ArrayList<>();
-
-        for(int i = 0; i < user.getTopArtists().size() && i < 3; i++)
-            artistIds.add(user.getTopArtists().get(i));
-
-        for(int i = 0; i < user.getLikedSongs().size() && i < 2; i++)
-            songIds.add(user.getLikedSongs().get(i).getSong().getId());
-
-        JsonNode recommendations = musicService.getRecommendations(new RecommendationDTO(Integer.toString(100), artistIds, songIds));
-        
-        for(int i = 0; i < recommendations.get("tracks").size(); i++)
-            songRec.add(new Song(recommendations.get("tracks").get(i)));
-
-        return songRec;
-    }
-
-    private void loadFeed(Session session) throws IOException {
+    private void loadProperties(Session session) throws IOException {
         User user;
         String password;
 
@@ -279,14 +210,14 @@ public class FeedService {
         }
 
         for(String artistId : user.getTopArtists()) {
-            for(Song song : getNewReleases(artistId)) {
+            for(Song song : musicService.getNewReleases(artistId)) {
                 if(user.getLikedSongs().contains(new LikedSong(user, song)))
                     continue;
                 feed.add(new SongFeedItem(FeedEnum.NEW_RELEASE, song, user));
             }
         }
 
-        for(Song song : getRecommendedSongs(user)) {
+        for(Song song : musicService.getRecommendedSongs(user)) {
             if(user.getLikedSongs().contains(new LikedSong(user, song)))
                 continue;
             feed.add(new SongFeedItem(FeedEnum.RECOMMENDATION, song, user));

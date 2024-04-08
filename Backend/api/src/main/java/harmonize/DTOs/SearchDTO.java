@@ -16,10 +16,4 @@ public class SearchDTO {
     private String type;
     private String limit;
     private String offset;
-
-    public SearchDTO(String q, String limit, String offset) {
-        this.q = q;
-        this.offset = offset;
-        this.limit = limit;
-    }
 }

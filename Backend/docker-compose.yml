@@ -4,7 +4,7 @@ services:
   harmonize-db:
     build: ./db
     ports:
-      - "3306:3306"
+      - "3306:3306" # REMOVE THIS!! -Isaac
     networks:
       - harmonize-net
     environment:

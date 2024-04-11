@@ -1,10 +1,12 @@
 stages:
+  - envsubst
   - backendDockerTest
   - backendDockerDeploy
   - dockerCleanup
 
 envsubst:
   stage: envsubst
+  needs: []
   script:
     - cd Backend
     - TEST_ID=$CI_JOB_ID envsubst '${TEST_ID}' < docker-compose.test.yml > docker-compose.test2.yml

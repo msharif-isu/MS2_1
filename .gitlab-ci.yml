@@ -11,12 +11,14 @@ envsubst:
     - cd Backend
     - TEST_ID=$CI_JOB_ID envsubst '${TEST_ID}' < docker-compose.test.yml > docker-compose.test2.yml
     - sync
+  artifacts:
+    untracked: true
 
 backend-docker-test:
   stage: backendDockerTest
-  needs:
-    - job: envsubst
-      artifacts: true
+  needs: [ envsubst ]
+  dependencies:
+    - envsubst
   tags:
     - backendTest
   script:
@@ -46,4 +48,3 @@ docker-cleanup:
     - sudo docker image prune -af --filter "until=2m"
     - sudo docker network prune -f --filter "until=2m"
     - sudo docker volume prune -af
-  

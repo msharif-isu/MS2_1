@@ -1,10 +1,10 @@
-name: backend-test
+name: ${TEST_ID}-backend-test
 
 services:
   harmonize-db:
     build: ./db
     networks:
-      - harmonize-net-test
+      - ${TEST_ID}-harmonize-net-test
     environment:
       MYSQL_ROOT_PASSWORD: adminpw
       MYSQL_DATABASE: harmonize-db
@@ -17,15 +17,14 @@ services:
       retries: 10
 
   harmonize-api:
-    build:
-      context: ./api
-      dockerfile: Dockerfile.test
+    build: ./api
+    entrypoint: mvn clean test
     depends_on:
       harmonize-db:
         condition: service_healthy
     networks:
-      - harmonize-net-test
+      - ${TEST_ID}-harmonize-net-test
 
 networks:
-  harmonize-net-test:
+  ${TEST_ID}-harmonize-net-test:
     driver: bridge

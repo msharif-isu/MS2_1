@@ -4,7 +4,7 @@ services:
   harmonize-db:
     build: ./db
     ports:
-      - "3306:3306" # REMOVE THIS!! -Isaac
+      - "3306:3306"
     networks:
       - harmonize-net
     environment:
@@ -21,6 +21,7 @@ services:
 
   harmonize-api:
     build: ./api
+    entrypoint: java -jar /home/target/*.jar
     ports:
       - "8080:8080"
     depends_on:

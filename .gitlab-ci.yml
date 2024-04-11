@@ -14,7 +14,9 @@ envsubst:
 
 backend-docker-test:
   stage: backendDockerTest
-  needs: [ envsubst ]
+  needs:
+    - job: envsubst
+      artifacts: true
   tags:
     - backendTest
   script:

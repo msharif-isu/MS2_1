@@ -1,17 +1,28 @@
 stages:
+  - envsubst
   - backendDockerTest
   - backendDockerDeploy
   - dockerCleanup
 
-backend-docker-test:
-  stage: backendDockerTest
+envsubst:
+  stage: envsubst
   needs: []
-  tags:
-    - backendTest
   script:
     - cd Backend
     - TEST_ID=$CI_JOB_ID envsubst '${TEST_ID}' < docker-compose.test.yml > docker-compose.test2.yml
     - sync
+  artifacts:
+    untracked: true
+
+backend-docker-test:
+  stage: backendDockerTest
+  needs: [ envsubst ]
+  dependencies:
+    - envsubst
+  tags:
+    - backendTest
+  script:
+    - cd Backend
     - sudo docker-compose -f docker-compose.test2.yml down
     - sudo docker-compose -f docker-compose.test2.yml build
     - sudo docker-compose -f docker-compose.test2.yml up --abort-on-container-exit
@@ -32,11 +43,8 @@ backend-docker-deploy:
 
 docker-cleanup:
   stage: dockerCleanup
-  tags:
-    - cleanup
   script:
     - sudo docker container prune -f --filter "until=2m"
     - sudo docker image prune -af --filter "until=2m"
     - sudo docker network prune -f --filter "until=2m"
     - sudo docker volume prune -af
-  

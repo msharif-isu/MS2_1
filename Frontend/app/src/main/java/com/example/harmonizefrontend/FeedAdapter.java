@@ -106,7 +106,7 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.FeedViewHolder
             feedItemTypeTextView.setText(feedItem.getType());
 
             // Make API request to retrieve track information
-            String trackUrl = "http://coms-309-032.class.las.iastate.edu:8080/music/songs/" + feedItem.getData().getItem().getSong().getId();
+            String trackUrl = "http://coms-309-032.class.las.iastate.edu:8080/music/tracks/" + feedItem.getData().getItem().getSong().getId();
             JsonObjectRequest trackRequest = new JsonObjectRequest(Request.Method.GET, trackUrl, null,
                     new Response.Listener<JSONObject>() {
                         @Override

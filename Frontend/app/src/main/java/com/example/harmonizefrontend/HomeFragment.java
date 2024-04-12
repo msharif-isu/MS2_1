@@ -238,14 +238,16 @@ public class HomeFragment extends Fragment implements WebSocketListener {
         if (offset == 0) {
 
             feedItems.clear();
-
-        }
-
-        if (feedDTO.getData() != null && feedDTO.getData().getItem() != null) {
-
-            feedItems.add(feedDTO);
             feedAdapter.notifyDataSetChanged();
 
+        } else {
+
+            if (feedDTO.getData() != null && feedDTO.getData().getItem() != null) {
+
+                int insertIndex = feedItems.size();
+                feedItems.add(feedDTO);
+                feedAdapter.notifyItemInserted(insertIndex);
+            }
         }
 
         offset += 1;

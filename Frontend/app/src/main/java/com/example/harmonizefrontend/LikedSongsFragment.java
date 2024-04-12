@@ -8,12 +8,16 @@ import android.view.ViewGroup;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
+import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
@@ -23,10 +27,14 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import UserInfo.UserSession;
+
 public class LikedSongsFragment extends Fragment {
     private RecyclerView likedSongsRecyclerView;
     private LikedSongsAdapter likedSongsAdapter;
     private List<Track> likedSongs;
+    private String username, password, JWTtoken;
+    private RequestQueue mQueue;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -73,8 +81,15 @@ public class LikedSongsFragment extends Fragment {
                     public void onErrorResponse(VolleyError error) {
                         error.printStackTrace();
                     }
-                });
-
+                }) {
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                JWTtoken = UserSession.getInstance().getJwtToken();
+                Map<String, String> headers = new HashMap<>();
+                headers.put("Authorization", JWTtoken);
+                return headers;
+            }
+        };
         Volley.newRequestQueue(getContext()).add(jsonArrayRequest);
     }
 }

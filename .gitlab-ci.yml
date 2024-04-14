@@ -1,8 +1,17 @@
 stages:
+  - dockerCleanup
   - envsubst
   - dockerTest
   - backendDockerDeploy
-  - dockerCleanup
+
+docker-cleanup:
+  stage: dockerCleanup
+  script:
+    - sudo docker container prune -f --filter "until=2m"
+    - sudo docker image prune -af --filter "until=2m"
+    - sudo docker network prune -f --filter "until=2m"
+    - sudo docker volume prune -af
+    - sudo docker system prune -af --filter "until=2m"
 
 envsubst:
   stage: envsubst
@@ -39,10 +48,3 @@ backend-docker-deploy:
     - $CI_PIPELINE_SOURCE == "web"
     - $CI_COMMIT_REF_NAME == "main"
 
-docker-cleanup:
-  stage: dockerCleanup
-  script:
-    - sudo docker container prune -f --filter "until=2m"
-    - sudo docker image prune -af --filter "until=2m"
-    - sudo docker network prune -f --filter "until=2m"
-    - sudo docker volume prune -af

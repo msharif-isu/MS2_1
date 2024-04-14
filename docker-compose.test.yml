@@ -31,7 +31,7 @@ services:
       retries: 10
 
   harmonize-frontend:
-    image: afirefly/android-ci:java17
+    build: Frontend
     entrypoint: /bin/bash -c "export GRADLE_USER_HOME=`pwd`/.gradle && chmod +x ./Frontend/gradlew && cd Frontend && ./gradlew test"
     networks:
       - ${TEST_ID}-harmonize-net-test

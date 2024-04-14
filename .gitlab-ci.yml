@@ -27,8 +27,6 @@ docker-test:
   needs: [ envsubst ]
   dependencies:
     - envsubst
-  tags:
-    - backendTest
   script:
     - sudo docker-compose -f docker-compose.test2.yml down
     - sudo docker-compose -f docker-compose.test2.yml build

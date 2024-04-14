@@ -18,7 +18,7 @@ services:
 
   coms-309-032.class.las.iastate.edu:
     build: ./Backend/api
-    entrypoint: /bin/bash -c "mvn test && java -jar /home/target/harmonize-api-1.0.0.jar"
+    entrypoint: /bin/bash -c "export GRADLE_USER_HOME=/home/.gradle && chmod +x /home/gradlew && /home/gradlew test"
     networks:
       - ${TEST_ID}-harmonize-net-test
     depends_on:

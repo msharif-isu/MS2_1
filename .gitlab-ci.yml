@@ -1,48 +1,29 @@
 stages:
-  - dockerCleanup
-  - envsubst
-  - dockerTest
-  - backendDockerDeploy
-
-docker-cleanup:
-  stage: dockerCleanup
-  script:
-    - sudo docker container prune -f --filter "until=2m"
-    - sudo docker image prune -af --filter "until=2m"
-    - sudo docker network prune -f --filter "until=2m"
-    - sudo docker volume prune -af
-    - sudo docker system prune -af --filter "until=2m"
-
-envsubst:
-  stage: envsubst
-  needs: []
-  script:
-    - TEST_ID=$CI_JOB_ID envsubst '${TEST_ID}' < docker-compose.test.yml > docker-compose.test2.yml
-    - sync
-  artifacts:
-    untracked: true
-
-docker-test:
-  stage: dockerTest
-  needs: [ envsubst ]
-  dependencies:
-    - envsubst
-  script:
-    - sudo docker-compose -f docker-compose.test2.yml down
-    - sudo docker-compose -f docker-compose.test2.yml build
-    - sudo docker-compose -f docker-compose.test2.yml up --abort-on-container-exit
-
-backend-docker-deploy:
-  stage: backendDockerDeploy
-  needs: []
+  - mavenbuild
+  - maventest
+  
+maven-build:            
+  stage: mavenbuild
   tags:
-    - backendDeploy
+    - phun_tag      # <-- change to your runner's tag
   script:
-    - cd Backend
-    - sudo docker-compose down
-    - sudo docker-compose up -d
+    - cd Backend/api        # change 'Backend' to to where you have the pom.xml (do not add / in the beginning)
+    - mvn package
   only:
-    variables:
-    - $CI_PIPELINE_SOURCE == "web"
-    - $CI_COMMIT_REF_NAME == "main"
+    refs:
+      - PHUN_CICD
+    changes:
+      - Backend/**/*
 
+maven-test:             
+  stage: maventest
+  tags:
+    - phun_tag     # <-- change to your runner's tag
+  script:
+    - cd Backend/api       # change 'Backend' to to where you have the pom.xml (do not add / in the beginning)
+    - mvn test
+  only:
+    refs:
+      - PHUN_CICD
+    changes:
+      - Backend/**/*

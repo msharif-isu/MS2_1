@@ -1,20 +1,7 @@
 stages:
-  - dockerclean
   - mavenbuild
   - maventest
-
-docker-clean:
-  stage: dockerclean
-  needs: [ mavenbuild, maventest ]
-  script:
-    - sudo docker container prune -f --filter "until=2m"
-    - sudo docker image prune -af --filter "until=2m"
-    - sudo docker network prune -f --filter "until=2m"
-    - sudo docker volume prune -af
-    - sudo docker system prune -af --filter "until=2m"
-  only:
-    refs:
-      - PHUN_CICD
+  - dockerclean
   
 maven-build:            
   stage: mavenbuild
@@ -38,6 +25,19 @@ maven-test:
     - sudo docker-compose -f docker-compose.test2.yml down
     - sudo docker-compose -f docker-compose.test2.yml build
     - sudo docker-compose -f docker-compose.test2.yml up --abort-on-container-exit
+  only:
+    refs:
+      - PHUN_CICD
+
+docker-clean:
+  stage: dockerclean
+  needs: [ maven-build, maven-test ]
+  script:
+    - sudo docker container prune -f --filter "until=2m"
+    - sudo docker image prune -af --filter "until=2m"
+    - sudo docker network prune -f --filter "until=2m"
+    - sudo docker volume prune -af
+    - sudo docker system prune -af --filter "until=2m"
   only:
     refs:
       - PHUN_CICD

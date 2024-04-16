@@ -8,7 +8,7 @@ maven-build:
     - phun_tag      # <-- change to your runner's tag
   script:
     - cd Backend/api        # change 'Backend' to to where you have the pom.xml (do not add / in the beginning)
-    - mvn package
+    - mvn clean package -DskipTests
   only:
     refs:
       - PHUN_CICD

@@ -5,6 +5,7 @@ stages:
 
 docker-clean:
   stage: dockerclean
+  needs: [ mavenbuild, maventest ]
   script:
     - sudo docker container prune -f --filter "until=2m"
     - sudo docker image prune -af --filter "until=2m"
@@ -25,10 +26,7 @@ maven-build:
     - sudo docker-compose up -d
   only:
     refs:
-      - PHUN_CICD
-    variables:
-      - $CI_PIPELINE_SOURCE == "web"
-      - $CI_COMMIT_REF_NAME == "main"
+      - PHUN_CICD 
 
 maven-test:             
   stage: maventest

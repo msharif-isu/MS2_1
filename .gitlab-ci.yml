@@ -31,8 +31,6 @@ maven-test:
 
 docker-clean:
   stage: dockerclean
-  tags:
-    -phun_tag
   script:
     - sudo docker container prune -f --filter "until=2m"
     - sudo docker image prune -af --filter "until=2m"

@@ -12,8 +12,6 @@ maven-build:
   only:
     refs:
       - PHUN_CICD
-    changes:
-      - Backend/**/*
 
 maven-test:             
   stage: maventest
@@ -25,5 +23,3 @@ maven-test:
   only:
     refs:
       - PHUN_CICD
-    changes:
-      - Backend/**/*

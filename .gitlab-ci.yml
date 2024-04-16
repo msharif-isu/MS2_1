@@ -1,7 +1,19 @@
 stages:
+  - dockerclean
   - mavenbuild
   - maventest
-  - dockerclean
+
+docker-clean:
+  stage: dockerclean
+  script:
+    - sudo docker container prune -f --filter "until=2m"
+    - sudo docker image prune -af --filter "until=2m"
+    - sudo docker network prune -f --filter "until=2m"
+    - sudo docker volume prune -af
+    - sudo docker system prune -af --filter "until=2m"
+  only:
+    refs:
+      - PHUN_CICD
   
 maven-build:            
   stage: mavenbuild
@@ -14,6 +26,9 @@ maven-build:
   only:
     refs:
       - PHUN_CICD
+    variables:
+      - $CI_PIPELINE_SOURCE == "web"
+      - $CI_COMMIT_REF_NAME == "main"
 
 maven-test:             
   stage: maventest
@@ -28,20 +43,3 @@ maven-test:
   only:
     refs:
       - PHUN_CICD
-
-docker-clean:
-  stage: dockerclean
-  script:
-    - sudo docker container prune -f --filter "until=2m"
-    - sudo docker image prune -af --filter "until=2m"
-    - sudo docker network prune -f --filter "until=2m"
-    - sudo docker volume prune -af
-    - sudo docker system prune -af --filter "until=2m"
-  only:
-    refs:
-      - PHUN_CICD
-    variables:
-      - $CI_PIPELINE_SOURCE == "web"
-      - $CI_COMMIT_REF_NAME == "main"
-
-

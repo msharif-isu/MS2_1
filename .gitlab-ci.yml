@@ -8,11 +8,10 @@ stages:
 docker-cleanup:
   stage: dockerCleanup
   script:
-    - sudo docker container prune -f --filter "until=2m"
-    - sudo docker image prune -af --filter "until=2m"
-    - sudo docker network prune -f --filter "until=2m"
-    - sudo docker volume prune -af
-    - sudo docker system prune -af --filter "until=2m"
+    - sudo docker container prune -f --filter "until=10m"
+    - sudo docker image prune -af --filter "until=10m"
+    - sudo docker network prune -f --filter "until=10m"
+    - sudo docker system prune -af --filter "until=10m"
 
 envsubst:
   stage: envsubst
@@ -44,8 +43,8 @@ backend-docker-deploy:
     - sudo docker-compose up -d
   only:
     variables:
-    - $CI_PIPELINE_SOURCE == "web"
-    - $CI_COMMIT_REF_NAME == "main"
+      - $CI_PIPELINE_SOURCE == "web"
+      - $CI_COMMIT_REF_NAME == "main"
 
 frontend-docker-build:
   stage: frontendDockerBuild
@@ -59,7 +58,10 @@ frontend-docker-build:
   script:
     - cd Frontend
     - ./gradlew build
+  artifacts:
+    paths:
+      - Frontend/app/build/outputs/
   only:
     variables:
-    - $CI_PIPELINE_SOURCE == "web"
-    - $CI_COMMIT_REF_NAME == "main"
+      - $CI_PIPELINE_SOURCE == "web"
+      - $CI_COMMIT_REF_NAME == "main"

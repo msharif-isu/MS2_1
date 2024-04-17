@@ -3,6 +3,7 @@ stages:
   - envsubst
   - dockerTest
   - backendDockerDeploy
+  - frontendDockerBuild
 
 docker-cleanup:
   stage: dockerCleanup
@@ -46,3 +47,19 @@ backend-docker-deploy:
     - $CI_PIPELINE_SOURCE == "web"
     - $CI_COMMIT_REF_NAME == "main"
 
+frontend-docker-build:
+  stage: frontendDockerBuild
+  needs: []
+  tags:
+    - frontendBuild
+  image: afirefly/android-ci:java17
+  before_script:
+    - export GRADLE_USER_HOME=`pwd`/.gradle
+    - chmod +x ./Frontend/gradlew
+  script:
+    - cd Frontend
+    - ./gradlew build
+  only:
+    variables:
+    - $CI_PIPELINE_SOURCE == "web"
+    - $CI_COMMIT_REF_NAME == "main"

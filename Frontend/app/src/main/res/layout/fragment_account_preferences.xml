@@ -9,14 +9,14 @@
 
 
 
-
-    <ImageView
+    <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/profile_Picture"
         android:layout_width="100dp"
         android:layout_height="100dp"
         android:layout_marginTop="73dp"
         android:layout_marginLeft="15dp"
-        tools:src="@tools:sample/avatars" />
+        android:src="@drawable/ic_launcher_foreground"/>
+
 
     <EditText
         android:id="@+id/usernameHolder"

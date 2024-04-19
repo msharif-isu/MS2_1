@@ -80,6 +80,7 @@ public class HomeFragment extends Fragment implements WebSocketListener {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+
         navBar navBar = (navBar) getActivity();
         if (navBar != null) {
             username = navBar.username;
@@ -115,7 +116,7 @@ public class HomeFragment extends Fragment implements WebSocketListener {
         feedItems = new ArrayList<>();
         feedAdapter = new FeedAdapter(feedItems);
         feedRecyclerView.setAdapter(feedAdapter);
-        feedRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        feedRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
         swipeRefreshLayout = view.findViewById(R.id.swipeRefreshLayout);
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {

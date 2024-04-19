@@ -51,8 +51,6 @@ public class SearchFragment extends Fragment {
         searchResultsRecyclerView.setAdapter(searchResultsAdapter);
         searchResultsRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
-        mQueue = Volley.newRequestQueue(getContext());
-
         navBar navBar = (navBar) getActivity();
         if (navBar != null) {
             username = navBar.username;
@@ -94,7 +92,7 @@ public class SearchFragment extends Fragment {
         try {
             requestBody.put("q", query);
             requestBody.put("type", "track");
-            requestBody.put("limit", "9");
+            requestBody.put("limit", "3");
             requestBody.put("offset", "0");
         } catch (JSONException e) {
             e.printStackTrace();
@@ -130,8 +128,8 @@ public class SearchFragment extends Fragment {
                 }) {
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
-                JWTtoken = UserSession.getInstance().getJwtToken();
-                Map<String, String> headers = new HashMap<>();
+                HashMap<String, String> headers = new HashMap<>();
+                Log.d("SearchFragment", "JWTtoken: " + JWTtoken);
                 headers.put("Authorization", JWTtoken);
                 return headers;
             }

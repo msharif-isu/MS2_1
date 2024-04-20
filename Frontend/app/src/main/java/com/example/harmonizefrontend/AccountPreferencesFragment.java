@@ -1,7 +1,11 @@
 package com.example.harmonizefrontend;
 
+import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.text.method.HideReturnsTransformationMethod;
 import android.text.method.PasswordTransformationMethod;
 import android.util.Log;
@@ -15,6 +19,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.fragment.app.Fragment;
 
 import com.android.volley.AuthFailureError;
@@ -26,6 +32,7 @@ import com.android.volley.toolbox.JsonObjectRequest;
 
 import org.json.JSONObject;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -186,14 +193,14 @@ public class AccountPreferencesFragment extends Fragment {
 
 
         //When changeBtn is clicked, give the user the option to upload their own picture and change the profile picture
-//        changePicBtn.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                // Give user option to upload their own picture
-//
-//
-//            }
-//        });
+        changePicBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                imageChooser();
+
+
+            }
+        });
 
         // When update preferences is clicked, take user to the change preferences screen
 //        updatePrefsBtn.setOnClickListener(new View.OnClickListener() {
@@ -279,6 +286,8 @@ public class AccountPreferencesFragment extends Fragment {
                             // SET ID TO MAX BECAUSE CURRENTLY DO NOT HAVE A REQUEST TO GET ID
                         }
                     });
+
+                    editInfoBtn.setImageResource(R.drawable.green_checkbox);
 
                 }
 
@@ -473,6 +482,43 @@ public class AccountPreferencesFragment extends Fragment {
         };
         mQueue.add(jsonObjReq);
     }
+
+    void imageChooser() {
+        Intent intent = new Intent();
+        intent.setType("image/*");
+        intent.setAction(Intent.ACTION_GET_CONTENT);
+
+        gallery.launch(intent);
+
+    }
+
+    ActivityResultLauncher<Intent> gallery
+            = registerForActivityResult(
+            new ActivityResultContracts
+                    .StartActivityForResult(),
+            result -> {
+                if (result.getResultCode()
+                        == Activity.RESULT_OK) {
+                    Intent data = result.getData();
+                    // do your operation from here....
+                    if (data != null
+                            && data.getData() != null) {
+                        Uri selectedImageUri = data.getData();
+                        Bitmap selectedImageBitmap = null;
+                        try {
+                            selectedImageBitmap
+                                    = MediaStore.Images.Media.getBitmap(
+                                    this.getContext().getContentResolver(),
+                                    selectedImageUri);
+                        }
+                        catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                        profilePicture.setImageBitmap(
+                                selectedImageBitmap);
+                    }
+                }
+            });
 
 
 }

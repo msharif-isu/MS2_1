@@ -5,7 +5,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".AccountPreferencesFragment"
-    android:background="@color/cambridge_blue">
+    android:background="@color/cambridge_blue"
+    >
 
 
 
@@ -111,10 +112,9 @@
         android:id="@+id/changePicture"
         android:layout_width="25dp"
         android:layout_height="25dp"
-        android:layout_marginTop="160dp"
-        android:layout_marginLeft="100dp"
-        android:src="@android:drawable/ic_menu_camera"
-        />
+        android:layout_marginLeft="87dp"
+        android:layout_marginTop="145dp"
+        android:src="@android:drawable/ic_menu_camera" />
 
     <ImageButton
         android:id="@+id/editInfo"

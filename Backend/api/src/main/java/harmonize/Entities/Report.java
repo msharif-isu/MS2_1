@@ -7,6 +7,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.PreRemove;
 import jakarta.persistence.Table;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
@@ -37,6 +38,13 @@ public class Report {
 
     @Column(columnDefinition = "LONGTEXT")
     private String reportText;
+
+    @PreRemove
+    public void removeReference() {
+        message.getReports().remove(this);
+        reporter.getSentReports().remove(this);
+        reported.getReceivedReports().remove(this);
+    }
 
     @Override
     public boolean equals(Object o) {

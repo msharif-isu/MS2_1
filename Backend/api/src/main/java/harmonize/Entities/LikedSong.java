@@ -10,6 +10,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.PreRemove;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -26,11 +27,11 @@ public class LikedSong {
     private int id;
 
     @ManyToOne
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "user_id", referencedColumnName = "id")
     private User user;
 
     @ManyToOne
-    @JoinColumn(name = "song_id")
+    @JoinColumn(name = "song_id", referencedColumnName = "id")
     private Song song;
 
     @Column(name = "time")
@@ -40,6 +41,11 @@ public class LikedSong {
         this.user = user;
         this.song = song;
         this.time = new Date(System.currentTimeMillis());
+    }
+
+    @PreRemove
+    public void removeReference() {
+        user.getLikedSongs().remove(this);
     }
 
     @Override

@@ -145,27 +145,16 @@ public class ReportService {
     }
 
     @NonNull
-    public String deleteReport(int id) {
-        Report report = reportRepository.findReferenceById(id);
+    public String deleteReport(int reportID) {
+        Report report = reportRepository.findReferenceById(reportID);
         if (report == null)
-            throw new EntityNotFoundException("Report" + id + " not found.");
+            throw new EntityNotFoundException("Report" + reportID + " not found.");
         deleteReport(report);
 
         return new String(String.format("Report %d was deleted.", report.getId()));
     }
 
     public void deleteReport(Report report) {
-        Message message = report.getMessage();
-        User reported = report.getReported();
-        User reporter = report.getReporter();
-
-        message.getReports().remove(report);
-        reported.getReceivedReports().remove(report);
-        reporter.getSentReports().remove(report);
-
-        messageRepository.save(message);
-        userRepository.save(reported);
-        userRepository.save(reporter);
         reportRepository.delete(report);
     }
 }

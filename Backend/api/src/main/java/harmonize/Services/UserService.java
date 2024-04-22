@@ -290,7 +290,7 @@ public class UserService {
         if(!user.getLikedSongs().contains(connection))
             throw new EntityNotFoundException(song.getTitle() + " could not be found.");
 
-        user.getLikedSongs().remove(connection);
+        connection.removeReference();
         userRepository.save(user);
         updateTopArtist(user);
         

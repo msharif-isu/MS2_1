@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Set;
 
 import harmonize.Entities.FeedItems.AbstractFeedItem;
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
 import jakarta.persistence.ElementCollection;
@@ -21,6 +20,7 @@ import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OrderBy;
 import jakarta.persistence.OrderColumn;
+import jakarta.persistence.PreRemove;
 import jakarta.persistence.Table;
 import lombok.Data;
 
@@ -56,8 +56,7 @@ public class User {
     @Column(columnDefinition = "TEXT")
     private String privateKeyWrapped;
 
-    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER, 
-                cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
     @OrderBy("time DESC")
     private List<LikedSong> likedSongs = new ArrayList<>();
 
@@ -68,28 +67,33 @@ public class User {
     private List<String> topArtists = new ArrayList<>();
 
     @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(name = "userRoles", joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),
-                            inverseJoinColumns = @JoinColumn(name = "role_id", referencedColumnName = "id"))
+    @JoinTable(name = "user_roles", 
+        joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),
+        inverseJoinColumns = @JoinColumn(name = "role_id", referencedColumnName = "id"))
     private Set<Role> roles = new HashSet<>();
 
     @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(name = "friends", joinColumns = @JoinColumn(name = "user_id",   referencedColumnName = "id"),
-                        inverseJoinColumns = @JoinColumn(name = "friend_id", referencedColumnName = "id"))
+    @JoinTable(name = "friends",
+        joinColumns = @JoinColumn(name = "user_id",   referencedColumnName = "id"),
+        inverseJoinColumns = @JoinColumn(name = "friend_id", referencedColumnName = "id"))
     private Set<User> friends = new HashSet<>();
 
     @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(name = "friendInvites", joinColumns = @JoinColumn(name = "user_id",    referencedColumnName = "id"),
-                                inverseJoinColumns = @JoinColumn(name = "inviter_id", referencedColumnName = "id"))
+    @JoinTable(name = "friend_invites",
+        joinColumns = @JoinColumn(name = "user_id",    referencedColumnName = "id"),
+        inverseJoinColumns = @JoinColumn(name = "inviter_id", referencedColumnName = "id"))
     private Set<User> friendInvites = new HashSet<>();
 
     @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(name = "conversation_members", joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),
-                                    inverseJoinColumns = @JoinColumn(name = "conversation_id", referencedColumnName = "id"))
+    @JoinTable(name = "conversation_members",
+        joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),
+        inverseJoinColumns = @JoinColumn(name = "conversation_id", referencedColumnName = "id"))
     private Set<Conversation> conversations = new HashSet<>();
 
-    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinTable(name = "user_seen_feed", joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),
-                                inverseJoinColumns = @JoinColumn(name = "feed_item_id", referencedColumnName = "id"))
+    @OneToMany(fetch = FetchType.EAGER)
+    @JoinTable(name = "user_seen_feed",
+        joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),
+        inverseJoinColumns = @JoinColumn(name = "feed_item_id", referencedColumnName = "id"))
     private Set<AbstractFeedItem> seenFeed = new HashSet<>();
 
     @OneToMany(fetch = FetchType.EAGER)
@@ -115,6 +119,41 @@ public class User {
     }
 
     public User() {}
+
+    @PreRemove
+    public void removeReference() {
+        for (LikedSong likedSong : likedSongs)
+            likedSong.removeReference();
+        
+        for (Role role : roles)
+            role.getUsers().remove(this);
+
+        for (User user : friends)
+            user.friends.remove(this);
+
+        for (Report report : sentReports)
+            report.removeReference();
+
+        for (Report report : receivedReports)
+            report.removeReference();
+
+        for (Conversation conversation : conversations) {
+            conversation.getMembers().remove(this);
+            if (conversation.getMembers().size() <= 1) {
+                conversation.removeReference();
+            } else {
+                for (Message message : conversation.getMessages()) {
+                    message.getEncryptions().remove(this);
+                    if (message.getSender() == this) {
+                        message.removeReference();
+                    }
+                }
+            }
+        }
+
+        for (AbstractFeedItem feedItem : seenFeed)
+            feedItem.removeReference();
+    }
 
     @Override
     public boolean equals(Object o) {

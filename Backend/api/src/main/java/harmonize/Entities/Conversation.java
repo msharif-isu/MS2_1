@@ -12,6 +12,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.PreRemove;
 import jakarta.persistence.Table;
 
 import lombok.Data;
@@ -33,7 +34,7 @@ public class Conversation {
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "conversation_members", 
-               joinColumns = @JoinColumn(name = "conversation_id", referencedColumnName = "id"),
+        joinColumns = @JoinColumn(name = "conversation_id", referencedColumnName = "id"),
         inverseJoinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"))
     private Set<User> members = new HashSet<>();
 
@@ -42,6 +43,15 @@ public class Conversation {
 
     public Conversation(Set<User> members) {
         this.members = members;
+    }
+
+    @PreRemove
+    public void removeReference() {
+        for (User user : members)
+            user.getConversations().remove(this);
+
+        for (Message message : messages)
+            message.removeReference();
     }
 
     @Override

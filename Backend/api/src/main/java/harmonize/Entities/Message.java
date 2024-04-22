@@ -18,6 +18,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.MapKeyJoinColumn;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.PreRemove;
 import jakarta.persistence.Table;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
@@ -56,6 +57,13 @@ public class Message {
 
     @OneToMany(mappedBy="message", fetch = FetchType.EAGER)
     private Set<Report> reports = new HashSet<>();
+
+    @PreRemove
+    public void removeReference() {
+        conversation.getMessages().remove(this);
+        for (Report report : reports)
+            report.removeReference();
+    }
 
     @Override
     public boolean equals(Object o) {

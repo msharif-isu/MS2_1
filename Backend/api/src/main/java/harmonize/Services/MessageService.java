@@ -11,7 +11,6 @@ import harmonize.DTOs.MessageDTO;
 import harmonize.DTOs.UserDTO;
 import harmonize.Entities.Conversation;
 import harmonize.Entities.Message;
-import harmonize.Entities.Report;
 import harmonize.Entities.User;
 import harmonize.ErrorHandling.Exceptions.EntityNotFoundException;
 import harmonize.Repositories.ConversationRepository;
@@ -23,15 +22,13 @@ public class MessageService {
 
     private MessageRepository messageRepository;
     private ConversationRepository conversationRepository;
-    private ReportService reportService;
     private ChatCrypto chatCrypto;
     private BCryptPasswordEncoder encoder;
 
     @Autowired
-    public MessageService(ConversationRepository conversationRepository, MessageRepository messageRepository, ReportService reportService, ChatCrypto chatCrypto, BCryptPasswordEncoder encoder) {
+    public MessageService(ConversationRepository conversationRepository, MessageRepository messageRepository, ChatCrypto chatCrypto, BCryptPasswordEncoder encoder) {
         this.conversationRepository = conversationRepository;
         this.messageRepository = messageRepository;
-        this.reportService = reportService;
         this.chatCrypto = chatCrypto;
         this.encoder = encoder;
     }
@@ -64,14 +61,7 @@ public class MessageService {
         Message message = messageRepository.findReferenceById(id);
         if (message == null)
             throw new EntityNotFoundException("Message " + id + " not found.");
-        Conversation conversation = message.getConversation();
-        
-        conversation.getMessages().remove(message);
-        for (Report report : message.getReports()) {
-            reportService.deleteReport(report);
-        }
-
-        conversationRepository.save(conversation);
+            
         messageRepository.delete(message);
         
         return new String(String.format("Message %d was deleted.", message.getId()));

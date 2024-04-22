@@ -1,6 +1,9 @@
 package harmonize.Services;
 
+import java.time.Year;
+import java.util.ArrayList;
 import java.util.Base64;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
@@ -17,9 +20,11 @@ import org.springframework.web.util.UriComponentsBuilder;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import harmonize.DTOs.RecommendationDTO;
 import harmonize.DTOs.SearchDTO;
 import harmonize.Entities.Song;
-import harmonize.ErrorHandling.Exceptions.InvalidSearchException;
+import harmonize.Entities.User;
+import harmonize.ErrorHandling.Exceptions.InvalidArgumentException;
 import harmonize.Repositories.SongRepository;
 
 @Service
@@ -69,7 +74,7 @@ public class MusicService {
             responseJson = objectMapper.readTree(response.getBody());
         }
         catch(Exception e) {
-            throw new InvalidSearchException("Unable to retrieve token");
+            throw new InvalidArgumentException("Unable to retrieve token.");
         }
 
         this.apiExpiration = System.currentTimeMillis() + responseJson.get("expires_in").asInt() * 1000;
@@ -99,11 +104,10 @@ public class MusicService {
         JsonNode responseJson;
 
         try {
-            @SuppressWarnings("null")
             ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.GET, new HttpEntity<>(headers), String.class);
             responseJson = objectMapper.readTree(response.getBody());
         } catch(Exception e) {
-            throw new InvalidSearchException("Invalid search");
+            throw new InvalidArgumentException("Invalid search.");
         }
 
         return responseJson;
@@ -119,11 +123,10 @@ public class MusicService {
         JsonNode responseJson;
 
         try {
-            @SuppressWarnings("null")
             ResponseEntity<String> response = restTemplate.exchange(apiURL + urlEnd, HttpMethod.GET, new HttpEntity<>(headers), String.class);
             responseJson = objectMapper.readTree(response.getBody());
         } catch(Exception e) {
-            throw new InvalidSearchException("Invalid song");
+            throw new InvalidArgumentException("Invalid song.");
         }
 
         songRepository.save(new Song(responseJson));
@@ -141,13 +144,153 @@ public class MusicService {
         JsonNode responseJson;
 
         try {
-            @SuppressWarnings("null")
             ResponseEntity<String> response = restTemplate.exchange(apiURL + urlEnd, HttpMethod.GET, new HttpEntity<>(headers), String.class);
             responseJson = objectMapper.readTree(response.getBody());
         } catch(Exception e) {
-            throw new InvalidSearchException("Invalid artist");
+            throw new InvalidArgumentException("Invalid artist.");
         }
 
         return responseJson;
+    }
+
+    public JsonNode getArtistAlbums(SearchDTO search) {
+        String urlEnd = "/artists/" + search.getQ() + "/albums";
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.set(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE);
+        headers.set("Authorization", "Bearer " + getAPIToken());
+
+        String url = UriComponentsBuilder.fromHttpUrl(apiURL + urlEnd)
+                        .queryParam("include_groups", search.getType())
+                        .queryParam("market", "US")
+                        .queryParam("limit", search.getLimit())
+                        .queryParam("offset", search.getOffset())
+                        .encode().toUriString();
+
+        JsonNode responseJson;
+
+        try {
+            ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.GET, new HttpEntity<>(headers), String.class);
+            responseJson = objectMapper.readTree(response.getBody());
+        } catch(Exception e) {
+            throw new InvalidArgumentException("Invalid search");
+        }
+
+        return responseJson;
+    }
+
+    public JsonNode getAlbumSongs(SearchDTO search) {
+        String urlEnd = "/albums/" + search.getQ() + "/tracks";
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.set(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE);
+        headers.set("Authorization", "Bearer " + getAPIToken());
+
+        String url = UriComponentsBuilder.fromHttpUrl(apiURL + urlEnd)
+                        .queryParam("market", "US")
+                        .queryParam("limit", search.getLimit())
+                        .queryParam("offset", search.getOffset())
+                        .encode().toUriString();
+
+        JsonNode responseJson;
+
+        try {
+            ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.GET, new HttpEntity<>(headers), String.class);
+            responseJson = objectMapper.readTree(response.getBody());
+        } catch(Exception e) {
+            throw new InvalidArgumentException("Invalid search");
+        }
+
+        return responseJson;
+    }
+
+    public JsonNode getRecommendations(RecommendationDTO recommendation) {
+        String urlEnd = "/recommendations";
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.set(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE);
+        headers.set("Authorization", "Bearer " + getAPIToken());
+
+        String url = UriComponentsBuilder.fromHttpUrl(apiURL + urlEnd)
+                        .queryParam("limit", recommendation.getLimit())
+                        .queryParam("market", "US")
+                        .queryParam("seed_artists", String.join(",", recommendation.getArtistIds()))
+                        .queryParam("seed_tracks", String.join(",", recommendation.getSongIds()))
+                        .encode().toUriString();
+
+        JsonNode responseJson;
+
+        try {
+            ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.GET, new HttpEntity<>(headers), String.class);
+            responseJson = objectMapper.readTree(response.getBody());
+        } catch(Exception e) {
+            throw new InvalidArgumentException("Invalid search");
+        }
+
+        return responseJson;
+    }
+
+    public List<Song> getNewReleases(String artistId) {
+        int limit = 50;
+        int offset = 0;
+        List<Song> newReleases = new ArrayList<>();
+        JsonNode albums;
+
+        do {
+            SearchDTO search = new SearchDTO(artistId, "album,single", Integer.toString(limit), Integer.toString(offset));
+            albums = getArtistAlbums(search);
+
+            for(int i = 0; i < albums.get("items").size(); i++) {
+                String releaseDate = albums.get("items").get(i).get("release_date").asText();
+                String releaseYear = releaseDate.substring(0, 4);
+
+                if(Integer.parseInt(releaseYear) != Year.now().getValue())
+                    break;
+                    
+                newReleases.addAll(getAlbumSongs(albums.get("items").get(i).get("id").asText()));
+            }
+
+            offset += limit;
+        } while(albums.get("items").size() == limit);
+
+        return newReleases;
+    }
+
+    private List<Song> getAlbumSongs(String albumId) {
+        int limit = 50;
+        int offset = 0;
+        List<Song> songs = new ArrayList<>();
+        JsonNode album;
+
+        do {
+            SearchDTO search = new SearchDTO(albumId, "track", Integer.toString(limit), Integer.toString(offset));
+            album = getAlbumSongs(search);
+
+            for(int i = 0; i < album.get("items").size(); i++)
+                songs.add(new Song(album.get("items").get(i)));
+
+            offset += limit;
+        } while(album.get("items").size() == limit);
+
+        return songs;
+    }
+
+    public List<Song> getRecommendedSongs(User user) {
+        List<Song> songRec = new ArrayList<>();
+        List<String> artistIds = new ArrayList<>();
+        List<String> songIds = new ArrayList<>();
+
+        for(int i = 0; i < user.getTopArtists().size() && i < 3; i++)
+            artistIds.add(user.getTopArtists().get(i));
+
+        for(int i = 0; i < user.getLikedSongs().size() && i < 2; i++)
+            songIds.add(user.getLikedSongs().get(i).getSong().getId());
+
+        JsonNode recommendations = getRecommendations(new RecommendationDTO(Integer.toString(100), artistIds, songIds));
+        
+        for(int i = 0; i < recommendations.get("tracks").size(); i++)
+            songRec.add(new Song(recommendations.get("tracks").get(i)));
+
+        return songRec;
     }
 }

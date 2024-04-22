@@ -13,11 +13,14 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
 import harmonize.DTOs.RegisterDTO;
-import harmonize.ErrorHandling.Exceptions.RolePermissionException;
-import harmonize.ErrorHandling.Exceptions.UserAlreadyFriendException;
-import harmonize.ErrorHandling.Exceptions.UsernameTakenException;
+import harmonize.Entities.Conversation;
+import harmonize.Entities.User;
+import harmonize.ErrorHandling.Exceptions.EntityAlreadyExistsException;
+import harmonize.Repositories.UserRepository;
+import harmonize.Security.ChatCrypto;
 import harmonize.Services.AdminService;
 import harmonize.Services.AuthService;
+import harmonize.Services.MessageService;
 import harmonize.Services.RoleService;
 import harmonize.Services.UserService;
 
@@ -36,7 +39,7 @@ public class Application {
     }
 
     @Bean
-    public CommandLineRunner initUser(AuthService authService, RoleService roleService, AdminService adminService, UserService userService) {
+    public CommandLineRunner initUser(AuthService authService, RoleService roleService, AdminService adminService, UserService userService, MessageService messageService, ChatCrypto chatCrypto, UserRepository userRepository) {
         return args -> {
             try {
                 if (roleService.getRole("ADMIN") == null)
@@ -49,21 +52,47 @@ public class Application {
                 try {
                     authService.register(new RegisterDTO("first", "last", "admin", "adminpw"));
                     authService.register(new RegisterDTO("first", "last", "mod", "modpw"));
-                    authService.register(new RegisterDTO("john", "smith", "jsmith", "johnpw"));
-                    authService.register(new RegisterDTO("tim", "brown", "tbrown", "timpw"));
-                } catch (UsernameTakenException e) {}
+                    authService.register(new RegisterDTO("John", "Smith", "john", "johnpw"));
+                    authService.register(new RegisterDTO("Tim", "Brown", "tim", "timpw"));
+                    authService.register(new RegisterDTO("Manas", "Mathur", "manasmathur2023", "Backup890!"));
+                } catch (EntityAlreadyExistsException e) {}
                 
+                User john = userRepository.findByUsername("john");
+                User tim = userRepository.findByUsername("tim");
+                User manas = userRepository.findByUsername("manasmathur2023");
+
                 try {
-                    userService.addFriend(adminService.getUser("jsmith").getId(), adminService.getUser("tbrown").getId());
-                    userService.addFriend(adminService.getUser("tbrown").getId(), adminService.getUser("jsmith").getId());
-                } catch (UserAlreadyFriendException e) {}
+                    userService.addFriend(john.getId(), tim.getId());
+                    userService.addFriend(tim.getId(), john.getId());
+                    userService.addFriend(manas.getId(), john.getId());
+                    userService.addFriend(john.getId(), manas.getId());
+                    userService.addFriend(manas.getId(), tim.getId());
+                    userService.addFriend(tim.getId(), manas.getId());
+                } catch (EntityAlreadyExistsException e) {}
+
+                john = userRepository.findByUsername("john");
+                tim = userRepository.findByUsername("tim");
+                manas = userRepository.findByUsername("manasmathur2023");
+
+                Conversation conversation = null;
+                for (Conversation convo : john.getConversations()) {
+                    if (convo.getMembers().contains(manas))
+                        conversation = convo;
+                }
+                messageService.createMessage(john, conversation, "Wassup", chatCrypto.unwrap("johnpw", john.getPrivateKeyWrapped()));
+
+                for (Conversation convo : tim.getConversations()) {
+                    if (convo.getMembers().contains(manas))
+                        conversation = convo;
+                }
+                messageService.createMessage(tim, conversation, "Hii", chatCrypto.unwrap("timpw", tim.getPrivateKeyWrapped()));
             
                 try {
                     adminService.updateRole(adminService.getUser("admin").getId(), "ADMIN");
                     adminService.updateRole(adminService.getUser("mod").getId(), "MODERATOR");
                     adminService.deleteRole(adminService.getUser("admin").getId(), "USER");
                     adminService.deleteRole(adminService.getUser("mod").getId(), "USER");
-                } catch (RolePermissionException e) {}
+                } catch (EntityAlreadyExistsException e) {}
                 
             } catch (Exception e) {
                 e.printStackTrace();

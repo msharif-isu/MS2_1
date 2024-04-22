@@ -1,34 +1,48 @@
 stages:
-  - backendDockerTest
+  - dockerCleanup
+  - envsubst
+  - dockerTest
   - backendDockerDeploy
 
-backend-docker-test:
-  stage: backendDockerTest
-  needs: []
-  tags:
-    - backend
+docker-cleanup:
+  stage: dockerCleanup
   script:
-    - cd Backend
-    - sudo docker-compose -f docker-compose.test.yml down
-    - sudo docker-compose -f docker-compose.test.yml build
-    - sudo docker-compose -f docker-compose.test.yml up --abort-on-container-exit
-    - sudo docker image prune -af
+    - sudo docker container prune -f --filter "until=2m"
+    - sudo docker image prune -af --filter "until=2m"
+    - sudo docker network prune -f --filter "until=2m"
     - sudo docker volume prune -af
+    - sudo docker system prune -af --filter "until=2m"
+
+envsubst:
+  stage: envsubst
+  needs: []
+  script:
+    - TEST_ID=$CI_JOB_ID envsubst '${TEST_ID}' < docker-compose.test.yml > docker-compose.test2.yml
+    - sync
+  artifacts:
+    untracked: true
+
+docker-test:
+  stage: dockerTest
+  needs: [ envsubst ]
+  dependencies:
+    - envsubst
+  script:
+    - sudo docker-compose -f docker-compose.test2.yml down
+    - sudo docker-compose -f docker-compose.test2.yml build
+    - sudo docker-compose -f docker-compose.test2.yml up --abort-on-container-exit
 
 backend-docker-deploy:
   stage: backendDockerDeploy
   needs: []
   tags:
-    - backend
+    - backendDeploy
   script:
     - cd Backend
     - sudo docker-compose down
-    - sudo docker-compose build
     - sudo docker-compose up -d
-    - sudo docker image prune -af
-    - sudo docker volume prune -af
   only:
     variables:
     - $CI_PIPELINE_SOURCE == "web"
     - $CI_COMMIT_REF_NAME == "main"
-  
+

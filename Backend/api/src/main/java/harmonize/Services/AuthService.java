@@ -15,9 +15,9 @@ import harmonize.DTOs.AuthDTO;
 import harmonize.DTOs.LoginDTO;
 import harmonize.DTOs.RegisterDTO;
 import harmonize.Entities.User;
+import harmonize.ErrorHandling.Exceptions.EntityAlreadyExistsException;
 import harmonize.ErrorHandling.Exceptions.InternalServerErrorException;
-import harmonize.ErrorHandling.Exceptions.UserInfoInvalidException;
-import harmonize.ErrorHandling.Exceptions.UsernameTakenException;
+import harmonize.ErrorHandling.Exceptions.InvalidArgumentException;
 import harmonize.Repositories.RoleRepository;
 import harmonize.Repositories.UserRepository;
 import harmonize.Security.ChatCrypto;
@@ -63,9 +63,9 @@ public class AuthService {
     @NonNull
     public AuthDTO register(RegisterDTO user) {
         if (user.getUsername().isEmpty())
-            throw new UserInfoInvalidException("Username cannot be empty.");
+            throw new InvalidArgumentException("Username cannot be empty.");
         if (userRepository.findByUsername(user.getUsername()) != null)
-            throw new UsernameTakenException(user.getUsername());
+            throw new EntityAlreadyExistsException("Username" + user.getUsername() + " already taken.");
         
         User newUser = new User(user.getFirstName(), user.getLastName(), user.getUsername(), encoder.encode(user.getPassword()));
         try {

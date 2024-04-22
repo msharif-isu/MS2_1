@@ -1,5 +1,0 @@
-FROM maven:latest AS test-env
-WORKDIR /home
-COPY . .
-RUN mvn -B dependency:go-offline
-CMD ["mvn", "clean", "test"]

@@ -29,6 +29,10 @@ import org.json.JSONObject;
 import java.util.HashMap;
 import java.util.Map;
 
+import Connections.VolleyCallBack;
+import UserInfo.Member;
+import UserInfo.UserSession;
+
 /**
  * A simple {@link Fragment} subclass that allows users to see their info.
  * Use the {@link AccountPreferencesFragment#newInstance} factory method to
@@ -99,6 +103,8 @@ public class AccountPreferencesFragment extends Fragment {
         }
 
 
+
+
     }
 
     @Override
@@ -136,7 +142,7 @@ public class AccountPreferencesFragment extends Fragment {
             username = navBar.username;
             password = navBar.password;
             jwtToken = navBar.jwtToken;
-            mQueue = navBar.mQueue;
+            mQueue = navBar.getQueue();
         }
 
         Log.e("JWT", "username: " + username);
@@ -166,6 +172,8 @@ public class AccountPreferencesFragment extends Fragment {
 
                 Member currentUser = new Member(99999, firstName, lastName, username, bio);
                 UserSession.getInstance().setCurrentUser(currentUser);
+                UserSession.getInstance().setPassword(password);
+                UserSession.getInstance().setJwtToken(jwtToken);
                 Log.e("msg", currentUser.getUsername() + " " + currentUser.getFirstName() + " " + currentUser.getLastName() + " " + currentUser.getBio());
             }
 
@@ -265,6 +273,8 @@ public class AccountPreferencesFragment extends Fragment {
 
                             currentUser = new Member(99999, firstName, lastName, username, bio);
                             UserSession.getInstance().setCurrentUser(currentUser);
+                            UserSession.getInstance().setPassword(password);
+                            UserSession.getInstance().setJwtToken(jwtToken);
                             Log.e("msg", currentUser.getUsername() + " " + currentUser.getFirstName() + " " + currentUser.getLastName() + " " + currentUser.getBio());
                             // SET ID TO MAX BECAUSE CURRENTLY DO NOT HAVE A REQUEST TO GET ID
                         }

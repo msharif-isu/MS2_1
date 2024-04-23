@@ -8,6 +8,8 @@ public class FeedDTO {
         private int index;
         private Item item;
 
+
+
         public Data(int index, Item item) {
             this.index = index;
             this.item = item;

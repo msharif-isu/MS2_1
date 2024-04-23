@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
 
+import org.apache.commons.lang3.ObjectUtils.Null;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -22,9 +23,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import harmonize.DTOs.RecommendationDTO;
 import harmonize.DTOs.SearchDTO;
+import harmonize.DTOs.SongDTO;
+import harmonize.Entities.Artist;
 import harmonize.Entities.Song;
 import harmonize.Entities.User;
 import harmonize.ErrorHandling.Exceptions.InvalidArgumentException;
+import harmonize.Repositories.ArtistRepository;
 import harmonize.Repositories.SongRepository;
 
 @Service
@@ -41,13 +45,16 @@ public class MusicService {
 
     private SongRepository songRepository;
 
+    private ArtistRepository artistRepository;
+
     @Autowired
-    public MusicService(RestTemplate restTemplate, SongRepository songRepository) {
+    public MusicService(RestTemplate restTemplate, SongRepository songRepository, ArtistRepository artistRepository) {
         this.restTemplate = restTemplate;
         this.objectMapper = new ObjectMapper();
         this.apiURL = "https://api.spotify.com/v1";
         this.apiExpiration = 0;
         this.songRepository = songRepository;
+        this.artistRepository = artistRepository;
     }
 
     public String getAPIToken() {
@@ -110,6 +117,19 @@ public class MusicService {
             throw new InvalidArgumentException("Invalid search.");
         }
 
+        // for(Song song : artistRepository.findSongsById("1RyvyyTE3xzB2ZywiAwp0i")) {
+        //     System.out.println(song.getTitle());
+        // }
+
+        for(Artist artist : artistRepository.findAll()) {
+            System.out.println(artist.getName() + ": ");
+            for(Song song : artist.getSongs()) {
+                if(song != null)
+                    System.out.println(new SongDTO(song));
+            }
+        }
+
+
         return responseJson;
     }
 
@@ -128,8 +148,15 @@ public class MusicService {
         } catch(Exception e) {
             throw new InvalidArgumentException("Invalid song.");
         }
+        
+        Artist artist = new Artist(responseJson.get("artists").get(0));
+        artistRepository.save(artist);
 
-        songRepository.save(new Song(responseJson));
+        Song song = new Song(responseJson);
+        song.setArtist(artist);
+        artist.getSongs().add(song);
+
+        songRepository.save(song);
 
         return responseJson;
     }
@@ -149,6 +176,8 @@ public class MusicService {
         } catch(Exception e) {
             throw new InvalidArgumentException("Invalid artist.");
         }
+
+        artistRepository.save(new Artist(responseJson));
 
         return responseJson;
     }

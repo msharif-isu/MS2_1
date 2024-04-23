@@ -15,26 +15,19 @@ public class SongDTO {
     private String id;
 
     @NonNull
-    private String artistid;
-
-    @NonNull
     private String title;
 
-    //For Testing
-    @Deprecated
-    private String artist;
+    private ArtistDTO artist;
 
     public SongDTO(Song song) {
         this.id = song.getId();
-        this.artistid = song.getArtistId();
         this.title = song.getTitle();
-        this.artist = song.getArtist();
+        this.artist = new ArtistDTO(song.getArtist().getId(), song.getArtist().getName());
     }
 
     public SongDTO(LikedSong connection) {
         this.id = connection.getSong().getId();
-        this.artistid = connection.getSong().getArtistId();
         this.title = connection.getSong().getTitle();
-        this.artist = connection.getSong().getArtist();
+        this.artist = new ArtistDTO(connection.getSong().getArtist().getId(), connection.getSong().getArtist().getName());
     }
 }

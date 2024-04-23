@@ -16,14 +16,14 @@ import harmonize.Entities.Song;
  */ 
 
 @Repository
-public interface SongRepository extends JpaRepository<Song, Long> {
+public interface SongRepository extends JpaRepository<Song, String> {
     Song findReferenceById(String id);
 
-    @Query("SELECT l.song.artistId " +
-           "FROM LikedSong l " +
-           "WHERE l IN :likedSongs " +
-           "GROUP BY l.song.artistId " +
-           "ORDER BY COUNT(l.song.artistId) DESC " +
-           "LIMIT 10")
-    List<String> findTopArtists(List<LikedSong> likedSongs);
+    // @Query("SELECT l.song.artistId " +
+    //        "FROM LikedSong l " +
+    //        "WHERE l IN :likedSongs " +
+    //        "GROUP BY l.song.artistId " +
+    //        "ORDER BY COUNT(l.song.artistId) DESC " +
+    //        "LIMIT 10")
+    // List<String> findTopArtists(List<LikedSong> likedSongs);
 }

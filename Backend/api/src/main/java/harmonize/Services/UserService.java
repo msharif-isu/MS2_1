@@ -298,13 +298,13 @@ public class UserService {
     }
 
     private void updateTopArtist(User user) {
-        List<String> topArtists = songRepository.findTopArtists(user.getLikedSongs());
+        // List<String> topArtists = songRepository.findTopArtists(user.getLikedSongs());
 
-        user.getTopArtists().clear();
+        // user.getTopArtists().clear();
 
-        for(int i = 0; i < topArtists.size(); i++)
-            user.getTopArtists().add(topArtists.get(i));
+        // for(int i = 0; i < topArtists.size(); i++)
+        //     user.getTopArtists().add(topArtists.get(i));
 
-        userRepository.save(user);
+        // userRepository.save(user);
     }
 }

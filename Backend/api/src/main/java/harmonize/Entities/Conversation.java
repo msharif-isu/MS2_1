@@ -33,7 +33,7 @@ public class Conversation {
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "conversation_members", 
-               joinColumns = @JoinColumn(name = "conversation_id", referencedColumnName = "id"),
+        joinColumns = @JoinColumn(name = "conversation_id", referencedColumnName = "id"),
         inverseJoinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"))
     private Set<User> members = new HashSet<>();
 

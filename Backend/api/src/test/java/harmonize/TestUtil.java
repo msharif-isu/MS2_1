@@ -1,0 +1,98 @@
+package harmonize;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+import java.util.List;
+
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.web.client.TestRestTemplate;
+import org.springframework.boot.test.web.server.LocalServerPort;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
+import org.springframework.http.ResponseEntity;
+
+import harmonize.DTOs.AuthDTO;
+import harmonize.DTOs.LoginDTO;
+import harmonize.DTOs.RegisterDTO;
+import harmonize.DTOs.RoleDTO;
+import harmonize.DTOs.UserDTO;
+import harmonize.Services.AdminTestService;
+import harmonize.Services.AuthTestService;
+import harmonize.Services.ModeratorTestService;
+import harmonize.Services.RequestService;
+import harmonize.Services.UserTestService;
+import harmonize.Services.WebSocketTestClient;
+
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+public class TestUtil {
+    
+    @LocalServerPort
+    private int port;
+    private String url = "http://localhost:";
+
+    @Autowired
+    protected TestRestTemplate restTemplate;
+
+    @Autowired
+    protected RequestService requestService;
+    
+    @Autowired protected AuthTestService authTestService;
+    @Autowired protected AdminTestService adminTestService;
+    @Autowired protected ModeratorTestService modTestService;
+    @Autowired protected UserTestService todTestService;
+    @Autowired protected UserTestService bobTestService;
+    protected WebSocketTestClient chatSocket;
+
+    @BeforeEach
+    @Test
+    public void setup() {
+        authTestService.setConnection(url, port);
+        adminTestService.setConnection(url, port);
+        modTestService.setConnection(url, port);
+        todTestService.setConnection(url, port);
+        bobTestService.setConnection(url, port);
+
+        adminTestService.setAuth(authTestService.login(new LoginDTO(adminTestService.getUsername(), adminTestService.getPassword())).getBody());
+        adminTestService.setUser(adminTestService.getSelf().getBody());
+
+        modTestService.setAuth(authTestService.login(new LoginDTO(modTestService.getUsername(), modTestService.getPassword())).getBody());
+        modTestService.setUser(modTestService.getSelf().getBody());
+
+        ResponseEntity<AuthDTO> responseEntity = authTestService.register(new RegisterDTO("tod", "wilson", todTestService.getUsername(), todTestService.getPassword()));
+        if (responseEntity.getStatusCode() == HttpStatus.OK)
+            todTestService.setAuth(responseEntity.getBody());
+        else
+            todTestService.setAuth(authTestService.login(new LoginDTO(todTestService.getUsername(), todTestService.getPassword())).getBody());
+        todTestService.setUser(todTestService.getSelf().getBody());
+
+        responseEntity = authTestService.register(new RegisterDTO("bob", "roberts", bobTestService.getUsername(), bobTestService.getPassword()));
+        if (responseEntity.getStatusCode() == HttpStatus.OK)
+            bobTestService.setAuth(responseEntity.getBody());
+        else
+            bobTestService.setAuth(authTestService.login(new LoginDTO(bobTestService.getUsername(), bobTestService.getPassword())).getBody());
+        bobTestService.setUser(bobTestService.getSelf().getBody());
+    }
+
+    @AfterEach
+    @Test
+    public void teardown() {
+        ResponseEntity<List<UserDTO>> usersResponseEntity = adminTestService.getUsers();
+        if (usersResponseEntity.getStatusCode() != HttpStatus.OK)
+            return;
+        
+        for (UserDTO user : usersResponseEntity.getBody()) {
+            ResponseEntity<List<RoleDTO>> rolesResponseEntity = adminTestService.getUserRoles(user.getId());
+            if (rolesResponseEntity.getStatusCode() != HttpStatus.OK)
+                continue;
+            
+            if (!rolesResponseEntity.getBody().stream().anyMatch(role -> (role.getName().equals("ADMIN") || role.getName().equals("MODERATOR")))) {
+                HttpStatusCode statusCode = adminTestService.deleteUser(user.getId()).getStatusCode();
+                assertEquals(HttpStatus.OK, statusCode, user.toString());
+            }
+        }
+    }
+}

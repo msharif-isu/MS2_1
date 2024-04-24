@@ -14,11 +14,15 @@ import harmonize.DTOs.UserDTO;
 import harmonize.Entities.Role;
 import harmonize.Entities.Song;
 import harmonize.Entities.User;
+import harmonize.Entities.Conversation;
 import harmonize.Entities.LikedSong;
+import harmonize.Entities.Message;
 import harmonize.ErrorHandling.Exceptions.EntityAlreadyExistsException;
 import harmonize.ErrorHandling.Exceptions.EntityNotFoundException;
 import harmonize.ErrorHandling.Exceptions.InvalidArgumentException;
 import harmonize.ErrorHandling.Exceptions.UserNotFriendException;
+import harmonize.Repositories.ConversationRepository;
+import harmonize.Repositories.MessageRepository;
 import harmonize.Repositories.RoleRepository;
 import harmonize.Repositories.SongRepository;
 import harmonize.Repositories.UserRepository;
@@ -28,16 +32,20 @@ public class UserService {
     private UserRepository userRepository;
     private RoleRepository roleRepository;
     private SongRepository songRepository;
+    private ConversationRepository conversationRepository;
+    private MessageRepository messageRepository;
 
     private ConversationService conversationService;
     private MusicService musicService;
 
     @Autowired
-    public UserService(UserRepository userRepository, RoleRepository roleRepository, SongRepository songRepository,
+    public UserService(UserRepository userRepository, RoleRepository roleRepository, SongRepository songRepository, ConversationRepository conversationRepository, MessageRepository messageRepository,
                         ConversationService conversationService, MusicService musicService) {
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
         this.songRepository = songRepository;
+        this.conversationRepository = conversationRepository;
+        this.messageRepository = messageRepository;
         this.conversationService = conversationService;
         this.musicService = musicService;
     }
@@ -98,6 +106,34 @@ public class UserService {
 
         if(user == null)
             throw new EntityNotFoundException("User " + id + " not found.");
+
+        for (User other : userRepository.findAll()) {
+            if (other.getFriendInvites().contains(user)) {
+                other.getFriendInvites().remove(user);
+                userRepository.save(other);
+            }
+        }
+
+        for (User friend : user.getFriends()) {
+            friend.getFriends().remove(user);
+            userRepository.save(friend);
+        }
+
+        for (Conversation conversation : user.getConversations()) {
+            conversation.getMembers().remove(user);
+            for (Message message : conversation.getMessages()) {
+                if (message.getSender().equals(user)) {
+                    messageRepository.delete(message);
+                } else {
+                    message.getEncryptions().remove(user);
+                    messageRepository.save(message);
+                }
+            }
+            if (conversation.getMembers().size() <= 1) {
+                conversationRepository.delete(conversation);
+            }
+
+        }
             
         userRepository.delete(user);
         

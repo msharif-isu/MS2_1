@@ -177,12 +177,12 @@ public class UserTest extends TestUtil {
     @Test
     public void adminRequestUnauthorizedTest() {
         ResponseEntity<UserDTO> responseEntity = todTestService.getAdminRequest();
-        assertEquals(HttpStatus.BAD_REQUEST, responseEntity.getStatusCode());
+        assertEquals(HttpStatus.UNAUTHORIZED, responseEntity.getStatusCode());
     }
 
     @Test
     public void moderatorRequestUnauthorizedTest() {
         ResponseEntity<UserDTO> responseEntity = todTestService.getModeratorRequest();
-        assertEquals(HttpStatus.BAD_REQUEST, responseEntity.getStatusCode());
+        assertEquals(HttpStatus.UNAUTHORIZED, responseEntity.getStatusCode());
     }
 }

@@ -25,14 +25,15 @@ import harmonize.Services.AuthTestService;
 import harmonize.Services.ModeratorTestService;
 import harmonize.Services.RequestService;
 import harmonize.Services.UserTestService;
-import harmonize.Services.WebSocketTestClient;
+import harmonize.Services.WebSocketTestService;
+import lombok.Getter;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class TestUtil {
     
     @LocalServerPort
-    private int port;
-    private String url = "http://localhost:";
+    @Getter private int port;
+    @Getter private String hostname = "localhost";
 
     @Autowired
     protected TestRestTemplate restTemplate;
@@ -45,16 +46,16 @@ public class TestUtil {
     @Autowired protected ModeratorTestService modTestService;
     @Autowired protected UserTestService todTestService;
     @Autowired protected UserTestService bobTestService;
-    protected WebSocketTestClient chatSocket;
+    protected WebSocketTestService chatSocket;
 
     @BeforeEach
     @Test
     public void setup() {
-        authTestService.setConnection(url, port);
-        adminTestService.setConnection(url, port);
-        modTestService.setConnection(url, port);
-        todTestService.setConnection(url, port);
-        bobTestService.setConnection(url, port);
+        authTestService.setConnection(hostname, port);
+        adminTestService.setConnection(hostname, port);
+        modTestService.setConnection(hostname, port);
+        todTestService.setConnection(hostname, port);
+        bobTestService.setConnection(hostname, port);
 
         adminTestService.setAuth(authTestService.login(new LoginDTO(adminTestService.getUsername(), adminTestService.getPassword())).getBody());
         adminTestService.setUser(adminTestService.getSelf().getBody());

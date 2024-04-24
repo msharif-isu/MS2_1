@@ -1,43 +1,18 @@
 package harmonize.Services;
 
-import java.net.URI;
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
-
-import harmonize.DTOs.AuthDTO;
 import harmonize.DTOs.UserDTO;
 
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 
-import lombok.Getter;
-import lombok.Setter;
-
 import harmonize.DTOs.RoleDTO;
 
-public class UserTestService {
-    private int port;
-    private String url;
-    @Getter @Setter private String username;
-    @Getter @Setter private String password;
-    @Getter @Setter private UserDTO user;
-    @Getter @Setter private AuthDTO auth;
-
-    @Getter WebSocketTestClient chatSocket;
-
-    @Autowired
-    private RequestService requestService;
+public class UserTestService extends AbstractUserTestService {
 
     public UserTestService(String username, String password) {
-        this.username = username;
-        this.password = password;
-    }
-
-    public void setConnection(String url, int port) {
-        this.url = url;
-        this.port = port;
-        chatSocket = new WebSocketTestClient(URI.create("ws://localhost:" + port + "/chats?username=" + username + "&password=" + password));
+        super(username, password);
     }
 
     public ResponseEntity<UserDTO> getSelf() {

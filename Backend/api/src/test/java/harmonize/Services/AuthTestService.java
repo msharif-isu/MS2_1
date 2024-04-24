@@ -18,8 +18,8 @@ public class AuthTestService {
     @Autowired
     private RequestService requestService;
 
-    public void setConnection(String url, int port) {
-        this.url = url;
+    public void setConnection(String hostname, int port) {
+        this.url = "http://" + hostname + ":";
         this.port = port;
     }
 

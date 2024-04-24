@@ -9,12 +9,12 @@ import org.java_websocket.handshake.ServerHandshake;
 
 import lombok.Getter;
 
-public class WebSocketTestClient extends WebSocketClient {
+public class WebSocketTestService extends WebSocketClient {
 
     @Getter private List<Exception> exceptions = new ArrayList<>();
     @Getter private List<String> messages = new ArrayList<>();
 
-    public WebSocketTestClient(URI serverUri) {
+    public WebSocketTestService(URI serverUri) {
         super(serverUri);
     }
 

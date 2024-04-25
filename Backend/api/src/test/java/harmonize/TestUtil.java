@@ -6,7 +6,6 @@ import java.util.List;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
@@ -50,7 +49,6 @@ public class TestUtil {
     protected WebSocketTestService chatSocket;
 
     @BeforeEach
-    @Test
     public void setup() {
         authTestService.setConnection(hostname, port);
         adminTestService.setConnection(hostname, port);
@@ -88,7 +86,6 @@ public class TestUtil {
     }
 
     @AfterEach
-    @Test
     public void teardown() {
         ResponseEntity<List<UserDTO>> usersResponseEntity = adminTestService.getUsers();
         if (usersResponseEntity.getStatusCode() != HttpStatus.OK)

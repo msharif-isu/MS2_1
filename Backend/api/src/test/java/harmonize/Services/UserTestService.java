@@ -7,9 +7,17 @@ import harmonize.DTOs.UserDTO;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+
+import harmonize.DTOs.MessageDTO;
+import harmonize.DTOs.ReportDTO;
 import harmonize.DTOs.RoleDTO;
 
 public class UserTestService extends AbstractUserTestService {
+
+    ObjectMapper mapper = new ObjectMapper();
 
     public UserTestService(String username, String password) {
         super(username, password);
@@ -53,6 +61,21 @@ public class UserTestService extends AbstractUserTestService {
 
     public ResponseEntity<String> removeFriend(int id) {
         return requestService.requestString(auth, url + port + "/users/friends/" + id, HttpMethod.DELETE);
+    }
+
+    public ResponseEntity<List<ReportDTO>> getSentReports() {
+        return requestService.requestReports(auth, url + port + "/users/reports", HttpMethod.GET);
+    }
+
+    public ResponseEntity<ReportDTO> sendReport(MessageDTO message, String reportText) throws JsonProcessingException {
+        ObjectNode body = mapper.createObjectNode();
+        body.putPOJO("message", message);
+        body.put("reportText", reportText);
+        return requestService.requestReport(auth, url + port + "/users/reports", HttpMethod.POST, body);
+    }
+
+    public ResponseEntity<String> deleteReport(ReportDTO report) {
+        return requestService.requestString(auth, url + port + "/users/reports/" + report.getId(), HttpMethod.DELETE);
     }
 
     public ResponseEntity<UserDTO> getAdminRequest() {

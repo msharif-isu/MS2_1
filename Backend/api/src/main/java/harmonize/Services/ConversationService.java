@@ -27,11 +27,14 @@ public class ConversationService {
     }
 
     public Conversation createConversation(Set<User> members) {
+        for (Conversation conversation : conversationRepository.findAll()) {
+            if (conversation.getMembers().equals(members)) {
+                return conversation;
+            }
+        }
+
         Conversation conversation = new Conversation(members);
         conversationRepository.save(conversation);
-        for (User user : members) {
-            user.getConversations().add(conversation);
-        }
         chatService.notifyUsers(conversation);
         return conversation;
     }
@@ -50,6 +53,9 @@ public class ConversationService {
             userRepository.save(user);
         }
         chatService.notifyUsers(conversation, true);
+        for (Message message : conversation.getMessages()) {
+            messageService.deleteMessage(message);
+        }
         conversationRepository.delete(conversation);
     }
 

@@ -13,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import harmonize.DTOs.AuthDTO;
+import harmonize.DTOs.ReportDTO;
 import harmonize.DTOs.RoleDTO;
 import harmonize.DTOs.UserDTO;
 
@@ -68,6 +69,26 @@ public class RequestService {
             method,
             new HttpEntity<>(body, headers),
             UserDTO.class);
+    }
+
+    public ResponseEntity<ReportDTO> requestReport(AuthDTO auth, String path, HttpMethod method) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization", "Bearer " + auth.getAccessToken());
+        return restTemplate.exchange(
+            path,
+            method,
+            new HttpEntity<>(headers),
+            ReportDTO.class);
+    }
+
+    public ResponseEntity<ReportDTO> requestReport(AuthDTO auth, String path, HttpMethod method, Object body) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization", "Bearer " + auth.getAccessToken());
+        return restTemplate.exchange(
+            path,
+            method,
+            new HttpEntity<>(body, headers),
+            ReportDTO.class);
     }
 
     public ResponseEntity<String> requestString(AuthDTO auth, String path, HttpMethod method) {
@@ -128,6 +149,26 @@ public class RequestService {
             method,
             new HttpEntity<>(body, headers),
             new ParameterizedTypeReference<List<RoleDTO>>() {});
+    }
+
+    public ResponseEntity<List<ReportDTO>> requestReports(AuthDTO auth, String path, HttpMethod method) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization", "Bearer " + auth.getAccessToken());
+        return restTemplate.exchange(
+            path,
+            method,
+            new HttpEntity<>(headers),
+            new ParameterizedTypeReference<List<ReportDTO>>() {});
+    }
+
+    public ResponseEntity<List<ReportDTO>> requestReports(AuthDTO auth, String path, HttpMethod method, Object body) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization", "Bearer " + auth.getAccessToken());
+        return restTemplate.exchange(
+            path,
+            method,
+            new HttpEntity<>(body, headers),
+            new ParameterizedTypeReference<List<ReportDTO>>() {});
     }
     
 }

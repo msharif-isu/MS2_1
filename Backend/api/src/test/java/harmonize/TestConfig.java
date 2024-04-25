@@ -29,4 +29,9 @@ public class TestConfig {
     public UserTestService bobTestService() {
         return new UserTestService("broberts", "bobpw");
     }
+
+    @Bean
+    public UserTestService samTestService() {
+        return new UserTestService("sjones", "sampw");
+    }
 }

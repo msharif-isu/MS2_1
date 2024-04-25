@@ -17,7 +17,7 @@ public abstract class AbstractUserTestService {
     @Getter @Setter protected UserDTO user;
     @Getter @Setter protected AuthDTO auth;
 
-    @Getter WebSocketTestService chatSocket;
+    @Getter ChatSocketTestService chatSocket;
 
     @Autowired
     protected RequestService requestService;
@@ -30,6 +30,6 @@ public abstract class AbstractUserTestService {
     public void setConnection(String hostname, int port) {
         this.url = "http://" + hostname + ":";
         this.port = port;
-        chatSocket = new WebSocketTestService(URI.create("ws://" + hostname + ":" + port + "/chats?username=" + username + "&password=" + password));
+        chatSocket = new ChatSocketTestService(URI.create("ws://" + hostname + ":" + port + "/chats?username=" + username + "&password=" + password));
     }
 }

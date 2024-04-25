@@ -29,6 +29,9 @@ public class ConversationService {
     public Conversation createConversation(Set<User> members) {
         Conversation conversation = new Conversation(members);
         conversationRepository.save(conversation);
+        for (User user : members) {
+            user.getConversations().add(conversation);
+        }
         chatService.notifyUsers(conversation);
         return conversation;
     }

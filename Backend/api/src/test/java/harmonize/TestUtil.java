@@ -46,6 +46,7 @@ public class TestUtil {
     @Autowired protected ModeratorTestService modTestService;
     @Autowired protected UserTestService todTestService;
     @Autowired protected UserTestService bobTestService;
+    @Autowired protected UserTestService samTestService;
     protected WebSocketTestService chatSocket;
 
     @BeforeEach
@@ -56,6 +57,7 @@ public class TestUtil {
         modTestService.setConnection(hostname, port);
         todTestService.setConnection(hostname, port);
         bobTestService.setConnection(hostname, port);
+        samTestService.setConnection(hostname, port);
 
         adminTestService.setAuth(authTestService.login(new LoginDTO(adminTestService.getUsername(), adminTestService.getPassword())).getBody());
         adminTestService.setUser(adminTestService.getSelf().getBody());
@@ -76,6 +78,13 @@ public class TestUtil {
         else
             bobTestService.setAuth(authTestService.login(new LoginDTO(bobTestService.getUsername(), bobTestService.getPassword())).getBody());
         bobTestService.setUser(bobTestService.getSelf().getBody());
+
+        responseEntity = authTestService.register(new RegisterDTO("sam", "jones", samTestService.getUsername(), samTestService.getPassword()));
+        if (responseEntity.getStatusCode() == HttpStatus.OK)
+            samTestService.setAuth(responseEntity.getBody());
+        else
+            samTestService.setAuth(authTestService.login(new LoginDTO(samTestService.getUsername(), samTestService.getPassword())).getBody());
+        samTestService.setUser(samTestService.getSelf().getBody());
     }
 
     @AfterEach

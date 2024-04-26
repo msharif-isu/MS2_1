@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import harmonize.DTOs.ConversationDTO;
 import harmonize.DTOs.ReportDTO;
 import harmonize.DTOs.RoleDTO;
 import harmonize.DTOs.UserDTO;
@@ -67,6 +68,16 @@ public class AdminController {
     @DeleteMapping(path = "/users/{id}")
     public ResponseEntity<String> deleteUser(@PathVariable int id){
         return ResponseEntity.ok(userService.deleteUser(id));
+    }
+
+    @PostMapping(path = "/users/conversations/{id}")
+    public ResponseEntity<ConversationDTO> createConversation(@PathVariable int id, @RequestBody List<Integer> others){
+        return ResponseEntity.ok(userService.createConversation(id, others));
+    }
+
+    @DeleteMapping(path = "/users/conversations/{id}")
+    public ResponseEntity<String> removeConversation(@PathVariable int id, @PathVariable int convoId){
+        return ResponseEntity.ok(userService.removeConversation(id, convoId));
     }
 
     @GetMapping(path = "/friends/recommended/{id}")

@@ -14,18 +14,27 @@ import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.ViewModelProvider;
 
 import android.provider.MediaStore;
+import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.Toast;
 
+import com.android.volley.AuthFailureError;
+import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.example.harmonizefrontend.R;
 import com.example.harmonizefrontend.navBar;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+
+import UserInfo.UserSession;
 
 
 public class SeePictureFragment extends Fragment {
@@ -106,13 +115,18 @@ public class SeePictureFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 sendDataBack(null);
+                deleteImage();
             }
+
+
         });
 
         updatePicture.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 imageChooser();
+
+
             }
         });
         return view;
@@ -152,9 +166,86 @@ public class SeePictureFragment extends Fragment {
 //                        profilePicture.setImageBitmap(
 //                                selectedImageBitmap);
                         sendDataBack(selectedImageBitmap);
+                        uploadImage(selectedImageBitmap);
+
+
                     }
                 }
             });
+
+    private void deleteImage() {
+        MultipartRequest multipartRequest = new MultipartRequest(
+                Request.Method.DELETE,
+                URL + "/delete", // CHANGE
+                null,
+                response -> {
+                    // Handle response
+                    Log.d("Delete", "Response: " + response);
+                },
+                error -> {
+                    // Handle error
+                    Log.e("Delete", "Error: " + error.getMessage());
+                }
+        ) {
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                HashMap<String, String> headers = new HashMap<String, String>();
+                headers.put("Authorization", UserSession.getInstance().getJwtToken());
+                return headers;
+            }
+
+            @Override
+            protected Map<String, String> getParams() {
+                Map<String, String> params = new HashMap<String, String>();
+//                params.put("param1", "value1");
+//                params.put("param2", "value2");
+                return params;
+            }
+        };
+        mQueue.add(multipartRequest);
+    }
+
+
+    private void uploadImage(Bitmap selectedImageBitMap){
+
+        // Is it required to use bitmaps?
+        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+        selectedImageBitMap.compress(Bitmap.CompressFormat.JPEG, 50, stream);
+        byte[] imageData = stream.toByteArray();
+        MultipartRequest multipartRequest = new MultipartRequest(
+                Request.Method.POST,
+                URL + "/upload", // CHANGE
+                imageData,
+                response -> {
+                    // Handle response
+                    Log.d("Upload", "Response: " + response);
+                },
+                error -> {
+                    // Handle error
+                    Log.e("Upload", "Error: " + error.getMessage());
+                }
+        )
+
+        {
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                HashMap<String, String> headers = new HashMap<String, String>();
+                headers.put("Authorization", UserSession.getInstance().getJwtToken());
+                return headers;
+            }
+
+            @Override
+            protected Map<String, String> getParams() {
+                Map<String, String> params = new HashMap<String, String>();
+//                params.put("param1", "value1");
+//                params.put("param2", "value2");
+                return params;
+            }
+        };
+
+        mQueue.add(multipartRequest);
+    }
+
 
 
 

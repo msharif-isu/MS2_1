@@ -29,6 +29,7 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.android.volley.toolbox.ImageRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
 
 import org.json.JSONObject;
@@ -200,6 +201,8 @@ public class AccountPreferencesFragment extends Fragment {
             }
 
         });
+
+        makeImageRequest();
 
 
 
@@ -498,6 +501,54 @@ public class AccountPreferencesFragment extends Fragment {
         };
         mQueue.add(jsonObjReq);
     }
+
+    private void makeImageRequest() {
+
+        ImageRequest imageRequest = new ImageRequest(
+                URL + "/users/image", // Do change
+                new Response.Listener<Bitmap>() {
+                    @Override
+                    public void onResponse(Bitmap response) {
+                        // Display the image in the ImageView
+                        profilePicture.setImageBitmap(response);
+                    }
+                },
+                0, // Width, set to 0 to get the original width
+                0, // Height, set to 0 to get the original height
+                ImageView.ScaleType.FIT_XY, // ScaleType
+                Bitmap.Config.RGB_565, // Bitmap config
+
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        // Handle errors here
+                        Log.e("Volley Error", error.toString());
+                    }
+                }
+
+        )
+
+        {
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                HashMap<String, String> headers = new HashMap<String, String>();
+                headers.put("Authorization", jwtToken);
+                return headers;
+            }
+
+            @Override
+            protected Map<String, String> getParams() {
+                Map<String, String> params = new HashMap<String, String>();
+//                params.put("param1", "value1");
+//                params.put("param2", "value2");
+                return params;
+            }
+        };
+
+        // Adding request to request queue
+        mQueue.add(imageRequest);
+    }
+
 
 
 

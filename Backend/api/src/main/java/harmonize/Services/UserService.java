@@ -331,26 +331,25 @@ public class UserService {
     }
 
     public ConversationDTO createConversation(int id, List<Integer> others) {
-
-        Set<User> members = new HashSet<>() {};
-        for (int other : others) {
-            User user = userRepository.findReferenceById(other);
-            if(user.getFriends().contains(user)) {
-                throw new EntityNotFoundException("User " + other + " was not found in user " + id + " friend list.");
-            }
-            members.add(user);
-        }
-
         User user = userRepository.findReferenceById(id);
+
         if(user == null)
             throw new EntityNotFoundException("User " + id + " not found.");
 
+        Set<User> members = new HashSet<>() {};
         members.add(user);
+        for (int other : others) {
+            User friend = userRepository.findReferenceById(other);
+            if(user.getFriends().contains(friend)) {
+                throw new EntityNotFoundException("User " + other + " was not found in user " + id + " friend list.");
+            }
+            members.add(friend);
+        }
 
         return new ConversationDTO(conversationService.createConversation(members));
     }
 
-    public String removeConversation(int id, int convoId) {
+    public String leaveConversation(int id, int convoId) {
         User user = userRepository.findReferenceById(id);
 
         if(user == null)
@@ -358,7 +357,7 @@ public class UserService {
 
         Conversation conversation = conversationRepository.findReferenceById(convoId);
         if(conversation == null)
-            throw new EntityNotFoundException("Conversation " + convoId + " not found.");
+            throw new EntityNotFoundException("Cannot find conversation with id: " + convoId);
 
 
         conversationService.removeMember(conversation, user);

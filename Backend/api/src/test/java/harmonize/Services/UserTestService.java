@@ -11,6 +11,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
+import harmonize.DTOs.ConversationDTO;
 import harmonize.DTOs.MessageDTO;
 import harmonize.DTOs.ReportDTO;
 import harmonize.DTOs.RoleDTO;
@@ -76,6 +77,14 @@ public class UserTestService extends AbstractUserTestService {
 
     public ResponseEntity<String> deleteReport(ReportDTO report) {
         return requestService.requestString(auth, url + port + "/users/reports/" + report.getId(), HttpMethod.DELETE);
+    }
+
+    public ResponseEntity<ConversationDTO> createConversation(List<Integer> members) {
+        return requestService.requestConversation(auth, url + port + "/users/conversations", HttpMethod.POST, members);
+    }
+
+    public ResponseEntity<String> leaveConversation(ConversationDTO conversation) {
+        return requestService.requestString(auth, url + port + "/users/conversations/" + conversation.getId(), HttpMethod.DELETE);
     }
 
     public ResponseEntity<UserDTO> getAdminRequest() {

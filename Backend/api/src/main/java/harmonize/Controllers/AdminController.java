@@ -75,9 +75,9 @@ public class AdminController {
         return ResponseEntity.ok(userService.createConversation(id, others));
     }
 
-    @DeleteMapping(path = "/users/conversations/{id}")
+    @DeleteMapping(path = "/users/conversations/{id}/{convoId}")
     public ResponseEntity<String> removeConversation(@PathVariable int id, @PathVariable int convoId){
-        return ResponseEntity.ok(userService.removeConversation(id, convoId));
+        return ResponseEntity.ok(userService.leaveConversation(id, convoId));
     }
 
     @GetMapping(path = "/friends/recommended/{id}")

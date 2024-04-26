@@ -350,6 +350,44 @@ public class UserTest extends TestUtil {
     }
 
     @Test
+    public void userCreateConversationTest() throws Exception {
+        todTestService.addFriend(bobTestService.getUser().getId());
+        todTestService.addFriend(samTestService.getUser().getId());
+        bobTestService.addFriend(todTestService.getUser().getId());
+        samTestService.addFriend(todTestService.getUser().getId());
+
+        ResponseEntity<ConversationDTO> responseEntity = todTestService.createConversation(List.of(
+            todTestService.getUser().getId(), 
+            bobTestService.getUser().getId(), 
+            samTestService.getUser().getId()));
+
+        assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
+    }
+
+    @Test
+    public void userLeaveConversationTest() throws Exception {
+        todTestService.addFriend(bobTestService.getUser().getId());
+        todTestService.addFriend(samTestService.getUser().getId());
+        bobTestService.addFriend(todTestService.getUser().getId());
+        samTestService.addFriend(todTestService.getUser().getId());
+
+        ConversationDTO conversation = todTestService.createConversation(List.of(
+            todTestService.getUser().getId(), 
+            bobTestService.getUser().getId(), 
+            samTestService.getUser().getId()))
+            .getBody();
+
+        if (conversation == null) {
+            fail();
+            return;
+        }
+        
+        ResponseEntity<String> responseEntity = todTestService.leaveConversation(conversation);
+
+        assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
+    }
+
+    @Test
     public void adminRequestUnauthorizedTest() throws Exception {
         ResponseEntity<UserDTO> responseEntity = todTestService.getAdminRequest();
         assertEquals(HttpStatus.UNAUTHORIZED, responseEntity.getStatusCode());

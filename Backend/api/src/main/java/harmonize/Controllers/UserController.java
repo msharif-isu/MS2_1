@@ -141,8 +141,8 @@ public class UserController {
     }
 
     @DeleteMapping(path = "/conversations/{id}")
-    public ResponseEntity<String> removeConversation(Principal principal, @PathVariable int convoId){
-        return ResponseEntity.ok(userService.removeConversation(userService.getUser(principal.getName()).getId(), convoId));
+    public ResponseEntity<String> leaveConversation(Principal principal, @PathVariable int id){
+        return ResponseEntity.ok(userService.leaveConversation(userService.getUser(principal.getName()).getId(), id));
     }
 }
 

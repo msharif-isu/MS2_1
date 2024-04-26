@@ -72,6 +72,26 @@ public class AdminController {
         return ResponseEntity.ok(userService.deleteUser(id));
     }
 
+    @GetMapping(path = "/users/icons", produces = MediaType.IMAGE_JPEG_VALUE)
+    public ResponseEntity<byte[]> getIcon(Principal principal){
+        return ResponseEntity.ok(adminService.getIcon(adminService.getUser(principal.getName()).getId()));
+    }
+
+    @GetMapping(path = "/users/icons/{id}", produces = MediaType.IMAGE_JPEG_VALUE)
+    public ResponseEntity<byte[]> getIcon(@PathVariable int id){
+        return ResponseEntity.ok(adminService.getIcon(id));
+    }
+
+    @PostMapping(path = "/users/icons/{id}", produces = MediaType.IMAGE_JPEG_VALUE)
+    public ResponseEntity<byte[]> saveIcon(@RequestParam("image") MultipartFile image, @PathVariable int id){
+        return ResponseEntity.ok(userService.saveIcon(id, image));
+    }
+
+    @DeleteMapping(path = "/users/icons/{id}")
+    public ResponseEntity<String> deleteIcon(@PathVariable int id){
+        return ResponseEntity.ok(userService.deleteIcon(id));
+    }
+
     @GetMapping(path = "/friends/recommended/{id}")
     public ResponseEntity<List<UserDTO>> getRecommendedFriends(@PathVariable int id) {
         return ResponseEntity.ok(userService.getRecommendedFriends(id));
@@ -141,25 +161,4 @@ public class AdminController {
     public ResponseEntity<String> deleteMessage(@PathVariable int id) {
         return ResponseEntity.ok(messageService.deleteMessage(id));
     }
-
-    @GetMapping(path = "/icon", produces = MediaType.IMAGE_JPEG_VALUE)
-    public ResponseEntity<byte[]> getIcon(Principal principal){
-        return ResponseEntity.ok(adminService.getIcon(userService.getUser(principal.getName()).getId()));
-    }
-
-    @GetMapping(path = "/icon/{id}", produces = MediaType.IMAGE_JPEG_VALUE)
-    public ResponseEntity<byte[]> getIcon(Principal principal, @PathVariable int id){
-        return ResponseEntity.ok(adminService.getIcon(id));
-    }
-
-    @PostMapping(path = "/icon", produces = MediaType.IMAGE_JPEG_VALUE)
-    public ResponseEntity<byte[]> saveIcon(Principal principal, @RequestParam("image") MultipartFile image){
-        return ResponseEntity.ok(userService.saveIcon(userService.getUser(principal.getName()).getId(), image));
-    }
-
-    @DeleteMapping(path = "/icon")
-    public ResponseEntity<String> deleteIcon(Principal principal){
-        return ResponseEntity.ok(userService.deleteIcon(userService.getUser(principal.getName()).getId()));
-    }
-
 }

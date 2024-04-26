@@ -137,22 +137,22 @@ public class UserController {
         return ResponseEntity.ok(userService.removeSong(userService.getUser(principal.getName()).getId(), id));
     }
 
-    @GetMapping(path = "/icon", produces = MediaType.IMAGE_JPEG_VALUE)
+    @GetMapping(path = "/icons", produces = MediaType.IMAGE_JPEG_VALUE)
     public ResponseEntity<byte[]> getIcon(Principal principal){
         return ResponseEntity.ok(userService.getIcon(userService.getUser(principal.getName()).getId()));
     }
 
-    @GetMapping(path = "/icon/{id}", produces = MediaType.IMAGE_JPEG_VALUE)
+    @GetMapping(path = "/icons/{id}", produces = MediaType.IMAGE_JPEG_VALUE)
     public ResponseEntity<byte[]> getIcon(Principal principal, @PathVariable int id){
         return ResponseEntity.ok(userService.getIcon(id));
     }
 
-    @PostMapping(path = "/icon", produces = MediaType.IMAGE_JPEG_VALUE)
+    @PostMapping(path = "/icons", produces = MediaType.IMAGE_JPEG_VALUE)
     public ResponseEntity<byte[]> saveIcon(Principal principal, @RequestParam("image") MultipartFile image){
         return ResponseEntity.ok(userService.saveIcon(userService.getUser(principal.getName()).getId(), image));
     }
 
-    @DeleteMapping(path = "/icon")
+    @DeleteMapping(path = "/icons")
     public ResponseEntity<String> deleteIcon(Principal principal){
         return ResponseEntity.ok(userService.deleteIcon(userService.getUser(principal.getName()).getId()));
     }

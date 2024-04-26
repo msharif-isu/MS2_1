@@ -6,6 +6,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
 import jakarta.persistence.ElementCollection;
@@ -54,7 +55,7 @@ public class Message {
     @Column(name="encrypted_message", columnDefinition = "LONGTEXT")
     private Map<User, String> encryptions = new HashMap<>();
 
-    @OneToMany(mappedBy="message", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy="message", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Report> reports = new HashSet<>();
 
     @Override

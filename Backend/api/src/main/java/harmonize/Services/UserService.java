@@ -333,16 +333,17 @@ public class UserService {
     public ConversationDTO createConversation(int id, List<Integer> others) {
         User user = userRepository.findReferenceById(id);
 
-        if(user == null)
+        if(user == null) {
+            System.err.println("Here1");
             throw new EntityNotFoundException("User " + id + " not found.");
+        }
 
         Set<User> members = new HashSet<>() {};
         members.add(user);
         for (int other : others) {
             User friend = userRepository.findReferenceById(other);
-            if(user.getFriends().contains(friend)) {
+            if(user != friend && !user.getFriends().contains(friend))
                 throw new EntityNotFoundException("User " + other + " was not found in user " + id + " friend list.");
-            }
             members.add(friend);
         }
 

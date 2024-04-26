@@ -122,6 +122,7 @@ dependencies {
     annotationProcessor 'com.github.bumptech.glide:compiler:4.11.0'
     annotationProcessor 'com.github.bumptech.glide:compiler:4.11.0'
     implementation 'de.hdodenhof:circleimageview:3.1.0'
+    androidTestImplementation 'androidx.test.espresso:espresso-intents:3.4.0'
 
 
 }

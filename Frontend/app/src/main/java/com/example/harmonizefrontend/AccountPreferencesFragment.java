@@ -22,6 +22,7 @@ import android.widget.Toast;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
@@ -37,8 +38,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 import Connections.VolleyCallBack;
+import PictureData.SeePictureFragment;
+import PictureData.SharedViewModel;
 import UserInfo.Member;
 import UserInfo.UserSession;
+import messaging.chat.ReportMessageFragment;
 
 /**
  * A simple {@link Fragment} subclass that allows users to see their info.
@@ -49,8 +53,7 @@ import UserInfo.UserSession;
 // Fragment for the Account Preferences screen which allows users to see their info
 public class AccountPreferencesFragment extends Fragment {
 
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
+
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
 
@@ -75,6 +78,9 @@ public class AccountPreferencesFragment extends Fragment {
     private static Member currentUser;
 
     private String URL = "http://coms-309-032.class.las.iastate.edu:8080";
+
+    private SharedViewModel viewModel;
+
 
     /**
      * Creates a new instance of the Account Preferences fragment
@@ -109,10 +115,19 @@ public class AccountPreferencesFragment extends Fragment {
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
 
-
-
-
+        viewModel = new ViewModelProvider(requireActivity()).get(SharedViewModel.class);
+        viewModel.getData().observe(this, this::updateData);
     }
+
+    private void updateData(Bitmap data) {
+        if (data == null) {
+            //TODO: Set default image
+            profilePicture.setImageResource(R.drawable.ic_launcher_foreground);
+        }
+        profilePicture.setImageBitmap(
+                data);
+    }
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -196,8 +211,9 @@ public class AccountPreferencesFragment extends Fragment {
         changePicBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                imageChooser();
-
+//                imageChooser();
+                // TODO: Open picture fragment
+                ((navBar) getActivity()).loadFragmentPopout(new SeePictureFragment());
 
             }
         });
@@ -483,42 +499,7 @@ public class AccountPreferencesFragment extends Fragment {
         mQueue.add(jsonObjReq);
     }
 
-    void imageChooser() {
-        Intent intent = new Intent();
-        intent.setType("image/*");
-        intent.setAction(Intent.ACTION_GET_CONTENT);
 
-        gallery.launch(intent);
-
-    }
-
-    ActivityResultLauncher<Intent> gallery
-            = registerForActivityResult(
-            new ActivityResultContracts
-                    .StartActivityForResult(),
-            result -> {
-                if (result.getResultCode()
-                        == Activity.RESULT_OK) {
-                    Intent data = result.getData();
-                    // do your operation from here....
-                    if (data != null
-                            && data.getData() != null) {
-                        Uri selectedImageUri = data.getData();
-                        Bitmap selectedImageBitmap = null;
-                        try {
-                            selectedImageBitmap
-                                    = MediaStore.Images.Media.getBitmap(
-                                    this.getContext().getContentResolver(),
-                                    selectedImageUri);
-                        }
-                        catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                        profilePicture.setImageBitmap(
-                                selectedImageBitmap);
-                    }
-                }
-            });
 
 
 }

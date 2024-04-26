@@ -4,6 +4,7 @@ import java.security.Principal;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -12,7 +13,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import harmonize.DTOs.ReportDTO;
 import harmonize.DTOs.RoleDTO;
@@ -137,6 +140,26 @@ public class AdminController {
     @DeleteMapping(path = "/messages/{id}")
     public ResponseEntity<String> deleteMessage(@PathVariable int id) {
         return ResponseEntity.ok(messageService.deleteMessage(id));
+    }
+
+    @GetMapping(path = "/icon", produces = MediaType.IMAGE_JPEG_VALUE)
+    public ResponseEntity<byte[]> getIcon(Principal principal){
+        return ResponseEntity.ok(adminService.getIcon(userService.getUser(principal.getName()).getId()));
+    }
+
+    @GetMapping(path = "/icon/{id}", produces = MediaType.IMAGE_JPEG_VALUE)
+    public ResponseEntity<byte[]> getIcon(Principal principal, @PathVariable int id){
+        return ResponseEntity.ok(adminService.getIcon(id));
+    }
+
+    @PostMapping(path = "/icon", produces = MediaType.IMAGE_JPEG_VALUE)
+    public ResponseEntity<byte[]> saveIcon(Principal principal, @RequestParam("image") MultipartFile image){
+        return ResponseEntity.ok(userService.saveIcon(userService.getUser(principal.getName()).getId(), image));
+    }
+
+    @DeleteMapping(path = "/icon")
+    public ResponseEntity<String> deleteIcon(Principal principal){
+        return ResponseEntity.ok(userService.deleteIcon(userService.getUser(principal.getName()).getId()));
     }
 
 }

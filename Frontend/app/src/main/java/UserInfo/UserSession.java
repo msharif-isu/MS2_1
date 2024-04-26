@@ -1,5 +1,7 @@
 package UserInfo;
 
+import com.android.volley.RequestQueue;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -21,6 +23,7 @@ public class UserSession {
     private MessageDTO messagedReportedTemp;
 
     private ConversationDTO currentConversation;
+    private RequestQueue mQueue;
 
     private UserSession() {
         conversations = new java.util.HashMap<>();
@@ -95,5 +98,13 @@ public class UserSession {
 
     public void clearReportedMessage(MessageDTO messageDTO) {
         this.messagedReportedTemp = null;
+    }
+
+    public void setmQueue(RequestQueue mQueue) {
+        this.mQueue = mQueue;
+    }
+
+    public RequestQueue getmQueue() {
+        return mQueue;
     }
 }

@@ -79,7 +79,7 @@ public class AccountPreferencesFragment extends Fragment {
     private static Member currentUser;
 
     private String URL = "http://coms-309-032.class.las.iastate.edu:8080";
-
+//    private String URL = "http://10.48.110.126";
     private SharedViewModel viewModel;
 
 
@@ -197,6 +197,7 @@ public class AccountPreferencesFragment extends Fragment {
                 UserSession.getInstance().setCurrentUser(currentUser);
                 UserSession.getInstance().setPassword(password);
                 UserSession.getInstance().setJwtToken(jwtToken);
+                UserSession.getInstance().setmQueue(mQueue);
                 Log.e("msg", currentUser.getUsername() + " " + currentUser.getFirstName() + " " + currentUser.getLastName() + " " + currentUser.getBio());
             }
 
@@ -505,12 +506,18 @@ public class AccountPreferencesFragment extends Fragment {
     private void makeImageRequest() {
 
         ImageRequest imageRequest = new ImageRequest(
-                URL + "/users/image", // Do change
+                URL + "/users/icons", // Do change
                 new Response.Listener<Bitmap>() {
                     @Override
                     public void onResponse(Bitmap response) {
                         // Display the image in the ImageView
-                        profilePicture.setImageBitmap(response);
+                        if (response == null) {
+                            profilePicture.setImageResource(R.drawable.ic_launcher_foreground);
+                        }
+                        else {
+                            profilePicture.setImageBitmap(response);
+                        }
+                        Log.d("Image", response.toString());
                     }
                 },
                 0, // Width, set to 0 to get the original width

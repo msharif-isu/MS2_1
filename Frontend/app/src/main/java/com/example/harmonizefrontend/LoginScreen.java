@@ -51,7 +51,8 @@ public class LoginScreen extends AppCompatActivity implements OnClickListener {
     private Boolean saveLogin;
 
     private RequestQueue mQueue;
-
+    String URL = "http://coms-309-032.class.las.iastate.edu:8080";
+//    private String URL = "http://10.48.110.126";
     private String jwtToken = null;
 
 
@@ -173,7 +174,6 @@ public class LoginScreen extends AppCompatActivity implements OnClickListener {
 
         // Connect to backend in order to check if credentials are valid
         JSONObject jsonBody = new JSONObject();
-        String checkCredsURL = "http://coms-309-032.class.las.iastate.edu:8080";
 
         try {
             jsonBody.put("username", username);
@@ -185,7 +185,7 @@ public class LoginScreen extends AppCompatActivity implements OnClickListener {
 
         JsonObjectRequest request = new JsonObjectRequest(
                 Request.Method.POST,
-                checkCredsURL + "/auth/login",
+                URL + "/auth/login",
                 jsonBody,
                 new Response.Listener<JSONObject>() {
                     @Override

@@ -61,6 +61,7 @@ public class ConversationsFragment extends Fragment implements WebSocketListener
             username = navBar.username;
             password = navBar.password;
             JWTtoken = navBar.jwtToken;
+
         }
         else {
             Log.e("msg", "navBar is null, JWT token not set");

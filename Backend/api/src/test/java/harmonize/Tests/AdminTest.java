@@ -2,6 +2,7 @@ package harmonize.Tests;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.util.List;
 
@@ -25,7 +26,12 @@ public class AdminTest extends TestUtil {
     public void adminGetUsersOkTest() throws Exception {
         ResponseEntity<List<UserDTO>> responseEntity = adminTestService.getUsers();
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
-        assertTrue(responseEntity.getBody().contains(todTestService.getUser()), "Tod was not found in user list.");
+        List<UserDTO> body = responseEntity.getBody();
+        if (body == null) {
+            fail();
+            return;
+        }
+        assertTrue(body.contains(todTestService.getUser()), "Tod was not found in user list.");
     }
 
     @Test

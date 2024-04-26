@@ -1,6 +1,7 @@
 package harmonize;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.util.List;
 
@@ -91,12 +92,23 @@ public class TestUtil {
         if (usersResponseEntity.getStatusCode() != HttpStatus.OK)
             return;
         
-        for (UserDTO user : usersResponseEntity.getBody()) {
+        List<UserDTO> usersBody = usersResponseEntity.getBody();
+        if (usersBody == null) {
+            fail();
+            return;
+        }
+        for (UserDTO user : usersBody) {
             ResponseEntity<List<RoleDTO>> rolesResponseEntity = adminTestService.getUserRoles(user.getId());
             if (rolesResponseEntity.getStatusCode() != HttpStatus.OK)
                 continue;
+
+            List<RoleDTO> roleBody = rolesResponseEntity.getBody();
+            if (roleBody == null) {
+                fail();
+                return;
+            }
             
-            if (!rolesResponseEntity.getBody().stream().anyMatch(role -> (role.getName().equals("ADMIN") || role.getName().equals("MODERATOR")))) {
+            if (!roleBody.stream().anyMatch(role -> (role.getName().equals("ADMIN") || role.getName().equals("MODERATOR")))) {
                 HttpStatusCode statusCode = adminTestService.deleteUser(user.getId()).getStatusCode();
                 assertEquals(HttpStatus.OK, statusCode, user.toString());
             }

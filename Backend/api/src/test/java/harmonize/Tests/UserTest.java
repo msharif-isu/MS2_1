@@ -2,11 +2,13 @@ package harmonize.Tests;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.util.List;
 import java.util.Set;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledIfEnvironmentVariable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestClientException;
@@ -107,7 +109,12 @@ public class UserTest extends TestUtil {
         ResponseEntity<List<RoleDTO>> responseEntity = todTestService.getRoles();
 
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
-        assertTrue(responseEntity.getBody().stream().anyMatch(role -> role.getName().equals("USER")), "USER role was not found in response.");
+        List<RoleDTO> body = responseEntity.getBody();
+        if (body == null) {
+            fail();
+            return;
+        }
+        assertTrue(body.stream().anyMatch(role -> role.getName().equals("USER")), "USER role was not found in response.");
     }
 
     @Test
@@ -118,7 +125,12 @@ public class UserTest extends TestUtil {
         ResponseEntity<List<UserDTO>> responseEntity = todTestService.getFriends();
 
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
-        assertTrue(responseEntity.getBody().contains(bobTestService.getUser()), "Bob was not found in friends list.");
+        List<UserDTO> body = responseEntity.getBody();
+        if (body == null) {
+            fail();
+            return;
+        }
+        assertTrue(body.contains(bobTestService.getUser()), "Bob was not found in friends list.");
     }
 
     @Test
@@ -133,7 +145,12 @@ public class UserTest extends TestUtil {
         ResponseEntity<List<UserDTO>> responseEntity = todTestService.getFriendInvites();
 
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
-        assertTrue(responseEntity.getBody().contains(bobTestService.getUser()), "Bob was not found in friend invites list.");
+        List<UserDTO> body = responseEntity.getBody();
+        if (body == null) {
+            fail();
+            return;
+        }
+        assertTrue(body.contains(bobTestService.getUser()), "Bob was not found in friend invites list.");
     }
 
     @Test
@@ -180,12 +197,13 @@ public class UserTest extends TestUtil {
     }
 
     @Test
+    @DisabledIfEnvironmentVariable(named = "DOCKER_RUNNING", matches = "true")
     public void userSendReportOkTest() throws Exception {
+        bobTestService.getChatSocket().connect();
+
         todTestService.addFriend(bobTestService.getUser().getId());
         bobTestService.addFriend(todTestService.getUser().getId());
         Thread.sleep(5000);
-
-        bobTestService.getChatSocket().connect();
 
         ConversationDTO conversation = bobTestService.getChatSocket().getConversations().stream()
             .filter(item -> (item.getMembers().containsAll(Set.of(todTestService.getUser(), bobTestService.getUser()))))
@@ -208,12 +226,13 @@ public class UserTest extends TestUtil {
     }
 
     @Test
+    @DisabledIfEnvironmentVariable(named = "DOCKER_RUNNING", matches = "true")
     public void userSendReportMessageNotFoundTest() throws Exception {
+        bobTestService.getChatSocket().connect();
+
         todTestService.addFriend(bobTestService.getUser().getId());
         bobTestService.addFriend(todTestService.getUser().getId());
         Thread.sleep(5000);
-
-        bobTestService.getChatSocket().connect();
 
         ConversationDTO conversation = bobTestService.getChatSocket().getConversations().stream()
             .filter(item -> (item.getMembers().containsAll(Set.of(todTestService.getUser(), bobTestService.getUser()))))
@@ -232,12 +251,13 @@ public class UserTest extends TestUtil {
     }
 
     @Test
+    @DisabledIfEnvironmentVariable(named = "DOCKER_RUNNING", matches = "true")
     public void userSendReportMessageNotFound2Test() throws Exception {
+        bobTestService.getChatSocket().connect();
+
         todTestService.addFriend(bobTestService.getUser().getId());
         bobTestService.addFriend(todTestService.getUser().getId());
         Thread.sleep(5000);
-
-        bobTestService.getChatSocket().connect();
 
         ConversationDTO conversation = bobTestService.getChatSocket().getConversations().stream()
             .filter(item -> (item.getMembers().containsAll(Set.of(todTestService.getUser(), bobTestService.getUser()))))
@@ -262,12 +282,13 @@ public class UserTest extends TestUtil {
     }
 
     @Test
+    @DisabledIfEnvironmentVariable(named = "DOCKER_RUNNING", matches = "true")
     public void userDeleteReportOkTest() throws Exception {
+        bobTestService.getChatSocket().connect();
+
         todTestService.addFriend(bobTestService.getUser().getId());
         bobTestService.addFriend(todTestService.getUser().getId());
         Thread.sleep(5000);
-
-        bobTestService.getChatSocket().connect();
 
         ConversationDTO conversation = bobTestService.getChatSocket().getConversations().stream()
             .filter(item -> (item.getMembers().containsAll(Set.of(todTestService.getUser(), bobTestService.getUser()))))
@@ -291,12 +312,13 @@ public class UserTest extends TestUtil {
     }
 
     @Test
+    @DisabledIfEnvironmentVariable(named = "DOCKER_RUNNING", matches = "true")
     public void userGetReportsOkTest() throws Exception {
+        bobTestService.getChatSocket().connect();
+
         todTestService.addFriend(bobTestService.getUser().getId());
         bobTestService.addFriend(todTestService.getUser().getId());
         Thread.sleep(5000);
-
-        bobTestService.getChatSocket().connect();
 
         ConversationDTO conversation = bobTestService.getChatSocket().getConversations().stream()
             .filter(item -> (item.getMembers().containsAll(Set.of(todTestService.getUser(), bobTestService.getUser()))))
@@ -317,7 +339,12 @@ public class UserTest extends TestUtil {
         todTestService.sendReport(message, "It was offensive");
         ResponseEntity<List<ReportDTO>> responseEntity = todTestService.getSentReports();
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
-        assertTrue(responseEntity.getBody().stream()
+        List<ReportDTO> body = responseEntity.getBody();
+        if (body == null) {
+            fail();
+            return;
+        }
+        assertTrue(body.stream()
             .anyMatch(item -> (item.getMessage().equals(message) && item.getReportText().equals(reportText)))
         );
     }

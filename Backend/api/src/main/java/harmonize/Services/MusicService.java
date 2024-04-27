@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
 
-import org.apache.commons.lang3.ObjectUtils.Null;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -23,7 +22,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import harmonize.DTOs.RecommendationDTO;
 import harmonize.DTOs.SearchDTO;
-import harmonize.DTOs.SongDTO;
 import harmonize.Entities.Artist;
 import harmonize.Entities.Song;
 import harmonize.Entities.User;
@@ -117,19 +115,6 @@ public class MusicService {
             throw new InvalidArgumentException("Invalid search.");
         }
 
-        // for(Song song : artistRepository.findSongsById("1RyvyyTE3xzB2ZywiAwp0i")) {
-        //     System.out.println(song.getTitle());
-        // }
-
-        for(Artist artist : artistRepository.findAll()) {
-            System.out.println(artist.getName() + ": ");
-            for(Song song : artist.getSongs()) {
-                if(song != null)
-                    System.out.println(new SongDTO(song));
-            }
-        }
-
-
         return responseJson;
     }
 
@@ -150,9 +135,7 @@ public class MusicService {
         }
         
         Artist artist = new Artist(responseJson.get("artists").get(0));
-        artistRepository.save(artist);
-
-        Song song = new Song(responseJson);
+        Song song = new Song(responseJson, artistRepository.save(artist));
         song.setArtist(artist);
         artist.getSongs().add(song);
 
@@ -309,8 +292,8 @@ public class MusicService {
         List<String> artistIds = new ArrayList<>();
         List<String> songIds = new ArrayList<>();
 
-        for(int i = 0; i < user.getTopArtists().size() && i < 3; i++)
-            artistIds.add(user.getTopArtists().get(i));
+        // for(int i = 0; i < user.getTopArtists().size() && i < 3; i++)
+        //     artistIds.add(user.getTopArtists().get(i).getId());
 
         for(int i = 0; i < user.getLikedSongs().size() && i < 2; i++)
             songIds.add(user.getLikedSongs().get(i).getSong().getId());

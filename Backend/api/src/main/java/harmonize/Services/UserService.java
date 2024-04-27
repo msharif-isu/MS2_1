@@ -14,30 +14,31 @@ import harmonize.DTOs.UserDTO;
 import harmonize.Entities.Role;
 import harmonize.Entities.Song;
 import harmonize.Entities.User;
+import harmonize.Entities.ArtistFreq;
 import harmonize.Entities.LikedSong;
 import harmonize.ErrorHandling.Exceptions.EntityAlreadyExistsException;
 import harmonize.ErrorHandling.Exceptions.EntityNotFoundException;
 import harmonize.ErrorHandling.Exceptions.InvalidArgumentException;
 import harmonize.ErrorHandling.Exceptions.UserNotFriendException;
+import harmonize.Repositories.ArtistRepository;
 import harmonize.Repositories.RoleRepository;
-import harmonize.Repositories.SongRepository;
 import harmonize.Repositories.UserRepository;
 
 @Service
 public class UserService {
     private UserRepository userRepository;
     private RoleRepository roleRepository;
-    private SongRepository songRepository;
+    private ArtistRepository artistRepository;
 
     private ConversationService conversationService;
     private MusicService musicService;
 
     @Autowired
-    public UserService(UserRepository userRepository, RoleRepository roleRepository, SongRepository songRepository,
+    public UserService(UserRepository userRepository, RoleRepository roleRepository, ArtistRepository artistRepository,
                         ConversationService conversationService, MusicService musicService) {
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
-        this.songRepository = songRepository;
+        this.artistRepository = artistRepository;
         this.conversationService = conversationService;
         this.musicService = musicService;
     }
@@ -271,8 +272,11 @@ public class UserService {
             throw new EntityAlreadyExistsException(song.getTitle() + " already added.");
 
         user.getLikedSongs().add(connection);
-        userRepository.save(user);
-        updateTopArtist(user);
+        userRepository.saveAndFlush(user);
+        updateTopArtists(user, song, true);
+
+        for(ArtistFreq userArtist : userRepository.findReferenceById(user.getId()).getTopArtists())
+            System.out.println(String.format("%d: ID: %d, Artist: %s, User: %d", 3, userArtist.getId(), userArtist.getArtist().getName(), userArtist.getUser().getId()));
 
         return new String(String.format("\"%s\" favorited \"%s\"", user.getUsername(), song.getTitle()));
     }
@@ -291,20 +295,29 @@ public class UserService {
             throw new EntityNotFoundException(song.getTitle() + " could not be found.");
 
         user.getLikedSongs().remove(connection);
-        userRepository.save(user);
-        updateTopArtist(user);
+        userRepository.saveAndFlush(user);
+        updateTopArtists(user, song, false);
+
+        for(ArtistFreq userArtist : userRepository.findReferenceById(user.getId()).getTopArtists())
+            System.out.println(String.format("%d: ID: %d, Artist: %s, User: %d", 4, userArtist.getId(), userArtist.getArtist().getName(), userArtist.getUser().getId()));
         
         return new String(String.format("\"%s\" removed \"%s\"", user.getUsername(), song.getTitle()));
     }
 
-    private void updateTopArtist(User user) {
-        // List<String> topArtists = songRepository.findTopArtists(user.getLikedSongs());
+    private void updateTopArtists(User user, Song song, Boolean add) {
+        List<ArtistFreq> userArtist = userRepository.findReferenceById(user.getId()).getTopArtists();
+        ArtistFreq connection = new ArtistFreq(user, song.getArtist());
 
-        // user.getTopArtists().clear();
+        if(userArtist.contains(connection)) {
+            int index = userArtist.indexOf(connection);
+            userArtist.get(index).setFrequency(userArtist.get(index).getFrequency() + (add ? 1 : -1));
+            if(userArtist.get(index).getFrequency() == 0)
+                userArtist.remove(index);
+        }
+        else
+            userArtist.add(connection);
 
-        // for(int i = 0; i < topArtists.size(); i++)
-        //     user.getTopArtists().add(topArtists.get(i));
-
-        // userRepository.save(user);
+        user.setTopArtists(userArtist);
+        userRepository.save(user);
     }
 }

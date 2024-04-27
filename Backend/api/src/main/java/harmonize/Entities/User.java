@@ -7,9 +7,7 @@ import java.util.Set;
 
 import harmonize.Entities.FeedItems.AbstractFeedItem;
 import jakarta.persistence.CascadeType;
-import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
-import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -20,7 +18,6 @@ import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OrderBy;
-import jakarta.persistence.OrderColumn;
 import jakarta.persistence.Table;
 import lombok.Data;
 
@@ -61,11 +58,10 @@ public class User {
     @OrderBy("time DESC")
     private List<LikedSong> likedSongs = new ArrayList<>();
 
-    @ElementCollection(fetch = FetchType.EAGER)
-    @CollectionTable(name = "user_top_artists", joinColumns = @JoinColumn(name = "user_id"))
-    @Column(name = "artist_id")
-    @OrderColumn(name = "top_artist_index")
-    private List<String> topArtists = new ArrayList<>();
+    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER, cascade = { CascadeType.MERGE, CascadeType.REMOVE }, 
+                orphanRemoval = true)
+    @OrderBy("frequency ASC")
+    private List<ArtistFreq> topArtists = new ArrayList<>();
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "userRoles", joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),

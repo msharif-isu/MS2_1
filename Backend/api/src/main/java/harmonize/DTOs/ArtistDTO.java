@@ -19,4 +19,17 @@ public class ArtistDTO {
         this.id = artist.getId();
         this.name = artist.getName();
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || this.getClass() != o.getClass()) return false;
+        ArtistDTO artist = (ArtistDTO) o;
+        return artist.id.equals(this.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return id.hashCode();
+    }
 }

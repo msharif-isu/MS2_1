@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import harmonize.DTOs.FriendRecDTO;
 import harmonize.DTOs.ReportDTO;
 import harmonize.DTOs.RoleDTO;
 import harmonize.DTOs.SongDTO;
@@ -80,7 +81,7 @@ public class UserController {
     }
 
     @GetMapping(path = "/friends/recommended")
-    public ResponseEntity<List<UserDTO>> getRecommendedFriends(Principal principal){
+    public ResponseEntity<List<FriendRecDTO>> getRecommendedFriends(Principal principal){
         return ResponseEntity.ok(userService.getRecommendedFriends(userService.getUser(principal.getName()).getId()));
     }
 

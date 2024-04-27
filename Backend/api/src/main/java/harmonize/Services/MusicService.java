@@ -20,7 +20,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import harmonize.DTOs.RecommendationDTO;
+import harmonize.DTOs.SongRecDTO;
 import harmonize.DTOs.SearchDTO;
 import harmonize.Entities.Artist;
 import harmonize.Entities.ArtistFreq;
@@ -217,7 +217,7 @@ public class MusicService {
         return responseJson;
     }
 
-    public JsonNode getRecommendations(RecommendationDTO recommendation) {
+    public JsonNode getRecommendations(SongRecDTO recommendation) {
         String urlEnd = "/recommendations";
 
         HttpHeaders headers = new HttpHeaders();
@@ -300,7 +300,7 @@ public class MusicService {
         for(int i = 0; i < user.getLikedSongs().size() && i < 2; i++)
             songIds.add(user.getLikedSongs().get(i).getSong().getId());
 
-        JsonNode recommendations = getRecommendations(new RecommendationDTO(Integer.toString(100), artistIds, songIds));
+        JsonNode recommendations = getRecommendations(new SongRecDTO(Integer.toString(100), artistIds, songIds));
         
         for(int i = 0; i < recommendations.get("tracks").size(); i++)
             songRec.add(new Song(recommendations.get("tracks").get(i)));

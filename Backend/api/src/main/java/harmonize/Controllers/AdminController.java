@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import harmonize.DTOs.FriendRecDTO;
 import harmonize.DTOs.ReportDTO;
 import harmonize.DTOs.RoleDTO;
 import harmonize.DTOs.UserDTO;
@@ -70,7 +71,7 @@ public class AdminController {
     }
 
     @GetMapping(path = "/friends/recommended/{id}")
-    public ResponseEntity<List<UserDTO>> getRecommendedFriends(@PathVariable int id) {
+    public ResponseEntity<List<FriendRecDTO>> getRecommendedFriends(@PathVariable int id) {
         return ResponseEntity.ok(userService.getRecommendedFriends(id));
     }
 

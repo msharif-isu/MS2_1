@@ -1,7 +1,9 @@
 package harmonize.Services;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Random;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +13,7 @@ import org.springframework.stereotype.Service;
 import harmonize.DTOs.RoleDTO;
 import harmonize.DTOs.SongDTO;
 import harmonize.DTOs.UserDTO;
+import harmonize.DTOs.FriendRecDTO;
 import harmonize.Entities.Role;
 import harmonize.Entities.Song;
 import harmonize.Entities.User;
@@ -121,24 +124,41 @@ public class UserService {
     }
 
     @NonNull
-    public List<UserDTO> getRecommendedFriends(int id) {
+    public List<FriendRecDTO> getRecommendedFriends(int id) {
         User user = userRepository.findReferenceById(id);
 
         if(user == null)
             throw new EntityNotFoundException("User " + id + " not found.");
 
-        List<UserDTO> recommendedFriends = new ArrayList<UserDTO>();
+        List<FriendRecDTO> recommendedFriends = new ArrayList<>();
+        List<ArtistFreq> topArtists = user.getTopArtists();
+        Random random = new Random();
 
-        for (User currUser : userRepository.findAllByRole("USER")) {
-            if (currUser.getId() == user.getId())
-                continue;
-            if (user.getFriends().contains(currUser))
-                continue;
-            if (currUser.getFriendInvites().contains(user))
-                continue;
+        for(int i = 0; i < topArtists.size() && i < 10; i++) {
+            List<ArtistFreq> topListeners = topArtists.get(i).getArtist().getTopListeners();
+            
+            for (int j = 0; j < 5; j++) {
+                ArtistFreq connection = topListeners.get(random.nextInt(topListeners.size()));
+                User connectionUser = connection.getUser();
+                FriendRecDTO pair = new FriendRecDTO(connectionUser, connection.getArtist());
 
-            recommendedFriends.add(new UserDTO(currUser));
+                if(connectionUser.getId() == user.getId())
+                    continue;
+                
+                if(user.getFriends().contains(connectionUser))
+                    continue;
+
+                if(connectionUser.getFriendInvites().contains(user))
+                    continue;
+
+                if(recommendedFriends.contains(pair))
+                    continue;
+
+                recommendedFriends.add(pair);
+            }
         }
+
+        Collections.shuffle(recommendedFriends);
 
         return recommendedFriends;
     }

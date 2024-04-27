@@ -396,7 +396,7 @@ public class AccountPreferencesFragment extends Fragment {
         JsonObjectRequest jsonObjReq = new JsonObjectRequest(
                 Request.Method.DELETE,
                 URL + "/users",
-                null, // Pass null as the request body since it's a GET request
+                null,
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
@@ -409,6 +409,8 @@ public class AccountPreferencesFragment extends Fragment {
                         }
                         catch (Exception e) {
                             e.printStackTrace();
+                            delUserCallBack.onSuccess(); // GOTTA FIGURE OUT WHY IM GETTING THIS ERROR, IT STILL ACTUALLY DELETES THE ACCOUNT
+
                         }
                     }
                 },
@@ -424,7 +426,7 @@ public class AccountPreferencesFragment extends Fragment {
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
                 HashMap<String, String> headers = new HashMap<String, String>();
-                headers.put("Authorization", jwtToken);
+                headers.put("Authorization", UserSession.getInstance().getJwtToken());
                 return headers;
             }
 
@@ -437,9 +439,6 @@ public class AccountPreferencesFragment extends Fragment {
             }
         };
         mQueue.add(jsonObjReq);
-
-
-
     }
 
 

@@ -60,7 +60,7 @@ public class User {
 
     @OneToMany(mappedBy = "user", fetch = FetchType.EAGER, cascade = { CascadeType.MERGE, CascadeType.REMOVE }, 
                 orphanRemoval = true)
-    @OrderBy("frequency ASC")
+    @OrderBy("frequency DESC")
     private List<ArtistFreq> topArtists = new ArrayList<>();
 
     @ManyToMany(fetch = FetchType.EAGER)
@@ -83,7 +83,7 @@ public class User {
                                     inverseJoinColumns = @JoinColumn(name = "conversation_id", referencedColumnName = "id"))
     private Set<Conversation> conversations = new HashSet<>();
 
-    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinTable(name = "user_seen_feed", joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),
                                 inverseJoinColumns = @JoinColumn(name = "feed_item_id", referencedColumnName = "id"))
     private Set<AbstractFeedItem> seenFeed = new HashSet<>();

@@ -5,6 +5,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.JsonNode;
 
 import jakarta.persistence.CascadeType;
@@ -31,9 +32,11 @@ public class Artist {
 
     private String name;
 
+    @JsonIgnore
     @OneToMany(mappedBy="artist", fetch = FetchType.EAGER)
     private Set<Song> songs = new HashSet<>();
 
+    @JsonIgnore
     @OneToMany(mappedBy = "artist", fetch = FetchType.EAGER, cascade = { CascadeType.MERGE, CascadeType.REMOVE }, 
                 orphanRemoval = true)
     @OrderBy("frequency ASC")

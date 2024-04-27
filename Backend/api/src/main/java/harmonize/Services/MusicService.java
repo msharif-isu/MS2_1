@@ -23,6 +23,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import harmonize.DTOs.RecommendationDTO;
 import harmonize.DTOs.SearchDTO;
 import harmonize.Entities.Artist;
+import harmonize.Entities.ArtistFreq;
 import harmonize.Entities.Song;
 import harmonize.Entities.User;
 import harmonize.ErrorHandling.Exceptions.InvalidArgumentException;
@@ -291,9 +292,10 @@ public class MusicService {
         List<Song> songRec = new ArrayList<>();
         List<String> artistIds = new ArrayList<>();
         List<String> songIds = new ArrayList<>();
+        List<ArtistFreq> topArtists = user.getTopArtists();
 
-        // for(int i = 0; i < user.getTopArtists().size() && i < 3; i++)
-        //     artistIds.add(user.getTopArtists().get(i).getId());
+        for(int i = 0; i < topArtists.size() && i < 3; i++)
+            artistIds.add(topArtists.get(i).getArtist().getId());
 
         for(int i = 0; i < user.getLikedSongs().size() && i < 2; i++)
             songIds.add(user.getLikedSongs().get(i).getSong().getId());

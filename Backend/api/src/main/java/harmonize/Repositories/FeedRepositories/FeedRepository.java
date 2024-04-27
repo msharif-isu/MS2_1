@@ -22,4 +22,7 @@ public interface FeedRepository extends JpaRepository<AbstractFeedItem, Long> {
     @Modifying
     @Query("SELECT f FROM AbstractFeedItem f WHERE f.expiration < CURRENT_TIMESTAMP")
     List<AbstractFeedItem> getExpiredFeedItems();
+
+    @Query("SELECT f FROM AbstractFeedItem f WHERE f.user.id = :userId")
+    List<AbstractFeedItem> getSeenFeedItemsByUser(int userId);
 }

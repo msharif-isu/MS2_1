@@ -34,7 +34,8 @@ public class RegistrationScreen extends AppCompatActivity implements OnClickList
 //    private AppBarConfiguration appBarConfiguration;
 //    private ActivityLoginScreenBinding binding;
 
-    private String username, password, first, last, checkPass;
+    // Made public bc im too lazy too make setters for the tests
+    public String username, password, first, last, checkPass;
     private EditText firstNameEditText, lastNameEditText, usernameEditText, passwordEditText, reenterpasswordEditText;
     private Button loginButton;
     private Button registerButton;

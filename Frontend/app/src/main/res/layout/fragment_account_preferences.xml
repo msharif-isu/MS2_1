@@ -5,18 +5,19 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".AccountPreferencesFragment"
-    android:background="@color/cambridge_blue">
+    android:background="@color/cambridge_blue"
+    >
 
 
 
-
-    <ImageView
+    <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/profile_Picture"
         android:layout_width="100dp"
         android:layout_height="100dp"
         android:layout_marginTop="73dp"
         android:layout_marginLeft="15dp"
-        tools:src="@tools:sample/avatars" />
+        android:src="@drawable/ic_launcher_foreground"/>
+
 
     <EditText
         android:id="@+id/usernameHolder"
@@ -34,7 +35,9 @@
         android:layout_marginLeft="130dp"
         android:layout_marginTop="130dp"
         android:hint="First"
-        android:textColor="@color/mint_cream"/>
+        android:textColor="@color/mint_cream"
+        android:focusable="true"
+        android:focusableInTouchMode="true"/>
 
     <EditText
         android:id="@+id/lastname"
@@ -43,7 +46,9 @@
         android:layout_marginLeft="265dp"
         android:layout_marginTop="130dp"
         android:hint="First"
-        android:textColor="@color/mint_cream"/>
+        android:textColor="@color/mint_cream"
+        android:focusable="true"
+        android:focusableInTouchMode="true"/>
 
 
     <TextView
@@ -111,10 +116,9 @@
         android:id="@+id/changePicture"
         android:layout_width="25dp"
         android:layout_height="25dp"
-        android:layout_marginTop="160dp"
-        android:layout_marginLeft="100dp"
-        android:src="@android:drawable/ic_menu_camera"
-        />
+        android:layout_marginLeft="87dp"
+        android:layout_marginTop="145dp"
+        android:src="@android:drawable/ic_menu_camera" />
 
     <ImageButton
         android:id="@+id/editInfo"

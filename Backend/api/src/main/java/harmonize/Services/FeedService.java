@@ -83,16 +83,16 @@ public class FeedService {
             return;
         }
 
-        if(jsonMessage.at("/body/requestType").asInt() == FeedEnum.REFRESH.ordinal()) {
+        if(jsonMessage.at("/data/requestType").asInt() == FeedEnum.REFRESH.ordinal()) {
             session.getUserProperties().remove("feed");
             session.getUserProperties().remove("user");
             loadProperties(session);
             return;
         }
 
-        if(jsonMessage.at("/body/requestType").asInt() == FeedEnum.NEW_PAGE.ordinal()) {  
-            int offset = jsonMessage.at("/body/data/offset").asInt();
-            int limit = jsonMessage.at("/body/data/limit").asInt();
+        if(jsonMessage.at("/data/requestType").asInt() == FeedEnum.NEW_PAGE.ordinal()) {  
+            int offset = jsonMessage.at("/data/page/offset").asInt();
+            int limit = jsonMessage.at("/data/page/limit").asInt();
 
             if(limit <= 0 || offset < 0) {
                 onError(session, new IndexOutOfBoundsException("Page and limit must be positive"), false);

@@ -123,12 +123,12 @@ public class LoginScreen extends AppCompatActivity implements OnClickListener {
             passwordEditText.setBackgroundTintList(null);
 
             if (username.length() == 0) {
-                Toast.makeText(LoginScreen.this, "Username is required", Toast.LENGTH_LONG).show();
+                Toast.makeText(LoginScreen.this, "Username is required", Toast.LENGTH_SHORT).show();
                 usernameEditText.setBackgroundTintList(ColorStateList.valueOf(Color.RED));
 
             }
             else if (password.length() == 0) {
-                Toast.makeText(LoginScreen.this, "password is required", Toast.LENGTH_LONG).show();
+                Toast.makeText(LoginScreen.this, "password is required", Toast.LENGTH_SHORT).show();
                 passwordEditText.setBackgroundTintList(ColorStateList.valueOf(Color.RED));
             }
             else {
@@ -208,7 +208,7 @@ public class LoginScreen extends AppCompatActivity implements OnClickListener {
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        Toast.makeText(LoginScreen.this, "The username or password is incorrect, please try again!", Toast.LENGTH_LONG).show();
+                        Toast.makeText(LoginScreen.this, "The username or password is incorrect, please try again!", Toast.LENGTH_SHORT).show();
                         jwtToken = null;
 //                        Log.e("JWT", error.toString());
                     }

@@ -68,7 +68,8 @@
         android:layout_height="25dp"
         android:layout_marginTop="185dp"
         android:layout_marginLeft="365dp"
-        android:src="@android:drawable/ic_menu_view" />
+        android:src="@android:drawable/ic_menu_view"
+        android:background="?attr/selectableItemBackgroundBorderless"/>
 
     <EditText
         android:id="@+id/bio"
@@ -118,7 +119,8 @@
         android:layout_height="25dp"
         android:layout_marginLeft="87dp"
         android:layout_marginTop="145dp"
-        android:src="@android:drawable/ic_menu_camera" />
+        android:src="@android:drawable/ic_menu_camera"
+        android:background="?attr/selectableItemBackgroundBorderless"/>
 
     <ImageButton
         android:id="@+id/editInfo"
@@ -126,7 +128,8 @@
         android:layout_height="25dp"
         android:layout_marginLeft="365dp"
         android:layout_marginTop="15dp"
-        android:src="@android:drawable/ic_menu_edit" />
+        android:src="@android:drawable/ic_menu_edit"
+        android:background="?attr/selectableItemBackgroundBorderless"/>
 
 
 </FrameLayout>

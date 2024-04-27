@@ -18,9 +18,18 @@
             android:id="@+id/toolbar_gchannel"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
+            android:background="@color/cambridge_blue"
             android:theme="@style/Widget.AppCompat.Toolbar"
-            app:popupTheme="@style/Theme.AppCompat.Light"
-            android:background="@color/cambridge_blue">
+            app:popupTheme="@style/Theme.AppCompat.Light">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Conversations"
+                android:textColor="@color/black"
+                android:textSize="20sp"
+                android:layout_gravity="center"/>
+
         </androidx.appcompat.widget.Toolbar>
 
     </com.google.android.material.appbar.AppBarLayout>

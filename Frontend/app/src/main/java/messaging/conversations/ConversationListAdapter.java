@@ -18,6 +18,7 @@ import com.android.volley.toolbox.ImageRequest;
 import com.example.harmonizefrontend.R;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -25,6 +26,8 @@ import java.util.Map;
 
 import Connections.VolleyCallBack;
 import DTO.ConversationDTO;
+import DTO.MessageDTO;
+import UserInfo.Member;
 import UserInfo.UserSession;
 
 import com.example.harmonizefrontend.ClickListener;
@@ -62,16 +65,16 @@ public class ConversationListAdapter extends RecyclerView.Adapter<RecyclerView.V
         SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy");
         SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm");
 
-        String friendUsername = conversation.getFriend().getUsername();
-
         String lastMessage = "";
         String lastMessageDateTime = "";
+        String friendUsername = "";
 
 
         try {
-            lastMessage = conversation.getMessageList().get(-1).getText();
+            MessageDTO message = conversation.getMessageList().get(conversation.getMessageList().size() - 1);
+            lastMessage = message.getText();
+            Date dateUnix = new Date(message.getData().getDataUnixTime());
 
-            Date dateUnix = new Date(conversation.getMessageList().get(-1).getData().getDataUnixTime());
             String lastMessageDate = dateFormat.format(dateUnix);
             String lastMessageTime = timeFormat.format(dateUnix);
             lastMessageDateTime = lastMessageDate + " " + lastMessageTime;
@@ -81,10 +84,20 @@ public class ConversationListAdapter extends RecyclerView.Adapter<RecyclerView.V
 
         }
 
-
-
         final int index = holder.getAdapterPosition();
         ConversationViewHolder viewHolder = (ConversationViewHolder) holder;
+        if (conversation.getFriends().size() > 1) {
+            ArrayList<Member> friends = conversation.getFriends();
+            for (int i = 0; i < friends.size() - 2; i++) { // Iterate until last friend
+                friendUsername += friends.get(i).getUsername() + ", ";
+            }
+            friendUsername += friends.get(friends.size() - 1).getUsername();
+        }
+        else {
+            friendUsername = conversation.getFriends().get(conversation.getFriends().size() - 1).getUsername();
+        }
+
+//        if (conversation.get)
         viewHolder.friendName.setText(friendUsername);
         viewHolder.lastMessage.setText(lastMessage);
         viewHolder.lastMessageTime.setText(lastMessageDateTime);

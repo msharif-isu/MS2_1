@@ -1,6 +1,7 @@
 package messaging.conversations;
 
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -38,9 +39,10 @@ public class ConversationListAdapter extends RecyclerView.Adapter<RecyclerView.V
     private ClickListener clickListener;
 
     private RequestQueue mQueue = UserSession.getInstance().getmQueue();
-
     private String URL = "http://coms-309-032.cs.iastate.edu:8080";
     private Bitmap friendPic;
+    private Boolean isSelected = false;
+    ArrayList<ConversationDTO> selectedConversations = new ArrayList<>();
     public ConversationListAdapter(List<ConversationDTO> conversationList, ClickListener clickListener) {
         this.conversationList = conversationList;
         this.clickListener = clickListener;
@@ -84,7 +86,7 @@ public class ConversationListAdapter extends RecyclerView.Adapter<RecyclerView.V
 
         }
 
-        final int index = holder.getAdapterPosition();
+        final int index = holder.getAdapterPosition(); // Find alternative to getAdapterPosition
         ConversationViewHolder viewHolder = (ConversationViewHolder) holder;
         if (conversation.getFriends().size() > 1) {
             ArrayList<Member> friends = conversation.getFriends();
@@ -112,7 +114,44 @@ public class ConversationListAdapter extends RecyclerView.Adapter<RecyclerView.V
         viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                clickListener.click(index);
+                if (isSelected) {
+                    if (selectedConversations.contains(conversation)) {
+                        selectedConversations.remove(conversation);
+                        viewHolder.itemView.setBackgroundColor(Color.TRANSPARENT);
+                    }
+                    else {
+                        selectedConversations.add(conversation);
+                        viewHolder.itemView.setBackgroundColor(Color.rgb(200,120, 106));
+                    }
+
+                    if (selectedConversations.size() == 0) {
+                        isSelected = false;
+                    }
+                }
+                else {
+                    clickListener.click(index);
+                }
+            }
+        });
+
+        viewHolder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                isSelected = true;
+                if (selectedConversations.contains(conversation)) {
+                    selectedConversations.remove(conversation);
+                    viewHolder.itemView.setBackgroundColor(Color.TRANSPARENT);
+                }
+                else {
+                    selectedConversations.add(conversation);
+                    viewHolder.itemView.setBackgroundColor(Color.rgb(200,120, 106));
+                }
+
+                if (selectedConversations.size() == 0) {
+                    isSelected = false;
+                }
+
+                return true;
             }
         });
     }

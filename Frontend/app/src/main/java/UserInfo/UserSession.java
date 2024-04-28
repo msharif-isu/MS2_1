@@ -25,6 +25,8 @@ public class UserSession {
     private ConversationDTO currentConversation;
     private RequestQueue mQueue;
 
+    private String URL = "http://coms-309-032.cs.iastate.edu:8080";
+
     private UserSession() {
         conversations = new java.util.HashMap<>();
     }
@@ -106,5 +108,9 @@ public class UserSession {
 
     public RequestQueue getmQueue() {
         return mQueue;
+    }
+
+    public String getURL() {
+        return URL;
     }
 }

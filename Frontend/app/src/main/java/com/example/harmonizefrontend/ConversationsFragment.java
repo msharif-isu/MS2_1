@@ -4,6 +4,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -41,6 +42,7 @@ public class ConversationsFragment extends Fragment implements WebSocketListener
     private ClickListener clickListener;
     private List<ConversationDTO> conversations;
     private Map<Integer, ConversationDTO> listConversations;
+
 
     public ConversationsFragment() {
         // Required empty public constructor

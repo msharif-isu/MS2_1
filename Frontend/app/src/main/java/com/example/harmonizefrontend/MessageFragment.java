@@ -177,6 +177,9 @@ public class MessageFragment extends Fragment implements WebSocketListener {
             @Override
             public void onClick(View v) {
                 ((navBar) getActivity()).loadFragment(new ConversationsFragment());
+
+                getActivity().findViewById(R.id.popout_frame_layout).setVisibility(View.GONE);
+
             }
         });
         sendBtn.setOnClickListener(new View.OnClickListener() {

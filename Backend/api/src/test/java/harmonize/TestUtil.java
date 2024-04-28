@@ -23,6 +23,7 @@ import harmonize.DTOs.UserDTO;
 import harmonize.Services.AdminTestService;
 import harmonize.Services.AuthTestService;
 import harmonize.Services.ModeratorTestService;
+import harmonize.Services.MusicTestService;
 import harmonize.Services.RequestService;
 import harmonize.Services.UserTestService;
 import harmonize.Services.WebSocketTestService;
@@ -47,6 +48,7 @@ public class TestUtil {
     @Autowired protected UserTestService todTestService;
     @Autowired protected UserTestService bobTestService;
     @Autowired protected UserTestService samTestService;
+    @Autowired protected MusicTestService musicTestService;
     protected WebSocketTestService chatSocket;
 
     @BeforeEach
@@ -57,6 +59,7 @@ public class TestUtil {
         todTestService.setConnection(hostname, port);
         bobTestService.setConnection(hostname, port);
         samTestService.setConnection(hostname, port);
+        musicTestService.setConnection(hostname, port);
 
         adminTestService.setAuth(authTestService.login(new LoginDTO(adminTestService.getUsername(), adminTestService.getPassword())).getBody());
         adminTestService.setUser(adminTestService.getSelf().getBody());
@@ -84,6 +87,9 @@ public class TestUtil {
         else
             samTestService.setAuth(authTestService.login(new LoginDTO(samTestService.getUsername(), samTestService.getPassword())).getBody());
         samTestService.setUser(samTestService.getSelf().getBody());
+
+        musicTestService.setAuth(todTestService.getAuth());
+        musicTestService.setUser(todTestService.getUser());
     }
 
     @AfterEach

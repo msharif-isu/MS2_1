@@ -5,6 +5,7 @@ import org.springframework.context.annotation.Configuration;
 
 import harmonize.Services.AdminTestService;
 import harmonize.Services.ModeratorTestService;
+import harmonize.Services.MusicTestService;
 import harmonize.Services.UserTestService;
 
 @Configuration
@@ -33,5 +34,10 @@ public class TestConfig {
     @Bean
     public UserTestService samTestService() {
         return new UserTestService("sjones", "sampw");
+    }
+
+    @Bean
+    public MusicTestService musicTestService() {
+        return new MusicTestService("twilson", "todpw");
     }
 }

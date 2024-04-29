@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.android.volley.AuthFailureError;
@@ -28,12 +29,16 @@ import java.util.Map;
 import Connections.VolleyCallBack;
 import DTO.ConversationDTO;
 import DTO.MessageDTO;
+import PictureData.SharedViewModel;
 import UserInfo.Member;
 import UserInfo.UserSession;
 
+
+
+
 import com.example.harmonizefrontend.ClickListener;
 
-public class ConversationListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
+public class ConversationListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private List<ConversationDTO> conversationList;
     private ClickListener clickListener;
@@ -43,9 +48,12 @@ public class ConversationListAdapter extends RecyclerView.Adapter<RecyclerView.V
     private Bitmap friendPic;
     private Boolean isSelected = false;
     ArrayList<ConversationDTO> selectedConversations = new ArrayList<>();
+
     public ConversationListAdapter(List<ConversationDTO> conversationList, ClickListener clickListener) {
         this.conversationList = conversationList;
         this.clickListener = clickListener;
+//        viewModel = new ViewModelProvider(requireActivity()).get(SharedViewModel.class);
+
     }
 
     @NonNull
@@ -80,8 +88,7 @@ public class ConversationListAdapter extends RecyclerView.Adapter<RecyclerView.V
             String lastMessageDate = dateFormat.format(dateUnix);
             String lastMessageTime = timeFormat.format(dateUnix);
             lastMessageDateTime = lastMessageDate + " " + lastMessageTime;
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             Log.e("convo", "Error, likely no messages between user");
 
         }
@@ -94,8 +101,7 @@ public class ConversationListAdapter extends RecyclerView.Adapter<RecyclerView.V
                 friendUsername += friends.get(i).getUsername() + ", ";
             }
             friendUsername += friends.get(friends.size() - 1).getUsername();
-        }
-        else {
+        } else {
             friendUsername = conversation.getFriends().get(conversation.getFriends().size() - 1).getUsername();
         }
 
@@ -118,17 +124,15 @@ public class ConversationListAdapter extends RecyclerView.Adapter<RecyclerView.V
                     if (selectedConversations.contains(conversation)) {
                         selectedConversations.remove(conversation);
                         viewHolder.itemView.setBackgroundColor(Color.TRANSPARENT);
-                    }
-                    else {
+                    } else {
                         selectedConversations.add(conversation);
-                        viewHolder.itemView.setBackgroundColor(Color.rgb(200,120, 106));
+                        viewHolder.itemView.setBackgroundColor(Color.rgb(200, 120, 106));
                     }
 
                     if (selectedConversations.size() == 0) {
                         isSelected = false;
                     }
-                }
-                else {
+                } else {
                     clickListener.click(index);
                 }
             }
@@ -141,14 +145,14 @@ public class ConversationListAdapter extends RecyclerView.Adapter<RecyclerView.V
                 if (selectedConversations.contains(conversation)) {
                     selectedConversations.remove(conversation);
                     viewHolder.itemView.setBackgroundColor(Color.TRANSPARENT);
-                }
-                else {
+                } else {
                     selectedConversations.add(conversation);
-                    viewHolder.itemView.setBackgroundColor(Color.rgb(200,120, 106));
+                    viewHolder.itemView.setBackgroundColor(Color.rgb(200, 120, 106));
                 }
 
                 if (selectedConversations.size() == 0) {
                     isSelected = false;
+                    selectedConversations.clear();
                 }
 
                 return true;
@@ -163,6 +167,7 @@ public class ConversationListAdapter extends RecyclerView.Adapter<RecyclerView.V
 
     /**
      * Called when a view created by this adapter has been attached to a window.
+     *
      * @param recyclerView
      */
     @Override
@@ -185,8 +190,7 @@ public class ConversationListAdapter extends RecyclerView.Adapter<RecyclerView.V
                         // Display the image in the ImageView
                         if (response == null) {
                             // TODO
-                        }
-                        else {
+                        } else {
                             // TODO
                             friendPic = response;
                         }
@@ -210,5 +214,5 @@ public class ConversationListAdapter extends RecyclerView.Adapter<RecyclerView.V
 
         // Adding request to request queue
         mQueue.add(imageRequest);
-    };
-}
+    }
+};

@@ -43,7 +43,11 @@ public class ConversationsFragment extends Fragment implements WebSocketListener
     private List<ConversationDTO> conversations;
     private Map<Integer, ConversationDTO> listConversations;
 
+    private ImageButton deleteConvos;
 
+    private ArrayList<ConversationDTO> selectedConversations = new ArrayList<>();
+
+    private View view;
     public ConversationsFragment() {
         // Required empty public constructor
     }
@@ -105,13 +109,16 @@ public class ConversationsFragment extends Fragment implements WebSocketListener
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_conversation_list, container, false);
+        view = inflater.inflate(R.layout.fragment_conversation_list, container, false);
 
         recyclerView = view.findViewById(R.id.recycler);
+        deleteConvos = view.findViewById(R.id.deleteConvo);
+        view.findViewById(R.id.deleteConvo).setVisibility(View.GONE);
         conversations = getConversations();
         conversationListAdapter = new ConversationListAdapter(conversations, clickListener);
         recyclerView.setAdapter(conversationListAdapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+
 
         return view;
     }
@@ -126,9 +133,6 @@ public class ConversationsFragment extends Fragment implements WebSocketListener
                 listConversations.put(id, convo);
             }
         }
-
-
-
 
         return conversations;
     }

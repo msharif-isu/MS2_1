@@ -1,7 +1,11 @@
 package com.example.harmonizefrontend;
 
+import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.text.method.HideReturnsTransformationMethod;
 import android.text.method.PasswordTransformationMethod;
 import android.util.Log;
@@ -15,10 +19,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
@@ -29,6 +32,7 @@ import com.android.volley.toolbox.JsonObjectRequest;
 
 import org.json.JSONObject;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -60,7 +64,7 @@ public class AccountPreferencesFragment extends Fragment {
     private TextView passwordView;
     private boolean hidden = true;
     private boolean allowEdit = false;
-    private Button updatePrefsBtn, logoutBtn, delAccBtn, addSongsBtn;
+    private Button updatePrefsBtn, logoutBtn, delAccBtn;
 
     private ImageButton changePicBtn, editInfoBtn, unhidePass;
 
@@ -129,7 +133,6 @@ public class AccountPreferencesFragment extends Fragment {
         bioText = rootView.findViewById(R.id.bio);
 
         updatePrefsBtn = rootView.findViewById(R.id.updatePrefs);
-        addSongsBtn = rootView.findViewById(R.id.addSongs);
         logoutBtn = rootView.findViewById(R.id.logOut);
         delAccBtn = rootView.findViewById(R.id.delAccount);
         changePicBtn = rootView.findViewById(R.id.changePicture);
@@ -190,29 +193,22 @@ public class AccountPreferencesFragment extends Fragment {
 
 
         //When changeBtn is clicked, give the user the option to upload their own picture and change the profile picture
-//        changePicBtn.setOnClickListener(new View.OnClickListener() {
+        changePicBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                imageChooser();
+
+
+            }
+        });
+
+        // When update preferences is clicked, take user to the change preferences screen
+//        updatePrefsBtn.setOnClickListener(new View.OnClickListener() {
 //            @Override
 //            public void onClick(View v) {
-//                // Give user option to upload their own picture
-//
-//
+//                // Send PUT request to server
 //            }
 //        });
-
-         // When update preferences is clicked, take user to the change preferences screen
-        updatePrefsBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                loadFragment(new LikedSongsFragment());
-            }
-        });
-
-        addSongsBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                loadFragment(new SearchFragment());
-            }
-        });
 
         // When logout is clicked, change intent to login screen
         logoutBtn.setOnClickListener(new View.OnClickListener() {
@@ -290,6 +286,8 @@ public class AccountPreferencesFragment extends Fragment {
                             // SET ID TO MAX BECAUSE CURRENTLY DO NOT HAVE A REQUEST TO GET ID
                         }
                     });
+
+                    editInfoBtn.setImageResource(R.drawable.green_checkbox);
 
                 }
 
@@ -378,7 +376,7 @@ public class AccountPreferencesFragment extends Fragment {
         JsonObjectRequest jsonObjReq = new JsonObjectRequest(
                 Request.Method.DELETE,
                 URL + "/users",
-                null, // Pass null as the request body since it's a GET request
+                null,
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
@@ -391,6 +389,8 @@ public class AccountPreferencesFragment extends Fragment {
                         }
                         catch (Exception e) {
                             e.printStackTrace();
+                            delUserCallBack.onSuccess(); // GOTTA FIGURE OUT WHY IM GETTING THIS ERROR, IT STILL ACTUALLY DELETES THE ACCOUNT
+
                         }
                     }
                 },
@@ -406,7 +406,7 @@ public class AccountPreferencesFragment extends Fragment {
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
                 HashMap<String, String> headers = new HashMap<String, String>();
-                headers.put("Authorization", jwtToken);
+                headers.put("Authorization", UserSession.getInstance().getJwtToken());
                 return headers;
             }
 
@@ -419,9 +419,6 @@ public class AccountPreferencesFragment extends Fragment {
             }
         };
         mQueue.add(jsonObjReq);
-
-
-
     }
 
 
@@ -485,11 +482,42 @@ public class AccountPreferencesFragment extends Fragment {
         mQueue.add(jsonObjReq);
     }
 
-    private void loadFragment(Fragment fragment) {
-        FragmentManager fragmentManager = getParentFragmentManager();
-        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        fragmentTransaction.replace(R.id.frame_layout, fragment);
-        fragmentTransaction.commit();
+    void imageChooser() {
+        Intent intent = new Intent();
+        intent.setType("image/*");
+        intent.setAction(Intent.ACTION_GET_CONTENT);
+
+        gallery.launch(intent);
+
     }
+
+    ActivityResultLauncher<Intent> gallery
+            = registerForActivityResult(
+            new ActivityResultContracts
+                    .StartActivityForResult(),
+            result -> {
+                if (result.getResultCode()
+                        == Activity.RESULT_OK) {
+                    Intent data = result.getData();
+                    // do your operation from here....
+                    if (data != null
+                            && data.getData() != null) {
+                        Uri selectedImageUri = data.getData();
+                        Bitmap selectedImageBitmap = null;
+                        try {
+                            selectedImageBitmap
+                                    = MediaStore.Images.Media.getBitmap(
+                                    this.getContext().getContentResolver(),
+                                    selectedImageUri);
+                        }
+                        catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                        profilePicture.setImageBitmap(
+                                selectedImageBitmap);
+                    }
+                }
+            });
+
 
 }

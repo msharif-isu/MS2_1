@@ -32,6 +32,7 @@ import java.util.ArrayList;
 
 import Connections.VolleySingleton;
 import UserInfo.User;
+import UserInfo.UserSession;
 
 /**
  * This fragment will display all recommended friends to the user. Users will have the option to add them as friends.
@@ -50,7 +51,6 @@ public class FindFragment extends Fragment {
     private int id;
     private String username;
     private RequestQueue mQueue;
-    private String jwtToken;
     private static final String TAG = FindFragment.class.getSimpleName();
     public FindFragment() {
         // Required empty public constructor
@@ -82,7 +82,6 @@ public class FindFragment extends Fragment {
         super.onCreate(savedInstanceState);
         userList = new ArrayList<>();
         mQueue = VolleySingleton.getInstance(getActivity()).getRequestQueue();
-        jwtToken = "Bearer " + "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ0ZXN0MSIsImV4cCI6MTcwOTQwOTIwNn0.60NflM9v-M-yWIQhuG7646xYY8pe9rZ4Uk9VE_PvMUtZszhNx_7GjdnwxhtnaIodNjx-jh7RC9pi_wO05ixe4Q";
 
     }
 
@@ -177,8 +176,7 @@ public class FindFragment extends Fragment {
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
                 Map<String, String> params = new HashMap<String, String>();
-                //params.put("Content-Type", "application/json; charset=UTF-8");
-                params.put("Authorization", jwtToken);
+                params.put("Authorization", UserSession.getInstance().getJwtToken());
                 return params;
             }
         };
@@ -272,8 +270,7 @@ public class FindFragment extends Fragment {
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
                 Map<String, String> params = new HashMap<String, String>();
-                //params.put("Content-Type", "application/json; charset=UTF-8");
-                params.put("Authorization", jwtToken);
+                params.put("Authorization", UserSession.getInstance().getJwtToken());
                 return params;
             }
         };

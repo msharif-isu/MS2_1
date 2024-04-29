@@ -1,5 +1,6 @@
 package HomeFeed;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,6 +10,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -22,15 +24,18 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import DTO.FeedDTO;
+
+import UserInfo.UserSession;
 
 /**
  * This adapter is responsible for creating and binding views for each item in the RecyclerView.
  */
 public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.FeedViewHolder> {
-
     private List<FeedDTO> feedItems;
 
     /**
@@ -53,6 +58,8 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.FeedViewHolder
     public FeedViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
 
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.feed_item, parent, false);
+
+
 
         return new FeedViewHolder(view);
     }
@@ -106,10 +113,10 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.FeedViewHolder
         }
 
         void bind(FeedDTO feedItem) {
-            feedItemTypeTextView.setText(feedItem.getType());
+            feedItemTypeTextView.setText(feedItem.getData().getItem().getType().replaceAll("_", " "));
 
             // Make API request to retrieve track information
-            String trackUrl = "http://coms-309-032.class.las.iastate.edu:8080/music/tracks/" + feedItem.getData().getItem().getSong().getId();
+            String trackUrl = "http://coms-309-032.class.las.iastate.edu:8080/music/songs/" + feedItem.getData().getItem().getSong().getId();
             JsonObjectRequest trackRequest = new JsonObjectRequest(Request.Method.GET, trackUrl, null,
                     new Response.Listener<JSONObject>() {
                         @Override
@@ -117,12 +124,15 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.FeedViewHolder
                             try {
                                 // Parse the JSON response and update views with track information
                                 String trackName = response.getString("name");
+                                JSONArray artistsArray = response.getJSONArray("artists");
+                                String artistName = artistsArray.getJSONObject(0).getString("name");
                                 JSONObject albumObject = response.getJSONObject("album");
                                 String albumName = albumObject.getString("name");
                                 JSONArray imagesArray = albumObject.getJSONArray("images");
                                 String albumCoverUrl = imagesArray.getJSONObject(0).getString("url");
 
                                 trackNameTextView.setText(trackName);
+                                artistNameTextView.setText(artistName);
                                 albumNameTextView.setText(albumName);
 
                                 // Load album cover image using Glide
@@ -135,6 +145,7 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.FeedViewHolder
                                 e.printStackTrace();
                                 // Handle JSON parsing error
                                 trackNameTextView.setText("Track not found");
+                                artistNameTextView.setText("Artist not found");
                                 albumNameTextView.setText("Album not found");
                                 albumCoverImageView.setImageResource(R.drawable.error_image);
                             }
@@ -143,41 +154,20 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.FeedViewHolder
                     new Response.ErrorListener() {
                         @Override
                         public void onErrorResponse(VolleyError error) {
-                            // Handle API request error
-                            trackNameTextView.setText("Track not found");
-                            albumNameTextView.setText("Album not found");
-                            albumCoverImageView.setImageResource(R.drawable.error_image);
+                            error.printStackTrace();
                         }
-                    });
+                    }) {
+                @Override
+                public Map<String, String> getHeaders() throws AuthFailureError {
+                    HashMap<String, String> headers = new HashMap<>();
+                    Log.d("SearchFragment", "JWTtoken: " + UserSession.getInstance().getJwtToken());
+                    headers.put("Authorization", UserSession.getInstance().getJwtToken());
+                    return headers;
+                }
+            };
 
-            // Make API request to retrieve artist information
-            String artistUrl = "http://coms-309-032.class.las.iastate.edu:8080/music/artists/" + feedItem.getData().getItem().getSong().getArtistId();
-            JsonObjectRequest artistRequest = new JsonObjectRequest(Request.Method.GET, artistUrl, null,
-                    new Response.Listener<JSONObject>() {
-                        @Override
-                        public void onResponse(JSONObject response) {
-                            try {
-                                // Parse the JSON response and update views with artist information
-                                String artistName = response.getString("name");
-                                artistNameTextView.setText(artistName);
-                            } catch (JSONException e) {
-                                e.printStackTrace();
-                                // Handle JSON parsing error
-                                artistNameTextView.setText("Artist not found");
-                            }
-                        }
-                    },
-                    new Response.ErrorListener() {
-                        @Override
-                        public void onErrorResponse(VolleyError error) {
-                            // Handle API request error
-                            artistNameTextView.setText("Artist not found");
-                        }
-                    });
-
-            // Add the requests to the RequestQueue
+            // Add the request to the RequestQueue
             requestQueue.add(trackRequest);
-            requestQueue.add(artistRequest);
         }
     }
 

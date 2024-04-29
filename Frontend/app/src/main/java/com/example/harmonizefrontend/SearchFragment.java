@@ -19,6 +19,7 @@ import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -29,7 +30,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import Connections.VolleySingleton;
 import SearchSongs.SearchResultsAdapter;
+
+import UserInfo.UserSession;
 
 public class SearchFragment extends Fragment {
 
@@ -37,7 +41,6 @@ public class SearchFragment extends Fragment {
     private RecyclerView searchResultsRecyclerView;
     private SearchResultsAdapter searchResultsAdapter;
     private List<Track> searchResults;
-    private String username, password, JWTtoken;
     private RequestQueue mQueue;
 
     @Override
@@ -51,15 +54,7 @@ public class SearchFragment extends Fragment {
         searchResultsRecyclerView.setAdapter(searchResultsAdapter);
         searchResultsRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
-        navBar navBar = (navBar) getActivity();
-        if (navBar != null) {
-            username = navBar.username;
-            password = navBar.password;
-            JWTtoken = navBar.jwtToken;
-            mQueue = navBar.mQueue;
-        } else {
-            Log.e("msg", "navBar is null, JWT token not set");
-        }
+        mQueue = VolleySingleton.getInstance(getActivity()).getRequestQueue();
 
         searchEditText.addTextChangedListener(new TextWatcher() {
             @Override
@@ -129,8 +124,8 @@ public class SearchFragment extends Fragment {
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
                 HashMap<String, String> headers = new HashMap<>();
-                Log.d("SearchFragment", "JWTtoken: " + JWTtoken);
-                headers.put("Authorization", JWTtoken);
+                Log.d("SearchFragment", "JWTtoken: " + UserSession.getInstance().getJwtToken());
+                headers.put("Authorization", UserSession.getInstance().getJwtToken());
                 return headers;
             }
         };

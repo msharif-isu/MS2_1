@@ -1,4 +1,4 @@
-package com.example.harmonizefrontend;
+package DTO;
 
 public class FeedDTO {
     private String type;

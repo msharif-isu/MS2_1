@@ -27,6 +27,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import LikedSongs.LikedSongsAdapter;
 import UserInfo.UserSession;
 
 public class LikedSongsFragment extends Fragment {

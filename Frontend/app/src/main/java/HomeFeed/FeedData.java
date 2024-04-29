@@ -1,4 +1,4 @@
-package com.example.harmonizefrontend;
+package HomeFeed;
 
 public class FeedData {
     private int limit;

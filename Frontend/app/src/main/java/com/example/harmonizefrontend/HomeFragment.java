@@ -18,16 +18,16 @@ import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 
 import org.java_websocket.WebSocket;
-import org.java_websocket.client.WebSocketClient;
 import org.java_websocket.handshake.ServerHandshake;
 
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 
 import Connections.WebSocketListener;
 import Connections.WebSocketManagerFeed;
+import HomeFeed.FeedAdapter;
+import DTO.FeedDTO;
+import HomeFeed.FeedRequest;
 
 /**
  * A fragment that displays the main feed, showing music news for the usser.

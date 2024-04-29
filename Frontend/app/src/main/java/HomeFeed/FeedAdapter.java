@@ -1,4 +1,4 @@
-package com.example.harmonizefrontend;
+package HomeFeed;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,12 +16,15 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.bumptech.glide.Glide;
+import com.example.harmonizefrontend.R;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.List;
+
+import DTO.FeedDTO;
 
 /**
  * This adapter is responsible for creating and binding views for each item in the RecyclerView.

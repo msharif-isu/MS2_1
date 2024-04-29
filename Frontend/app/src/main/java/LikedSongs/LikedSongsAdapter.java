@@ -1,27 +1,23 @@
-package com.example.harmonizefrontend;
+package LikedSongs;
 
-import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
-import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.example.harmonizefrontend.R;
+import com.example.harmonizefrontend.Track;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class LikedSongsAdapter extends RecyclerView.Adapter<LikedSongsAdapter.LikedSongViewHolder> {
     private List<Track> likedSongs;

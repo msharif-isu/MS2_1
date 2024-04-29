@@ -139,9 +139,19 @@ public class UserController {
         return ResponseEntity.ok(userService.removeSong(userService.getUser(principal.getName()).getId(), id));
     }
 
+    @GetMapping(path = "/posts")
+    public ResponseEntity<List<PostDTO>> getPosts(Principal principal){
+        return ResponseEntity.ok(postService.getPost(userService.getUser(principal.getName()).getId()));
+    }
+
     @PostMapping(path = "/posts")
     public ResponseEntity<PostDTO> sendPost(Principal principal, @RequestBody PostDTO post){
         return ResponseEntity.ok(postService.sendPost(userService.getUser(principal.getName()).getId(), post.getPost()));
+    }
+
+    @DeleteMapping(path = "/posts/{id}")
+    public ResponseEntity<PostDTO> deletePost(Principal principal, @PathVariable int id){
+        return ResponseEntity.ok(postService.deletePost(userService.getUser(principal.getName()).getId(), id));
     }
 }
 

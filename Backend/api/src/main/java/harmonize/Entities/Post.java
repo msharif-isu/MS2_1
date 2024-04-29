@@ -1,9 +1,14 @@
 package harmonize.Entities;
 
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIncludeProperties;
 
+import harmonize.Entities.FeedItems.PostFeedItem;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -12,6 +17,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
@@ -38,6 +44,10 @@ public class Post {
     @Column(columnDefinition = "LONGTEXT")
     @Size(max = POST_LENGTH_MAX)
     private String post;
+
+    @OneToMany(mappedBy = "post", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, orphanRemoval = true)
+    @JsonIgnore
+    private Set<PostFeedItem> postFeedItems = new HashSet<>();
 
     public Post(User poster, String post) {
         this.poster = poster;

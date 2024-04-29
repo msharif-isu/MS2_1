@@ -97,7 +97,7 @@ public class FeedService {
                 return;
             }
 
-            if(offset >= feed.size() || limit > feed.size()) {
+            if(offset >= feed.size()) {
                 onError(session, new IndexOutOfBoundsException("Requested item is out of bounds"), false);
                 return;
             }
@@ -114,8 +114,10 @@ public class FeedService {
                     musicService.getSong(((SongFeedItem)item).getSong().getId());
                     user.getSeenFeed().add(item);
                 }
-                else if(item instanceof PostFeedItem)
+                else if(item instanceof PostFeedItem) {
                     user.getReceivedPosts().remove(item);
+                    feedRepository.delete(item);
+                }
 
                 userRepository.save(user);
                 send(session, new FeedDTO(i, item));
@@ -242,6 +244,7 @@ public class FeedService {
         feed.removeAll(user.getSeenFeed());
         Collections.shuffle(feed);
         
+        Hibernate.initialize(user.getReceivedPosts());
         Random rand = new Random();
         int i = 0;
         for(AbstractFeedItem feedItem : user.getReceivedPosts()) {

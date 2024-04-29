@@ -17,7 +17,7 @@ import lombok.Data;
 @Entity
 @DiscriminatorValue(value = "post")
 public class PostFeedItem extends AbstractFeedItem {
-    public static final long POST_EXPIRATION_DATE_MS = 86400 * 1000 * 30;
+    public static final long POST_EXPIRATION_DATE_MS = 86400L * 1000 * 30;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "post_id", referencedColumnName = "id")    

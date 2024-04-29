@@ -141,7 +141,12 @@ public class UserController {
 
     @GetMapping(path = "/posts")
     public ResponseEntity<List<PostDTO>> getPosts(Principal principal){
-        return ResponseEntity.ok(postService.getPost(userService.getUser(principal.getName()).getId()));
+        return ResponseEntity.ok(postService.getPosts(userService.getUser(principal.getName()).getId()));
+    }
+
+    @GetMapping(path = "/posts/{id}")
+    public ResponseEntity<List<PostDTO>> getPosts(Principal principal, @PathVariable int id){
+        return ResponseEntity.ok(postService.getPosts(userService.getUser(principal.getName()).getId(), id));
     }
 
     @PostMapping(path = "/posts")
@@ -150,8 +155,8 @@ public class UserController {
     }
 
     @DeleteMapping(path = "/posts/{id}")
-    public ResponseEntity<PostDTO> deletePost(Principal principal, @PathVariable int id){
-        return ResponseEntity.ok(postService.deletePost(userService.getUser(principal.getName()).getId(), id));
+    public ResponseEntity<PostDTO> deleteSentPost(Principal principal, @PathVariable int id){
+        return ResponseEntity.ok(postService.deleteSentPost(userService.getUser(principal.getName()).getId(), id));
     }
 }
 

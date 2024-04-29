@@ -119,9 +119,9 @@ public class FeedService {
                     feedRepository.delete(item);
                 }
 
-                userRepository.save(user);
                 send(session, new FeedDTO(i, item));
             }
+            userRepository.save(user);
         }
 
         session.getUserProperties().put("feed", feed);

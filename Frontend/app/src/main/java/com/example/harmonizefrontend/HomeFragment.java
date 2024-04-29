@@ -152,8 +152,7 @@ public class HomeFragment extends Fragment implements WebSocketListener {
 
         isLoading = true;
         offset += LIMIT;
-        FeedData data = new FeedData(LIMIT, offset);
-        FeedRequest request = new FeedRequest(FeedRequest.RequestType.FEED_ITEMS, data);
+        FeedRequest request = new FeedRequest(FeedRequest.RequestType.FEED_ITEMS, LIMIT, offset);
         sendWebSocketRequest(request);
 
     }
@@ -223,8 +222,7 @@ public class HomeFragment extends Fragment implements WebSocketListener {
 
         isLoading = true;
         offset = 0;
-        FeedData data = new FeedData(LIMIT, offset);
-        FeedRequest request = new FeedRequest(FeedRequest.RequestType.FEED_ITEMS, data);
+        FeedRequest request = new FeedRequest(FeedRequest.RequestType.FEED_ITEMS, LIMIT, offset);
         sendWebSocketRequest(request);
 
     }
@@ -265,8 +263,7 @@ public class HomeFragment extends Fragment implements WebSocketListener {
 
         isLoading = true;
         offset = 0;
-        FeedData data = new FeedData(LIMIT, offset);
-        FeedRequest request = new FeedRequest(FeedRequest.RequestType.REFRESH_FEED, data);
+        FeedRequest request = new FeedRequest(FeedRequest.RequestType.REFRESH_FEED, LIMIT, offset);
         sendWebSocketRequest(request);
 
     }

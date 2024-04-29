@@ -88,9 +88,6 @@ public class WebSocketManagerFeed {
      */
     public void sendMessage(String message) {
         if (webSocketClient != null && webSocketClient.isOpen()) {
-//            Gson gson = new Gson();
-//            String messageGson = gson.toJson(messageDTO);
-
             webSocketClient.send(message);
         }
         else {

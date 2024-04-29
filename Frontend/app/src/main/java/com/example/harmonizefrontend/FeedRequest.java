@@ -1,7 +1,6 @@
 package com.example.harmonizefrontend;
 
 public class FeedRequest {
-
     private String type;
     private FeedData data;
 
@@ -26,7 +25,7 @@ public class FeedRequest {
 
     }
 
-    public FeedRequest(RequestType requestType, FeedData data) {
+    public FeedRequest(RequestType requestType, int limit, int offset) {
 
         if (requestType == RequestType.FEED_ITEMS) {
 
@@ -42,19 +41,51 @@ public class FeedRequest {
 
         }
 
-        this.data = data;
+        this.data = new FeedData(requestType, limit, offset);
 
+    }
+
+    public static class FeedData {
+        private int requestType;
+        private Page page;
+
+        public FeedData(RequestType requestType, int limit, int offset) {
+            this.requestType = requestType.getValue();
+            this.page = new Page(limit, offset);
+        }
+
+        public int getRequestType() {
+            return requestType;
+        }
+
+        public Page getPage() {
+            return page;
+        }
+    }
+
+    public static class Page {
+        private int limit;
+        private int offset;
+
+        public Page(int limit, int offset) {
+            this.limit = limit;
+            this.offset = offset;
+        }
+
+        public int getLimit() {
+            return limit;
+        }
+
+        public int getOffset() {
+            return offset;
+        }
     }
 
     public String getType() {
-
         return type;
-
     }
 
     public FeedData getData() {
-
         return data;
-
     }
 }

@@ -30,18 +30,14 @@ public class Post {
 
     private Date time;
 
-    @ManyToOne
-    @JoinColumn(name = "poster_id", referencedColumnName = "id")
+    @JsonIncludeProperties(value = {"id"})
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "poster_id", referencedColumnName = "id")  
     private User poster;
 
     @Column(columnDefinition = "LONGTEXT")
     @Size(max = POST_LENGTH_MAX)
     private String post;
-
-    @JsonIncludeProperties(value = {"id"})
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", referencedColumnName = "id")    
-    private User user;
 
     @Override
     public boolean equals(Object o) {

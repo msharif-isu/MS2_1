@@ -37,7 +37,7 @@ import lombok.Data;
     name = "feed_item_type",
     discriminatorType = DiscriminatorType.STRING
 )
-@Table(name = "seen_feed_items")
+@Table(name = "feed_items")
 @AllArgsConstructor
 @Data
 public abstract class AbstractFeedItem {

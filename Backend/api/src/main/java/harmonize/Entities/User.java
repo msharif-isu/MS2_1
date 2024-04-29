@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Set;
 
 import harmonize.Entities.FeedItems.AbstractFeedItem;
+import harmonize.Entities.FeedItems.PostFeedItem;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -83,10 +84,14 @@ public class User {
                                     inverseJoinColumns = @JoinColumn(name = "conversation_id", referencedColumnName = "id"))
     private Set<Conversation> conversations = new HashSet<>();
 
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinTable(name = "user_seen_feed", joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),
-                                inverseJoinColumns = @JoinColumn(name = "feed_item_id", referencedColumnName = "id"))
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<AbstractFeedItem> seenFeed = new HashSet<>();
+
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<PostFeedItem> receivedPosts = new HashSet<>();
+    
+    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<Post> sentPosts = new HashSet<>();
 
     @OneToMany(fetch = FetchType.EAGER)
     private Set<Report> sentReports = new HashSet<>();

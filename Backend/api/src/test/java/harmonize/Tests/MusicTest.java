@@ -13,7 +13,7 @@ import harmonize.DTOs.SearchDTO;
 public class MusicTest extends TestUtil {
     @Test
     public void searchTest() throws Exception {
-        SearchDTO search = new SearchDTO("Future", "track", "3", "0");
+        SearchDTO search = new SearchDTO("Future", "track", "1", "0");
         ResponseEntity<JsonNode> responseEntity = musicTestService.getSearch(search);
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
     }

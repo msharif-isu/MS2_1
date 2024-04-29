@@ -20,6 +20,6 @@ public class MusicTestService extends AbstractUserTestService {
         System.out.println(objectMapper.writeValueAsString(search));
         System.out.println(url + port + "/music");
         System.out.println("Bearer "  + auth.getAccessToken());
-        return requestService.requestJson(auth, url + port + "/music", HttpMethod.GET, search);
+        return requestService.requestJson(auth, url + port + "/music", HttpMethod.POST, search);
     }
 }

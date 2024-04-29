@@ -92,7 +92,7 @@ public class SearchFragment extends Fragment {
         try {
             requestBody.put("q", query);
             requestBody.put("type", "track");
-            requestBody.put("limit", "3");
+            requestBody.put("limit", "5");
             requestBody.put("offset", "0");
         } catch (JSONException e) {
             e.printStackTrace();

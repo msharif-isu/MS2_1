@@ -22,6 +22,8 @@ import android.widget.Toast;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
@@ -64,7 +66,7 @@ public class AccountPreferencesFragment extends Fragment {
     private TextView passwordView;
     private boolean hidden = true;
     private boolean allowEdit = false;
-    private Button updatePrefsBtn, logoutBtn, delAccBtn;
+    private Button updatePrefsBtn, logoutBtn, delAccBtn, addSongsBtn;
 
     private ImageButton changePicBtn, editInfoBtn, unhidePass;
 
@@ -137,6 +139,7 @@ public class AccountPreferencesFragment extends Fragment {
         delAccBtn = rootView.findViewById(R.id.delAccount);
         changePicBtn = rootView.findViewById(R.id.changePicture);
         editInfoBtn = rootView.findViewById(R.id.editInfo);
+        addSongsBtn = rootView.findViewById(R.id.addSongs);
 
         usernameText.setEnabled(allowEdit);
         firstNameText.setEnabled(allowEdit);
@@ -202,13 +205,21 @@ public class AccountPreferencesFragment extends Fragment {
             }
         });
 
-        // When update preferences is clicked, take user to the change preferences screen
-//        updatePrefsBtn.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                // Send PUT request to server
-//            }
-//        });
+        // When addSongsBtn is clicked, take user to the add songs screen
+        addSongsBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ((navBar) getActivity()).loadFragment(new SearchFragment());
+            }
+        });
+
+        // When updatePrefsBtn is clicked, take user to the change preferences screen
+        updatePrefsBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ((navBar) getActivity()).loadFragment(new LikedSongsFragment());
+            }
+        });
 
         // When logout is clicked, change intent to login screen
         logoutBtn.setOnClickListener(new View.OnClickListener() {

@@ -20,6 +20,7 @@ import harmonize.DTOs.ReportDTO;
 import harmonize.DTOs.RoleDTO;
 import harmonize.DTOs.SongDTO;
 import harmonize.DTOs.UserDTO;
+import harmonize.Services.PostService;
 import harmonize.Services.ReportService;
 import harmonize.Services.UserService;
 
@@ -34,11 +35,13 @@ import harmonize.Services.UserService;
 public class UserController {
     private UserService userService;
     private ReportService reportService;
+    private PostService postService;
 
     @Autowired
-    public UserController(UserService userService, ReportService reportService) {
+    public UserController(UserService userService, ReportService reportService, PostService postService) {
         this.userService = userService;
         this.reportService = reportService;
+        this.postService = postService;
     }
 
     /**
@@ -137,8 +140,8 @@ public class UserController {
     }
 
     @PostMapping(path = "/posts")
-    public ResponseEntity<PostDTO> sendPOst(Principal principal){
-        return ResponseEntity.ok(userService.addSong(userService.getUser(principal.getName()).getId(), id));
+    public ResponseEntity<PostDTO> sendPost(Principal principal, @RequestBody PostDTO post){
+        return ResponseEntity.ok(postService.sendPost(userService.getUser(principal.getName()).getId(), post.getPost()));
     }
 }
 

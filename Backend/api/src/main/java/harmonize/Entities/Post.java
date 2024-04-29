@@ -39,6 +39,12 @@ public class Post {
     @Size(max = POST_LENGTH_MAX)
     private String post;
 
+    public Post(User poster, String post) {
+        this.poster = poster;
+        this.post = post;
+        this.time = new Date(System.currentTimeMillis());
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

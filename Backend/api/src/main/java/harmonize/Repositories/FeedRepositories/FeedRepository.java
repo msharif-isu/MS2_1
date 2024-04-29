@@ -2,10 +2,11 @@ package harmonize.Repositories.FeedRepositories;
 
 import java.util.List;
 
+import org.springframework.context.annotation.Primary;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.NoRepositoryBean;
+import org.springframework.stereotype.Repository;
 
 import harmonize.Entities.FeedItems.AbstractFeedItem;
 import jakarta.transaction.Transactional;
@@ -16,7 +17,8 @@ import jakarta.transaction.Transactional;
  * 
  */ 
 
-@NoRepositoryBean
+@Primary
+@Repository
 public interface FeedRepository extends JpaRepository<AbstractFeedItem, Long> {
     @Transactional
     @Modifying

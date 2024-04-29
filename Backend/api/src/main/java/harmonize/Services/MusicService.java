@@ -24,6 +24,7 @@ import harmonize.DTOs.SongRecDTO;
 import harmonize.DTOs.SearchDTO;
 import harmonize.Entities.Artist;
 import harmonize.Entities.ArtistFreq;
+import harmonize.Entities.LikedSong;
 import harmonize.Entities.Song;
 import harmonize.Entities.User;
 import harmonize.ErrorHandling.Exceptions.InvalidArgumentException;
@@ -293,12 +294,16 @@ public class MusicService {
         List<String> artistIds = new ArrayList<>();
         List<String> songIds = new ArrayList<>();
         List<ArtistFreq> topArtists = user.getTopArtists();
+        List<LikedSong> likedSongs = user.getLikedSongs();
+
+        if(topArtists.isEmpty() || likedSongs.isEmpty())
+            return songRec;
 
         for(int i = 0; i < topArtists.size() && i < 3; i++)
             artistIds.add(topArtists.get(i).getArtist().getId());
 
-        for(int i = 0; i < user.getLikedSongs().size() && i < 2; i++)
-            songIds.add(user.getLikedSongs().get(i).getSong().getId());
+        for(int i = 0; i < likedSongs.size() && i < 2; i++)
+            songIds.add(likedSongs.get(i).getSong().getId());
 
         JsonNode recommendations = getRecommendations(new SongRecDTO(Integer.toString(100), artistIds, songIds));
         

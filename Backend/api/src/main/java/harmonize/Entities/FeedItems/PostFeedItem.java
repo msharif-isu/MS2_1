@@ -27,9 +27,10 @@ public class PostFeedItem extends AbstractFeedItem {
         super();
     }
 
-    public PostFeedItem(FeedEnum type, User user) {
+    public PostFeedItem(FeedEnum type, Post post, User user) {
         super(new Date(System.currentTimeMillis() + POST_EXPIRATION_DATE_MS), 
             type, user);
+        this.post = post;
     }
 
     @Override

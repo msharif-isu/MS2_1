@@ -16,6 +16,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 
 import harmonize.DTOs.AuthDTO;
 import harmonize.DTOs.ReportDTO;
+import harmonize.DTOs.ResponseDTO;
 import harmonize.DTOs.RoleDTO;
 import harmonize.DTOs.UserDTO;
 
@@ -145,6 +146,26 @@ public class RequestService {
             new ParameterizedTypeReference<List<ReportDTO>>() {});
     }
     
+    public ResponseEntity<ResponseDTO> requestResponse(AuthDTO auth, String path, HttpMethod method) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization", "Bearer " + auth.getAccessToken());
+        return testRestTemplate.exchange(
+            path,
+            method,
+            new HttpEntity<>(headers),
+            ResponseDTO.class);
+    }
+
+    public ResponseEntity<ResponseDTO> requestResponse(AuthDTO auth, String path, HttpMethod method, Object body) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization", "Bearer " + auth.getAccessToken());
+        return testRestTemplate.exchange(
+            path,
+            method,
+            new HttpEntity<>(body, headers),
+            ResponseDTO.class);
+    }
+
     public ResponseEntity<JsonNode> requestJson(AuthDTO auth, String path, HttpMethod method) {
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", "Bearer " + auth.getAccessToken());

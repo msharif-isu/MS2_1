@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import harmonize.DTOs.ConversationDTO;
 import harmonize.DTOs.MessageDTO;
+import harmonize.DTOs.ResponseDTO;
 import harmonize.DTOs.UserDTO;
 import harmonize.Entities.Conversation;
 import harmonize.Entities.Message;
@@ -60,14 +61,14 @@ public class MessageService {
         );
     }
 
-    public String deleteMessage(int id) {
+    public ResponseDTO deleteMessage(int id) {
         Message message = messageRepository.findReferenceById(id);
         if (message == null)
             throw new EntityNotFoundException("Message " + id + " not found.");
         return deleteMessage(message);
     }
 
-    public String deleteMessage(Message message) {
+    public ResponseDTO deleteMessage(Message message) {
         Conversation conversation = message.getConversation();
         
         conversation.getMessages().remove(message);
@@ -78,7 +79,7 @@ public class MessageService {
         conversationRepository.save(conversation);
         messageRepository.delete(message);
         
-        return new String(String.format("Message %d was deleted.", message.getId()));
+        return new ResponseDTO(String.format("Message %d was deleted.", message.getId()));
     }
 
     public void removeRecipient(Message message, User recipient) {

@@ -20,7 +20,7 @@ public class ChatTest extends TestUtil {
     @DisabledIfEnvironmentVariable(named = "DOCKER_RUNNING", matches = "true")
     public void connectionOkTest() throws Exception {
         todTestService.getChatSocket().connect();
-        Thread.sleep(5000);
+        Thread.sleep(1000);
         assertTrue(todTestService.getChatSocket().isOpen());
     }
 
@@ -28,7 +28,7 @@ public class ChatTest extends TestUtil {
     @DisabledIfEnvironmentVariable(named = "DOCKER_RUNNING", matches = "true")
     public void connectionInvalidPasswordTest() throws Exception {
         chatSocket = new WebSocketTestService(URI.create("wss://" + getHostname() + ":" + getPort() + "/chats?username=" + todTestService.getUsername() + "&password=INVALIDPASSWORD"));
-        Thread.sleep(5000);
+        Thread.sleep(1000);
         assertFalse(todTestService.getChatSocket().isOpen());
     }
 
@@ -36,7 +36,7 @@ public class ChatTest extends TestUtil {
     @DisabledIfEnvironmentVariable(named = "DOCKER_RUNNING", matches = "true")
     public void connectionInvalidUsernameTest() throws Exception {
         chatSocket = new WebSocketTestService(URI.create("wss://" + getHostname() + ":" + getPort() + "/chats?username=INVALIDUSERNAME" + "&password=" + todTestService.getPassword()));
-        Thread.sleep(5000);
+        Thread.sleep(1000);
         assertFalse(todTestService.getChatSocket().isOpen());
     }
 
@@ -46,7 +46,7 @@ public class ChatTest extends TestUtil {
         todTestService.getChatSocket().connect();
         todTestService.addFriend(bobTestService.getUser().getId());
         bobTestService.addFriend(todTestService.getUser().getId());
-        Thread.sleep(5000);
+        Thread.sleep(1000);
 
         assertTrue(todTestService.getChatSocket().isOpen());
         assertTrue(todTestService.getChatSocket().getConversations().stream()
@@ -62,7 +62,7 @@ public class ChatTest extends TestUtil {
 
         todTestService.addFriend(bobTestService.getUser().getId());
         bobTestService.addFriend(todTestService.getUser().getId());
-        Thread.sleep(5000);
+        Thread.sleep(1000);
 
         assertTrue(samTestService.getChatSocket().isOpen());
         assertFalse(samTestService.getChatSocket().getConversations().stream()
@@ -79,7 +79,7 @@ public class ChatTest extends TestUtil {
 
         todTestService.addFriend(bobTestService.getUser().getId());
         bobTestService.addFriend(todTestService.getUser().getId());
-        Thread.sleep(5000);
+        Thread.sleep(1000);
 
         ConversationDTO conversation = todTestService.getChatSocket().getConversations().stream()
             .filter(item -> (item.getMembers().containsAll(Set.of(todTestService.getUser(), bobTestService.getUser()))))
@@ -88,7 +88,7 @@ public class ChatTest extends TestUtil {
         
         String text = "Hello, World!";
         todTestService.getChatSocket().send(new MessageDTO(conversation, text));
-        Thread.sleep(5000);
+        Thread.sleep(1000);
 
         assertTrue(todTestService.getChatSocket().isOpen());
         assertTrue(bobTestService.getChatSocket().isOpen());

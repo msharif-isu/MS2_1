@@ -1,5 +1,6 @@
 package harmonize.Services;
 
+import harmonize.DTOs.ResponseDTO;
 import harmonize.DTOs.RoleDTO;
 import harmonize.DTOs.UserDTO;
 
@@ -7,9 +8,6 @@ import java.util.List;
 
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
-
-import com.fasterxml.jackson.databind.JsonNode;
-
 
 public class AdminTestService extends AbstractUserTestService {
 
@@ -35,8 +33,8 @@ public class AdminTestService extends AbstractUserTestService {
         return requestService.requestUser(auth, url + port + "/admins/users/" + id, HttpMethod.GET);
     }
 
-    public ResponseEntity<JsonNode> deleteUser(int id) {
-        return requestService.requestJson(auth, url + port + "/admins/users/" + id, HttpMethod.DELETE);
+    public ResponseEntity<ResponseDTO> deleteUser(int id) {
+        return requestService.requestResponse(auth, url + port + "/admins/users/" + id, HttpMethod.DELETE);
     }
 
     public ResponseEntity<List<RoleDTO>> getUserRoles(int id) {

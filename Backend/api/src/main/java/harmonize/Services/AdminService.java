@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 
+import harmonize.DTOs.ResponseDTO;
 import harmonize.DTOs.UserDTO;
 import harmonize.Entities.Role;
 import harmonize.Entities.User;
@@ -56,7 +57,7 @@ public class AdminService {
     }
 
     @NonNull
-    public String updateRole(int id, String role){
+    public ResponseDTO updateRole(int id, String role){
         User user = userRepository.findReferenceById(id);
         Role newRole = roleRepository.findByName(role);
 
@@ -72,11 +73,11 @@ public class AdminService {
         user.getRoles().add(newRole);
         userRepository.save(user);
 
-        return new String(String.format("\"%s\" has been added to \"%s\"", role, user.getUsername()));
+        return new ResponseDTO(String.format("\"%s\" has been added to \"%s\"", role, user.getUsername()));
     }
 
     @NonNull
-    public String deleteRole(int id, String role) {
+    public ResponseDTO deleteRole(int id, String role) {
         User user = userRepository.findReferenceById(id);
         Role newRole = roleRepository.findByName(role);
 
@@ -92,6 +93,6 @@ public class AdminService {
         user.getRoles().remove(newRole);
         userRepository.save(user);
 
-        return new String(String.format("\"%s\" has been deleted from \"%s\"", role, user.getUsername()));
+        return new ResponseDTO(String.format("\"%s\" has been deleted from \"%s\"", role, user.getUsername()));
     }
 }

@@ -1,11 +1,10 @@
 package harmonize.Services;
 
+import harmonize.DTOs.ResponseDTO;
 import harmonize.DTOs.UserDTO;
 
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
-
-import com.fasterxml.jackson.databind.JsonNode;
 
 public class ModeratorTestService extends AbstractUserTestService {
 
@@ -23,7 +22,7 @@ public class ModeratorTestService extends AbstractUserTestService {
         return requestService.requestUser(auth, url + port + "/moderators", HttpMethod.GET);
     }
     
-    public ResponseEntity<JsonNode> deleteSelf() {
-        return requestService.requestJson(auth, url + port + "/moderators", HttpMethod.DELETE);
+    public ResponseEntity<ResponseDTO> deleteSelf() {
+        return requestService.requestResponse(auth, url + port + "/moderators", HttpMethod.DELETE);
     }
 }

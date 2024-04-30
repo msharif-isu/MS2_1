@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import harmonize.DTOs.ReportDTO;
+import harmonize.DTOs.ResponseDTO;
 import harmonize.DTOs.RoleDTO;
 import harmonize.DTOs.SongDTO;
 import harmonize.DTOs.UserDTO;
@@ -65,7 +66,7 @@ public class UserController {
     }
 
     @DeleteMapping(path = "")
-    public ResponseEntity<String> deleteUser(Principal principal){
+    public ResponseEntity<ResponseDTO> deleteUser(Principal principal){
         return ResponseEntity.ok(userService.deleteUser(userService.getUser(principal.getName()).getId()));
     }
 
@@ -90,12 +91,12 @@ public class UserController {
     }
 
     @PostMapping(path = "/friends/{id}")
-    public ResponseEntity<String> addFriend(Principal principal, @PathVariable int id){
+    public ResponseEntity<ResponseDTO> addFriend(Principal principal, @PathVariable int id){
         return ResponseEntity.ok(userService.addFriend(userService.getUser(principal.getName()).getId(), id));
     }
 
     @DeleteMapping(path = "/friends/{id}")
-    public ResponseEntity<String> removeFriend(Principal principal, @PathVariable int id){
+    public ResponseEntity<ResponseDTO> removeFriend(Principal principal, @PathVariable int id){
         return ResponseEntity.ok(userService.removeFriend(userService.getUser(principal.getName()).getId(), id));
     }
 
@@ -115,7 +116,7 @@ public class UserController {
     }
 
     @DeleteMapping(path = "/reports/{id}")
-    public ResponseEntity<String> deleteSentReport(Principal principal, @PathVariable int id){
+    public ResponseEntity<ResponseDTO> deleteSentReport(Principal principal, @PathVariable int id){
         return ResponseEntity.ok(reportService.deleteSentReport(userService.getUser(principal.getName()).getId(), id));
     }
 
@@ -125,12 +126,12 @@ public class UserController {
     }
 
     @PostMapping(path = "/songs/{id}")
-    public ResponseEntity<String> addSong(Principal principal, @PathVariable String id){
+    public ResponseEntity<ResponseDTO> addSong(Principal principal, @PathVariable String id){
         return ResponseEntity.ok(userService.addSong(userService.getUser(principal.getName()).getId(), id));
     }
 
     @DeleteMapping(path = "/songs/{id}")
-    public ResponseEntity<String> removeSong(Principal principal, @PathVariable String id){
+    public ResponseEntity<ResponseDTO> removeSong(Principal principal, @PathVariable String id){
         return ResponseEntity.ok(userService.removeSong(userService.getUser(principal.getName()).getId(), id));
     }
 }

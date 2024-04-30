@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 
+import harmonize.DTOs.ResponseDTO;
 import harmonize.DTOs.UserDTO;
 import harmonize.Entities.User;
 import harmonize.ErrorHandling.Exceptions.EntityNotFoundException;
@@ -64,7 +65,7 @@ public class ModeratorService {
     }
 
     @NonNull
-    public String deleteUser(int id){
+    public ResponseDTO deleteUser(int id){
         User user = userRepository.findReferenceById(id);
 
         if (user == null ||
@@ -78,6 +79,6 @@ public class ModeratorService {
             
         userRepository.delete(user);
         
-        return new String(String.format("\"%s\" was deleted.", user.getUsername()));
+        return new ResponseDTO(String.format("\"%s\" was deleted.", user.getUsername()));
     }
 }

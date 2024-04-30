@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import harmonize.DTOs.ReportDTO;
+import harmonize.DTOs.ResponseDTO;
 import harmonize.DTOs.RoleDTO;
 import harmonize.DTOs.UserDTO;
 import harmonize.Services.AdminService;
@@ -65,7 +66,7 @@ public class AdminController {
     }
 
     @DeleteMapping(path = "/users/{id}")
-    public ResponseEntity<String> deleteUser(@PathVariable int id){
+    public ResponseEntity<ResponseDTO> deleteUser(@PathVariable int id){
         return ResponseEntity.ok(userService.deleteUser(id));
     }
 
@@ -85,12 +86,12 @@ public class AdminController {
     }
 
     @PostMapping(path = "/friends/{id1}/{id2}")
-    public ResponseEntity<String> addFriend(@PathVariable int id1, @PathVariable int id2) {
+    public ResponseEntity<ResponseDTO> addFriend(@PathVariable int id1, @PathVariable int id2) {
         return ResponseEntity.ok(userService.addFriend(id1, id2));
     }
 
     @DeleteMapping(path = "/friends/{id1}/{id2}")
-    public ResponseEntity<String> removeFriend(@PathVariable int id1, @PathVariable int id2) {
+    public ResponseEntity<ResponseDTO> removeFriend(@PathVariable int id1, @PathVariable int id2) {
         return ResponseEntity.ok(userService.removeFriend(id1, id2));
     }
 
@@ -100,12 +101,12 @@ public class AdminController {
     }
 
     @PutMapping(path = "/roles/{id}/{role}")
-    public ResponseEntity<String> updateRole(@PathVariable int id, @PathVariable String role) {
+    public ResponseEntity<ResponseDTO> updateRole(@PathVariable int id, @PathVariable String role) {
         return ResponseEntity.ok(adminService.updateRole(id, role));
     }
 
     @DeleteMapping(path = "/roles/{id}/{role}")
-    public ResponseEntity<String> deleteRole(@PathVariable int id, @PathVariable String role) {
+    public ResponseEntity<ResponseDTO> deleteRole(@PathVariable int id, @PathVariable String role) {
         return ResponseEntity.ok(adminService.deleteRole(id, role));
     }
 
@@ -130,12 +131,12 @@ public class AdminController {
     }
 
     @DeleteMapping(path = "/reports/{id}")
-    public ResponseEntity<String> deleteReport(@PathVariable int id) {
+    public ResponseEntity<ResponseDTO> deleteReport(@PathVariable int id) {
         return ResponseEntity.ok(reportService.deleteReport(id));
     }
 
     @DeleteMapping(path = "/messages/{id}")
-    public ResponseEntity<String> deleteMessage(@PathVariable int id) {
+    public ResponseEntity<ResponseDTO> deleteMessage(@PathVariable int id) {
         return ResponseEntity.ok(messageService.deleteMessage(id));
     }
 

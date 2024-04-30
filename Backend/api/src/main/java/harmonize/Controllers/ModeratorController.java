@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import harmonize.DTOs.ReportDTO;
+import harmonize.DTOs.ResponseDTO;
 import harmonize.DTOs.UserDTO;
 import harmonize.Services.MessageService;
 import harmonize.Services.ModeratorService;
@@ -45,7 +46,7 @@ public class ModeratorController {
     }
 
     @DeleteMapping(path = "")
-    public ResponseEntity<String> deleteSelf(Principal principal){
+    public ResponseEntity<ResponseDTO> deleteSelf(Principal principal){
         return ResponseEntity.ok(userService.deleteUser(moderatorService.getUser(principal.getName()).getId()));
     }
 
@@ -55,7 +56,7 @@ public class ModeratorController {
     }
 
     @DeleteMapping(path = "/users/{id}")
-    public ResponseEntity<String> deleteUser(@PathVariable int id){
+    public ResponseEntity<ResponseDTO> deleteUser(@PathVariable int id){
         return ResponseEntity.ok(moderatorService.deleteUser(id));
     }
 
@@ -80,12 +81,12 @@ public class ModeratorController {
     }
 
     @DeleteMapping(path = "/reports/{id}")
-    public ResponseEntity<String> deleteReport(@PathVariable int id) {
+    public ResponseEntity<ResponseDTO> deleteReport(@PathVariable int id) {
         return ResponseEntity.ok(reportService.deleteReport(id));
     }
 
     @DeleteMapping(path = "/messages/{id}")
-    public ResponseEntity<String> deleteMessage(@PathVariable int id) {
+    public ResponseEntity<ResponseDTO> deleteMessage(@PathVariable int id) {
         return ResponseEntity.ok(messageService.deleteMessage(id));
     }
 }

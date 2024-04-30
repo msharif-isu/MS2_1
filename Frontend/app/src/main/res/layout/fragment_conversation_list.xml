@@ -34,9 +34,9 @@
             <ImageButton
                 android:layout_width="45dp"
                 android:layout_height="45dp"
-                android:src="@drawable/delete"
+                android:src="@drawable/baseline_group_add_24"
                 android:background="?attr/selectableItemBackgroundBorderless"
-                android:id="@+id/deleteConvo"/>
+                android:id="@+id/addGroupChat"/>
 
         </androidx.appcompat.widget.Toolbar>
 

@@ -50,7 +50,7 @@ public class ConversationsFragment extends Fragment implements WebSocketListener
     private List<ConversationDTO> conversations;
     private Map<Integer, ConversationDTO> listConversations;
 
-    private ImageButton deleteConvos;
+    private ImageButton addGC;
 
     private RequestQueue mQueue = UserSession.getInstance().getmQueue();
 
@@ -121,30 +121,21 @@ public class ConversationsFragment extends Fragment implements WebSocketListener
         view = inflater.inflate(R.layout.fragment_conversation_list, container, false);
 
         recyclerView = view.findViewById(R.id.recycler);
-        deleteConvos = view.findViewById(R.id.deleteConvo);
+        addGC = view.findViewById(R.id.addGroupChat);
 //        view.findViewById(R.id.deleteConvo).setVisibility(View.GONE);
         conversations = getConversations();
         conversationListAdapter = new ConversationListAdapter(conversations, clickListener);
         recyclerView.setAdapter(conversationListAdapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
-        deleteConvos.setOnClickListener(new View.OnClickListener() {
+        addGC.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.d("Conversation", String.valueOf(UserSession.getInstance().getSelectedConversations().size()));
-                ArrayList<ConversationDTO> tempConvos = UserSession.getInstance().getSelectedConversations();
-                for (ConversationDTO convo : tempConvos) {
-                    int convoId = convo.getDataId();
-                    deleteConversation(convoId, new VolleyCallBack() {
-                        @Override
-                        public void onSuccess() {
-                            Log.d("Conversation", "Conversation id: " + convoId + " deleted");
-                        }
-                    });
-                }
-                ((navBar) getActivity()).loadFragment(new ConversationsFragment());
+//                ((navBar) getActivity()).loadFragment(new addGroupsFragment);
             }
         });
+
+
 
 
         return view;

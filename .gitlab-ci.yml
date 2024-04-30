@@ -61,7 +61,7 @@ frontend-docker-build:
     - ./gradlew build
   artifacts:
     paths:
-      - Android_test/app/build/outputs/
+      - app/build/outputs/
   only:
     variables:
       - $CI_PIPELINE_SOURCE == "web"

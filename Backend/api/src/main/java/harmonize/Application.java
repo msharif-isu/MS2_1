@@ -1,5 +1,7 @@
 package harmonize;
 
+import java.util.Set;
+
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -14,6 +16,7 @@ import harmonize.Repositories.UserRepository;
 import harmonize.Security.ChatCrypto;
 import harmonize.Services.AdminService;
 import harmonize.Services.AuthService;
+import harmonize.Services.ConversationService;
 import harmonize.Services.MessageService;
 import harmonize.Services.RoleService;
 import harmonize.Services.UserService;
@@ -33,7 +36,7 @@ public class Application {
     }
 
     @Bean
-    public CommandLineRunner initUser(AuthService authService, RoleService roleService, AdminService adminService, UserService userService, MessageService messageService, ChatCrypto chatCrypto, UserRepository userRepository) {
+    public CommandLineRunner initUser(AuthService authService, RoleService roleService, AdminService adminService, UserService userService, ConversationService conversationService, MessageService messageService, ChatCrypto chatCrypto, UserRepository userRepository) {
         return args -> {
             try {
                 if (roleService.getRole("ADMIN") == null)
@@ -68,17 +71,12 @@ public class Application {
                 tim = userRepository.findByUsername("tim");
                 manas = userRepository.findByUsername("manasmathur2023");
 
-                Conversation conversation = null;
-                for (Conversation convo : john.getConversations()) {
-                    if (convo.getMembers().contains(manas))
-                        conversation = convo;
-                }
+
+
+                Conversation conversation = conversationService.createConversation(Set.of(manas, john));
                 messageService.createMessage(john, conversation, "Wassup", chatCrypto.unwrap("johnpw", john.getPrivateKeyWrapped()));
 
-                for (Conversation convo : tim.getConversations()) {
-                    if (convo.getMembers().contains(manas))
-                        conversation = convo;
-                }
+                conversation = conversationService.createConversation(Set.of(tim, john));
                 messageService.createMessage(tim, conversation, "Hii", chatCrypto.unwrap("timpw", tim.getPrivateKeyWrapped()));
             
                 try {

@@ -48,6 +48,7 @@ public class ChatTest extends TestUtil {
         todTestService.getChatSocket().connect();
         todTestService.addFriend(bobTestService.getUser().getId());
         bobTestService.addFriend(todTestService.getUser().getId());
+        todTestService.createConversation(List.of(todTestService.getUser().getId(), bobTestService.getUser().getId()));
         Thread.sleep(5000);
 
         assertTrue(todTestService.getChatSocket().isOpen());
@@ -64,6 +65,7 @@ public class ChatTest extends TestUtil {
 
         todTestService.addFriend(bobTestService.getUser().getId());
         bobTestService.addFriend(todTestService.getUser().getId());
+        todTestService.createConversation(List.of(todTestService.getUser().getId(), bobTestService.getUser().getId()));
         Thread.sleep(5000);
 
         assertTrue(samTestService.getChatSocket().isOpen());
@@ -81,6 +83,7 @@ public class ChatTest extends TestUtil {
 
         todTestService.addFriend(bobTestService.getUser().getId());
         bobTestService.addFriend(todTestService.getUser().getId());
+        todTestService.createConversation(List.of(todTestService.getUser().getId(), bobTestService.getUser().getId()));
         Thread.sleep(5000);
 
         ConversationDTO conversation = todTestService.getChatSocket().getConversations().stream()

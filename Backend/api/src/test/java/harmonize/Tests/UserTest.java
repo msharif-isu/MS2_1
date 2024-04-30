@@ -203,6 +203,7 @@ public class UserTest extends TestUtil {
 
         todTestService.addFriend(bobTestService.getUser().getId());
         bobTestService.addFriend(todTestService.getUser().getId());
+        todTestService.createConversation(List.of(todTestService.getUser().getId(), bobTestService.getUser().getId()));
         Thread.sleep(5000);
 
         ConversationDTO conversation = bobTestService.getChatSocket().getConversations().stream()
@@ -232,6 +233,7 @@ public class UserTest extends TestUtil {
 
         todTestService.addFriend(bobTestService.getUser().getId());
         bobTestService.addFriend(todTestService.getUser().getId());
+        todTestService.createConversation(List.of(todTestService.getUser().getId(), bobTestService.getUser().getId()));
         Thread.sleep(5000);
 
         ConversationDTO conversation = bobTestService.getChatSocket().getConversations().stream()
@@ -257,6 +259,7 @@ public class UserTest extends TestUtil {
 
         todTestService.addFriend(bobTestService.getUser().getId());
         bobTestService.addFriend(todTestService.getUser().getId());
+        todTestService.createConversation(List.of(todTestService.getUser().getId(), bobTestService.getUser().getId()));
         Thread.sleep(5000);
 
         ConversationDTO conversation = bobTestService.getChatSocket().getConversations().stream()
@@ -288,6 +291,7 @@ public class UserTest extends TestUtil {
 
         todTestService.addFriend(bobTestService.getUser().getId());
         bobTestService.addFriend(todTestService.getUser().getId());
+        todTestService.createConversation(List.of(todTestService.getUser().getId(), bobTestService.getUser().getId()));
         Thread.sleep(5000);
 
         ConversationDTO conversation = bobTestService.getChatSocket().getConversations().stream()
@@ -318,6 +322,7 @@ public class UserTest extends TestUtil {
 
         todTestService.addFriend(bobTestService.getUser().getId());
         bobTestService.addFriend(todTestService.getUser().getId());
+        todTestService.createConversation(List.of(todTestService.getUser().getId(), bobTestService.getUser().getId()));
         Thread.sleep(5000);
 
         ConversationDTO conversation = bobTestService.getChatSocket().getConversations().stream()

@@ -116,10 +116,9 @@ public class UserService {
             friend.getFriends().remove(user);
             userRepository.save(friend);
         }
-
-        for (Conversation conversation : user.getConversations()) {
-            conversationService.removeMember(conversation, user);
-        }
+        
+        List<Conversation> conversationCopy = new ArrayList<>(user.getConversations());
+        conversationCopy.stream().forEach(conversation -> conversationService.removeMember(conversation, user));
             
         userRepository.delete(user);
         
@@ -218,8 +217,6 @@ public class UserService {
             userRepository.save(friend);
             return new String(String.format("\"%s\" sent friend invite to \"%s\"", user.getUsername(), friend.getUsername()));
         }
-
-        conversationService.createConversation(Set.of(user, friend));
 
         user.getFriendInvites().remove(friend);
         friend.getFriends().add(user);
@@ -330,21 +327,20 @@ public class UserService {
         userRepository.save(user);
     }
 
-    public ConversationDTO createConversation(int id, List<Integer> others) {
+    public ConversationDTO createConversation(int id, List<Integer> memberIds) {
         User user = userRepository.findReferenceById(id);
 
-        if(user == null) {
-            System.err.println("Here1");
+        if(user == null)
             throw new EntityNotFoundException("User " + id + " not found.");
-        }
 
         Set<User> members = new HashSet<>() {};
         members.add(user);
-        for (int other : others) {
-            User friend = userRepository.findReferenceById(other);
-            if(user != friend && !user.getFriends().contains(friend))
-                throw new EntityNotFoundException("User " + other + " was not found in user " + id + " friend list.");
-            members.add(friend);
+        user.getFriends().stream().forEach(friend -> System.err.println("Friend:" + new UserDTO(friend)));
+        for (int memberId : memberIds) {
+            User other = userRepository.findReferenceById(memberId);
+            if(user.getId() != other.getId() && user.getFriends().stream().noneMatch(friend -> friend.getId() == other.getId()))
+                throw new EntityNotFoundException("User " + memberId + " was not found in user " + id + " friend list.");
+            members.add(other);
         }
 
         return new ConversationDTO(conversationService.createConversation(members));

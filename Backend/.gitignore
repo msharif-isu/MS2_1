@@ -1,2 +1,3 @@
 .vscode/
 HarmonizeDBConnection.session.sql
+docker-compose.test.yml

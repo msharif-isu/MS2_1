@@ -1,4 +1,4 @@
-name: ${TEST_ID}-backend-test
+name: ${TEST_ID}-harmonize-test
 
 services:
   harmonize-db:
@@ -14,7 +14,7 @@ services:
       test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p$MYSQL_ROOT_PASSWORD"]
       interval: 5s
       timeout: 5s
-      retries: 10
+      retries: 50
 
   coms-309-032.class.las.iastate.edu:
     build: ./Backend/api
@@ -28,7 +28,7 @@ services:
       test: ["CMD", "curl", "localhost:8080"]
       interval: 5s
       timeout: 5s
-      retries: 10
+      retries: 100
 
   harmonize-frontend:
     build: Frontend

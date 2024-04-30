@@ -82,7 +82,7 @@ public class ChatService {
             onError(session, new InternalServerErrorException("Could not parse message."), false);
             return;
         }
-        if (!user.getConversations().contains(conversationRepository.findReferenceById(map.at("/data/conversation/id").asInt()))) {
+        if (!conversationRepository.findReferenceById(map.at("/data/conversation/id").asInt()).getMembers().contains(user)) {
             onError(session, new UnauthorizedException("You are not a member of that conversation."), false);
             return;
         }

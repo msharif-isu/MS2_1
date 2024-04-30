@@ -55,7 +55,7 @@ public abstract class AbstractFeedItem {
     private Date expiration;
 
     @JsonIncludeProperties(value = {"id"})
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", referencedColumnName = "id") 
     private User user;
 

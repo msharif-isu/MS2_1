@@ -10,6 +10,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -21,6 +22,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import harmonize.DTOs.FeedDTO;
 import harmonize.DTOs.TransmissionDTO;
+import harmonize.Entities.ArtistFreq;
 import harmonize.Entities.LikedSong;
 import harmonize.Entities.Song;
 import harmonize.Entities.User;
@@ -33,9 +35,11 @@ import harmonize.ErrorHandling.Exceptions.UnauthorizedException;
 import harmonize.Repositories.UserRepository;
 import harmonize.Repositories.FeedRepositories.FeedRepository;
 import harmonize.Repositories.FeedRepositories.SongFeedRepository;
+import jakarta.transaction.Transactional;
 import jakarta.websocket.Session;
 
 @Service
+@Transactional
 public class FeedService {
     private static Set<Session> sessions = new HashSet<>();
 
@@ -48,7 +52,7 @@ public class FeedService {
     private BCryptPasswordEncoder encoder;
 
     @Autowired
-    public FeedService(MusicService musicService, UserRepository userRepository, SongFeedRepository songFeedRepository, FeedRepository feedRepository, 
+    public FeedService(MusicService musicService, UserRepository userRepository, SongFeedRepository songFeedRepository, FeedRepository feedRepository,
                             BCryptPasswordEncoder encoder, ObjectMapper mapper) {
         this.musicService = musicService;
         this.userRepository = userRepository;
@@ -108,6 +112,7 @@ public class FeedService {
             int end = Math.min(feed.size(), offset + limit);
 
             List<AbstractFeedItem> feedPage = feed.subList(start, end);
+            Hibernate.initialize(user.getSeenFeed());
             for(int i = start; i < end; i++) {
                 AbstractFeedItem item = feedPage.get(i - start);
                 if(item instanceof SongFeedItem)
@@ -126,8 +131,10 @@ public class FeedService {
     public void onClose(Session session) throws IOException {
         loadProperties(session);
         User user = (User)session.getUserProperties().get("user");
+
         if(user != null)
-            userRepository.save(user);
+            user = userRepository.saveAndFlush(user);
+
         sessions.remove(session);
     }
 
@@ -183,7 +190,7 @@ public class FeedService {
             session.getUserProperties().containsKey("password") ? 
                 (String)session.getUserProperties().get("password") : 
                 session.getRequestParameterMap().get("password").get(0);
-        
+
         if (!encoder.matches(password, user.getPassword()))
             onError(session, new UnauthorizedException("Password field in request parameters was invalid."));
 
@@ -205,12 +212,13 @@ public class FeedService {
     private List<AbstractFeedItem> generateFeed(User user) {
         List<AbstractFeedItem> feed = new ArrayList<>();
 
-        if(user.getLikedSongs().isEmpty()) {
+        if(user.getLikedSongs().isEmpty())
             return feed;
-        }
 
-        for(String artistId : user.getTopArtists()) {
-            for(Song song : musicService.getNewReleases(artistId)) {
+        List<ArtistFreq> topArtists = user.getTopArtists();
+
+        for(int i = 0; i < topArtists.size() && i < 10; i++) {
+            for(Song song : musicService.getNewReleases(topArtists.get(i).getArtist().getId())) {
                 if(user.getLikedSongs().contains(new LikedSong(user, song)))
                     continue;
                 feed.add(new SongFeedItem(FeedEnum.NEW_RELEASE, song, user));
@@ -223,6 +231,7 @@ public class FeedService {
             feed.add(new SongFeedItem(FeedEnum.RECOMMENDATION, song, user));
         }
 
+        Hibernate.initialize(user.getSeenFeed());
         feed.removeAll(user.getSeenFeed());
         Collections.shuffle(feed);
 

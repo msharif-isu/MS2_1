@@ -1,6 +1,5 @@
 package harmonize.Repositories.FeedRepositories;
 
-
 import org.springframework.stereotype.Repository;
 
 /**

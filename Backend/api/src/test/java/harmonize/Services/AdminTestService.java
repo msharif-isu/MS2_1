@@ -8,6 +8,8 @@ import java.util.List;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 
+import com.fasterxml.jackson.databind.JsonNode;
+
 
 public class AdminTestService extends AbstractUserTestService {
 
@@ -33,8 +35,8 @@ public class AdminTestService extends AbstractUserTestService {
         return requestService.requestUser(auth, url + port + "/admins/users/" + id, HttpMethod.GET);
     }
 
-    public ResponseEntity<String> deleteUser(int id) {
-        return requestService.requestString(auth, url + port + "/admins/users/" + id, HttpMethod.DELETE);
+    public ResponseEntity<JsonNode> deleteUser(int id) {
+        return requestService.requestJson(auth, url + port + "/admins/users/" + id, HttpMethod.DELETE);
     }
 
     public ResponseEntity<List<RoleDTO>> getUserRoles(int id) {

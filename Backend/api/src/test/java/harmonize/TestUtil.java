@@ -9,7 +9,6 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
@@ -26,15 +25,12 @@ import harmonize.Services.UserTestService;
 import harmonize.Services.WebSocketTestService;
 import lombok.Getter;
 
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 public class TestUtil {
     
     @LocalServerPort
     @Getter private int port;
-    @Getter private String hostname = "localhost";
-
-    @Autowired
-    protected TestRestTemplate restTemplate;
+    @Getter private String hostname = "coms-309-032.class.las.iastate.edu";
 
     @Autowired
     protected RequestService requestService;

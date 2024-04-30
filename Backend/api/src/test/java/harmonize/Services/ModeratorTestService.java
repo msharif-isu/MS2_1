@@ -5,6 +5,8 @@ import harmonize.DTOs.UserDTO;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 
+import com.fasterxml.jackson.databind.JsonNode;
+
 public class ModeratorTestService extends AbstractUserTestService {
 
     public ModeratorTestService(String username, String password) {
@@ -21,7 +23,7 @@ public class ModeratorTestService extends AbstractUserTestService {
         return requestService.requestUser(auth, url + port + "/moderators", HttpMethod.GET);
     }
     
-    public ResponseEntity<String> deleteSelf() {
-        return requestService.requestString(auth, url + port + "/moderators", HttpMethod.DELETE);
+    public ResponseEntity<JsonNode> deleteSelf() {
+        return requestService.requestJson(auth, url + port + "/moderators", HttpMethod.DELETE);
     }
 }

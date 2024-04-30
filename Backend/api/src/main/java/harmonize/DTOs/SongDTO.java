@@ -1,14 +1,16 @@
 package harmonize.DTOs;
 
 import harmonize.Entities.Song;
+
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import harmonize.Entities.LikedSong;
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 
 @Data
-@AllArgsConstructor
 @RequiredArgsConstructor
 public class SongDTO {
     @NonNull
@@ -36,5 +38,13 @@ public class SongDTO {
         this.artistid = connection.getSong().getArtistId();
         this.title = connection.getSong().getTitle();
         this.artist = connection.getSong().getArtist();
+    }
+
+    @JsonCreator
+    public SongDTO(@JsonProperty("id") String id, @JsonProperty("artistid") String artistid, @JsonProperty("title") String title, @JsonProperty("artist") String artist) {
+        this.id = id;
+        this.artistid = artistid;
+        this.title = title;
+        this.artist = artist;
     }
 }

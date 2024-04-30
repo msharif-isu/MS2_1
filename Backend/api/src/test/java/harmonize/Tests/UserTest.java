@@ -13,6 +13,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestClientException;
 
+import com.fasterxml.jackson.databind.JsonNode;
+
 import harmonize.TestUtil;
 import harmonize.DTOs.ConversationDTO;
 import harmonize.DTOs.LoginDTO;
@@ -155,13 +157,13 @@ public class UserTest extends TestUtil {
 
     @Test
     public void addFriendInviteOkTest() throws Exception {
-        ResponseEntity<String> responseEntity = todTestService.addFriend(bobTestService.getUser().getId());
+        ResponseEntity<JsonNode> responseEntity = todTestService.addFriend(bobTestService.getUser().getId());
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
     }
 
     @Test
     public void addFriendNotFoundTest() throws Exception {
-        ResponseEntity<String> responseEntity = todTestService.addFriend(0);
+        ResponseEntity<JsonNode> responseEntity = todTestService.addFriend(0);
         assertEquals(HttpStatus.NOT_FOUND, responseEntity.getStatusCode());
     }
 
@@ -169,7 +171,7 @@ public class UserTest extends TestUtil {
     public void addFriendInviteAlreadySentTest() throws Exception {
         todTestService.addFriend(bobTestService.getUser().getId());
 
-        ResponseEntity<String> responseEntity = todTestService.addFriend(bobTestService.getUser().getId());
+        ResponseEntity<JsonNode> responseEntity = todTestService.addFriend(bobTestService.getUser().getId());
         assertEquals(HttpStatus.CONFLICT, responseEntity.getStatusCode());
     }
 
@@ -177,7 +179,7 @@ public class UserTest extends TestUtil {
     public void addFriendOkTest() throws Exception {
         bobTestService.addFriend(todTestService.getUser().getId());
 
-        ResponseEntity<String> responseEntity = todTestService.addFriend(bobTestService.getUser().getId());
+        ResponseEntity<JsonNode> responseEntity = todTestService.addFriend(bobTestService.getUser().getId());
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
     }
 
@@ -186,13 +188,13 @@ public class UserTest extends TestUtil {
         todTestService.addFriend(bobTestService.getUser().getId());
         bobTestService.addFriend(todTestService.getUser().getId());
         
-        ResponseEntity<String> responseEntity = todTestService.addFriend(bobTestService.getUser().getId());
+        ResponseEntity<JsonNode> responseEntity = todTestService.addFriend(bobTestService.getUser().getId());
         assertEquals(HttpStatus.CONFLICT, responseEntity.getStatusCode());
     }
 
     @Test
     public void addFriendSelfTest() throws Exception {
-        ResponseEntity<String> responseEntity = todTestService.addFriend(todTestService.getUser().getId());
+        ResponseEntity<JsonNode> responseEntity = todTestService.addFriend(todTestService.getUser().getId());
         assertEquals(HttpStatus.BAD_REQUEST, responseEntity.getStatusCode());
     }
 
@@ -307,7 +309,7 @@ public class UserTest extends TestUtil {
 
         String reportText = "It was offensive";
         ReportDTO report = todTestService.sendReport(message, reportText).getBody();
-        ResponseEntity<String> responseEntity = todTestService.deleteReport(report);
+        ResponseEntity<JsonNode> responseEntity = todTestService.deleteReport(report);
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
     }
 

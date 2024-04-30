@@ -2,6 +2,9 @@ package harmonize.DTOs;
 
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import harmonize.ErrorHandling.Exceptions.InternalServerErrorException;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -17,7 +20,8 @@ public class RecommendationDTO {
     private List<String> artistIds;
     private List<String> songIds;
 
-    public RecommendationDTO(String limit, List<String> artistIds, List<String> songIds) {
+    @JsonCreator
+    public RecommendationDTO(@JsonProperty("limit") String limit, @JsonProperty("artistIds") List<String> artistIds, @JsonProperty("songIds") List<String> songIds) {
         if(artistIds.size() + songIds.size() > 5)
             throw new InternalServerErrorException("Combined size of artistIds and songIds must be equal to or less than 5");
 

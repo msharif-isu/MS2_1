@@ -8,6 +8,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
@@ -37,8 +38,8 @@ public class UserTestService extends AbstractUserTestService {
         return requestService.requestUser(auth, url + port + "/users", HttpMethod.PUT, user);
     }
 
-    public ResponseEntity<String> deleteSelf() {
-        return requestService.requestString(auth, url + port + "/users", HttpMethod.DELETE);
+    public ResponseEntity<JsonNode> deleteSelf() {
+        return requestService.requestJson(auth, url + port + "/users", HttpMethod.DELETE);
     }
 
     public ResponseEntity<UserDTO> getUserById(int id) {
@@ -61,12 +62,12 @@ public class UserTestService extends AbstractUserTestService {
         return requestService.requestUserList(auth, url + port + "/users/friends/invites", HttpMethod.GET);
     }
 
-    public ResponseEntity<String> addFriend(int id) {
-        return requestService.requestString(auth, url + port + "/users/friends/" + id, HttpMethod.POST);
+    public ResponseEntity<JsonNode> addFriend(int id) {
+        return requestService.requestJson(auth, url + port + "/users/friends/" + id, HttpMethod.POST);
     }
 
-    public ResponseEntity<String> removeFriend(int id) {
-        return requestService.requestString(auth, url + port + "/users/friends/" + id, HttpMethod.DELETE);
+    public ResponseEntity<JsonNode> removeFriend(int id) {
+        return requestService.requestJson(auth, url + port + "/users/friends/" + id, HttpMethod.DELETE);
     }
 
     public ResponseEntity<List<ReportDTO>> getSentReports() {
@@ -80,8 +81,8 @@ public class UserTestService extends AbstractUserTestService {
         return requestService.requestReport(auth, url + port + "/users/reports", HttpMethod.POST, body);
     }
 
-    public ResponseEntity<String> deleteReport(ReportDTO report) {
-        return requestService.requestString(auth, url + port + "/users/reports/" + report.getId(), HttpMethod.DELETE);
+    public ResponseEntity<JsonNode> deleteReport(ReportDTO report) {
+        return requestService.requestJson(auth, url + port + "/users/reports/" + report.getId(), HttpMethod.DELETE);
     }
 
     public ResponseEntity<UserDTO> getAdminRequest() {

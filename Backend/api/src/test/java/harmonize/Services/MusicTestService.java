@@ -27,7 +27,7 @@ public class MusicTestService {
     }
 
     public void setConnection(String hostname, int port) {
-        this.url = "http://" + hostname + ":";
+        this.url = "https://" + hostname + ":";
         this.port = port;
     }
 

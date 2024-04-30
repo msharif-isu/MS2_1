@@ -20,7 +20,7 @@ public class ChatSocketTestService extends WebSocketTestService {
 
     ObjectMapper mapper = new ObjectMapper();
 
-    public ChatSocketTestService(URI serverUri) {
+    public ChatSocketTestService(URI serverUri) throws Exception {
         super(serverUri);
     }
 

@@ -35,11 +35,15 @@ public abstract class AbstractUserTestService {
     }
 
     public void setConnection(String hostname, int port) {
-        this.url = "http://" + hostname + ":";
+        this.url = "https://" + hostname + ":";
         this.port = port;
-        chatSocket = new ChatSocketTestService(URI.create("ws://" + hostname + ":" + port + "/chats?username=" + username + "&password=" + password));
+        try {
+            chatSocket = new ChatSocketTestService(URI.create("wss://" + hostname + ":" + port + "/chats?username=" + username + "&password=" + password));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
-        ResponseEntity<AuthDTO> responseEntity = authTestService.register(new RegisterDTO("tod", "wilson", username, password));
+        ResponseEntity<AuthDTO> responseEntity = authTestService.register(new RegisterDTO("first", "last", username, password));
         if (responseEntity.getStatusCode() == HttpStatus.OK)
             auth = responseEntity.getBody();
         else

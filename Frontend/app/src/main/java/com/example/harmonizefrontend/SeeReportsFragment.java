@@ -116,10 +116,10 @@ public class SeeReportsFragment extends Fragment {
                         Log.e("report", "Accessed all reports");
                         for (int i = 0; i < response.length(); i++) {
                             JSONObject reportObject = response.getJSONObject(i);
-                            Report report = parseReport(reportObject); // Implement this method based on your Report class
+                            Report report = parseReport(reportObject);
                             reportList.add(report);
                         }
-                        volleyCallBack.onSuccess(); // Adjust your callback interface to accept the parsed reports
+                        volleyCallBack.onSuccess();
                     } catch (Exception e) {
                         e.printStackTrace();
                     }

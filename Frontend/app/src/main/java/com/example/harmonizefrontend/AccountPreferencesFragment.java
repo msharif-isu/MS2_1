@@ -30,18 +30,23 @@ import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.ImageRequest;
+import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
 
 import org.json.JSONObject;
 
+import java.sql.Array;
+import java.util.ArrayList;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import Connections.VolleyCallBack;
 import PictureData.SeePictureFragment;
 import PictureData.SharedViewModel;
 import UserInfo.Member;
+import UserInfo.User;
 import UserInfo.UserSession;
 import messaging.chat.ReportMessageFragment;
 
@@ -63,13 +68,12 @@ public class AccountPreferencesFragment extends Fragment {
     private String mParam2;
 
     private ImageView profilePicture;
-    private int id;
     private String username, password, firstName, lastName, bio;
     private EditText usernameText, bioText, firstNameText, lastNameText;
     private TextView passwordView;
     private boolean hidden = true;
     private boolean allowEdit = false;
-    private Button updatePrefsBtn, logoutBtn, delAccBtn;
+    private Button updatePrefsBtn, logoutBtn, delAccBtn, seeReportsBtn;
 
     private ImageButton changePicBtn, editInfoBtn, unhidePass;
 
@@ -130,7 +134,6 @@ public class AccountPreferencesFragment extends Fragment {
                 data);
     }
 
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -154,6 +157,8 @@ public class AccountPreferencesFragment extends Fragment {
         delAccBtn = rootView.findViewById(R.id.delAccount);
         changePicBtn = rootView.findViewById(R.id.changePicture);
         editInfoBtn = rootView.findViewById(R.id.editInfo);
+        seeReportsBtn = rootView.findViewById(R.id.seeReports);
+        seeReportsBtn.setVisibility(View.GONE);
 
         usernameText.setEnabled(allowEdit);
         firstNameText.setEnabled(allowEdit);
@@ -194,18 +199,30 @@ public class AccountPreferencesFragment extends Fragment {
                 bioText.setText(bio);
                 passwordView.setText(password);
 
-                Member currentUser = new Member(id, firstName, lastName, username, bio);
+                Member currentUser = new Member(99999, firstName, lastName, username, bio);
                 UserSession.getInstance().setCurrentUser(currentUser);
                 UserSession.getInstance().setPassword(password);
                 UserSession.getInstance().setJwtToken(jwtToken);
                 Log.d("jwt", "OG jwt: " + jwtToken);
                 UserSession.getInstance().setmQueue(mQueue);
                 Log.e("msg", currentUser.getUsername() + " " + currentUser.getFirstName() + " " + currentUser.getLastName() + " " + currentUser.getBio());
+                checkRoles();
+                Log.e("Mod", "Num roles: " + String.valueOf(UserSession.getInstance().getRoles().size()));
+                if (UserSession.getInstance().getRoles().size() > 1) {
+                    seeReportsBtn.setVisibility(View.VISIBLE);
+                }
+                makeImageRequest();
             }
 
         });
 
-        makeImageRequest();
+        seeReportsBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ((navBar) getActivity()).loadFragment(new SeeReportsFragment());
+            }
+        });
+
 
 
 
@@ -300,7 +317,7 @@ public class AccountPreferencesFragment extends Fragment {
                             lastNameText.setText(lastName);
                             bioText.setText(bio);
 
-                            currentUser = new Member(id, firstName, lastName, username, bio);
+                            currentUser = new Member(99999, firstName, lastName, username, bio);
                             UserSession.getInstance().setCurrentUser(currentUser);
                             UserSession.getInstance().setPassword(password);
                             UserSession.getInstance().setJwtToken(jwtToken);
@@ -320,12 +337,164 @@ public class AccountPreferencesFragment extends Fragment {
         return rootView;
     }
 
-    /**
-     * Sends a request to change current users profile details
-     * @param callBackDetails
-     */
-    private void updateUserDetails(final VolleyCallBack callBackDetails) {
+    private void getUserDetails(VolleyCallBack callBack) {
+        Log.e("JWT", "inside the method");
 
+        JsonObjectRequest jsonObjReq = new JsonObjectRequest(
+                Request.Method.GET,
+                URL + "/users",
+                null, // Pass null as the request body since it's a GET request
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        try {
+                            Log.e("JWT", "Accessed user details");
+
+                            username = response.getString("username");
+
+                            firstName = response.getString("firstName");
+
+                            lastName = response.getString("lastName");
+
+                            bio = response.getString("bio");
+
+                            callBack.onSuccess();
+
+                        }
+                        catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Log.e("JWT", error.toString());
+                    }
+                }
+        )
+
+        {
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                HashMap<String, String> headers = new HashMap<String, String>();
+                headers.put("Authorization", jwtToken);
+                return headers;
+            }
+
+            @Override
+            protected Map<String, String> getParams() {
+                Map<String, String> params = new HashMap<String, String>();
+//                params.put("param1", "value1");
+//                params.put("param2", "value2");
+                return params;
+            }
+        };
+        mQueue.add(jsonObjReq);
+    }
+
+    private void makeImageRequest() {
+        ImageRequest imageRequest = new ImageRequest(
+                URL + "/users/icons", // Do change
+                new Response.Listener<Bitmap>() {
+                    @Override
+                    public void onResponse(Bitmap response) {
+                        // Display the image in the ImageView
+                        if (response == null) {
+                            profilePicture.setImageResource(R.drawable.ic_launcher_foreground);
+                        }
+                        else {
+                            profilePicture.setImageBitmap(response);
+                        }
+                        Log.d("Image", response.toString());
+                    }
+                },
+                0, // Width, set to 0 to get the original width
+                0, // Height, set to 0 to get the original height
+                ImageView.ScaleType.FIT_XY, // ScaleType
+                Bitmap.Config.RGB_565, // Bitmap config
+
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        // Handle errors here
+                        Log.e("Volley Error", error.toString());
+                    }
+                }
+
+        )
+
+        {
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                HashMap<String, String> headers = new HashMap<String, String>();
+                headers.put("Authorization", jwtToken);
+                return headers;
+            }
+
+            @Override
+            protected Map<String, String> getParams() {
+                Map<String, String> params = new HashMap<String, String>();
+//                params.put("param1", "value1");
+//                params.put("param2", "value2");
+                return params;
+            }
+        };
+
+        // Adding request to request queue
+        mQueue.add(imageRequest);
+    }
+
+    private void deleteUser(VolleyCallBack volleyCallBack) {
+        JsonObjectRequest jsonObjReq = new JsonObjectRequest(
+                Request.Method.DELETE,
+                URL + "/users",
+                null,
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        try {
+                            Log.e("JWT", "Deleting user");
+                            Toast.makeText(getActivity(), "Account Deleted", Toast.LENGTH_LONG).show();
+
+                            volleyCallBack.onSuccess();
+
+                        }
+                        catch (Exception e) {
+                            e.printStackTrace();
+                            volleyCallBack.onSuccess(); // GOTTA FIGURE OUT WHY IM GETTING THIS ERROR, IT STILL ACTUALLY DELETES THE ACCOUNT
+
+                        }
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Log.e("JWT", error.toString());
+                    }
+                }
+        )
+
+        {
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                HashMap<String, String> headers = new HashMap<String, String>();
+                headers.put("Authorization", UserSession.getInstance().getJwtToken());
+                return headers;
+            }
+
+            @Override
+            protected Map<String, String> getParams() {
+                Map<String, String> params = new HashMap<String, String>();
+//                params.put("param1", "value1");
+//                params.put("param2", "value2");
+                return params;
+            }
+        };
+        mQueue.add(jsonObjReq);
+    }
+
+    private void updateUserDetails(VolleyCallBack callBackDetails) {
         JSONObject jsonBody = new JSONObject();
         try {
             if (!username.equals(usernameText.getText().toString())) {
@@ -386,45 +555,30 @@ public class AccountPreferencesFragment extends Fragment {
             }
         };
         mQueue.add(jsonObjReq);
+    }
 
-    };
-
-    /**
-     * Sends a request to delete the current user
-     * @param delUserCallBack
-     */
-    private void deleteUser(final VolleyCallBack delUserCallBack) {
-
-        JsonObjectRequest jsonObjReq = new JsonObjectRequest(
-                Request.Method.DELETE,
-                URL + "/users",
-                null,
-                new Response.Listener<JSONObject>() {
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        try {
-                            Log.e("JWT", "Deleting user");
-                            Toast.makeText(getActivity(), "Account Deleted", Toast.LENGTH_LONG).show();
-
-                            delUserCallBack.onSuccess();
-
+    private void checkRoles() {
+        JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(
+                Request.Method.GET,
+                URL + "/users/roles",
+                null, // Pass null as the request body since it's a GET request
+                response -> {
+                    try {
+                        List<String> roles = new ArrayList<>();
+                        for (int i = 0; i < response.length(); i++) {
+                            JSONObject roleObject = response.getJSONObject(i);
+                            String role = roleObject.getString("name");
+                            Log.e("roles", "User has role: " + role);
+                            roles.add(role);
                         }
-                        catch (Exception e) {
-                            e.printStackTrace();
-                            delUserCallBack.onSuccess(); // GOTTA FIGURE OUT WHY IM GETTING THIS ERROR, IT STILL ACTUALLY DELETES THE ACCOUNT
-
-                        }
+                        UserSession.getInstance().setRoles(roles);
+                    }
+                    catch (Exception e) {
+                        e.printStackTrace();
                     }
                 },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        Log.e("JWT", error.toString());
-                    }
-                }
-        )
-
-        {
+                error -> Log.e("report", error.toString())
+        ) {
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
                 HashMap<String, String> headers = new HashMap<String, String>();
@@ -440,127 +594,11 @@ public class AccountPreferencesFragment extends Fragment {
                 return params;
             }
         };
-        mQueue.add(jsonObjReq);
+        mQueue.add(jsonArrayRequest);
     }
-
-
-    /**
-     * Request to get user details
-     */
-    private void getUserDetails(final VolleyCallBack callBack) {
-
-        Log.e("JWT", "inside the method");
-
-        JsonObjectRequest jsonObjReq = new JsonObjectRequest(
-                Request.Method.GET,
-                URL + "/users",
-                null, // Pass null as the request body since it's a GET request
-                new Response.Listener<JSONObject>() {
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        try {
-                            Log.e("JWT", "Accessed user details");
-
-                            id = response.getInt("id");
-
-                            username = response.getString("username");
-
-                            firstName = response.getString("firstName");
-
-                            lastName = response.getString("lastName");
-
-                            bio = response.getString("bio");
-
-                            callBack.onSuccess();
-
-                    }
-                    catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                    }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        Log.e("JWT", error.toString());
-                    }
-                }
-        )
-
-        {
-            @Override
-            public Map<String, String> getHeaders() throws AuthFailureError {
-                HashMap<String, String> headers = new HashMap<String, String>();
-                headers.put("Authorization", jwtToken);
-                return headers;
-            }
-
-            @Override
-            protected Map<String, String> getParams() {
-                Map<String, String> params = new HashMap<String, String>();
-//                params.put("param1", "value1");
-//                params.put("param2", "value2");
-                return params;
-            }
-        };
-        mQueue.add(jsonObjReq);
-    }
-
-    private void makeImageRequest() {
-
-        ImageRequest imageRequest = new ImageRequest(
-                URL + "/users/icons", // Do change
-                new Response.Listener<Bitmap>() {
-                    @Override
-                    public void onResponse(Bitmap response) {
-                        // Display the image in the ImageView
-                        if (response == null) {
-                            profilePicture.setImageResource(R.drawable.ic_launcher_foreground);
-                        }
-                        else {
-                            profilePicture.setImageBitmap(response);
-                        }
-                        Log.d("Image", response.toString());
-                    }
-                },
-                0, // Width, set to 0 to get the original width
-                0, // Height, set to 0 to get the original height
-                ImageView.ScaleType.FIT_XY, // ScaleType
-                Bitmap.Config.RGB_565, // Bitmap config
-
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        // Handle errors here
-                        Log.e("Volley Error", error.toString());
-                    }
-                }
-
-        )
-
-        {
-            @Override
-            public Map<String, String> getHeaders() throws AuthFailureError {
-                HashMap<String, String> headers = new HashMap<String, String>();
-                headers.put("Authorization", jwtToken);
-                return headers;
-            }
-
-            @Override
-            protected Map<String, String> getParams() {
-                Map<String, String> params = new HashMap<String, String>();
-//                params.put("param1", "value1");
-//                params.put("param2", "value2");
-                return params;
-            }
-        };
-
-        // Adding request to request queue
-        mQueue.add(imageRequest);
-    }
-
-
-
-
-
 }
+
+
+
+
+

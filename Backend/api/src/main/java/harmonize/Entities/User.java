@@ -6,10 +6,9 @@ import java.util.List;
 import java.util.Set;
 
 import harmonize.Entities.FeedItems.AbstractFeedItem;
+import harmonize.Entities.FeedItems.PostFeedItem;
 import jakarta.persistence.CascadeType;
-import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
-import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -20,7 +19,6 @@ import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OrderBy;
-import jakarta.persistence.OrderColumn;
 import jakarta.persistence.Table;
 import lombok.Data;
 
@@ -61,11 +59,10 @@ public class User {
     @OrderBy("time DESC")
     private List<LikedSong> likedSongs = new ArrayList<>();
 
-    @ElementCollection(fetch = FetchType.EAGER)
-    @CollectionTable(name = "user_top_artists", joinColumns = @JoinColumn(name = "user_id"))
-    @Column(name = "artist_id")
-    @OrderColumn(name = "top_artist_index")
-    private List<String> topArtists = new ArrayList<>();
+    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER, cascade = { CascadeType.MERGE, CascadeType.REMOVE }, 
+                orphanRemoval = true)
+    @OrderBy("frequency DESC")
+    private List<ArtistFreq> topArtists = new ArrayList<>();
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "userRoles", joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),
@@ -87,10 +84,14 @@ public class User {
                                     inverseJoinColumns = @JoinColumn(name = "conversation_id", referencedColumnName = "id"))
     private Set<Conversation> conversations = new HashSet<>();
 
-    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinTable(name = "user_seen_feed", joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),
-                                inverseJoinColumns = @JoinColumn(name = "feed_item_id", referencedColumnName = "id"))
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<AbstractFeedItem> seenFeed = new HashSet<>();
+
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<PostFeedItem> receivedPosts = new HashSet<>();
+    
+    @OneToMany(mappedBy = "poster", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<Post> sentPosts = new HashSet<>();
 
     @OneToMany(fetch = FetchType.EAGER)
     private Set<Report> sentReports = new HashSet<>();

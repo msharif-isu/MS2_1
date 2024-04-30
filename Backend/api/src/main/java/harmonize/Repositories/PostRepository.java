@@ -3,7 +3,7 @@ package harmonize.Repositories;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import harmonize.Entities.Song;
+import harmonize.Entities.Post;
 
 /**
  * 
@@ -11,7 +11,7 @@ import harmonize.Entities.Song;
  * 
  */ 
 
-@Repository
-public interface SongRepository extends JpaRepository<Song, String> {
-    Song findReferenceById(String id);
-}
+ @Repository
+ public interface PostRepository extends JpaRepository<Post, Long> {
+     Post findReferenceById(int id);
+ }

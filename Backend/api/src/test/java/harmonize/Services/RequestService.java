@@ -12,6 +12,8 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import com.fasterxml.jackson.databind.JsonNode;
+
 import harmonize.DTOs.AuthDTO;
 import harmonize.DTOs.ConversationDTO;
 import harmonize.DTOs.ReportDTO;
@@ -192,4 +194,23 @@ public class RequestService {
             new ParameterizedTypeReference<List<ReportDTO>>() {});
     }
     
+    public ResponseEntity<JsonNode> requestJson(AuthDTO auth, String path, HttpMethod method) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization", "Bearer " + auth.getAccessToken());
+        return restTemplate.exchange(
+            path,
+            method,
+            new HttpEntity<>(headers),
+            JsonNode.class);
+    }
+
+    public ResponseEntity<JsonNode> requestJson(AuthDTO auth, String path, HttpMethod method, Object body) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization", "Bearer " + auth.getAccessToken());
+        return restTemplate.exchange(
+            path,
+            method,
+            new HttpEntity<>(body, headers),
+            JsonNode.class);
+    }
 }

@@ -15,14 +15,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 
-import harmonize.DTOs.AuthDTO;
-import harmonize.DTOs.LoginDTO;
-import harmonize.DTOs.RegisterDTO;
 import harmonize.DTOs.RoleDTO;
 import harmonize.DTOs.UserDTO;
 import harmonize.Services.AdminTestService;
 import harmonize.Services.AuthTestService;
 import harmonize.Services.ModeratorTestService;
+import harmonize.Services.MusicTestService;
 import harmonize.Services.RequestService;
 import harmonize.Services.UserTestService;
 import harmonize.Services.WebSocketTestService;
@@ -47,6 +45,7 @@ public class TestUtil {
     @Autowired protected UserTestService todTestService;
     @Autowired protected UserTestService bobTestService;
     @Autowired protected UserTestService samTestService;
+    @Autowired protected MusicTestService musicTestService;
     protected WebSocketTestService chatSocket;
 
     @BeforeEach
@@ -57,33 +56,9 @@ public class TestUtil {
         todTestService.setConnection(hostname, port);
         bobTestService.setConnection(hostname, port);
         samTestService.setConnection(hostname, port);
+        musicTestService.setConnection(hostname, port);
 
-        adminTestService.setAuth(authTestService.login(new LoginDTO(adminTestService.getUsername(), adminTestService.getPassword())).getBody());
-        adminTestService.setUser(adminTestService.getSelf().getBody());
-
-        modTestService.setAuth(authTestService.login(new LoginDTO(modTestService.getUsername(), modTestService.getPassword())).getBody());
-        modTestService.setUser(modTestService.getSelf().getBody());
-
-        ResponseEntity<AuthDTO> responseEntity = authTestService.register(new RegisterDTO("tod", "wilson", todTestService.getUsername(), todTestService.getPassword()));
-        if (responseEntity.getStatusCode() == HttpStatus.OK)
-            todTestService.setAuth(responseEntity.getBody());
-        else
-            todTestService.setAuth(authTestService.login(new LoginDTO(todTestService.getUsername(), todTestService.getPassword())).getBody());
-        todTestService.setUser(todTestService.getSelf().getBody());
-
-        responseEntity = authTestService.register(new RegisterDTO("bob", "roberts", bobTestService.getUsername(), bobTestService.getPassword()));
-        if (responseEntity.getStatusCode() == HttpStatus.OK)
-            bobTestService.setAuth(responseEntity.getBody());
-        else
-            bobTestService.setAuth(authTestService.login(new LoginDTO(bobTestService.getUsername(), bobTestService.getPassword())).getBody());
-        bobTestService.setUser(bobTestService.getSelf().getBody());
-
-        responseEntity = authTestService.register(new RegisterDTO("sam", "jones", samTestService.getUsername(), samTestService.getPassword()));
-        if (responseEntity.getStatusCode() == HttpStatus.OK)
-            samTestService.setAuth(responseEntity.getBody());
-        else
-            samTestService.setAuth(authTestService.login(new LoginDTO(samTestService.getUsername(), samTestService.getPassword())).getBody());
-        samTestService.setUser(samTestService.getSelf().getBody());
+        musicTestService.setUser(todTestService);
     }
 
     @AfterEach

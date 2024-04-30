@@ -4,7 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".navBar">
+    tools:context=".navBar"
+    android:background="@color/mint_cream">
 
     <FrameLayout
         android:id="@+id/frame_layout"

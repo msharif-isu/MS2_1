@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".AccountPreferencesFragment"
-    android:background="@color/cambridge_blue"
+    android:background="@color/Indian_red"
     >
 
 
@@ -89,7 +89,7 @@
         android:layout_marginTop="40dp"
         app:cornerRadius="5dp"
         android:text="Update Preferences"
-        android:textColor="@color/cool_grey"
+        android:textColor="@color/Ebony"
         android:backgroundTint="@color/mint_cream"/>
 
     <Button
@@ -111,7 +111,7 @@
         android:layout_marginTop="230dp"
         app:cornerRadius="5dp"
         android:text="Logout"
-        android:textColor="@color/cool_grey"
+        android:textColor="@color/Ebony"
         android:backgroundTint="@color/mint_cream"/>
     <Button
         android:id="@+id/delAccount"
@@ -121,7 +121,7 @@
         android:layout_marginTop="300dp"
         app:cornerRadius="5dp"
         android:text="Delete Account"
-        android:textColor="@color/cool_grey"
+        android:textColor="@color/Ebony"
         android:backgroundTint="@color/mint_cream"/>
 
     <ImageButton

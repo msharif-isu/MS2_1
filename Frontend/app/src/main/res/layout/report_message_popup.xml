@@ -33,7 +33,7 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="12dp"
         android:text="Please write your report here"
-        android:textColor="@color/black"
+        android:textColor="@color/Jet"
         app:layout_constraintBottom_toTopOf="@id/view"
         android:foregroundGravity="center"
         tools:layout_editor_absoluteX="115dp" />
@@ -42,7 +42,7 @@
         android:id="@+id/view"
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:background="#e0e0e0"
+        android:background="@color/Jet"
         app:layout_constraintBottom_toTopOf="@+id/layout_chatbox" />
 
     <RelativeLayout
@@ -73,7 +73,7 @@
             android:layout_alignParentEnd="true"
             android:background="?attr/selectableItemBackground"
             android:text="Send"
-            android:textColor="@color/black" />
+            android:textColor="@color/Jet" />
 
 
     </RelativeLayout>

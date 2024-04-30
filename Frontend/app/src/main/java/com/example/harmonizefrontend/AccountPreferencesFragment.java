@@ -197,6 +197,7 @@ public class AccountPreferencesFragment extends Fragment {
                 UserSession.getInstance().setCurrentUser(currentUser);
                 UserSession.getInstance().setPassword(password);
                 UserSession.getInstance().setJwtToken(jwtToken);
+                Log.d("jwt", "OG jwt: " + jwtToken);
                 UserSession.getInstance().setmQueue(mQueue);
                 Log.e("msg", currentUser.getUsername() + " " + currentUser.getFirstName() + " " + currentUser.getLastName() + " " + currentUser.getBio());
             }

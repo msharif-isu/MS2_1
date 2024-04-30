@@ -1,6 +1,7 @@
 package messaging.conversations;
 
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -8,6 +9,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.android.volley.AuthFailureError;
@@ -27,23 +29,32 @@ import java.util.Map;
 import Connections.VolleyCallBack;
 import DTO.ConversationDTO;
 import DTO.MessageDTO;
+import PictureData.SharedViewModel;
 import UserInfo.Member;
+import UserInfo.User;
 import UserInfo.UserSession;
+
+
+
 
 import com.example.harmonizefrontend.ClickListener;
 
-public class ConversationListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
+public class ConversationListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private List<ConversationDTO> conversationList;
     private ClickListener clickListener;
 
     private RequestQueue mQueue = UserSession.getInstance().getmQueue();
-
-    private String URL = "http://coms-309-032.cs.iastate.edu:8080";
     private Bitmap friendPic;
+    private Boolean isSelected = false;
+    ArrayList<ConversationDTO> selectedConversations = new ArrayList<>();
+
+
+
     public ConversationListAdapter(List<ConversationDTO> conversationList, ClickListener clickListener) {
         this.conversationList = conversationList;
         this.clickListener = clickListener;
+
     }
 
     @NonNull
@@ -78,13 +89,12 @@ public class ConversationListAdapter extends RecyclerView.Adapter<RecyclerView.V
             String lastMessageDate = dateFormat.format(dateUnix);
             String lastMessageTime = timeFormat.format(dateUnix);
             lastMessageDateTime = lastMessageDate + " " + lastMessageTime;
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             Log.e("convo", "Error, likely no messages between user");
 
         }
 
-        final int index = holder.getAdapterPosition();
+        final int index = holder.getAdapterPosition(); // Find alternative to getAdapterPosition
         ConversationViewHolder viewHolder = (ConversationViewHolder) holder;
         if (conversation.getFriends().size() > 1) {
             ArrayList<Member> friends = conversation.getFriends();
@@ -92,8 +102,7 @@ public class ConversationListAdapter extends RecyclerView.Adapter<RecyclerView.V
                 friendUsername += friends.get(i).getUsername() + ", ";
             }
             friendUsername += friends.get(friends.size() - 1).getUsername();
-        }
-        else {
+        } else {
             friendUsername = conversation.getFriends().get(conversation.getFriends().size() - 1).getUsername();
         }
 
@@ -112,7 +121,44 @@ public class ConversationListAdapter extends RecyclerView.Adapter<RecyclerView.V
         viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                clickListener.click(index);
+                if (isSelected) {
+                    if (selectedConversations.contains(conversation)) {
+                        selectedConversations.remove(conversation);
+                        viewHolder.itemView.setBackgroundColor(Color.TRANSPARENT);
+                    } else {
+                        selectedConversations.add(conversation);
+                        viewHolder.itemView.setBackgroundColor(Color.rgb(200, 120, 106));
+                    }
+
+                    if (selectedConversations.size() == 0) {
+                        isSelected = false;
+                    }
+                    UserSession.getInstance().setSelectedconversations(selectedConversations);
+                } else {
+                    clickListener.click(index);
+                }
+            }
+        });
+
+        viewHolder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                isSelected = true;
+
+                if (selectedConversations.contains(conversation)) {
+                    selectedConversations.remove(conversation);
+                    viewHolder.itemView.setBackgroundColor(Color.TRANSPARENT);
+                } else {
+                    selectedConversations.add(conversation);
+                    viewHolder.itemView.setBackgroundColor(Color.rgb(200, 120, 106));
+                }
+
+                if (selectedConversations.size() == 0) {
+                    isSelected = false;
+                    selectedConversations.clear();
+                }
+                UserSession.getInstance().setSelectedconversations(selectedConversations);
+                return true;
             }
         });
     }
@@ -124,6 +170,7 @@ public class ConversationListAdapter extends RecyclerView.Adapter<RecyclerView.V
 
     /**
      * Called when a view created by this adapter has been attached to a window.
+     *
      * @param recyclerView
      */
     @Override
@@ -139,15 +186,14 @@ public class ConversationListAdapter extends RecyclerView.Adapter<RecyclerView.V
 
 
         ImageRequest imageRequest = new ImageRequest(
-                URL + "/users/1/image", // Do change
+                UserSession.getInstance().getURL() + "/users/1/image", // Do change
                 new Response.Listener<Bitmap>() {
                     @Override
                     public void onResponse(Bitmap response) {
                         // Display the image in the ImageView
                         if (response == null) {
                             // TODO
-                        }
-                        else {
+                        } else {
                             // TODO
                             friendPic = response;
                         }
@@ -171,5 +217,5 @@ public class ConversationListAdapter extends RecyclerView.Adapter<RecyclerView.V
 
         // Adding request to request queue
         mQueue.add(imageRequest);
-    };
-}
+    }
+};

@@ -4,7 +4,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="75dp"
-    android:background="@color/cambridge_blue">
+    android:background="@color/Indian_red">
 
 
     <TextView
@@ -13,7 +13,7 @@
         android:textSize="16sp"
         android:layout_marginStart="50dp"
         android:text="Friend Name"
-        android:textColor="@color/black"
+        android:textColor="@color/Jet"
         android:layout_marginEnd="20dp"
         android:maxLines="1"
         android:layout_marginTop="15dp"
@@ -45,6 +45,7 @@
         android:layout_alignParentRight="true"
         android:gravity="center"
         android:text="dd/mm/yyyy hh:mm"
+        android:textColor="@color/Jet"
         android:textSize="10sp" />
 
     <TextView
@@ -58,6 +59,7 @@
         android:layout_alignParentRight="true"
         android:gravity="center"
         android:text=">"
+        android:textColor="@color/Jet"
         android:textSize="15sp" />
 
 
@@ -73,6 +75,7 @@
         android:layout_marginStart="50dp"
         android:gravity="center"
         android:text="Last sent message"
+        android:textColor="@color/Jet"
         android:textSize="10sp"/>
 
 

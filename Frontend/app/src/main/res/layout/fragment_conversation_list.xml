@@ -31,12 +31,12 @@
                 android:layout_gravity="center"
                 android:layout_marginTop="25px"/>
 
-            <ImageButton
-                android:layout_width="45dp"
-                android:layout_height="45dp"
-                android:src="@drawable/delete"
-                android:background="?attr/selectableItemBackgroundBorderless"
-                android:id="@+id/deleteConvo"/>
+<!--            <ImageButton-->
+<!--                android:layout_width="45dp"-->
+<!--                android:layout_height="45dp"-->
+<!--                android:src="@drawable/delete"-->
+<!--                android:background="?attr/selectableItemBackgroundBorderless"-->
+<!--                android:id="@+id/deleteConvo"/>-->
 
         </androidx.appcompat.widget.Toolbar>
 

@@ -78,6 +78,16 @@
         android:textColor="@color/Jet"
         android:textSize="10sp"/>
 
+    <ImageButton
+        android:id="@+id/delete"
+        android:layout_width="25dp"
+        android:layout_height="25dp"
+        android:src="@drawable/delete"
+        android:layout_alignParentEnd="true"
+        android:layout_centerVertical="true"
+        android:layout_marginEnd="15dp"
+        android:background="?attr/selectableItemBackgroundBorderless"/>
+
 
     <TextView
         android:id="@+id/border2"

@@ -73,7 +73,7 @@ public class AccountPreferencesFragment extends Fragment {
     private TextView passwordView;
     private boolean hidden = true;
     private boolean allowEdit = false;
-    private Button updatePrefsBtn, logoutBtn, delAccBtn;
+    private Button updatePrefsBtn, logoutBtn, delAccBtn, seeReportsBtn;
 
     private ImageButton changePicBtn, editInfoBtn, unhidePass;
 
@@ -157,6 +157,8 @@ public class AccountPreferencesFragment extends Fragment {
         delAccBtn = rootView.findViewById(R.id.delAccount);
         changePicBtn = rootView.findViewById(R.id.changePicture);
         editInfoBtn = rootView.findViewById(R.id.editInfo);
+        seeReportsBtn = rootView.findViewById(R.id.seeReports);
+        seeReportsBtn.setVisibility(View.GONE);
 
         usernameText.setEnabled(allowEdit);
         firstNameText.setEnabled(allowEdit);
@@ -205,9 +207,20 @@ public class AccountPreferencesFragment extends Fragment {
                 UserSession.getInstance().setmQueue(mQueue);
                 Log.e("msg", currentUser.getUsername() + " " + currentUser.getFirstName() + " " + currentUser.getLastName() + " " + currentUser.getBio());
                 checkRoles();
+                Log.e("Mod", "Num roles: " + String.valueOf(UserSession.getInstance().getRoles().size()));
+                if (UserSession.getInstance().getRoles().size() > 1) {
+                    seeReportsBtn.setVisibility(View.VISIBLE);
+                }
                 makeImageRequest();
             }
 
+        });
+
+        seeReportsBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ((navBar) getActivity()).loadFragment(new SeeReportsFragment());
+            }
         });
 
 

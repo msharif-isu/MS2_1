@@ -65,14 +65,7 @@ public class navBar extends AppCompatActivity {
 //                loadFragment(new MessageFragment());
                 loadFragment(new ConversationsFragment());
             } else if (item.getItemId() == R.id.navigation_profile) {
-//                UserSession.getInstance().getRoles().size() > 1
-                if (UserSession.getInstance().getRoles().size() > 1) {
-                    Log.e("roles", "Detected moderator+ roles");
-                    loadFragment(new ModeratorAccountPreferencesFragment());
-                }
-                else {
-                    loadFragment(new AccountPreferencesFragment());
-                }
+                loadFragment(new AccountPreferencesFragment());
             }
 
 

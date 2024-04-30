@@ -3,9 +3,7 @@ package harmonize.Services;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Random;
 import java.util.stream.Collectors;
 
@@ -14,6 +12,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -41,7 +41,7 @@ import jakarta.websocket.Session;
 @Service
 @Transactional
 public class FeedService {
-    private static Map<String, Session> sessions = new HashMap<>();
+    private static MultiValueMap<String, Session> sessions = new LinkedMultiValueMap<>();
 
     private FeedRepository feedRepository;
     private MusicService musicService;
@@ -61,7 +61,7 @@ public class FeedService {
 
     public void onOpen(Session session) throws IOException {
         loadProperties(session);
-        sessions.put(((User)session.getUserProperties().get("user")).getUsername(), session);
+        sessions.add(((User)session.getUserProperties().get("user")).getUsername(), session);
     }
 
     public void onMessage(Session session, String message) throws IOException {
@@ -157,13 +157,13 @@ public class FeedService {
         if(!sessions.containsKey(user.getUsername()))
             return;
 
-        Session session = sessions.get(user.getUsername());
-
-        try {
-            send(session, FeedEnum.NEW_POST);
-        } catch (Exception e) {
-            onError(session, e, false);
-            e.printStackTrace();
+        for(Session session : sessions.get(user.getUsername())) {
+            try {
+                send(session, FeedEnum.NEW_POST);
+            } catch (Exception e) {
+                onError(session, e, false);
+                e.printStackTrace();
+            }
         }
     }
 

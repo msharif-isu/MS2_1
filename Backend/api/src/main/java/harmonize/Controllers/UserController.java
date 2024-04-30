@@ -2,6 +2,8 @@ package harmonize.Controllers;
 
 import java.security.Principal;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -14,12 +16,16 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.fasterxml.jackson.databind.JsonNode;
+
+import harmonize.DTOs.ConversationDTO;
 import harmonize.DTOs.FriendRecDTO;
 import harmonize.DTOs.PostDTO;
 import harmonize.DTOs.ReportDTO;
 import harmonize.DTOs.RoleDTO;
 import harmonize.DTOs.SongDTO;
 import harmonize.DTOs.UserDTO;
+import harmonize.ErrorHandling.Exceptions.InvalidArgumentException;
 import harmonize.Services.PostService;
 import harmonize.Services.ReportService;
 import harmonize.Services.UserService;
@@ -137,6 +143,27 @@ public class UserController {
     @DeleteMapping(path = "/songs/{id}")
     public ResponseEntity<String> removeSong(Principal principal, @PathVariable String id){
         return ResponseEntity.ok(userService.removeSong(userService.getUser(principal.getName()).getId(), id));
+    }
+
+    @PostMapping(path = "/conversations")
+    public ResponseEntity<ConversationDTO> createConversation(Principal principal, @RequestBody JsonNode body){
+        if (!body.has("memberIds"))
+            throw new InvalidArgumentException("No \"memberIds\" field found.");
+
+        if (!body.get("memberIds").isArray())
+            throw new InvalidArgumentException("The \"memberIds\" field must be a list.");
+
+        List<Integer> memberIds = StreamSupport.stream(body.get("memberIds").spliterator(), false)
+            .filter(JsonNode::isInt)
+            .map(JsonNode::asInt)
+            .collect(Collectors.toList());
+
+        return ResponseEntity.ok(userService.createConversation(userService.getUser(principal.getName()).getId(), memberIds));
+    }
+
+    @DeleteMapping(path = "/conversations/{id}")
+    public ResponseEntity<String> leaveConversation(Principal principal, @PathVariable int id){
+        return ResponseEntity.ok(userService.leaveConversation(userService.getUser(principal.getName()).getId(), id));
     }
 
     @GetMapping(path = "/posts")

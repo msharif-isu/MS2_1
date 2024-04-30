@@ -1,6 +1,7 @@
 package harmonize.Services;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Collections;
 import java.util.List;
 import java.util.Random;
@@ -10,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 
+import harmonize.DTOs.ConversationDTO;
 import harmonize.DTOs.RoleDTO;
 import harmonize.DTOs.SongDTO;
 import harmonize.DTOs.UserDTO;
@@ -17,12 +19,14 @@ import harmonize.DTOs.FriendRecDTO;
 import harmonize.Entities.Role;
 import harmonize.Entities.Song;
 import harmonize.Entities.User;
+import harmonize.Entities.Conversation;
 import harmonize.Entities.ArtistFreq;
 import harmonize.Entities.LikedSong;
 import harmonize.ErrorHandling.Exceptions.EntityAlreadyExistsException;
 import harmonize.ErrorHandling.Exceptions.EntityNotFoundException;
 import harmonize.ErrorHandling.Exceptions.InvalidArgumentException;
 import harmonize.ErrorHandling.Exceptions.UserNotFriendException;
+import harmonize.Repositories.ConversationRepository;
 import harmonize.Repositories.ArtistFreqRepository;
 import harmonize.Repositories.RoleRepository;
 import harmonize.Repositories.UserRepository;
@@ -31,16 +35,18 @@ import harmonize.Repositories.UserRepository;
 public class UserService {
     private UserRepository userRepository;
     private RoleRepository roleRepository;
+    private ConversationRepository conversationRepository;
     private ArtistFreqRepository artistFreqRepository;
 
     private ConversationService conversationService;
     private MusicService musicService;
 
     @Autowired
-    public UserService(UserRepository userRepository, RoleRepository roleRepository, ArtistFreqRepository artistFreqRepository,
+    public UserService(UserRepository userRepository, RoleRepository roleRepository, ConversationRepository conversationRepository, ArtistFreqRepository artistFreqRepository,
                         ConversationService conversationService, MusicService musicService) {
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
+        this.conversationRepository = conversationRepository;
         this.artistFreqRepository = artistFreqRepository;
         this.conversationService = conversationService;
         this.musicService = musicService;
@@ -102,6 +108,21 @@ public class UserService {
 
         if(user == null)
             throw new EntityNotFoundException("User " + id + " not found.");
+
+        for (User other : userRepository.findAll()) {
+            if (other.getFriendInvites().contains(user)) {
+                other.getFriendInvites().remove(user);
+                userRepository.save(other);
+            }
+        }
+
+        for (User friend : user.getFriends()) {
+            friend.getFriends().remove(user);
+            userRepository.save(friend);
+        }
+        
+        List<Conversation> conversationCopy = new ArrayList<>(user.getConversations());
+        conversationCopy.stream().forEach(conversation -> conversationService.removeMember(conversation, user));
             
         userRepository.delete(user);
         
@@ -217,8 +238,6 @@ public class UserService {
             userRepository.save(friend);
             return new String(String.format("\"%s\" sent friend invite to \"%s\"", user.getUsername(), friend.getUsername()));
         }
-
-        conversationService.createConversation(Set.of(user, friend));
 
         user.getFriendInvites().remove(friend);
         friend.getFriends().add(user);
@@ -338,5 +357,40 @@ public class UserService {
             userArtist.add(connection);
         
         userRepository.save(managedUser);
+    }
+
+    public ConversationDTO createConversation(int id, List<Integer> memberIds) {
+        User user = userRepository.findReferenceById(id);
+
+        if(user == null)
+            throw new EntityNotFoundException("User " + id + " not found.");
+
+        Set<User> members = new HashSet<>() {};
+        members.add(user);
+        user.getFriends().stream().forEach(friend -> System.err.println("Friend:" + new UserDTO(friend)));
+        for (int memberId : memberIds) {
+            User other = userRepository.findReferenceById(memberId);
+            if(user.getId() != other.getId() && user.getFriends().stream().noneMatch(friend -> friend.getId() == other.getId()))
+                throw new EntityNotFoundException("User " + memberId + " was not found in user " + id + " friend list.");
+            members.add(other);
+        }
+
+        return new ConversationDTO(conversationService.createConversation(members));
+    }
+
+    public String leaveConversation(int id, int convoId) {
+        User user = userRepository.findReferenceById(id);
+
+        if(user == null)
+            throw new EntityNotFoundException("User " + id + " not found.");
+
+        Conversation conversation = conversationRepository.findReferenceById(convoId);
+        if(conversation == null)
+            throw new EntityNotFoundException("Cannot find conversation with id: " + convoId);
+
+
+        conversationService.removeMember(conversation, user);
+
+        return "Memeber " + id + " removed from conversation " + convoId + ".";
     }
 }

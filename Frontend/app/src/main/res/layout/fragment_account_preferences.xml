@@ -93,11 +93,33 @@
         android:backgroundTint="@color/mint_cream"/>
 
     <Button
+        android:id="@+id/addSongs"
+        android:layout_width="250dp"
+        android:layout_height="60dp"
+        android:layout_gravity="center"
+        android:layout_marginTop="110dp"
+        app:cornerRadius="5dp"
+        android:text="Add Songs"
+        android:textColor="@color/Ebony"
+        android:backgroundTint="@color/mint_cream"/>
+
+    <Button
+        android:id="@+id/seeReports"
+        android:layout_width="250dp"
+        android:layout_height="60dp"
+        android:layout_gravity="center"
+        android:layout_marginTop="-30dp"
+        app:cornerRadius="5dp"
+        android:text="See Reports"
+        android:textColor="@color/Ebony"
+        android:backgroundTint="@color/mint_cream" />
+
+    <Button
         android:id="@+id/logOut"
         android:layout_width="250dp"
         android:layout_height="60dp"
         android:layout_gravity="center"
-        android:layout_marginTop="130dp"
+        android:layout_marginTop="230dp"
         app:cornerRadius="5dp"
         android:text="Logout"
         android:textColor="@color/Ebony"
@@ -107,7 +129,7 @@
         android:layout_width="250dp"
         android:layout_height="60dp"
         android:layout_gravity="center"
-        android:layout_marginTop="200dp"
+        android:layout_marginTop="300dp"
         app:cornerRadius="5dp"
         android:text="Delete Account"
         android:textColor="@color/Ebony"

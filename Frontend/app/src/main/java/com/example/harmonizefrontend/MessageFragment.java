@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.fragment.app.Fragment;
@@ -28,6 +29,7 @@ import java.util.Map;
 import Connections.WebSocketListener;
 import Connections.WebSocketManagerChat;
 import DTO.SendDTO;
+import UserInfo.Member;
 import messaging.chat.ChatListAdapter;
 import messaging.chat.ReportMessageFragment;
 import DTO.ConversationDTO;
@@ -58,6 +60,7 @@ public class MessageFragment extends Fragment implements WebSocketListener {
 
     private EditText writeMsg;
     private Button sendBtn;
+    private ImageView backBtn;
 
     private List<MessageDTO> list;
 
@@ -145,6 +148,7 @@ public class MessageFragment extends Fragment implements WebSocketListener {
         View view = inflater.inflate(R.layout.chat_list_activity, container, false);
 
         writeMsg = view.findViewById(R.id.edit_message);
+        backBtn = view.findViewById(R.id.back_button);
         sendBtn = view.findViewById(R.id.button_send);
         recyclerView = view.findViewById(R.id.recycler);
         friendUsername = view.findViewById(R.id.friendUsername);
@@ -153,8 +157,31 @@ public class MessageFragment extends Fragment implements WebSocketListener {
         recyclerView.setAdapter(chatListAdapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
-        friendUsername.setText(UserSession.getInstance().getCurrentConversation().getFriend().getUsername());
+        StringBuilder tempNames = new StringBuilder();
+        ConversationDTO tempConvo = UserSession.getInstance().getCurrentConversation();
 
+        if (tempConvo.getFriends().size() > 1) {
+            ArrayList<Member> friends = tempConvo.getFriends();
+            for (int i = 0; i < friends.size() - 2; i++) { // Iterate until last friend
+                tempNames.append(friends.get(i).getUsername()).append(", ");
+            }
+            tempNames.append(friends.get(friends.size() - 1).getUsername());
+        }
+        else {
+            tempNames = new StringBuilder(tempConvo.getFriends().get(tempConvo.getFriends().size() - 1).getUsername());
+        }
+
+        friendUsername.setText(tempNames.toString());
+
+        backBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ((navBar) getActivity()).loadFragment(new ConversationsFragment());
+
+                getActivity().findViewById(R.id.popout_frame_layout).setVisibility(View.GONE);
+
+            }
+        });
         sendBtn.setOnClickListener(new View.OnClickListener() {
             Gson gson = new Gson();
             @Override

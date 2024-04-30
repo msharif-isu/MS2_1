@@ -33,7 +33,8 @@ public class FeedRequest {
 
         } else if (requestType == RequestType.REFRESH_FEED) {
 
-            this.type = "com.fasterxml.jackson.databind.node.ObjectNode";
+            this.type = "harmonize.DTOs.FeedDTO";
+            //this.type = "com.fasterxml.jackson.databind.node.ObjectNode";
 
         } else {
 

@@ -12,15 +12,23 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
+import com.android.volley.AuthFailureError;
+import com.android.volley.Request;
 import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 
 import org.java_websocket.WebSocket;
 import org.java_websocket.handshake.ServerHandshake;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import Connections.WebSocketListener;
@@ -29,22 +37,24 @@ import HomeFeed.FeedAdapter;
 import DTO.FeedDTO;
 import HomeFeed.FeedRequest;
 
+import UserInfo.UserSession;
+
 /**
- * A fragment that displays the main feed, showing music news for the usser.
+ * A fragment that displays the main feed, showing music news for the user.
  * Uses a WebSocket connection to receive feed data from the server.
  * Use the {@link HomeFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class HomeFragment extends Fragment implements WebSocketListener {
+public class HomeFragment extends Fragment implements WebSocketListener, FeedAdapter.OnAddTrackListener {
     private RecyclerView feedRecyclerView;
     private SwipeRefreshLayout swipeRefreshLayout;
     private FeedAdapter feedAdapter;
     private List<FeedDTO> feedItems;
     private WebSocket webSocket;
     private static final String WEB_SOCKET_URL = "ws://coms-309-032.class.las.iastate.edu:8080/feed";
-    private String username, password, JWTtoken;
+    private String username, password;
     private RequestQueue mQueue;
-    private static final int LIMIT = 5;
+    private static final int LIMIT = 10;
     private int offset = 0;
     private int feedSize;
     private boolean isLoading = false;
@@ -85,7 +95,6 @@ public class HomeFragment extends Fragment implements WebSocketListener {
         if (navBar != null) {
             username = navBar.username;
             password = navBar.password;
-            JWTtoken = navBar.jwtToken;
             mQueue = navBar.mQueue;
         } else {
             Log.e("msg", "navBar is null, JWT token not set");
@@ -114,7 +123,7 @@ public class HomeFragment extends Fragment implements WebSocketListener {
 
         feedRecyclerView = view.findViewById(R.id.feedRecyclerView);
         feedItems = new ArrayList<>();
-        feedAdapter = new FeedAdapter(feedItems);
+        feedAdapter = new FeedAdapter(feedItems, this);
         feedRecyclerView.setAdapter(feedAdapter);
         feedRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
@@ -257,6 +266,44 @@ public class HomeFragment extends Fragment implements WebSocketListener {
         FeedRequest request = new FeedRequest(FeedRequest.RequestType.REFRESH_FEED, LIMIT, offset);
         sendWebSocketRequest(request);
 
+    }
+
+    @Override
+    public void onAddTrack(FeedDTO feedItem) {
+        addTrackToLikedSongs(feedItem);
+    }
+
+    private void addTrackToLikedSongs(FeedDTO feedItem) {
+        // Get the track ID from the feedItem
+        String trackId = feedItem.getData().getItem().getSong().getId();
+
+        // Make an API request to add the track to the user's liked songs
+        String url = "http://coms-309-032.class.las.iastate.edu:8080/users/songs/" + feedItem.getData().getItem().getSong().getId();
+
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, url, null,
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        // Track added successfully
+                        Toast.makeText(getActivity(), "Track added to liked songs", Toast.LENGTH_SHORT).show();
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        // Handle the error
+                        Toast.makeText(getActivity(), "Failed to add track to liked songs", Toast.LENGTH_SHORT).show();
+                    }
+                }) {
+            @Override
+            public HashMap<String, String> getHeaders() throws AuthFailureError {
+                HashMap<String, String> headers = new HashMap<>();
+                headers.put("Authorization", UserSession.getInstance().getJwtToken());
+                return headers;
+            }
+        };
+
+        mQueue.add(jsonObjectRequest);
     }
 
     /**

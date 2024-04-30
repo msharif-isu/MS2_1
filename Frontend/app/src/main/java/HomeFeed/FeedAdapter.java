@@ -4,6 +4,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -29,7 +30,6 @@ import java.util.List;
 import java.util.Map;
 
 import DTO.FeedDTO;
-
 import UserInfo.UserSession;
 
 /**
@@ -37,13 +37,19 @@ import UserInfo.UserSession;
  */
 public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.FeedViewHolder> {
     private List<FeedDTO> feedItems;
+    private OnAddTrackListener onAddTrackListener;
+
+    public interface OnAddTrackListener {
+        void onAddTrack(FeedDTO feedItem);
+    }
 
     /**
      * Constructor of the FeedAdapter class. Takes a List<FeedItem> parameter and assigns it to the feedItems instance variable.
      * @param feedItems
      */
-    public FeedAdapter(List<FeedDTO> feedItems) {
+    public FeedAdapter(List<FeedDTO> feedItems, OnAddTrackListener onAddTrackListener) {
         this.feedItems = feedItems;
+        this.onAddTrackListener = onAddTrackListener;
     }
 
     /**
@@ -58,10 +64,8 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.FeedViewHolder
     public FeedViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
 
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.feed_item, parent, false);
-
-
-
         return new FeedViewHolder(view);
+
     }
 
     /**
@@ -75,6 +79,16 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.FeedViewHolder
     public void onBindViewHolder(@NonNull FeedViewHolder holder, int position) {
         FeedDTO feedItem = feedItems.get(position);
         holder.bind(feedItem);
+
+        // Set click listener for the add button
+        holder.addButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (onAddTrackListener != null) {
+                    onAddTrackListener.onAddTrack(feedItem);
+                }
+            }
+        });
     }
 
     /**
@@ -96,6 +110,7 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.FeedViewHolder
         private TextView artistNameTextView;
         private TextView albumNameTextView;
         private TextView trackNameTextView;
+        private ImageButton addButton;
 
         private RequestQueue requestQueue;
 
@@ -108,6 +123,7 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.FeedViewHolder
             artistNameTextView = itemView.findViewById(R.id.artistNameTextView);
             albumNameTextView = itemView.findViewById(R.id.albumNameTextView);
             trackNameTextView = itemView.findViewById(R.id.trackNameTextView);
+            addButton = itemView.findViewById(R.id.addButton);
 
             requestQueue = Volley.newRequestQueue(itemView.getContext());
         }

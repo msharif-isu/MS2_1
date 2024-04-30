@@ -20,11 +20,15 @@ import org.springframework.web.util.UriComponentsBuilder;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import harmonize.DTOs.RecommendationDTO;
+import harmonize.DTOs.SongRecDTO;
 import harmonize.DTOs.SearchDTO;
+import harmonize.Entities.Artist;
+import harmonize.Entities.ArtistFreq;
+import harmonize.Entities.LikedSong;
 import harmonize.Entities.Song;
 import harmonize.Entities.User;
 import harmonize.ErrorHandling.Exceptions.InvalidArgumentException;
+import harmonize.Repositories.ArtistRepository;
 import harmonize.Repositories.SongRepository;
 
 @Service
@@ -41,13 +45,16 @@ public class MusicService {
 
     private SongRepository songRepository;
 
+    private ArtistRepository artistRepository;
+
     @Autowired
-    public MusicService(RestTemplate restTemplate, SongRepository songRepository) {
+    public MusicService(RestTemplate restTemplate, SongRepository songRepository, ArtistRepository artistRepository) {
         this.restTemplate = restTemplate;
         this.objectMapper = new ObjectMapper();
         this.apiURL = "https://api.spotify.com/v1";
         this.apiExpiration = 0;
         this.songRepository = songRepository;
+        this.artistRepository = artistRepository;
     }
 
     public String getAPIToken() {
@@ -128,8 +135,13 @@ public class MusicService {
         } catch(Exception e) {
             throw new InvalidArgumentException("Invalid song.");
         }
+        
+        Artist artist = new Artist(responseJson.get("artists").get(0));
+        Song song = new Song(responseJson, artistRepository.save(artist));
+        song.setArtist(artist);
+        artist.getSongs().add(song);
 
-        songRepository.save(new Song(responseJson));
+        songRepository.save(song);
 
         return responseJson;
     }
@@ -149,6 +161,8 @@ public class MusicService {
         } catch(Exception e) {
             throw new InvalidArgumentException("Invalid artist.");
         }
+
+        artistRepository.save(new Artist(responseJson));
 
         return responseJson;
     }
@@ -204,7 +218,7 @@ public class MusicService {
         return responseJson;
     }
 
-    public JsonNode getRecommendations(RecommendationDTO recommendation) {
+    public JsonNode getRecommendations(SongRecDTO recommendation) {
         String urlEnd = "/recommendations";
 
         HttpHeaders headers = new HttpHeaders();
@@ -279,14 +293,19 @@ public class MusicService {
         List<Song> songRec = new ArrayList<>();
         List<String> artistIds = new ArrayList<>();
         List<String> songIds = new ArrayList<>();
+        List<ArtistFreq> topArtists = user.getTopArtists();
+        List<LikedSong> likedSongs = user.getLikedSongs();
 
-        for(int i = 0; i < user.getTopArtists().size() && i < 3; i++)
-            artistIds.add(user.getTopArtists().get(i));
+        if(topArtists.isEmpty() || likedSongs.isEmpty())
+            return songRec;
 
-        for(int i = 0; i < user.getLikedSongs().size() && i < 2; i++)
-            songIds.add(user.getLikedSongs().get(i).getSong().getId());
+        for(int i = 0; i < topArtists.size() && i < 3; i++)
+            artistIds.add(topArtists.get(i).getArtist().getId());
 
-        JsonNode recommendations = getRecommendations(new RecommendationDTO(Integer.toString(100), artistIds, songIds));
+        for(int i = 0; i < likedSongs.size() && i < 2; i++)
+            songIds.add(likedSongs.get(i).getSong().getId());
+
+        JsonNode recommendations = getRecommendations(new SongRecDTO(Integer.toString(100), artistIds, songIds));
         
         for(int i = 0; i < recommendations.get("tracks").size(); i++)
             songRec.add(new Song(recommendations.get("tracks").get(i)));

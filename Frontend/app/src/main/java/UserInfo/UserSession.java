@@ -1,5 +1,7 @@
 package UserInfo;
 
+import com.android.volley.RequestQueue;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -11,8 +13,10 @@ import DTO.MessageDTO;
  * Class which holds data about the current user using the application
  */
 public class UserSession {
+
     private static UserSession instance;
     private Member currentUser;
+    private List<String> roleList;
 
     private String jwtToken, password;
 
@@ -21,6 +25,11 @@ public class UserSession {
     private MessageDTO messagedReportedTemp;
 
     private ConversationDTO currentConversation;
+    private RequestQueue mQueue;
+
+    private ArrayList<ConversationDTO> selectedConversations = new ArrayList<>();
+
+    private String URL = "http://coms-309-032.class.las.iastate.edu:8080";
 
     private UserSession() {
         conversations = new java.util.HashMap<>();
@@ -35,6 +44,14 @@ public class UserSession {
             instance = new UserSession();
         }
         return instance;
+    }
+
+    public List<String> getRoles() {
+        return roleList;
+    }
+
+    public void setRoles(List<String> roles) {
+        this.roleList = roles;
     }
 
     public Member getCurrentUser() {
@@ -95,5 +112,25 @@ public class UserSession {
 
     public void clearReportedMessage(MessageDTO messageDTO) {
         this.messagedReportedTemp = null;
+    }
+
+    public void setmQueue(RequestQueue mQueue) {
+        this.mQueue = mQueue;
+    }
+
+    public RequestQueue getmQueue() {
+        return mQueue;
+    }
+
+    public String getURL() {
+        return URL;
+    }
+
+    public void setSelectedconversations(ArrayList<ConversationDTO> selectedConversations) {
+        this.selectedConversations = selectedConversations;
+    }
+
+    public ArrayList<ConversationDTO> getSelectedConversations() {
+        return selectedConversations;
     }
 }

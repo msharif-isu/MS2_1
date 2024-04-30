@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/cambridge_blue">
+    android:background="@color/Indian_red">
 
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/layout_group_chat"
@@ -18,9 +18,26 @@
             android:id="@+id/toolbar_gchannel"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
+            android:background="@color/Indian_red"
             android:theme="@style/Widget.AppCompat.Toolbar"
-            app:popupTheme="@style/Theme.AppCompat.Light"
-            android:background="@color/cambridge_blue">
+            app:popupTheme="@style/Theme.AppCompat.Light">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Messages"
+                android:textColor="@color/Jet"
+                android:textSize="30sp"
+                android:layout_gravity="center"
+                android:layout_marginTop="25px"/>
+
+<!--            <ImageButton-->
+<!--                android:layout_width="45dp"-->
+<!--                android:layout_height="45dp"-->
+<!--                android:src="@drawable/delete"-->
+<!--                android:background="?attr/selectableItemBackgroundBorderless"-->
+<!--                android:id="@+id/deleteConvo"/>-->
+
         </androidx.appcompat.widget.Toolbar>
 
     </com.google.android.material.appbar.AppBarLayout>

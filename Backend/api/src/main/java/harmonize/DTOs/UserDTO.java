@@ -3,6 +3,9 @@ package harmonize.DTOs;
 import java.util.HashSet;
 import java.util.Set;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import harmonize.Entities.Role;
 import harmonize.Entities.User;
 import lombok.Data;
@@ -34,5 +37,35 @@ public class UserDTO {
         for (Role role : user.getRoles()) {
             this.roles.add(new RoleDTO(role));
         }
+    }
+
+    @JsonCreator
+    public UserDTO(
+        @JsonProperty("id") int id,
+        @JsonProperty("firstName") String firstName,
+        @JsonProperty("lastName") String lastName,
+        @JsonProperty("username") String username,
+        @JsonProperty("bio") String bio,
+        @JsonProperty("roles") Set<RoleDTO> roles
+        ) {
+        this.id = id;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.username = username;
+        this.bio = bio;
+        this.roles = roles;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || this.getClass() != o.getClass()) return false;
+        UserDTO user = (UserDTO) o;
+        return user.id == this.id;
+    }
+
+    @Override
+    public int hashCode() {
+        return id;
     }
 }

@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
     tools:context=".LoginScreen"
-    android:background="@color/cambridge_blue">
+    android:background="@color/Indian_red">
 
 
 
@@ -58,7 +58,7 @@
         android:layout_marginTop="250dp"
         app:cornerRadius="5dp"
         android:text="Login"
-        android:textColor="@color/cool_grey"
+        android:textColor="@color/Ebony"
         android:backgroundTint="@color/mint_cream"/>
 
     <Button
@@ -69,16 +69,24 @@
         android:layout_marginTop="400dp"
         android:text="Register"
         app:cornerRadius="5dp"
-        android:textColor="@color/cool_grey"
+        android:textColor="@color/Ebony"
         android:backgroundTint="@color/mint_cream"/>
 
-    <ImageView
-        android:id="@+id/Logo"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:background="@drawable/image"
+<!--    <ImageView-->
+<!--        android:id="@+id/Logo"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:background="@drawable/image"-->
+<!--        android:layout_gravity="center"-->
+<!--        android:layout_marginBottom="275dp"/>-->
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/profile_Picture"
+        android:layout_width="250dp"
+        android:layout_height="250dp"
         android:layout_gravity="center"
-        android:layout_marginBottom="275dp"/>
+        android:layout_marginBottom="400dp"
+        android:src="@drawable/logo"/>
 
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

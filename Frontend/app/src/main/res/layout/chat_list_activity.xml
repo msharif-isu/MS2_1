@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/cambridge_blue">
+    android:background="@color/Indian_red">
 
 
     <com.google.android.material.appbar.AppBarLayout
@@ -13,7 +13,7 @@
         android:layout_height="wrap_content"
         android:fitsSystemWindows="true"
         android:orientation="vertical"
-        android:background="@color/cambridge_blue"
+        android:background="@color/Indian_red"
         app:layout_constraintTop_toTopOf="parent">
 
 <!--        <androidx.appcompat.widget.Toolbar-->
@@ -25,20 +25,46 @@
 <!--            android:background="@color/cambridge_blue">-->
 <!--        </androidx.appcompat.widget.Toolbar>-->
 
-        <de.hdodenhof.circleimageview.CircleImageView
-            android:id="@+id/profile_Picture"
-            android:layout_width="75dp"
-            android:layout_height="75dp"
-            android:layout_gravity="center"
-            android:background="@color/cambridge_blue"
-            android:src="@drawable/ic_launcher_foreground"/>
+
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <ImageButton
+                android:id="@+id/back_button"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="16dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:src="?attr/homeAsUpIndicator"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/profile_Picture"
+                android:layout_width="75dp"
+                android:layout_height="75dp"
+                android:background="@color/Indian_red"
+                android:src="@drawable/ic_launcher_foreground"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+
+
         <TextView
             android:id="@+id/friendUsername"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Name"
             android:textSize="20dp"
-            android:background="@color/cambridge_blue"
+            android:textColor="@color/Jet"
+            android:background="@color/Indian_red"
             android:textAlignment="center"/>
 
     </com.google.android.material.appbar.AppBarLayout>
@@ -87,6 +113,7 @@
             android:hint="Enter Message"
             android:inputType="text"
             android:maxLines="6"
+            android:textColor="@color/mint_cream"
             tools:ignore="Autofill" />
 
         <Button
@@ -96,7 +123,7 @@
             android:layout_alignParentEnd="true"
             android:background="?attr/selectableItemBackground"
             android:text="Send"
-            android:textColor="@color/cool_grey" />
+            android:textColor="@color/Ebony" />
 
     </RelativeLayout>
 

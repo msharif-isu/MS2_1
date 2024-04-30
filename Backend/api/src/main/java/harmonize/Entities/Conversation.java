@@ -3,6 +3,7 @@ package harmonize.Entities;
 import java.util.HashSet;
 import java.util.Set;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -23,7 +24,7 @@ import lombok.NoArgsConstructor;
  * 
  */ 
 @Entity
-@Table(name = "conversation")
+@Table(name = "conversations")
 @Data
 @NoArgsConstructor
 public class Conversation {
@@ -33,11 +34,11 @@ public class Conversation {
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "conversation_members", 
-               joinColumns = @JoinColumn(name = "conversation_id", referencedColumnName = "id"),
+        joinColumns = @JoinColumn(name = "conversation_id", referencedColumnName = "id"),
         inverseJoinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"))
     private Set<User> members = new HashSet<>();
 
-    @OneToMany(mappedBy="conversation", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy="conversation", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Message> messages = new HashSet<>();
 
     public Conversation(Set<User> members) {

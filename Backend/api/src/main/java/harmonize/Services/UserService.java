@@ -19,6 +19,7 @@ import harmonize.Entities.Role;
 import harmonize.Entities.Song;
 import harmonize.Entities.User;
 import harmonize.Entities.Image;
+import harmonize.Entities.Conversation;
 import harmonize.Entities.LikedSong;
 import harmonize.ErrorHandling.Exceptions.EntityAlreadyExistsException;
 import harmonize.ErrorHandling.Exceptions.EntityNotFoundException;
@@ -105,7 +106,23 @@ public class UserService {
         if(user == null)
             throw new EntityNotFoundException("User " + id + " not found.");
 
-        deleteUser(id);
+        deleteIcon(id);
+
+        for (User other : userRepository.findAll()) {
+            if (other.getFriendInvites().contains(user)) {
+                other.getFriendInvites().remove(user);
+                userRepository.save(other);
+            }
+        }
+
+        for (User friend : user.getFriends()) {
+            friend.getFriends().remove(user);
+            userRepository.save(friend);
+        }
+
+        for (Conversation conversation : user.getConversations()) {
+            conversationService.removeMember(conversation, user);
+        }
             
         userRepository.delete(user);
         

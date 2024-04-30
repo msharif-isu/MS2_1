@@ -69,34 +69,39 @@ public class User {
     private List<String> topArtists = new ArrayList<>();
 
     @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(name = "userRoles", joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),
-                            inverseJoinColumns = @JoinColumn(name = "role_id", referencedColumnName = "id"))
+    @JoinTable(name = "userRoles",
+        joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),
+        inverseJoinColumns = @JoinColumn(name = "role_id", referencedColumnName = "id"))
     private Set<Role> roles = new HashSet<>();
 
     @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(name = "friends", joinColumns = @JoinColumn(name = "user_id",   referencedColumnName = "id"),
-                        inverseJoinColumns = @JoinColumn(name = "friend_id", referencedColumnName = "id"))
+    @JoinTable(name = "friends",
+        joinColumns = @JoinColumn(name = "user_id",   referencedColumnName = "id"),
+        inverseJoinColumns = @JoinColumn(name = "friend_id", referencedColumnName = "id"))
     private Set<User> friends = new HashSet<>();
 
     @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(name = "friendInvites", joinColumns = @JoinColumn(name = "user_id",    referencedColumnName = "id"),
-                                inverseJoinColumns = @JoinColumn(name = "inviter_id", referencedColumnName = "id"))
+    @JoinTable(name = "friendInvites",
+        joinColumns = @JoinColumn(name = "user_id",    referencedColumnName = "id"),
+        inverseJoinColumns = @JoinColumn(name = "inviter_id", referencedColumnName = "id"))
     private Set<User> friendInvites = new HashSet<>();
 
     @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(name = "conversation_members", joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),
-                                    inverseJoinColumns = @JoinColumn(name = "conversation_id", referencedColumnName = "id"))
+    @JoinTable(name = "conversation_members", 
+        joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),
+        inverseJoinColumns = @JoinColumn(name = "conversation_id", referencedColumnName = "id"))
     private Set<Conversation> conversations = new HashSet<>();
 
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinTable(name = "user_seen_feed", joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),
-                                inverseJoinColumns = @JoinColumn(name = "feed_item_id", referencedColumnName = "id"))
+    @JoinTable(name = "user_seen_feed",
+        joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),
+        inverseJoinColumns = @JoinColumn(name = "feed_item_id", referencedColumnName = "id"))
     private Set<AbstractFeedItem> seenFeed = new HashSet<>();
 
-    @OneToMany(fetch = FetchType.EAGER)
+    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Report> sentReports = new HashSet<>();
 
-    @OneToMany(fetch = FetchType.EAGER)
+    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Report> receivedReports = new HashSet<>();
 
     @OneToOne(cascade = CascadeType.ALL)

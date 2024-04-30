@@ -154,19 +154,19 @@ public class UserTest extends TestUtil {
     }
 
     @Test
-    public void userAddFriendInviteOkTest() throws Exception {
+    public void addFriendInviteOkTest() throws Exception {
         ResponseEntity<String> responseEntity = todTestService.addFriend(bobTestService.getUser().getId());
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
     }
 
     @Test
-    public void userAddFriendNotFoundTest() throws Exception {
+    public void addFriendNotFoundTest() throws Exception {
         ResponseEntity<String> responseEntity = todTestService.addFriend(0);
         assertEquals(HttpStatus.NOT_FOUND, responseEntity.getStatusCode());
     }
 
     @Test
-    public void userAddFriendInviteAlreadySentTest() throws Exception {
+    public void addFriendInviteAlreadySentTest() throws Exception {
         todTestService.addFriend(bobTestService.getUser().getId());
 
         ResponseEntity<String> responseEntity = todTestService.addFriend(bobTestService.getUser().getId());
@@ -174,7 +174,7 @@ public class UserTest extends TestUtil {
     }
 
     @Test
-    public void userAddFriendOkTest() throws Exception {
+    public void addFriendOkTest() throws Exception {
         bobTestService.addFriend(todTestService.getUser().getId());
 
         ResponseEntity<String> responseEntity = todTestService.addFriend(bobTestService.getUser().getId());
@@ -182,7 +182,7 @@ public class UserTest extends TestUtil {
     }
 
     @Test
-    public void userAddFriendAlreadyFriendTest() throws Exception {
+    public void addFriendAlreadyFriendTest() throws Exception {
         todTestService.addFriend(bobTestService.getUser().getId());
         bobTestService.addFriend(todTestService.getUser().getId());
         
@@ -191,14 +191,14 @@ public class UserTest extends TestUtil {
     }
 
     @Test
-    public void userAddFriendSelfTest() throws Exception {
+    public void addFriendSelfTest() throws Exception {
         ResponseEntity<String> responseEntity = todTestService.addFriend(todTestService.getUser().getId());
         assertEquals(HttpStatus.BAD_REQUEST, responseEntity.getStatusCode());
     }
 
     @Test
     @DisabledIfEnvironmentVariable(named = "DOCKER_RUNNING", matches = "true")
-    public void userSendReportOkTest() throws Exception {
+    public void sendReportOkTest() throws Exception {
         bobTestService.getChatSocket().connect();
 
         todTestService.addFriend(bobTestService.getUser().getId());
@@ -227,7 +227,7 @@ public class UserTest extends TestUtil {
 
     @Test
     @DisabledIfEnvironmentVariable(named = "DOCKER_RUNNING", matches = "true")
-    public void userSendReportMessageNotFoundTest() throws Exception {
+    public void sendReportMessageNotFoundTest() throws Exception {
         bobTestService.getChatSocket().connect();
 
         todTestService.addFriend(bobTestService.getUser().getId());
@@ -252,7 +252,7 @@ public class UserTest extends TestUtil {
 
     @Test
     @DisabledIfEnvironmentVariable(named = "DOCKER_RUNNING", matches = "true")
-    public void userSendReportMessageNotFound2Test() throws Exception {
+    public void sendReportMessageNotFound2Test() throws Exception {
         bobTestService.getChatSocket().connect();
 
         todTestService.addFriend(bobTestService.getUser().getId());
@@ -283,7 +283,7 @@ public class UserTest extends TestUtil {
 
     @Test
     @DisabledIfEnvironmentVariable(named = "DOCKER_RUNNING", matches = "true")
-    public void userDeleteReportOkTest() throws Exception {
+    public void deleteReportOkTest() throws Exception {
         bobTestService.getChatSocket().connect();
 
         todTestService.addFriend(bobTestService.getUser().getId());
@@ -313,7 +313,7 @@ public class UserTest extends TestUtil {
 
     @Test
     @DisabledIfEnvironmentVariable(named = "DOCKER_RUNNING", matches = "true")
-    public void userGetReportsOkTest() throws Exception {
+    public void getReportsOkTest() throws Exception {
         bobTestService.getChatSocket().connect();
 
         todTestService.addFriend(bobTestService.getUser().getId());

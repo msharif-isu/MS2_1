@@ -16,14 +16,14 @@ import harmonize.DTOs.UserDTO;
 public class AdminTest extends TestUtil {
 
     @Test
-    public void adminGetSelfOkTest() throws Exception {
+    public void getSelfOkTest() throws Exception {
         ResponseEntity<UserDTO> responseEntity = adminTestService.getSelf();
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
         assertEquals(adminTestService.getUser(), responseEntity.getBody());
     }
 
     @Test
-    public void adminGetUsersOkTest() throws Exception {
+    public void getUsersOkTest() throws Exception {
         ResponseEntity<List<UserDTO>> responseEntity = adminTestService.getUsers();
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
         List<UserDTO> body = responseEntity.getBody();
@@ -35,7 +35,7 @@ public class AdminTest extends TestUtil {
     }
 
     @Test
-    public void adminGetUserByIdOkTest() throws Exception {
+    public void getUserByIdOkTest() throws Exception {
         ResponseEntity<UserDTO> responseEntity = adminTestService.getUser(todTestService.getUser().getId());
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
         assertEquals(todTestService.getUser(), responseEntity.getBody());

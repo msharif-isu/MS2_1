@@ -23,6 +23,12 @@ public class UserTestService extends AbstractUserTestService {
         super(username, password);
     }
 
+    @Override
+    public void setConnection(String hostname, int port) {
+        super.setConnection(hostname, port);
+        setUser(getSelf().getBody());
+    }
+
     public ResponseEntity<UserDTO> getSelf() {
         return requestService.requestUser(auth, url + port + "/users", HttpMethod.GET);
     }

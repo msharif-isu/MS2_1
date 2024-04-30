@@ -11,6 +11,12 @@ public class ModeratorTestService extends AbstractUserTestService {
         super(username, password);
     }
 
+    @Override
+    public void setConnection(String hostname, int port) {
+        super.setConnection(hostname, port);
+        setUser(getSelf().getBody());
+    }
+
     public ResponseEntity<UserDTO> getSelf() {
         return requestService.requestUser(auth, url + port + "/moderators", HttpMethod.GET);
     }

@@ -1,25 +1,37 @@
 package harmonize.Services;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 import harmonize.DTOs.SearchDTO;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-public class MusicTestService extends AbstractUserTestService {
-    ObjectMapper objectMapper = new ObjectMapper();
+@NoArgsConstructor
+public class MusicTestService {
+    private int port;
+    private String url;
 
-    public MusicTestService(String username, String password) {
-        super(username, password);
+    @Getter @Setter private AbstractUserTestService user;
+
+    @Autowired
+    protected RequestService requestService;
+
+    public MusicTestService(AbstractUserTestService user) {
+        this.user = user;
+    }
+
+    public void setConnection(String hostname, int port) {
+        this.url = "http://" + hostname + ":";
+        this.port = port;
     }
 
     public ResponseEntity<JsonNode> getSearch(SearchDTO search) throws JsonProcessingException {
-        System.out.println(objectMapper.writeValueAsString(search));
-        System.out.println(url + port + "/music");
-        System.out.println("Bearer "  + auth.getAccessToken());
-        return requestService.requestJson(auth, url + port + "/music", HttpMethod.POST, search);
+        return requestService.requestJson(user.getAuth(), url + port + "/music", HttpMethod.POST, search);
     }
 }

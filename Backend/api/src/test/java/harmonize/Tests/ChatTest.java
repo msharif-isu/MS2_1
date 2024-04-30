@@ -18,7 +18,7 @@ public class ChatTest extends TestUtil {
 
     @Test
     @DisabledIfEnvironmentVariable(named = "DOCKER_RUNNING", matches = "true")
-    public void ConnectionOkTest() throws Exception {
+    public void connectionOkTest() throws Exception {
         todTestService.getChatSocket().connect();
         Thread.sleep(5000);
         assertTrue(todTestService.getChatSocket().isOpen());
@@ -26,7 +26,7 @@ public class ChatTest extends TestUtil {
 
     @Test
     @DisabledIfEnvironmentVariable(named = "DOCKER_RUNNING", matches = "true")
-    public void ConnectionInvalidPasswordTest() throws Exception {
+    public void connectionInvalidPasswordTest() throws Exception {
         chatSocket = new WebSocketTestService(URI.create("ws://" + getHostname() + ":" + getPort() + "/chats?username=" + todTestService.getUsername() + "&password=INVALIDPASSWORD"));
         Thread.sleep(5000);
         assertFalse(todTestService.getChatSocket().isOpen());
@@ -34,7 +34,7 @@ public class ChatTest extends TestUtil {
 
     @Test
     @DisabledIfEnvironmentVariable(named = "DOCKER_RUNNING", matches = "true")
-    public void ConnectionInvalidUsernameTest() throws Exception {
+    public void connectionInvalidUsernameTest() throws Exception {
         chatSocket = new WebSocketTestService(URI.create("ws://" + getHostname() + ":" + getPort() + "/chats?username=INVALIDUSERNAME" + "&password=" + todTestService.getPassword()));
         Thread.sleep(5000);
         assertFalse(todTestService.getChatSocket().isOpen());
@@ -42,7 +42,7 @@ public class ChatTest extends TestUtil {
 
     @Test
     @DisabledIfEnvironmentVariable(named = "DOCKER_RUNNING", matches = "true")
-    public void RecieveConversationOkTest() throws Exception {
+    public void recieveConversationOkTest() throws Exception {
         todTestService.getChatSocket().connect();
         todTestService.addFriend(bobTestService.getUser().getId());
         bobTestService.addFriend(todTestService.getUser().getId());
@@ -56,7 +56,7 @@ public class ChatTest extends TestUtil {
 
     @Test
     @DisabledIfEnvironmentVariable(named = "DOCKER_RUNNING", matches = "true")
-    public void RecieveConversationHiddenTest() throws Exception {
+    public void recieveConversationHiddenTest() throws Exception {
         todTestService.getChatSocket().connect();
         samTestService.getChatSocket().connect();
 
@@ -72,7 +72,7 @@ public class ChatTest extends TestUtil {
 
     @Test
     @DisabledIfEnvironmentVariable(named = "DOCKER_RUNNING", matches = "true")
-    public void RecieveMessageOkTest() throws Exception {
+    public void recieveMessageOkTest() throws Exception {
         todTestService.getChatSocket().connect();
         bobTestService.getChatSocket().connect();
         samTestService.getChatSocket().connect();

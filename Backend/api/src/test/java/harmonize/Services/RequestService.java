@@ -180,7 +180,7 @@ public class RequestService {
             path,
             method,
             new HttpEntity<>(headers),
-            new ParameterizedTypeReference<JsonNode>() {});
+            JsonNode.class);
     }
 
     public ResponseEntity<JsonNode> requestJson(AuthDTO auth, String path, HttpMethod method, Object body) {
@@ -190,6 +190,6 @@ public class RequestService {
             path,
             method,
             new HttpEntity<>(body, headers),
-            new ParameterizedTypeReference<JsonNode>() {});
+            JsonNode.class);
     }
 }

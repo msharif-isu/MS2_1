@@ -206,6 +206,7 @@ public class UserTest extends TestUtil {
 
         todTestService.addFriend(bobTestService.getUser().getId());
         bobTestService.addFriend(todTestService.getUser().getId());
+        todTestService.createConversation(List.of(todTestService.getUser().getId(), bobTestService.getUser().getId()));
         Thread.sleep(5000);
 
         ConversationDTO conversation = bobTestService.getChatSocket().getConversations().stream()
@@ -235,6 +236,7 @@ public class UserTest extends TestUtil {
 
         todTestService.addFriend(bobTestService.getUser().getId());
         bobTestService.addFriend(todTestService.getUser().getId());
+        todTestService.createConversation(List.of(todTestService.getUser().getId(), bobTestService.getUser().getId()));
         Thread.sleep(5000);
 
         ConversationDTO conversation = bobTestService.getChatSocket().getConversations().stream()
@@ -260,6 +262,7 @@ public class UserTest extends TestUtil {
 
         todTestService.addFriend(bobTestService.getUser().getId());
         bobTestService.addFriend(todTestService.getUser().getId());
+        todTestService.createConversation(List.of(todTestService.getUser().getId(), bobTestService.getUser().getId()));
         Thread.sleep(5000);
 
         ConversationDTO conversation = bobTestService.getChatSocket().getConversations().stream()
@@ -291,6 +294,7 @@ public class UserTest extends TestUtil {
 
         todTestService.addFriend(bobTestService.getUser().getId());
         bobTestService.addFriend(todTestService.getUser().getId());
+        todTestService.createConversation(List.of(todTestService.getUser().getId(), bobTestService.getUser().getId()));
         Thread.sleep(5000);
 
         ConversationDTO conversation = bobTestService.getChatSocket().getConversations().stream()
@@ -321,6 +325,7 @@ public class UserTest extends TestUtil {
 
         todTestService.addFriend(bobTestService.getUser().getId());
         bobTestService.addFriend(todTestService.getUser().getId());
+        todTestService.createConversation(List.of(todTestService.getUser().getId(), bobTestService.getUser().getId()));
         Thread.sleep(5000);
 
         ConversationDTO conversation = bobTestService.getChatSocket().getConversations().stream()
@@ -362,6 +367,20 @@ public class UserTest extends TestUtil {
     }
 
     @Test
+    public void userCreateConversationOKTest() throws Exception {
+        todTestService.addFriend(bobTestService.getUser().getId());
+        todTestService.addFriend(samTestService.getUser().getId());
+        bobTestService.addFriend(todTestService.getUser().getId());
+        samTestService.addFriend(todTestService.getUser().getId());
+
+        ResponseEntity<ConversationDTO> responseEntity = todTestService.createConversation(List.of(
+            todTestService.getUser().getId(), 
+            bobTestService.getUser().getId(), 
+            samTestService.getUser().getId()));
+        assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
+    }
+
+    @Test
     public void getIconOkTest() throws Exception {
         File icon = new File("./target/test-classes/test-icon1.jpeg");
         if (!icon.exists())
@@ -375,6 +394,19 @@ public class UserTest extends TestUtil {
     @Test
     public void getIconNotFoundTest() throws Exception {
         ResponseEntity<byte[]> responseEntity = todTestService.getIcon();
+        assertEquals(HttpStatus.NOT_FOUND, responseEntity.getStatusCode());
+    }
+
+    @Test
+    public void userCreateConversationNotFriendTest() throws Exception {
+        todTestService.addFriend(bobTestService.getUser().getId());
+        todTestService.addFriend(samTestService.getUser().getId());
+        bobTestService.addFriend(todTestService.getUser().getId());
+
+        ResponseEntity<ConversationDTO> responseEntity = todTestService.createConversation(List.of(
+            todTestService.getUser().getId(), 
+            bobTestService.getUser().getId(), 
+            samTestService.getUser().getId()));
         assertEquals(HttpStatus.NOT_FOUND, responseEntity.getStatusCode());
     }
 
@@ -411,6 +443,29 @@ public class UserTest extends TestUtil {
         assertEquals(HttpStatus.OK, todTestService.deleteIcon().getStatusCode());
         ResponseEntity<byte[]> responseEntity = todTestService.getIcon();
         assertEquals(HttpStatus.NOT_FOUND, responseEntity.getStatusCode());
+    }
+
+    @Test
+    public void userLeaveConversationOkTest() throws Exception {
+        todTestService.addFriend(bobTestService.getUser().getId());
+        todTestService.addFriend(samTestService.getUser().getId());
+        bobTestService.addFriend(todTestService.getUser().getId());
+        samTestService.addFriend(todTestService.getUser().getId());
+
+        ConversationDTO conversation = todTestService.createConversation(List.of(
+            todTestService.getUser().getId(), 
+            bobTestService.getUser().getId(), 
+            samTestService.getUser().getId()))
+            .getBody();
+
+        if (conversation == null) {
+            fail();
+            return;
+        }
+        
+        ResponseEntity<String> responseEntity = todTestService.leaveConversation(conversation);
+
+        assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
     }
 
     @Test

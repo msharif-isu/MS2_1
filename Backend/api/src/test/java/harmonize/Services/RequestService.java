@@ -16,6 +16,7 @@ import org.springframework.util.MultiValueMap;
 import com.fasterxml.jackson.databind.JsonNode;
 
 import harmonize.DTOs.AuthDTO;
+import harmonize.DTOs.ConversationDTO;
 import harmonize.DTOs.ReportDTO;
 import harmonize.DTOs.RoleDTO;
 import harmonize.DTOs.UserDTO;
@@ -112,6 +113,26 @@ public class RequestService {
             method,
             new HttpEntity<>(body, headers),
             String.class);
+    }
+
+    public ResponseEntity<ConversationDTO> requestConversation(AuthDTO auth, String path, HttpMethod method) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization", "Bearer " + auth.getAccessToken());
+        return restTemplate.exchange(
+            path,
+            method,
+            new HttpEntity<>(headers),
+            new ParameterizedTypeReference<ConversationDTO>() {});
+    }
+
+    public ResponseEntity<ConversationDTO> requestConversation(AuthDTO auth, String path, HttpMethod method, Object body) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization", "Bearer " + auth.getAccessToken());
+        return restTemplate.exchange(
+            path,
+            method,
+            new HttpEntity<>(body, headers),
+            new ParameterizedTypeReference<ConversationDTO>() {});
     }
 
     public ResponseEntity<List<UserDTO>> requestUserList(AuthDTO auth, String path, HttpMethod method) {

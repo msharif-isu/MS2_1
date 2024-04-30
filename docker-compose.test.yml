@@ -1,4 +1,4 @@
-name: ${TEST_ID}-backend-test
+name: ${TEST_ID}-harmonize-test
 
 services:
   harmonize-db:

@@ -4,22 +4,30 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
 import com.google.gson.Gson;
 
 import org.java_websocket.handshake.ServerHandshake;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import Connections.VolleyCallBack;
 import Connections.WebSocketListener;
 import Connections.WebSocketManagerChat;
 import DTO.MessageDTO;
@@ -42,6 +50,12 @@ public class ConversationsFragment extends Fragment implements WebSocketListener
     private List<ConversationDTO> conversations;
     private Map<Integer, ConversationDTO> listConversations;
 
+
+    private RequestQueue mQueue = UserSession.getInstance().getmQueue();
+
+    private ArrayList<ConversationDTO> selectedConversations = new ArrayList<>();
+
+    private View view;
     public ConversationsFragment() {
         // Required empty public constructor
     }
@@ -61,6 +75,7 @@ public class ConversationsFragment extends Fragment implements WebSocketListener
             username = navBar.username;
             password = navBar.password;
             JWTtoken = navBar.jwtToken;
+
         }
         else {
             Log.e("msg", "navBar is null, JWT token not set");
@@ -102,15 +117,19 @@ public class ConversationsFragment extends Fragment implements WebSocketListener
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_conversation_list, container, false);
+        view = inflater.inflate(R.layout.fragment_conversation_list, container, false);
 
         recyclerView = view.findViewById(R.id.recycler);
+//        view.findViewById(R.id.deleteConvo).setVisibility(View.GONE);
         conversations = getConversations();
         conversationListAdapter = new ConversationListAdapter(conversations, clickListener);
         recyclerView.setAdapter(conversationListAdapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
+
         return view;
+
+
     }
 
     private List<ConversationDTO> getConversations() {
@@ -123,9 +142,6 @@ public class ConversationsFragment extends Fragment implements WebSocketListener
                 listConversations.put(id, convo);
             }
         }
-
-
-
 
         return conversations;
     }
@@ -217,4 +233,45 @@ public class ConversationsFragment extends Fragment implements WebSocketListener
         Log.e("msg", "Websocket error: " + ex.toString());
 
     }
-}
+
+    private void deleteConversation(int id, final VolleyCallBack callback) {
+        String url = UserSession.getInstance().getURL() + "/users/conversations/" + id;
+        Log.d("JWT", "Delete Convo JWT: " + UserSession.getInstance().getJwtToken());
+        StringRequest stringRequest = new StringRequest(
+                Request.Method.DELETE,
+                url,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        try {
+                            Log.e("msg", "Conversation deleted");
+                            callback.onSuccess();
+                        }
+                        catch (Exception e) {
+                            Log.e("msg", "Error deleting conversation");
+                        }
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Log.e("Conversation", "Conversation id: " + id + " not deleted");
+                        Log.e("Conversation", error.toString());
+
+                    }
+                }
+
+        )
+        {
+            @Override
+            public Map<String, String> getHeaders() {
+                Map<String, String> headers = new HashMap<String, String>();
+                headers.put("Authorization", UserSession.getInstance().getJwtToken());
+                return headers;
+            }
+        };
+        mQueue.add(stringRequest);
+        }
+
+
+    }

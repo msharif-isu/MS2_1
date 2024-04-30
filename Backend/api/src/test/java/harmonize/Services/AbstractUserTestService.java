@@ -39,7 +39,7 @@ public abstract class AbstractUserTestService {
         this.port = port;
         chatSocket = new ChatSocketTestService(URI.create("ws://" + hostname + ":" + port + "/chats?username=" + username + "&password=" + password));
 
-        ResponseEntity<AuthDTO> responseEntity = authTestService.register(new RegisterDTO("tod", "wilson", username, password));
+        ResponseEntity<AuthDTO> responseEntity = authTestService.register(new RegisterDTO("first", "last", username, password));
         if (responseEntity.getStatusCode() == HttpStatus.OK)
             auth = responseEntity.getBody();
         else

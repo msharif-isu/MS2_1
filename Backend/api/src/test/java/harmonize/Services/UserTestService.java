@@ -16,8 +16,10 @@ import org.springframework.http.HttpHeaders;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
+import harmonize.DTOs.ConversationDTO;
 import harmonize.DTOs.MessageDTO;
 import harmonize.DTOs.ReportDTO;
 import harmonize.DTOs.RoleDTO;
@@ -111,6 +113,18 @@ public class UserTestService extends AbstractUserTestService {
 
     public ResponseEntity<byte[]> deleteIcon() {
         return requestService.requestByteArray(auth, url + port + "/users/icons", HttpMethod.DELETE);
+    }
+
+    public ResponseEntity<ConversationDTO> createConversation(List<Integer> members) {
+        ObjectNode body = mapper.createObjectNode();
+        ArrayNode memberIds = mapper.createArrayNode();
+        members.forEach(memberIds::add);
+        body.set("memberIds", memberIds);
+        return requestService.requestConversation(auth, url + port + "/users/conversations", HttpMethod.POST, body);
+    }
+
+    public ResponseEntity<String> leaveConversation(ConversationDTO conversation) {
+        return requestService.requestString(auth, url + port + "/users/conversations/" + conversation.getId(), HttpMethod.DELETE);
     }
 
     public ResponseEntity<UserDTO> getAdminRequest() {

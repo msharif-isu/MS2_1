@@ -12,10 +12,12 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import harmonize.DTOs.PostDTO;
 import harmonize.DTOs.ReportDTO;
 import harmonize.DTOs.UserDTO;
 import harmonize.Services.MessageService;
 import harmonize.Services.ModeratorService;
+import harmonize.Services.PostService;
 import harmonize.Services.ReportService;
 import harmonize.Services.UserService;
 
@@ -26,13 +28,15 @@ public class ModeratorController {
     private UserService userService;
     private ReportService reportService;
     private MessageService messageService;
+    private PostService postService;
 
     @Autowired
-    public ModeratorController(ModeratorService moderatorService, UserService userService, ReportService reportService, MessageService messageService) {
+    public ModeratorController(ModeratorService moderatorService, UserService userService, ReportService reportService, MessageService messageService, PostService postService) {
         this.moderatorService = moderatorService;
         this.userService = userService;
         this.reportService = reportService;
         this.messageService = messageService;
+        this.postService= postService;
     }
 
     @GetMapping(path = "/users")
@@ -42,7 +46,7 @@ public class ModeratorController {
 
     @GetMapping(path = "")
     public ResponseEntity<UserDTO> getSelf(Principal principal){
-        return ResponseEntity.ok(moderatorService.getUser(principal.getName()));
+        return ResponseEntity.ok(moderatorService.getUser(principal.getName(), false));
     }
 
     @DeleteMapping(path = "")
@@ -98,5 +102,14 @@ public class ModeratorController {
     @DeleteMapping(path = "/messages/{id}")
     public ResponseEntity<String> deleteMessage(@PathVariable int id) {
         return ResponseEntity.ok(messageService.deleteMessage(id));
+    }
+
+    @GetMapping(path = "/posts/{id}")
+    public ResponseEntity<List<PostDTO>> getPosts(Principal principal, @PathVariable int id){
+        return ResponseEntity.ok(postService.getPosts(moderatorService.getUser(principal.getName()).getId(), id));
+    }
+
+    @DeleteMapping(path = "/posts/{id}") ResponseEntity<PostDTO> deletePost(@PathVariable int id) {
+        return ResponseEntity.ok(postService.deletePost(id));
     }
 }

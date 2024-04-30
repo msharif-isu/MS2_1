@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/cambridge_blue">
+    android:background="@color/Indian_red">
 
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/layout_group_chat"
@@ -20,7 +20,7 @@
             android:layout_height="?attr/actionBarSize"
             android:theme="@style/Widget.AppCompat.Toolbar"
             app:popupTheme="@style/Theme.AppCompat.Light"
-            android:background="@color/cambridge_blue">
+            android:background="@color/Indian_red">
         </androidx.appcompat.widget.Toolbar>
 
     </com.google.android.material.appbar.AppBarLayout>

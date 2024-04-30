@@ -17,11 +17,15 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import harmonize.DTOs.ConversationDTO;
+import harmonize.DTOs.FriendRecDTO;
+import harmonize.DTOs.PostDTO;
 import harmonize.DTOs.ReportDTO;
 import harmonize.DTOs.RoleDTO;
 import harmonize.DTOs.UserDTO;
 import harmonize.Services.AdminService;
 import harmonize.Services.MessageService;
+import harmonize.Services.PostService;
 import harmonize.Services.ReportService;
 import harmonize.Services.UserService;
 
@@ -38,13 +42,15 @@ public class AdminController {
     private UserService userService;
     private ReportService reportService;
     private MessageService messageService;
+    private PostService postService;
 
     @Autowired
-    public AdminController(AdminService adminService, UserService userService, ReportService reportService, MessageService messageService) {
+    public AdminController(AdminService adminService, UserService userService, ReportService reportService, MessageService messageService, PostService postService) {
         this.adminService = adminService;
         this.userService = userService;
         this.reportService = reportService;
         this.messageService = messageService;
+        this.postService = postService;
     }
 
     @GetMapping(path = "/users")
@@ -92,8 +98,18 @@ public class AdminController {
         return ResponseEntity.ok(userService.deleteIcon(id));
     }
 
+    @PostMapping(path = "/users/conversations/{id}")
+    public ResponseEntity<ConversationDTO> createConversation(@PathVariable int id, @RequestBody List<Integer> others){
+        return ResponseEntity.ok(userService.createConversation(id, others));
+    }
+
+    @DeleteMapping(path = "/users/conversations/{id}/{convoId}")
+    public ResponseEntity<String> removeConversation(@PathVariable int id, @PathVariable int convoId){
+        return ResponseEntity.ok(userService.leaveConversation(id, convoId));
+    }
+
     @GetMapping(path = "/friends/recommended/{id}")
-    public ResponseEntity<List<UserDTO>> getRecommendedFriends(@PathVariable int id) {
+    public ResponseEntity<List<FriendRecDTO>> getRecommendedFriends(@PathVariable int id) {
         return ResponseEntity.ok(userService.getRecommendedFriends(id));
     }
 
@@ -160,5 +176,14 @@ public class AdminController {
     @DeleteMapping(path = "/messages/{id}")
     public ResponseEntity<String> deleteMessage(@PathVariable int id) {
         return ResponseEntity.ok(messageService.deleteMessage(id));
+    }
+
+    @GetMapping(path = "/posts/{id}")
+    public ResponseEntity<List<PostDTO>> getPosts(Principal principal, @PathVariable int id){
+        return ResponseEntity.ok(postService.getPosts(adminService.getUser(principal.getName()).getId(), id));
+    }
+
+    @DeleteMapping(path = "/posts/{id}") ResponseEntity<PostDTO> deletePost(@PathVariable int id) {
+        return ResponseEntity.ok(postService.deletePost(id));
     }
 }

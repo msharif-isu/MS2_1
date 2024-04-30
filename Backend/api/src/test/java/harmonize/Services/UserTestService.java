@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import harmonize.DTOs.ConversationDTO;
@@ -80,7 +81,11 @@ public class UserTestService extends AbstractUserTestService {
     }
 
     public ResponseEntity<ConversationDTO> createConversation(List<Integer> members) {
-        return requestService.requestConversation(auth, url + port + "/users/conversations", HttpMethod.POST, members);
+        ObjectNode body = mapper.createObjectNode();
+        ArrayNode memberIds = mapper.createArrayNode();
+        members.forEach(memberIds::add);
+        body.set("memberIds", memberIds);
+        return requestService.requestConversation(auth, url + port + "/users/conversations", HttpMethod.POST, body);
     }
 
     public ResponseEntity<String> leaveConversation(ConversationDTO conversation) {

@@ -350,7 +350,7 @@ public class UserTest extends TestUtil {
     }
 
     @Test
-    public void userCreateConversationTest() throws Exception {
+    public void userCreateConversationOKTest() throws Exception {
         todTestService.addFriend(bobTestService.getUser().getId());
         todTestService.addFriend(samTestService.getUser().getId());
         bobTestService.addFriend(todTestService.getUser().getId());
@@ -365,7 +365,21 @@ public class UserTest extends TestUtil {
     }
 
     @Test
-    public void userLeaveConversationTest() throws Exception {
+    public void userCreateConversationNotFriendTest() throws Exception {
+        todTestService.addFriend(bobTestService.getUser().getId());
+        todTestService.addFriend(samTestService.getUser().getId());
+        bobTestService.addFriend(todTestService.getUser().getId());
+
+        ResponseEntity<ConversationDTO> responseEntity = todTestService.createConversation(List.of(
+            todTestService.getUser().getId(), 
+            bobTestService.getUser().getId(), 
+            samTestService.getUser().getId()));
+
+        assertEquals(HttpStatus.NOT_FOUND, responseEntity.getStatusCode());
+    }
+
+    @Test
+    public void userLeaveConversationOkTest() throws Exception {
         todTestService.addFriend(bobTestService.getUser().getId());
         todTestService.addFriend(samTestService.getUser().getId());
         bobTestService.addFriend(todTestService.getUser().getId());

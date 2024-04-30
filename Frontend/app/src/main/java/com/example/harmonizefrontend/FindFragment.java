@@ -50,6 +50,7 @@ public class FindFragment extends Fragment {
     private ArrayList<User> userList;
     private int id;
     private String username;
+    private String artistName;
     private RequestQueue mQueue;
     private static final String TAG = FindFragment.class.getSimpleName();
     public FindFragment() {
@@ -142,8 +143,16 @@ public class FindFragment extends Fragment {
 
                         int id = userJson.getInt("id");
                         String username = userJson.getString("username");
-                        userList.add(new User(id, username));
+                        String artistName = "";
 
+                        JSONObject artistJson = userJson.getJSONObject("artist");
+                        if (artistJson.has("name")) {
+
+                            artistName = artistJson.getString("name");
+
+                        }
+
+                        userList.add(new User(id, username, artistName));
                     }
 
                     //Populate the user items

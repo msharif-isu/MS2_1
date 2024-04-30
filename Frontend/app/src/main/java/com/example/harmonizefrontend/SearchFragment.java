@@ -87,13 +87,13 @@ public class SearchFragment extends Fragment {
         try {
             requestBody.put("q", query);
             requestBody.put("type", "track");
-            requestBody.put("limit", "5");
+            requestBody.put("limit", "10");
             requestBody.put("offset", "0");
         } catch (JSONException e) {
             e.printStackTrace();
         }
 
-        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url, requestBody,
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, url, requestBody,
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {

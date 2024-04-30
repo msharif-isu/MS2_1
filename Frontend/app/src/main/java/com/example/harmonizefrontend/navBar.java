@@ -44,7 +44,8 @@ public class navBar extends AppCompatActivity {
 //                loadFragment(new HomeFragment());
                 loadFragment(new HomeFragment());
             } else if (item.getItemId() == R.id.navigation_findUser) {
-                loadFragment(new FindFragment());
+//                loadFragment(new FindFragment());
+                loadFragment(new SeeFriendsFragment());
 
             } else if (item.getItemId() == R.id.navigation_messages) {
 //                loadFragment(new MessageFragment());
@@ -101,6 +102,7 @@ public class navBar extends AppCompatActivity {
                         break;
                     case "find":
                         loadFragment(new FindFragment());
+//                        loadFragment(new SeeFriendsFragment());
                         break;
                     case "messages":
 //                        loadFragment(new MessageFragment());

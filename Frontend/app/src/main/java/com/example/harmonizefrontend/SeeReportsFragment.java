@@ -129,8 +129,7 @@ public class SeeReportsFragment extends Fragment {
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
                 HashMap<String, String> headers = new HashMap<>();
-                Log.e("report", "jwt bandaid TEMPORARY");
-                headers.put("Authorization", "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJqb2huIiwiZXhwIjoxNzEyMzk0NTAzfQ.U7vhqwReBPune-g_Zg6M69PPB3J8cL29-DCsAs3hXuzB12IOhRja5v2fpeTd1uhJusPyabHvOFMbvQzoWMGRCA");
+                headers.put("Authorization", UserSession.getInstance().getJwtToken());
                 return headers;
             }
         };

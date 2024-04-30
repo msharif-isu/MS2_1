@@ -22,12 +22,14 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import harmonize.DTOs.SongRecDTO;
 import harmonize.DTOs.SearchDTO;
+import harmonize.Entities.Album;
 import harmonize.Entities.Artist;
 import harmonize.Entities.ArtistFreq;
 import harmonize.Entities.LikedSong;
 import harmonize.Entities.Song;
 import harmonize.Entities.User;
 import harmonize.ErrorHandling.Exceptions.InvalidArgumentException;
+import harmonize.Repositories.AlbumRepository;
 import harmonize.Repositories.ArtistRepository;
 import harmonize.Repositories.SongRepository;
 
@@ -47,14 +49,17 @@ public class MusicService {
 
     private ArtistRepository artistRepository;
 
+    private AlbumRepository albumRepository;
+
     @Autowired
-    public MusicService(RestTemplate restTemplate, SongRepository songRepository, ArtistRepository artistRepository) {
+    public MusicService(RestTemplate restTemplate, SongRepository songRepository, ArtistRepository artistRepository, AlbumRepository albumRepository) {
         this.restTemplate = restTemplate;
         this.objectMapper = new ObjectMapper();
         this.apiURL = "https://api.spotify.com/v1";
         this.apiExpiration = 0;
         this.songRepository = songRepository;
         this.artistRepository = artistRepository;
+        this.albumRepository = albumRepository;
     }
 
     public String getAPIToken() {
@@ -130,18 +135,116 @@ public class MusicService {
         JsonNode responseJson;
 
         try {
-            ResponseEntity<String> response = restTemplate.exchange(apiURL + urlEnd, HttpMethod.GET, new HttpEntity<>(headers), String.class);
-            responseJson = objectMapper.readTree(response.getBody());
-        } catch(Exception e) {
-            throw new InvalidArgumentException("Invalid song.");
+            responseJson = objectMapper.readTree("{\r\n" + //
+                        "    \"album\": {\r\n" + //
+                        "        \"album_type\": \"album\",\r\n" + //
+                        "        \"artists\": [\r\n" + //
+                        "            {\r\n" + //
+                        "                \"external_urls\": {\r\n" + //
+                        "                    \"spotify\": \"https://open.spotify.com/artist/06HL4z0CvFAxyc27GXpf02\"\r\n" + //
+                        "                },\r\n" + //
+                        "                \"href\": \"https://api.spotify.com/v1/artists/06HL4z0CvFAxyc27GXpf02\",\r\n" + //
+                        "                \"id\": \"06HL4z0CvFAxyc27GXpf02\",\r\n" + //
+                        "                \"name\": \"Taylor Swift\",\r\n" + //
+                        "                \"type\": \"artist\",\r\n" + //
+                        "                \"uri\": \"spotify:artist:06HL4z0CvFAxyc27GXpf02\"\r\n" + //
+                        "            }\r\n" + //
+                        "        ],\r\n" + //
+                        "        \"available_markets\": [\r\n" + //
+                        "            \"CA\",\r\n" + //
+                        "            \"US\"\r\n" + //
+                        "        ],\r\n" + //
+                        "        \"external_urls\": {\r\n" + //
+                        "            \"spotify\": \"https://open.spotify.com/album/2QJmrSgbdM35R67eoGQo4j\"\r\n" + //
+                        "        },\r\n" + //
+                        "        \"href\": \"https://api.spotify.com/v1/albums/2QJmrSgbdM35R67eoGQo4j\",\r\n" + //
+                        "        \"id\": \"2QJmrSgbdM35R67eoGQo4j\",\r\n" + //
+                        "        \"images\": [\r\n" + //
+                        "            {\r\n" + //
+                        "                \"height\": 640,\r\n" + //
+                        "                \"url\": \"https://i.scdn.co/image/ab67616d0000b2739abdf14e6058bd3903686148\",\r\n" + //
+                        "                \"width\": 640\r\n" + //
+                        "            },\r\n" + //
+                        "            {\r\n" + //
+                        "                \"height\": 300,\r\n" + //
+                        "                \"url\": \"https://i.scdn.co/image/ab67616d00001e029abdf14e6058bd3903686148\",\r\n" + //
+                        "                \"width\": 300\r\n" + //
+                        "            },\r\n" + //
+                        "            {\r\n" + //
+                        "                \"height\": 64,\r\n" + //
+                        "                \"url\": \"https://i.scdn.co/image/ab67616d000048519abdf14e6058bd3903686148\",\r\n" + //
+                        "                \"width\": 64\r\n" + //
+                        "            }\r\n" + //
+                        "        ],\r\n" + //
+                        "        \"name\": \"1989\",\r\n" + //
+                        "        \"release_date\": \"2014-10-27\",\r\n" + //
+                        "        \"release_date_precision\": \"day\",\r\n" + //
+                        "        \"total_tracks\": 13,\r\n" + //
+                        "        \"type\": \"album\",\r\n" + //
+                        "        \"uri\": \"spotify:album:2QJmrSgbdM35R67eoGQo4j\"\r\n" + //
+                        "    },\r\n" + //
+                        "    \"artists\": [\r\n" + //
+                        "        {\r\n" + //
+                        "            \"external_urls\": {\r\n" + //
+                        "                \"spotify\": \"https://open.spotify.com/artist/06HL4z0CvFAxyc27GXpf02\"\r\n" + //
+                        "            },\r\n" + //
+                        "            \"href\": \"https://api.spotify.com/v1/artists/06HL4z0CvFAxyc27GXpf02\",\r\n" + //
+                        "            \"id\": \"06HL4z0CvFAxyc27GXpf02\",\r\n" + //
+                        "            \"name\": \"Taylor Swift\",\r\n" + //
+                        "            \"type\": \"artist\",\r\n" + //
+                        "            \"uri\": \"spotify:artist:06HL4z0CvFAxyc27GXpf02\"\r\n" + //
+                        "        }\r\n" + //
+                        "    ],\r\n" + //
+                        "    \"available_markets\": [\r\n" + //
+                        "        \"CA\",\r\n" + //
+                        "        \"US\"\r\n" + //
+                        "    ],\r\n" + //
+                        "    \"disc_number\": 1,\r\n" + //
+                        "    \"duration_ms\": 211933,\r\n" + //
+                        "    \"explicit\": false,\r\n" + //
+                        "    \"external_ids\": {\r\n" + //
+                        "        \"isrc\": \"USCJY1431369\"\r\n" + //
+                        "    },\r\n" + //
+                        "    \"external_urls\": {\r\n" + //
+                        "        \"spotify\": \"https://open.spotify.com/track/273dCMFseLcVsoSWx59IoE\"\r\n" + //
+                        "    },\r\n" + //
+                        "    \"href\": \"https://api.spotify.com/v1/tracks/273dCMFseLcVsoSWx59IoE\",\r\n" + //
+                        "    \"id\": \"273dCMFseLcVsoSWx59IoE\",\r\n" + //
+                        "    \"is_local\": false,\r\n" + //
+                        "    \"name\": \"Bad Blood\",\r\n" + //
+                        "    \"popularity\": 67,\r\n" + //
+                        "    \"preview_url\": null,\r\n" + //
+                        "    \"track_number\": 8,\r\n" + //
+                        "    \"type\": \"track\",\r\n" + //
+                        "    \"uri\": \"spotify:track:273dCMFseLcVsoSWx59IoE\"\r\n" + //
+                        "}");
         }
+        catch(Exception e) {
+            e.printStackTrace();
+            throw new InvalidArgumentException("BRUH");
+        }
+
+        // try {
+        //     ResponseEntity<String> response = restTemplate.exchange(apiURL + urlEnd, HttpMethod.GET, new HttpEntity<>(headers), String.class);
+        //     responseJson = objectMapper.readTree(response.getBody());
+        // } catch(Exception e) {
+        //     throw new InvalidArgumentException("Invalid song.");
+        // }
         
         Artist artist = new Artist(responseJson.get("artists").get(0));
-        Song song = new Song(responseJson, artistRepository.save(artist));
-        song.setArtist(artist);
+        artist = artistRepository.save(artist);
+
+        Album album = new Album(responseJson.get("album"), artist);
+        album = albumRepository.save(album);
+
+        Song song = new Song(responseJson, artist, album);
+
+        artist.getAlbums().add(album);
         artist.getSongs().add(song);
+        album.getSongs().add(song);
 
         songRepository.save(song);
+        responseJson = objectMapper.valueToTree(song);
 
         return responseJson;
     }

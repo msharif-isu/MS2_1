@@ -19,15 +19,19 @@ public class SongDTO {
 
     private ArtistDTO artist;
 
+    private AlbumDTO album;
+
     public SongDTO(Song song) {
         this.id = song.getId();
         this.title = song.getTitle();
         this.artist = new ArtistDTO(song.getArtist().getId(), song.getArtist().getName());
+        this.album = new AlbumDTO(song.getAlbum());
     }
 
     public SongDTO(LikedSong connection) {
         this.id = connection.getSong().getId();
         this.title = connection.getSong().getTitle();
         this.artist = new ArtistDTO(connection.getSong().getArtist().getId(), connection.getSong().getArtist().getName());
+        this.album = new AlbumDTO(connection.getSong().getAlbum());
     }
 }

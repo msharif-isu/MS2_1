@@ -1,5 +1,10 @@
 package harmonize;
 
+import java.io.FileInputStream;
+import java.security.KeyStore;
+import java.security.cert.CertificateFactory;
+import java.security.cert.X509Certificate;
+
 import javax.net.ssl.SSLContext;
 
 import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
@@ -8,7 +13,6 @@ import org.apache.hc.client5.http.impl.io.PoolingHttpClientConnectionManagerBuil
 import org.apache.hc.client5.http.io.HttpClientConnectionManager;
 import org.apache.hc.client5.http.ssl.SSLConnectionSocketFactory;
 import org.apache.hc.client5.http.ssl.SSLConnectionSocketFactoryBuilder;
-import org.apache.hc.client5.http.ssl.TrustAllStrategy;
 import org.apache.hc.core5.ssl.SSLContexts;
 
 import org.springframework.boot.test.web.client.TestRestTemplate;
@@ -59,8 +63,17 @@ public class TestConfig {
 
     @Bean
     public TestRestTemplate testRestTemplate() throws Exception {
+        FileInputStream inputStream = new FileInputStream("./target/test-classes/harmonize.crt");
+        CertificateFactory certificateFactory = CertificateFactory.getInstance("X.509");
+        X509Certificate serverCertificate = (X509Certificate) certificateFactory.generateCertificate(inputStream);
+        inputStream.close();
+
+        KeyStore keyStore = KeyStore.getInstance(KeyStore.getDefaultType());
+        keyStore.load(null, null);
+        keyStore.setCertificateEntry("harmonize", serverCertificate);
+
         SSLContext sslcontext = SSLContexts.custom()
-                .loadTrustMaterial(null, new TrustAllStrategy())
+                .loadTrustMaterial(keyStore, null)
                 .build();
         SSLConnectionSocketFactory sslSocketFactory = SSLConnectionSocketFactoryBuilder.create()
                 .setSslContext(sslcontext)

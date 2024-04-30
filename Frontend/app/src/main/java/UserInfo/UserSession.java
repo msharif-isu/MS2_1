@@ -13,8 +13,10 @@ import DTO.MessageDTO;
  * Class which holds data about the current user using the application
  */
 public class UserSession {
+
     private static UserSession instance;
     private Member currentUser;
+    private List<String> roleList;
 
     private String jwtToken, password;
 
@@ -42,6 +44,14 @@ public class UserSession {
             instance = new UserSession();
         }
         return instance;
+    }
+
+    public List<String> getRoles() {
+        return roleList;
+    }
+
+    public void setRoles(List<String> roles) {
+        this.roleList = roles;
     }
 
     public Member getCurrentUser() {

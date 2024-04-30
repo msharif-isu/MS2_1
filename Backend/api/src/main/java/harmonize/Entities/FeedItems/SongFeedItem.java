@@ -1,5 +1,6 @@
 package harmonize.Entities.FeedItems;
 
+import java.util.Date;
 import java.util.Objects;
 
 import harmonize.Entities.Song;
@@ -16,6 +17,8 @@ import lombok.Data;
 @Entity
 @DiscriminatorValue(value = "song")
 public class SongFeedItem extends AbstractFeedItem {
+    public static final long SONG_EXPIRATION_DATE_MS = 86400 * 1000;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "song_id", referencedColumnName = "id")    
     private Song song;
@@ -25,7 +28,8 @@ public class SongFeedItem extends AbstractFeedItem {
     }
 
     public SongFeedItem(FeedEnum type, Song song, User user) {
-        super(type, user);
+        super(new Date(System.currentTimeMillis() + SONG_EXPIRATION_DATE_MS), 
+                type, user);
         this.song = song;
     }
 

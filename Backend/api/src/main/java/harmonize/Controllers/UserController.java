@@ -15,10 +15,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import harmonize.DTOs.FriendRecDTO;
+import harmonize.DTOs.PostDTO;
 import harmonize.DTOs.ReportDTO;
 import harmonize.DTOs.RoleDTO;
 import harmonize.DTOs.SongDTO;
 import harmonize.DTOs.UserDTO;
+import harmonize.Services.PostService;
 import harmonize.Services.ReportService;
 import harmonize.Services.UserService;
 
@@ -33,11 +35,13 @@ import harmonize.Services.UserService;
 public class UserController {
     private UserService userService;
     private ReportService reportService;
+    private PostService postService;
 
     @Autowired
-    public UserController(UserService userService, ReportService reportService) {
+    public UserController(UserService userService, ReportService reportService, PostService postService) {
         this.userService = userService;
         this.reportService = reportService;
+        this.postService = postService;
     }
 
     /**
@@ -133,6 +137,26 @@ public class UserController {
     @DeleteMapping(path = "/songs/{id}")
     public ResponseEntity<String> removeSong(Principal principal, @PathVariable String id){
         return ResponseEntity.ok(userService.removeSong(userService.getUser(principal.getName()).getId(), id));
+    }
+
+    @GetMapping(path = "/posts")
+    public ResponseEntity<List<PostDTO>> getPosts(Principal principal){
+        return ResponseEntity.ok(postService.getPosts(userService.getUser(principal.getName()).getId()));
+    }
+
+    @GetMapping(path = "/posts/{id}")
+    public ResponseEntity<List<PostDTO>> getPosts(Principal principal, @PathVariable int id){
+        return ResponseEntity.ok(postService.getPosts(userService.getUser(principal.getName()).getId(), id));
+    }
+
+    @PostMapping(path = "/posts")
+    public ResponseEntity<PostDTO> sendPost(Principal principal, @RequestBody PostDTO post){
+        return ResponseEntity.ok(postService.sendPost(userService.getUser(principal.getName()).getId(), post.getPost()));
+    }
+
+    @DeleteMapping(path = "/posts/{id}")
+    public ResponseEntity<PostDTO> deleteSentPost(Principal principal, @PathVariable int id){
+        return ResponseEntity.ok(postService.deleteSentPost(userService.getUser(principal.getName()).getId(), id));
     }
 }
 

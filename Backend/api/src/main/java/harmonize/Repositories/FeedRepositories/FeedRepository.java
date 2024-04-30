@@ -2,11 +2,13 @@ package harmonize.Repositories.FeedRepositories;
 
 import java.util.List;
 
+import org.springframework.context.annotation.Primary;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.NoRepositoryBean;
+import org.springframework.stereotype.Repository;
 
+import harmonize.Entities.Post;
 import harmonize.Entities.FeedItems.AbstractFeedItem;
 import jakarta.transaction.Transactional;
 
@@ -16,7 +18,8 @@ import jakarta.transaction.Transactional;
  * 
  */ 
 
-@NoRepositoryBean
+@Primary
+@Repository
 public interface FeedRepository extends JpaRepository<AbstractFeedItem, Long> {
     @Transactional
     @Modifying
@@ -25,4 +28,7 @@ public interface FeedRepository extends JpaRepository<AbstractFeedItem, Long> {
 
     @Query("SELECT f FROM AbstractFeedItem f WHERE f.user.id = :userId")
     List<AbstractFeedItem> getSeenFeedItemsByUser(int userId);
+
+    @Query("DELETE FROM PostFeedItem p WHERE p.post = :post")
+    void deleteByPost(Post post);
 }

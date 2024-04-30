@@ -1,9 +1,12 @@
 package harmonize.Tests;
 
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
+import java.io.File;
+import java.nio.file.Files;
 import java.util.List;
 import java.util.Set;
 
@@ -154,19 +157,19 @@ public class UserTest extends TestUtil {
     }
 
     @Test
-    public void userAddFriendInviteOkTest() throws Exception {
+    public void addFriendInviteOkTest() throws Exception {
         ResponseEntity<String> responseEntity = todTestService.addFriend(bobTestService.getUser().getId());
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
     }
 
     @Test
-    public void userAddFriendNotFoundTest() throws Exception {
+    public void addFriendNotFoundTest() throws Exception {
         ResponseEntity<String> responseEntity = todTestService.addFriend(0);
         assertEquals(HttpStatus.NOT_FOUND, responseEntity.getStatusCode());
     }
 
     @Test
-    public void userAddFriendInviteAlreadySentTest() throws Exception {
+    public void addFriendInviteAlreadySentTest() throws Exception {
         todTestService.addFriend(bobTestService.getUser().getId());
 
         ResponseEntity<String> responseEntity = todTestService.addFriend(bobTestService.getUser().getId());
@@ -174,7 +177,7 @@ public class UserTest extends TestUtil {
     }
 
     @Test
-    public void userAddFriendOkTest() throws Exception {
+    public void addFriendOkTest() throws Exception {
         bobTestService.addFriend(todTestService.getUser().getId());
 
         ResponseEntity<String> responseEntity = todTestService.addFriend(bobTestService.getUser().getId());
@@ -182,7 +185,7 @@ public class UserTest extends TestUtil {
     }
 
     @Test
-    public void userAddFriendAlreadyFriendTest() throws Exception {
+    public void addFriendAlreadyFriendTest() throws Exception {
         todTestService.addFriend(bobTestService.getUser().getId());
         bobTestService.addFriend(todTestService.getUser().getId());
         
@@ -191,14 +194,14 @@ public class UserTest extends TestUtil {
     }
 
     @Test
-    public void userAddFriendSelfTest() throws Exception {
+    public void addFriendSelfTest() throws Exception {
         ResponseEntity<String> responseEntity = todTestService.addFriend(todTestService.getUser().getId());
         assertEquals(HttpStatus.BAD_REQUEST, responseEntity.getStatusCode());
     }
 
     @Test
     @DisabledIfEnvironmentVariable(named = "DOCKER_RUNNING", matches = "true")
-    public void userSendReportOkTest() throws Exception {
+    public void sendReportOkTest() throws Exception {
         bobTestService.getChatSocket().connect();
 
         todTestService.addFriend(bobTestService.getUser().getId());
@@ -227,7 +230,7 @@ public class UserTest extends TestUtil {
 
     @Test
     @DisabledIfEnvironmentVariable(named = "DOCKER_RUNNING", matches = "true")
-    public void userSendReportMessageNotFoundTest() throws Exception {
+    public void sendReportMessageNotFoundTest() throws Exception {
         bobTestService.getChatSocket().connect();
 
         todTestService.addFriend(bobTestService.getUser().getId());
@@ -252,7 +255,7 @@ public class UserTest extends TestUtil {
 
     @Test
     @DisabledIfEnvironmentVariable(named = "DOCKER_RUNNING", matches = "true")
-    public void userSendReportMessageNotFound2Test() throws Exception {
+    public void sendReportMessageNotFound2Test() throws Exception {
         bobTestService.getChatSocket().connect();
 
         todTestService.addFriend(bobTestService.getUser().getId());
@@ -283,7 +286,7 @@ public class UserTest extends TestUtil {
 
     @Test
     @DisabledIfEnvironmentVariable(named = "DOCKER_RUNNING", matches = "true")
-    public void userDeleteReportOkTest() throws Exception {
+    public void deleteReportOkTest() throws Exception {
         bobTestService.getChatSocket().connect();
 
         todTestService.addFriend(bobTestService.getUser().getId());
@@ -313,7 +316,7 @@ public class UserTest extends TestUtil {
 
     @Test
     @DisabledIfEnvironmentVariable(named = "DOCKER_RUNNING", matches = "true")
-    public void userGetReportsOkTest() throws Exception {
+    public void getReportsOkTest() throws Exception {
         bobTestService.getChatSocket().connect();
 
         todTestService.addFriend(bobTestService.getUser().getId());
@@ -347,6 +350,67 @@ public class UserTest extends TestUtil {
         assertTrue(body.stream()
             .anyMatch(item -> (item.getMessage().equals(message) && item.getReportText().equals(reportText)))
         );
+    }
+
+    @Test
+    public void setIconOkTest() throws Exception {
+        File icon = new File("./target/test-classes/test-icon1.jpeg");
+        if (!icon.exists())
+            fail("Test icon not found.");
+        ResponseEntity<byte[]> responseEntity = todTestService.postIcon(icon);
+        assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
+    }
+
+    @Test
+    public void getIconOkTest() throws Exception {
+        File icon = new File("./target/test-classes/test-icon1.jpeg");
+        if (!icon.exists())
+            fail("Test icon not found.");
+        assertEquals(HttpStatus.OK, todTestService.postIcon(icon).getStatusCode());
+        ResponseEntity<byte[]> responseEntity = todTestService.getIcon();
+        assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
+        assertArrayEquals(Files.readAllBytes(icon.toPath()), responseEntity.getBody());
+    }
+
+    @Test
+    public void getIconNotFoundTest() throws Exception {
+        ResponseEntity<byte[]> responseEntity = todTestService.getIcon();
+        assertEquals(HttpStatus.NOT_FOUND, responseEntity.getStatusCode());
+    }
+
+    @Test
+    public void getOtherIconOkTest() throws Exception {
+        File icon = new File("./target/test-classes/test-icon1.jpeg");
+        if (!icon.exists())
+            fail("Test icon not found.");
+        assertEquals(HttpStatus.OK, todTestService.postIcon(icon).getStatusCode());
+        ResponseEntity<byte[]> responseEntity = bobTestService.getIcon(todTestService.getUser().getId());
+        assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
+        assertArrayEquals(Files.readAllBytes(icon.toPath()), responseEntity.getBody());
+    }
+
+    @Test
+    public void setOverwriteIconOkTest() throws Exception {
+        File icon1 = new File("./target/test-classes/test-icon1.jpeg");
+        File icon2 = new File("./target/test-classes/test-icon2.jpeg");
+        if (!icon1.exists() || !icon2.exists())
+            fail("Test icons not found.");
+        assertEquals(HttpStatus.OK, todTestService.postIcon(icon1).getStatusCode());
+        assertEquals(HttpStatus.OK, todTestService.postIcon(icon2).getStatusCode());
+        ResponseEntity<byte[]> responseEntity = todTestService.getIcon();
+        assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
+        assertArrayEquals(Files.readAllBytes(icon2.toPath()), responseEntity.getBody());
+    }
+
+    @Test
+    public void deleteIconOkTest() throws Exception {
+        File icon = new File("./target/test-classes/test-icon1.jpeg");
+        if (!icon.exists())
+            fail("Test icon not found.");
+        assertEquals(HttpStatus.OK, todTestService.postIcon(icon).getStatusCode());
+        assertEquals(HttpStatus.OK, todTestService.deleteIcon().getStatusCode());
+        ResponseEntity<byte[]> responseEntity = todTestService.getIcon();
+        assertEquals(HttpStatus.NOT_FOUND, responseEntity.getStatusCode());
     }
 
     @Test

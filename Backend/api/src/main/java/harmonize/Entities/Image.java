@@ -6,7 +6,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.Data;
-import lombok.RequiredArgsConstructor;
+import lombok.NoArgsConstructor;
 
 /**
  * 
@@ -16,12 +16,16 @@ import lombok.RequiredArgsConstructor;
 @Entity
 @Table(name = "images")
 @Data
-@RequiredArgsConstructor
+@NoArgsConstructor
 public class Image {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
-    private final String path;
+    private String path;
+
+    public Image(String path) {
+        this.path = path;
+    }
 
     @Override
     public boolean equals(Object o) {

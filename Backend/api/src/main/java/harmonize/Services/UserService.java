@@ -339,6 +339,9 @@ public class UserService {
         if(user == null || !user.getRoles().contains(roleRepository.findByName("USER")))
             throw new EntityNotFoundException("User " + id + " not found.");
 
+        if (user.getIcon() == null)
+            throw new EntityNotFoundException("User " + id + " does not have and icon.");
+
         try {
             File file = new File(user.getIcon().getPath());
             return Files.readAllBytes(file.toPath());
@@ -360,10 +363,11 @@ public class UserService {
                     file.delete();
             }
 
-            File file = new File("/home/icons/" + File.separator + user.getId() + imageFile.getOriginalFilename());
-            imageFile.transferTo(file);  // save file to disk
+            File file = new File(System.getProperty("user.dir") + File.separator + "icons" + File.separator + user.getId() + '-' + imageFile.getOriginalFilename());
+            imageFile.transferTo(file); 
             
             user.setIcon(new Image(file.getAbsolutePath()));
+            userRepository.save(user);
 
             return Files.readAllBytes(file.toPath());
         } catch (IOException e) {
@@ -377,10 +381,15 @@ public class UserService {
         if(user == null)
             throw new EntityNotFoundException("User " + id + " not found.");
 
+        if (user.getIcon() == null)
+            return "User " + id + " did not have and icon.";
+
         if (user.getIcon() != null) {
             File file = new File(user.getIcon().getPath());
             if (file.exists()) {
                 file.delete();
+                user.setIcon(null);
+                userRepository.save(user);
                 return "Icon for user " + id + " deleted.";
             } else {
                 throw new InternalServerErrorException("Image file for user " + id + " not found.");

@@ -15,11 +15,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import harmonize.DTOs.FriendRecDTO;
+import harmonize.DTOs.PostDTO;
 import harmonize.DTOs.ReportDTO;
 import harmonize.DTOs.RoleDTO;
 import harmonize.DTOs.UserDTO;
 import harmonize.Services.AdminService;
 import harmonize.Services.MessageService;
+import harmonize.Services.PostService;
 import harmonize.Services.ReportService;
 import harmonize.Services.UserService;
 
@@ -36,13 +38,15 @@ public class AdminController {
     private UserService userService;
     private ReportService reportService;
     private MessageService messageService;
+    private PostService postService;
 
     @Autowired
-    public AdminController(AdminService adminService, UserService userService, ReportService reportService, MessageService messageService) {
+    public AdminController(AdminService adminService, UserService userService, ReportService reportService, MessageService messageService, PostService postService) {
         this.adminService = adminService;
         this.userService = userService;
         this.reportService = reportService;
         this.messageService = messageService;
+        this.postService = postService;
     }
 
     @GetMapping(path = "/users")
@@ -140,4 +144,12 @@ public class AdminController {
         return ResponseEntity.ok(messageService.deleteMessage(id));
     }
 
+    @GetMapping(path = "/posts/{id}")
+    public ResponseEntity<List<PostDTO>> getPosts(Principal principal, @PathVariable int id){
+        return ResponseEntity.ok(postService.getPosts(adminService.getUser(principal.getName()).getId(), id));
+    }
+
+    @DeleteMapping(path = "/posts/{id}") ResponseEntity<PostDTO> deletePost(@PathVariable int id) {
+        return ResponseEntity.ok(postService.deletePost(id));
+    }
 }

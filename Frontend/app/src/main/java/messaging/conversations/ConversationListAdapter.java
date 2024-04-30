@@ -31,6 +31,7 @@ import DTO.ConversationDTO;
 import DTO.MessageDTO;
 import PictureData.SharedViewModel;
 import UserInfo.Member;
+import UserInfo.User;
 import UserInfo.UserSession;
 
 
@@ -44,15 +45,15 @@ public class ConversationListAdapter extends RecyclerView.Adapter<RecyclerView.V
     private ClickListener clickListener;
 
     private RequestQueue mQueue = UserSession.getInstance().getmQueue();
-    private String URL = "http://coms-309-032.cs.iastate.edu:8080";
     private Bitmap friendPic;
     private Boolean isSelected = false;
     ArrayList<ConversationDTO> selectedConversations = new ArrayList<>();
 
+
+
     public ConversationListAdapter(List<ConversationDTO> conversationList, ClickListener clickListener) {
         this.conversationList = conversationList;
         this.clickListener = clickListener;
-//        viewModel = new ViewModelProvider(requireActivity()).get(SharedViewModel.class);
 
     }
 
@@ -132,6 +133,7 @@ public class ConversationListAdapter extends RecyclerView.Adapter<RecyclerView.V
                     if (selectedConversations.size() == 0) {
                         isSelected = false;
                     }
+                    UserSession.getInstance().setSelectedconversations(selectedConversations);
                 } else {
                     clickListener.click(index);
                 }
@@ -142,6 +144,7 @@ public class ConversationListAdapter extends RecyclerView.Adapter<RecyclerView.V
             @Override
             public boolean onLongClick(View v) {
                 isSelected = true;
+
                 if (selectedConversations.contains(conversation)) {
                     selectedConversations.remove(conversation);
                     viewHolder.itemView.setBackgroundColor(Color.TRANSPARENT);
@@ -154,7 +157,7 @@ public class ConversationListAdapter extends RecyclerView.Adapter<RecyclerView.V
                     isSelected = false;
                     selectedConversations.clear();
                 }
-
+                UserSession.getInstance().setSelectedconversations(selectedConversations);
                 return true;
             }
         });
@@ -183,7 +186,7 @@ public class ConversationListAdapter extends RecyclerView.Adapter<RecyclerView.V
 
 
         ImageRequest imageRequest = new ImageRequest(
-                URL + "/users/1/image", // Do change
+                UserSession.getInstance().getURL() + "/users/1/image", // Do change
                 new Response.Listener<Bitmap>() {
                     @Override
                     public void onResponse(Bitmap response) {

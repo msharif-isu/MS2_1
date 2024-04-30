@@ -214,7 +214,7 @@ public class SeePictureFragment extends Fragment {
         byte[] imageData = stream.toByteArray();
         MultipartRequest multipartRequest = new MultipartRequest(
                 Request.Method.POST,
-                URL + "/upload", // CHANGE
+                URL + "/users/icons",
                 imageData,
                 response -> {
                     // Handle response
@@ -232,14 +232,6 @@ public class SeePictureFragment extends Fragment {
                 HashMap<String, String> headers = new HashMap<String, String>();
                 headers.put("Authorization", UserSession.getInstance().getJwtToken());
                 return headers;
-            }
-
-            @Override
-            protected Map<String, String> getParams() {
-                Map<String, String> params = new HashMap<String, String>();
-//                params.put("param1", "value1");
-//                params.put("param2", "value2");
-                return params;
             }
         };
 

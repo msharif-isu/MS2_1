@@ -25,7 +25,9 @@ public class UserSession {
     private ConversationDTO currentConversation;
     private RequestQueue mQueue;
 
-    private String URL = "http://coms-309-032.cs.iastate.edu:8080";
+    private ArrayList<ConversationDTO> selectedConversations = new ArrayList<>();
+
+    private String URL = "http://coms-309-032.class.las.iastate.edu:8080";
 
     private UserSession() {
         conversations = new java.util.HashMap<>();
@@ -112,5 +114,13 @@ public class UserSession {
 
     public String getURL() {
         return URL;
+    }
+
+    public void setSelectedconversations(ArrayList<ConversationDTO> selectedConversations) {
+        this.selectedConversations = selectedConversations;
+    }
+
+    public ArrayList<ConversationDTO> getSelectedConversations() {
+        return selectedConversations;
     }
 }

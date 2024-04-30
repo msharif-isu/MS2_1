@@ -13,10 +13,12 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.android.volley.AuthFailureError;
+import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.ImageRequest;
+import com.android.volley.toolbox.StringRequest;
 import com.example.harmonizefrontend.R;
 
 import java.text.SimpleDateFormat;
@@ -118,6 +120,21 @@ public class ConversationListAdapter extends RecyclerView.Adapter<RecyclerView.V
             }
         });
 
+        viewHolder.delete.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                int convoId = conversation.getDataId();
+                deleteConversation(convoId, new VolleyCallBack() {
+
+                    @Override
+                    public void onSuccess() {
+                        conversationList.remove(position);
+                        notifyItemRemoved(position);
+                    }
+                });
+            }
+        });
+
         viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -125,15 +142,17 @@ public class ConversationListAdapter extends RecyclerView.Adapter<RecyclerView.V
                     if (selectedConversations.contains(conversation)) {
                         selectedConversations.remove(conversation);
                         viewHolder.itemView.setBackgroundColor(Color.TRANSPARENT);
+                        viewHolder.delete.setVisibility(View.GONE);
                     } else {
                         selectedConversations.add(conversation);
                         viewHolder.itemView.setBackgroundColor(Color.rgb(200, 120, 106));
+                        viewHolder.delete.setVisibility(View.VISIBLE);
                     }
 
                     if (selectedConversations.size() == 0) {
                         isSelected = false;
                     }
-                    UserSession.getInstance().setSelectedconversations(selectedConversations);
+//                    UserSession.getInstance().setSelectedconversations(selectedConversations);
                 } else {
                     clickListener.click(index);
                 }
@@ -148,20 +167,52 @@ public class ConversationListAdapter extends RecyclerView.Adapter<RecyclerView.V
                 if (selectedConversations.contains(conversation)) {
                     selectedConversations.remove(conversation);
                     viewHolder.itemView.setBackgroundColor(Color.TRANSPARENT);
+                    viewHolder.delete.setVisibility(View.GONE);
                 } else {
                     selectedConversations.add(conversation);
                     viewHolder.itemView.setBackgroundColor(Color.rgb(200, 120, 106));
+                    viewHolder.delete.setVisibility(View.VISIBLE);
                 }
 
                 if (selectedConversations.size() == 0) {
                     isSelected = false;
                     selectedConversations.clear();
                 }
-                UserSession.getInstance().setSelectedconversations(selectedConversations);
+//                UserSession.getInstance().setSelectedconversations(selectedConversations);
                 return true;
             }
         });
     }
+
+    private void deleteConversation(int convoId, VolleyCallBack volleyCallBack) {
+        StringRequest stringRequest = new StringRequest(
+                Request.Method.DELETE,
+                UserSession.getInstance().getURL() + "/users/conversations/" + String.valueOf(convoId),
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        Log.e("Conversations", response);
+                        volleyCallBack.onSuccess();
+
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Log.e("Conversations", error.toString());
+                    }
+                }
+        )
+        {
+            @Override
+            public Map<String, String> getHeaders () throws AuthFailureError {
+                HashMap<String, String> headers = new HashMap<String, String>();
+                headers.put("Authorization", UserSession.getInstance().getJwtToken());
+                return headers;
+            }
+        };
+        mQueue.add(stringRequest);
+    };
 
     @Override
     public int getItemCount() {

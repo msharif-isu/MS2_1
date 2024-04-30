@@ -37,11 +37,11 @@ import lombok.Data;
     name = "feed_item_type",
     discriminatorType = DiscriminatorType.STRING
 )
-@Table(name = "seen_feed_items")
+@Table(name = "feed_items")
 @AllArgsConstructor
 @Data
 public abstract class AbstractFeedItem {
-    public static final long ITEM_EXPIRATION_DATE_MS = 86400 * 1000;
+    public static final long DEFAULT_EXPIRATION_DATE_MS = 86400 * 1000;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -55,18 +55,18 @@ public abstract class AbstractFeedItem {
     private Date expiration;
 
     @JsonIncludeProperties(value = {"id"})
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", referencedColumnName = "id") 
     private User user;
 
     public AbstractFeedItem() {
-        expiration = new Date(System.currentTimeMillis() + ITEM_EXPIRATION_DATE_MS);
+        expiration = new Date(System.currentTimeMillis() + DEFAULT_EXPIRATION_DATE_MS);
     }
 
-    public AbstractFeedItem(FeedEnum type, User user) {
+    public AbstractFeedItem(Date expiration, FeedEnum type, User user) {
         this.user = user;
         this.type = type;
-        expiration = new Date(System.currentTimeMillis() + ITEM_EXPIRATION_DATE_MS);
+        this.expiration = expiration;
     }
 
     @PreRemove

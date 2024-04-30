@@ -3,17 +3,17 @@ package harmonize.Services;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.Random;
 import java.util.stream.Collectors;
 
+import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -21,10 +21,13 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import harmonize.DTOs.FeedDTO;
 import harmonize.DTOs.TransmissionDTO;
+import harmonize.Entities.ArtistFreq;
 import harmonize.Entities.LikedSong;
+import harmonize.Entities.Post;
 import harmonize.Entities.Song;
 import harmonize.Entities.User;
 import harmonize.Entities.FeedItems.AbstractFeedItem;
+import harmonize.Entities.FeedItems.PostFeedItem;
 import harmonize.Entities.FeedItems.SongFeedItem;
 import harmonize.Enum.FeedEnum;
 import harmonize.ErrorHandling.Exceptions.EntityNotFoundException;
@@ -32,14 +35,13 @@ import harmonize.ErrorHandling.Exceptions.InternalServerErrorException;
 import harmonize.ErrorHandling.Exceptions.UnauthorizedException;
 import harmonize.Repositories.UserRepository;
 import harmonize.Repositories.FeedRepositories.FeedRepository;
-import harmonize.Repositories.FeedRepositories.SongFeedRepository;
+import jakarta.transaction.Transactional;
 import jakarta.websocket.Session;
 
 @Service
+@Transactional
 public class FeedService {
-    private static Set<Session> sessions = new HashSet<>();
-
-    private Map<Class<? extends AbstractFeedItem>, FeedRepository> feedRepositories;
+    private static MultiValueMap<String, Session> sessions = new LinkedMultiValueMap<>();
 
     private FeedRepository feedRepository;
     private MusicService musicService;
@@ -48,22 +50,18 @@ public class FeedService {
     private BCryptPasswordEncoder encoder;
 
     @Autowired
-    public FeedService(MusicService musicService, UserRepository userRepository, SongFeedRepository songFeedRepository, FeedRepository feedRepository, 
-                            BCryptPasswordEncoder encoder, ObjectMapper mapper) {
+    public FeedService(MusicService musicService, UserRepository userRepository, FeedRepository feedRepository, BCryptPasswordEncoder encoder, ObjectMapper mapper) {
         this.musicService = musicService;
         this.userRepository = userRepository;
         this.mapper = mapper;
         this.encoder = encoder;
 
         this.feedRepository = feedRepository;
-
-        this.feedRepositories = new HashMap<>();
-        this.feedRepositories.put(SongFeedItem.class, songFeedRepository);
     }
 
     public void onOpen(Session session) throws IOException {
         loadProperties(session);
-        sessions.add(session);
+        sessions.add(((User)session.getUserProperties().get("user")).getUsername(), session);
     }
 
     public void onMessage(Session session, String message) throws IOException {
@@ -99,7 +97,7 @@ public class FeedService {
                 return;
             }
 
-            if(offset >= feed.size() || limit > feed.size()) {
+            if(offset >= feed.size()) {
                 onError(session, new IndexOutOfBoundsException("Requested item is out of bounds"), false);
                 return;
             }
@@ -108,16 +106,22 @@ public class FeedService {
             int end = Math.min(feed.size(), offset + limit);
 
             List<AbstractFeedItem> feedPage = feed.subList(start, end);
+            Hibernate.initialize(user.getSeenFeed());
             for(int i = start; i < end; i++) {
                 AbstractFeedItem item = feedPage.get(i - start);
-                if(item instanceof SongFeedItem)
-                    musicService.getSong(((SongFeedItem)item).getSong().getId());
 
-                feedRepositories.get(item.getClass()).save(item);
-                user.getSeenFeed().add(item);
+                if(item instanceof SongFeedItem) {
+                    musicService.getSong(((SongFeedItem)item).getSong().getId());
+                    user.getSeenFeed().add(item);
+                }
+                else if(item instanceof PostFeedItem) {
+                    user.getReceivedPosts().remove(item);
+                    feedRepository.delete(item);
+                }
 
                 send(session, new FeedDTO(i, item));
             }
+            userRepository.save(user);
         }
 
         session.getUserProperties().put("feed", feed);
@@ -126,9 +130,11 @@ public class FeedService {
     public void onClose(Session session) throws IOException {
         loadProperties(session);
         User user = (User)session.getUserProperties().get("user");
-        if(user != null)
-            userRepository.save(user);
-        sessions.remove(session);
+
+        if(user != null) {
+            user = userRepository.save(user);
+            sessions.remove(user.getUsername());
+        }
     }
 
     public void onError(Session session, Throwable throwable) {
@@ -144,6 +150,20 @@ public class FeedService {
             }
         } catch (IOException e) {
             e.printStackTrace();
+        }
+    }
+
+    public void notifyuser(User user, Post post) {
+        if(!sessions.containsKey(user.getUsername()))
+            return;
+
+        for(Session session : sessions.get(user.getUsername())) {
+            try {
+                send(session, FeedEnum.NEW_POST);
+            } catch (Exception e) {
+                onError(session, e, false);
+                e.printStackTrace();
+            }
         }
     }
 
@@ -183,7 +203,7 @@ public class FeedService {
             session.getUserProperties().containsKey("password") ? 
                 (String)session.getUserProperties().get("password") : 
                 session.getRequestParameterMap().get("password").get(0);
-        
+
         if (!encoder.matches(password, user.getPassword()))
             onError(session, new UnauthorizedException("Password field in request parameters was invalid."));
 
@@ -204,13 +224,10 @@ public class FeedService {
 
     private List<AbstractFeedItem> generateFeed(User user) {
         List<AbstractFeedItem> feed = new ArrayList<>();
+        List<ArtistFreq> topArtists = user.getTopArtists();
 
-        if(user.getLikedSongs().isEmpty()) {
-            return feed;
-        }
-
-        for(String artistId : user.getTopArtists()) {
-            for(Song song : musicService.getNewReleases(artistId)) {
+        for(int i = 0; i < topArtists.size() && i < 10; i++) {
+            for(Song song : musicService.getNewReleases(topArtists.get(i).getArtist().getId())) {
                 if(user.getLikedSongs().contains(new LikedSong(user, song)))
                     continue;
                 feed.add(new SongFeedItem(FeedEnum.NEW_RELEASE, song, user));
@@ -223,8 +240,21 @@ public class FeedService {
             feed.add(new SongFeedItem(FeedEnum.RECOMMENDATION, song, user));
         }
 
+        Hibernate.initialize(user.getSeenFeed());
         feed.removeAll(user.getSeenFeed());
         Collections.shuffle(feed);
+        
+        Hibernate.initialize(user.getReceivedPosts());
+        Random rand = new Random();
+        int i = 0;
+        for(AbstractFeedItem feedItem : user.getReceivedPosts()) {
+            int randNum = i * (rand.nextInt(3) + 1);
+
+            if(randNum <= feed.size()) feed.add(randNum, feedItem);
+            else feed.add(feedItem);
+            
+            i++;
+        }
 
         return feed;
     }

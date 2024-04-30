@@ -25,18 +25,18 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Messages"
+                android:text="Friends"
                 android:textColor="@color/Jet"
                 android:textSize="30sp"
                 android:layout_gravity="center"
                 android:layout_marginTop="25px"/>
 
-<!--            <ImageButton-->
-<!--                android:layout_width="45dp"-->
-<!--                android:layout_height="45dp"-->
-<!--                android:src="@drawable/delete"-->
-<!--                android:background="?attr/selectableItemBackgroundBorderless"-->
-<!--                android:id="@+id/deleteConvo"/>-->
+            <ImageButton
+                android:layout_width="45dp"
+                android:layout_height="45dp"
+                android:src="@drawable/baseline_person_add_24"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:id="@+id/addNewFriends"/>
 
         </androidx.appcompat.widget.Toolbar>
 

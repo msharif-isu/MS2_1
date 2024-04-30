@@ -75,9 +75,14 @@ public class UserService {
 
     @NonNull
     public UserDTO getUser(String username) {
+        return getUser(username, true);
+    }
+
+    @NonNull
+    public UserDTO getUser(String username, boolean roleChecking) {
         User user = userRepository.findByUsername(username);
         
-        if(user == null || !user.getRoles().contains(roleRepository.findByName("USER")))
+        if(user == null || (roleChecking && !user.getRoles().contains(roleRepository.findByName("USER"))))
             throw new EntityNotFoundException("User " + username + " not found.");
 
         return new UserDTO(user);
@@ -380,7 +385,6 @@ public class UserService {
 
         Set<User> members = new HashSet<>() {};
         members.add(user);
-        user.getFriends().stream().forEach(friend -> System.err.println("Friend:" + new UserDTO(friend)));
         for (int memberId : memberIds) {
             User other = userRepository.findReferenceById(memberId);
             if(user.getId() != other.getId() && user.getFriends().stream().noneMatch(friend -> friend.getId() == other.getId()))

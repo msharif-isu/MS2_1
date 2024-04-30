@@ -60,7 +60,7 @@ public class UserController {
      */
     @GetMapping(path = "")
     public ResponseEntity<UserDTO> getSelf(Principal principal){
-        return ResponseEntity.ok(userService.getUser(userService.getUser(principal.getName()).getId(), false));
+        return ResponseEntity.ok(userService.getUser(userService.getUser(principal.getName(), false).getId(), false));
     }
 
     @GetMapping(path = "/id/{id}")
@@ -75,82 +75,82 @@ public class UserController {
 
     @PutMapping(path = "")
     public ResponseEntity<UserDTO> updateUser(Principal principal, @RequestBody UserDTO update){
-        return ResponseEntity.ok(userService.updateUser(userService.getUser(principal.getName()).getId(), update));
+        return ResponseEntity.ok(userService.updateUser(userService.getUser(principal.getName(), false).getId(), update));
     }
 
     @DeleteMapping(path = "")
     public ResponseEntity<String> deleteUser(Principal principal){
-        return ResponseEntity.ok(userService.deleteUser(userService.getUser(principal.getName()).getId()));
+        return ResponseEntity.ok(userService.deleteUser(userService.getUser(principal.getName(), false).getId()));
     }
 
     @GetMapping(path = "/roles")
     public ResponseEntity<List<RoleDTO>> getRoles(Principal principal){
-        return ResponseEntity.ok(userService.getRoles(userService.getUser(principal.getName()).getId()));
+        return ResponseEntity.ok(userService.getRoles(userService.getUser(principal.getName(), false).getId()));
     }
 
     @GetMapping(path = "/friends")
     public ResponseEntity<List<UserDTO>> getFriends(Principal principal){
-        return ResponseEntity.ok(userService.getFriends(userService.getUser(principal.getName()).getId()));
+        return ResponseEntity.ok(userService.getFriends(userService.getUser(principal.getName(), false).getId()));
     }
 
     @GetMapping(path = "/friends/recommended")
     public ResponseEntity<List<FriendRecDTO>> getRecommendedFriends(Principal principal){
-        return ResponseEntity.ok(userService.getRecommendedFriends(userService.getUser(principal.getName()).getId()));
+        return ResponseEntity.ok(userService.getRecommendedFriends(userService.getUser(principal.getName(), false).getId()));
     }
 
     @GetMapping(path = "/friends/invites")
     public ResponseEntity<List<UserDTO>> getFriendInvites(Principal principal){
-        return ResponseEntity.ok(userService.getFriendInvites(userService.getUser(principal.getName()).getId()));
+        return ResponseEntity.ok(userService.getFriendInvites(userService.getUser(principal.getName(), false).getId()));
     }
 
     @PostMapping(path = "/friends/{id}")
     public ResponseEntity<String> addFriend(Principal principal, @PathVariable int id){
-        return ResponseEntity.ok(userService.addFriend(userService.getUser(principal.getName()).getId(), id));
+        return ResponseEntity.ok(userService.addFriend(userService.getUser(principal.getName(), false).getId(), id));
     }
 
     @DeleteMapping(path = "/friends/{id}")
     public ResponseEntity<String> removeFriend(Principal principal, @PathVariable int id){
-        return ResponseEntity.ok(userService.removeFriend(userService.getUser(principal.getName()).getId(), id));
+        return ResponseEntity.ok(userService.removeFriend(userService.getUser(principal.getName(), false).getId(), id));
     }
 
     @GetMapping(path = "/reports")
     public ResponseEntity<List<ReportDTO>> getSentReports(Principal principal){
-        return ResponseEntity.ok(reportService.getSentReports(userService.getUser(principal.getName()).getId()));
+        return ResponseEntity.ok(reportService.getSentReports(userService.getUser(principal.getName(), false).getId()));
     }
 
     @GetMapping(path = "/reports/{id}")
     public ResponseEntity<ReportDTO> getSentReport(Principal principal, @PathVariable int id){
-        return ResponseEntity.ok(reportService.getSentReport(userService.getUser(principal.getName()).getId(), id));
+        return ResponseEntity.ok(reportService.getSentReport(userService.getUser(principal.getName(), false).getId(), id));
     }
 
     @PostMapping(path = "/reports")
     public ResponseEntity<ReportDTO> sendReport(Principal principal, @RequestBody ReportDTO report){
-        return ResponseEntity.ok(reportService.sendReport(userService.getUser(principal.getName()).getId(), report));
+        return ResponseEntity.ok(reportService.sendReport(userService.getUser(principal.getName(), false).getId(), report));
     }
 
     @DeleteMapping(path = "/reports/{id}")
     public ResponseEntity<String> deleteSentReport(Principal principal, @PathVariable int id){
-        return ResponseEntity.ok(reportService.deleteSentReport(userService.getUser(principal.getName()).getId(), id));
+        return ResponseEntity.ok(reportService.deleteSentReport(userService.getUser(principal.getName(), false).getId(), id));
     }
 
     @GetMapping(path = "/songs")
     public ResponseEntity<List<SongDTO>> getSongs(Principal principal){
-        return ResponseEntity.ok(userService.getSongs(userService.getUser(principal.getName()).getId()));
+        return ResponseEntity.ok(userService.getSongs(userService.getUser(principal.getName(), false).getId()));
     }
 
     @PostMapping(path = "/songs/{id}")
     public ResponseEntity<String> addSong(Principal principal, @PathVariable String id){
-        return ResponseEntity.ok(userService.addSong(userService.getUser(principal.getName()).getId(), id));
+        return ResponseEntity.ok(userService.addSong(userService.getUser(principal.getName(), false).getId(), id));
     }
 
     @DeleteMapping(path = "/songs/{id}")
     public ResponseEntity<String> removeSong(Principal principal, @PathVariable String id){
-        return ResponseEntity.ok(userService.removeSong(userService.getUser(principal.getName()).getId(), id));
+        return ResponseEntity.ok(userService.removeSong(userService.getUser(principal.getName(), false).getId(), id));
     }
 
     @GetMapping(path = "/icons", produces = MediaType.IMAGE_JPEG_VALUE)
     public ResponseEntity<byte[]> getIcon(Principal principal){
-        return ResponseEntity.ok(userService.getIcon(userService.getUser(principal.getName()).getId()));
+        return ResponseEntity.ok(userService.getIcon(userService.getUser(principal.getName(), false).getId()));
     }
 
     @GetMapping(path = "/icons/{id}", produces = MediaType.IMAGE_JPEG_VALUE)
@@ -160,12 +160,12 @@ public class UserController {
 
     @PostMapping(path = "/icons", produces = MediaType.IMAGE_JPEG_VALUE)
     public ResponseEntity<byte[]> saveIcon(Principal principal, @RequestParam("image") MultipartFile image){
-        return ResponseEntity.ok(userService.saveIcon(userService.getUser(principal.getName()).getId(), image));
+        return ResponseEntity.ok(userService.saveIcon(userService.getUser(principal.getName(), false).getId(), image));
     }
 
     @DeleteMapping(path = "/icons")
     public ResponseEntity<String> deleteIcon(Principal principal){
-        return ResponseEntity.ok(userService.deleteIcon(userService.getUser(principal.getName()).getId()));
+        return ResponseEntity.ok(userService.deleteIcon(userService.getUser(principal.getName(), false).getId()));
     }
     
     @PostMapping(path = "/conversations")
@@ -181,32 +181,32 @@ public class UserController {
             .map(JsonNode::asInt)
             .collect(Collectors.toList());
 
-        return ResponseEntity.ok(userService.createConversation(userService.getUser(principal.getName()).getId(), memberIds));
+        return ResponseEntity.ok(userService.createConversation(userService.getUser(principal.getName(), false).getId(), memberIds));
     }
 
     @DeleteMapping(path = "/conversations/{id}")
     public ResponseEntity<String> leaveConversation(Principal principal, @PathVariable int id){
-        return ResponseEntity.ok(userService.leaveConversation(userService.getUser(principal.getName()).getId(), id));
+        return ResponseEntity.ok(userService.leaveConversation(userService.getUser(principal.getName(), false).getId(), id));
     }
 
     @GetMapping(path = "/posts")
     public ResponseEntity<List<PostDTO>> getPosts(Principal principal){
-        return ResponseEntity.ok(postService.getPosts(userService.getUser(principal.getName()).getId()));
+        return ResponseEntity.ok(postService.getPosts(userService.getUser(principal.getName(), false).getId()));
     }
 
     @GetMapping(path = "/posts/{id}")
     public ResponseEntity<List<PostDTO>> getPosts(Principal principal, @PathVariable int id){
-        return ResponseEntity.ok(postService.getPosts(userService.getUser(principal.getName()).getId(), id));
+        return ResponseEntity.ok(postService.getPosts(userService.getUser(principal.getName(), false).getId(), id));
     }
 
     @PostMapping(path = "/posts")
     public ResponseEntity<PostDTO> sendPost(Principal principal, @RequestBody PostDTO post){
-        return ResponseEntity.ok(postService.sendPost(userService.getUser(principal.getName()).getId(), post.getPost()));
+        return ResponseEntity.ok(postService.sendPost(userService.getUser(principal.getName(), false).getId(), post.getPost()));
     }
 
     @DeleteMapping(path = "/posts/{id}")
     public ResponseEntity<PostDTO> deleteSentPost(Principal principal, @PathVariable int id){
-        return ResponseEntity.ok(postService.deleteSentPost(userService.getUser(principal.getName()).getId(), id));
+        return ResponseEntity.ok(postService.deleteSentPost(userService.getUser(principal.getName(), false).getId(), id));
     }
 }
 

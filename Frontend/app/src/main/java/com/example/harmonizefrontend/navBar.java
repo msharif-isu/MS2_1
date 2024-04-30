@@ -42,7 +42,7 @@ public class navBar extends AppCompatActivity {
 
             if (item.getItemId() == R.id.navigation_home) {
 //                loadFragment(new HomeFragment());
-                loadFragment(new SeeReportsFragment());
+                loadFragment(new HomeFragment());
             } else if (item.getItemId() == R.id.navigation_findUser) {
                 loadFragment(new FindFragment());
 

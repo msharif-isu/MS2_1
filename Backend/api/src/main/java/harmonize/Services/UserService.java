@@ -1,5 +1,8 @@
 package harmonize.Services;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Collections;
@@ -10,6 +13,7 @@ import java.util.Set;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import harmonize.DTOs.ConversationDTO;
 import harmonize.DTOs.RoleDTO;
@@ -19,11 +23,13 @@ import harmonize.DTOs.FriendRecDTO;
 import harmonize.Entities.Role;
 import harmonize.Entities.Song;
 import harmonize.Entities.User;
+import harmonize.Entities.Image;
 import harmonize.Entities.Conversation;
 import harmonize.Entities.ArtistFreq;
 import harmonize.Entities.LikedSong;
 import harmonize.ErrorHandling.Exceptions.EntityAlreadyExistsException;
 import harmonize.ErrorHandling.Exceptions.EntityNotFoundException;
+import harmonize.ErrorHandling.Exceptions.InternalServerErrorException;
 import harmonize.ErrorHandling.Exceptions.InvalidArgumentException;
 import harmonize.ErrorHandling.Exceptions.UserNotFriendException;
 import harmonize.Repositories.ConversationRepository;
@@ -54,9 +60,14 @@ public class UserService {
 
     @NonNull
     public UserDTO getUser(int id) {
+        return getUser(id, true);
+    }
+
+    @NonNull
+    public UserDTO getUser(int id, boolean roleChecking) {
         User user = userRepository.findReferenceById(id);
 
-        if(user == null || !user.getRoles().contains(roleRepository.findByName("USER")))
+        if(user == null || (roleChecking && !user.getRoles().contains(roleRepository.findByName("USER"))))
             throw new EntityNotFoundException("User " + id + " not found.");
 
         return new UserDTO(user);
@@ -108,6 +119,8 @@ public class UserService {
 
         if(user == null)
             throw new EntityNotFoundException("User " + id + " not found.");
+
+        deleteIcon(id);
 
         for (User other : userRepository.findAll()) {
             if (other.getFriendInvites().contains(user)) {
@@ -392,5 +405,71 @@ public class UserService {
         conversationService.removeMember(conversation, user);
 
         return "Memeber " + id + " removed from conversation " + convoId + ".";
+    }
+
+    public byte[] getIcon(int id) {
+        User user = userRepository.findReferenceById(id);
+
+        if(user == null || !user.getRoles().contains(roleRepository.findByName("USER")))
+            throw new EntityNotFoundException("User " + id + " not found.");
+
+        if (user.getIcon() == null)
+            throw new EntityNotFoundException("User " + id + " does not have and icon.");
+
+        try {
+            File file = new File(user.getIcon().getPath());
+            return Files.readAllBytes(file.toPath());
+        } catch (IOException e) {
+            throw new InternalServerErrorException("Error: Was unable to read image.");
+        }
+    }
+
+    public byte[] saveIcon(int id, MultipartFile imageFile) {
+        User user = userRepository.findReferenceById(id);
+
+        if(user == null)
+            throw new EntityNotFoundException("User " + id + " not found.");
+
+        try {
+            if (user.getIcon() != null) {
+                File file = new File(user.getIcon().getPath());
+                if (file.exists())
+                    file.delete();
+            }
+
+            File file = new File(System.getProperty("user.dir") + File.separator + "icons" + File.separator + user.getId() + '-' + imageFile.getOriginalFilename());
+            imageFile.transferTo(file); 
+            
+            user.setIcon(new Image(file.getAbsolutePath()));
+            userRepository.save(user);
+
+            return Files.readAllBytes(file.toPath());
+        } catch (IOException e) {
+            throw new InternalServerErrorException("Error: Was unable to save image.");
+        }
+    }
+
+    public String deleteIcon(int id) {
+        User user = userRepository.findReferenceById(id);
+
+        if(user == null)
+            throw new EntityNotFoundException("User " + id + " not found.");
+
+        if (user.getIcon() == null)
+            return "User " + id + " did not have and icon.";
+
+        if (user.getIcon() != null) {
+            File file = new File(user.getIcon().getPath());
+            if (file.exists()) {
+                file.delete();
+                user.setIcon(null);
+                userRepository.save(user);
+                return "Icon for user " + id + " deleted.";
+            } else {
+                throw new InternalServerErrorException("Image file for user " + id + " not found.");
+            }
+        } else {
+            throw new EntityNotFoundException("Icon for user " + id + " not found.");
+        }
     }
 }

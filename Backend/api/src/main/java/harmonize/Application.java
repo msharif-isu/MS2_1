@@ -1,5 +1,6 @@
 package harmonize;
 
+import java.io.File;
 import java.util.Set;
 
 import org.springframework.boot.CommandLineRunner;
@@ -39,6 +40,8 @@ public class Application {
     public CommandLineRunner initUser(AuthService authService, RoleService roleService, AdminService adminService, UserService userService, ConversationService conversationService, MessageService messageService, ChatCrypto chatCrypto, UserRepository userRepository) {
         return args -> {
             try {
+                new File(System.getProperty("user.dir") + File.separator + "icons" + File.separator).mkdirs();
+
                 if (roleService.getRole("ADMIN") == null)
                     roleService.createRole("ADMIN");
                 if (roleService.getRole("MODERATOR") == null)

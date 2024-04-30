@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -14,7 +15,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
@@ -57,7 +60,7 @@ public class UserController {
      */
     @GetMapping(path = "")
     public ResponseEntity<UserDTO> getSelf(Principal principal){
-        return ResponseEntity.ok(userService.getUser(userService.getUser(principal.getName()).getId()));
+        return ResponseEntity.ok(userService.getUser(userService.getUser(principal.getName()).getId(), false));
     }
 
     @GetMapping(path = "/id/{id}")
@@ -145,6 +148,26 @@ public class UserController {
         return ResponseEntity.ok(userService.removeSong(userService.getUser(principal.getName()).getId(), id));
     }
 
+    @GetMapping(path = "/icons", produces = MediaType.IMAGE_JPEG_VALUE)
+    public ResponseEntity<byte[]> getIcon(Principal principal){
+        return ResponseEntity.ok(userService.getIcon(userService.getUser(principal.getName()).getId()));
+    }
+
+    @GetMapping(path = "/icons/{id}", produces = MediaType.IMAGE_JPEG_VALUE)
+    public ResponseEntity<byte[]> getIcon(Principal principal, @PathVariable int id){
+        return ResponseEntity.ok(userService.getIcon(id));
+    }
+
+    @PostMapping(path = "/icons", produces = MediaType.IMAGE_JPEG_VALUE)
+    public ResponseEntity<byte[]> saveIcon(Principal principal, @RequestParam("image") MultipartFile image){
+        return ResponseEntity.ok(userService.saveIcon(userService.getUser(principal.getName()).getId(), image));
+    }
+
+    @DeleteMapping(path = "/icons")
+    public ResponseEntity<String> deleteIcon(Principal principal){
+        return ResponseEntity.ok(userService.deleteIcon(userService.getUser(principal.getName()).getId()));
+    }
+    
     @PostMapping(path = "/conversations")
     public ResponseEntity<ConversationDTO> createConversation(Principal principal, @RequestBody JsonNode body){
         if (!body.has("memberIds"))

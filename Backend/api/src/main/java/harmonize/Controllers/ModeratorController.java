@@ -4,6 +4,7 @@ import java.security.Principal;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -45,7 +46,7 @@ public class ModeratorController {
 
     @GetMapping(path = "")
     public ResponseEntity<UserDTO> getSelf(Principal principal){
-        return ResponseEntity.ok(moderatorService.getUser(principal.getName()));
+        return ResponseEntity.ok(moderatorService.getUser(principal.getName(), false));
     }
 
     @DeleteMapping(path = "")
@@ -61,6 +62,16 @@ public class ModeratorController {
     @DeleteMapping(path = "/users/{id}")
     public ResponseEntity<String> deleteUser(@PathVariable int id){
         return ResponseEntity.ok(moderatorService.deleteUser(id));
+    }
+
+    @GetMapping(path = "/users/icons", produces = MediaType.IMAGE_JPEG_VALUE)
+    public ResponseEntity<byte[]> getIcon(Principal principal){
+        return ResponseEntity.ok(moderatorService.getIcon(moderatorService.getUser(principal.getName()).getId()));
+    }
+
+    @GetMapping(path = "/users/icons/{id}", produces = MediaType.IMAGE_JPEG_VALUE)
+    public ResponseEntity<byte[]> getIcon(@PathVariable int id){
+        return ResponseEntity.ok(moderatorService.getIcon(id));
     }
 
     @GetMapping(path = "/reports")

@@ -1,11 +1,18 @@
 package harmonize.Services;
 
 import java.util.List;
+import java.io.File;
 
 import harmonize.DTOs.UserDTO;
 
+import org.springframework.core.io.FileSystemResource;
+import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
+import org.springframework.http.HttpHeaders;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -84,6 +91,28 @@ public class UserTestService extends AbstractUserTestService {
 
     public ResponseEntity<String> deleteReport(ReportDTO report) {
         return requestService.requestString(auth, url + port + "/users/reports/" + report.getId(), HttpMethod.DELETE);
+    }
+
+    public ResponseEntity<byte[]> getIcon() {
+        return requestService.requestByteArray(auth, url + port + "/users/icons", HttpMethod.GET);
+    }
+
+    public ResponseEntity<byte[]> getIcon(int id) {
+        return requestService.requestByteArray(auth, url + port + "/users/icons/" + id, HttpMethod.GET);
+    }
+
+    public ResponseEntity<byte[]> postIcon(File icon) {
+        MultiValueMap<String, Object> body = new LinkedMultiValueMap<>();
+        body.add("image", new FileSystemResource(icon));
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.MULTIPART_FORM_DATA);
+        headers.setBearerAuth(auth.getAccessToken());
+        HttpEntity<MultiValueMap<String, Object>> requestEntity = new HttpEntity<>(body, headers);
+        return requestService.requestByteArray(auth, url + port + "/users/icons", HttpMethod.POST, requestEntity);
+    }
+
+    public ResponseEntity<byte[]> deleteIcon() {
+        return requestService.requestByteArray(auth, url + port + "/users/icons", HttpMethod.DELETE);
     }
 
     public ResponseEntity<ConversationDTO> createConversation(List<Integer> members) {

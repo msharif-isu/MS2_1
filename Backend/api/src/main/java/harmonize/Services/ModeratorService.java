@@ -1,5 +1,8 @@
 package harmonize.Services;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -10,6 +13,7 @@ import org.springframework.stereotype.Service;
 import harmonize.DTOs.UserDTO;
 import harmonize.Entities.User;
 import harmonize.ErrorHandling.Exceptions.EntityNotFoundException;
+import harmonize.ErrorHandling.Exceptions.InternalServerErrorException;
 import harmonize.ErrorHandling.Exceptions.UnauthorizedException;
 import harmonize.Repositories.RoleRepository;
 import harmonize.Repositories.UserRepository;
@@ -52,12 +56,17 @@ public class ModeratorService {
 
     @NonNull
     public UserDTO getUser(String username) {
+        return getUser(username, true);
+    }
+
+    @NonNull
+    public UserDTO getUser(String username, boolean roleChecking) {
         User user = userRepository.findByUsername(username);
 
-        if (user == null ||
+        if (user == null || (roleChecking &&
             (!user.getRoles().contains(roleRepository.findByName("USER")) && 
              !user.getRoles().contains(roleRepository.findByName("MODERATOR")))
-            )
+            ))
             throw new EntityNotFoundException("User " + username + " not found.");
             
         return new UserDTO(user);
@@ -79,5 +88,22 @@ public class ModeratorService {
         userRepository.delete(user);
         
         return new String(String.format("\"%s\" was deleted.", user.getUsername()));
+    }
+
+    public byte[] getIcon(int id) {
+        User user = userRepository.findReferenceById(id);
+
+        if (user == null ||
+            (!user.getRoles().contains(roleRepository.findByName("USER")) && 
+             !user.getRoles().contains(roleRepository.findByName("MODERATOR")))
+            )
+            throw new EntityNotFoundException("User " + id + " not found.");
+
+        try {
+            File file = new File(user.getIcon().getPath());
+            return Files.readAllBytes(file.toPath());
+        } catch (IOException e) {
+            throw new InternalServerErrorException("Error: Was unable to read image.");
+        }
     }
 }

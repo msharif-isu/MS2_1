@@ -11,6 +11,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.util.MultiValueMap;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
@@ -212,5 +213,23 @@ public class RequestService {
             method,
             new HttpEntity<>(body, headers),
             JsonNode.class);
+    }
+
+    public ResponseEntity<byte[]> requestByteArray(AuthDTO auth, String path, HttpMethod method) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization", "Bearer " + auth.getAccessToken());
+        return restTemplate.exchange(
+            path,
+            method,
+            new HttpEntity<>(headers),
+            byte[].class);
+    }
+
+    public ResponseEntity<byte[]> requestByteArray(AuthDTO auth, String path, HttpMethod method, HttpEntity<MultiValueMap<String, Object>> requestEntity) {
+        return restTemplate.exchange(
+            path,
+            method,
+            requestEntity,
+            byte[].class);
     }
 }

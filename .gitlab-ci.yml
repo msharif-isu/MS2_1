@@ -51,7 +51,6 @@ frontedn-docker-build:
   stage: frontendDockerBuild
   needs: []
   image: afirefly/android-ci:java17
-  stage: androidbuild
   tags:
    - frontendBuild
   before_script:

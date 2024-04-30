@@ -38,6 +38,6 @@ public class TestConfig {
 
     @Bean
     public MusicTestService musicTestService() {
-        return new MusicTestService("twilson", "todpw");
+        return new MusicTestService();
     }
 }

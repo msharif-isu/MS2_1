@@ -180,17 +180,16 @@ public class RequestService {
             path,
             method,
             new HttpEntity<>(headers),
-            new ParameterizedTypeReference<JsonNode>() {});
+            JsonNode.class);
     }
 
     public ResponseEntity<JsonNode> requestJson(AuthDTO auth, String path, HttpMethod method, Object body) {
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", "Bearer " + auth.getAccessToken());
-        headers.setContentType(MediaType.APPLICATION_JSON);
         return restTemplate.exchange(
             path,
             method,
             new HttpEntity<>(body, headers),
-            new ParameterizedTypeReference<JsonNode>() {});
+            JsonNode.class);
     }
 }

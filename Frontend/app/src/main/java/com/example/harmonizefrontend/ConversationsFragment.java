@@ -131,7 +131,7 @@ public class ConversationsFragment extends Fragment implements WebSocketListener
         addGC.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                ((navBar) getActivity()).loadFragment(new addGroupsFragment);
+                ((navBar) getActivity()).loadFragment(new MakeGroupChatFragment());
             }
         });
 

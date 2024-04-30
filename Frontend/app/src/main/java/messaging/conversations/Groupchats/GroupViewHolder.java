@@ -1,6 +1,4 @@
-package Friends;
-
-import static android.view.View.GONE;
+package messaging.conversations.Groupchats;
 
 import android.view.View;
 import android.widget.ImageButton;
@@ -11,21 +9,19 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.harmonizefrontend.R;
 
-public class FriendsViewHolder extends RecyclerView.ViewHolder{
+public class GroupViewHolder extends RecyclerView.ViewHolder{
 
     protected TextView friendName;
     protected ImageView friendPfp;
     protected ImageButton message;
     protected ImageButton removeFriend;
 
-    public FriendsViewHolder(View itemView) {
+    public GroupViewHolder(View itemView) {
         super(itemView);
         friendName = itemView.findViewById(R.id.FriendName);
+        friendPfp = itemView.findViewById(R.id.profile_Picture);
         message = itemView.findViewById(R.id.messageFriend);
         removeFriend = itemView.findViewById(R.id.deleteFriend);
-        friendPfp = itemView.findViewById(R.id.profile_Picture);
-        removeFriend.setVisibility(GONE);
-        message.setVisibility(GONE);
     }
 
     public TextView getFriendName() {

@@ -20,6 +20,7 @@ import com.google.android.material.navigation.NavigationBarView;
 
 import android.util.Log;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.Toast;
 
 import org.json.JSONException;
@@ -44,9 +45,6 @@ public class navBar extends AppCompatActivity {
     protected String password;
     public String jwtToken;
 
-    String URL = "http://coms-309-032.class.las.iastate.edu:8080";
-
-
     protected RequestQueue mQueue;
 
     /**
@@ -59,7 +57,7 @@ public class navBar extends AppCompatActivity {
 
             if (item.getItemId() == R.id.navigation_home) {
 //                loadFragment(new HomeFragment());
-                loadFragment(new SeeReportsFragment());
+                loadFragment(new HomeFragment());
             } else if (item.getItemId() == R.id.navigation_findUser) {
                 loadFragment(new FindFragment());
 
@@ -81,9 +79,6 @@ public class navBar extends AppCompatActivity {
             return true;
         }
     };
-
-
-
 
 
     /**
@@ -165,6 +160,7 @@ public class navBar extends AppCompatActivity {
         fragmentTransaction.addToBackStack(null); // Important for adding multiple fragments to the same container
         // The order which we add fragments to the backstack is the order in which they are popped off
         fragmentTransaction.commit();
+        findViewById(R.id.popout_frame_layout).setVisibility(View.VISIBLE);
     }
 
     public RequestQueue getQueue() {

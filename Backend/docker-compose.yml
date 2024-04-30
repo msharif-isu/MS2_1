@@ -21,6 +21,7 @@ services:
 
   harmonize-api:
     build: ./api
+    entrypoint: java -jar /home/target/harmonize-api-1.0.0.jar
     ports:
       - "8080:8080"
     depends_on:

@@ -16,15 +16,14 @@ services:
       timeout: 5s
       retries: 10
 
-  harmonize-api:
-    build:
-      context: ./api
-      dockerfile: Dockerfile.test
+  coms-309-032.class.las.iastate.edu:
+    build: ./api
+    entrypoint: mvn test
+    networks:
+      - harmonize-net-test
     depends_on:
       harmonize-db:
         condition: service_healthy
-    networks:
-      - harmonize-net-test
 
 networks:
   harmonize-net-test:

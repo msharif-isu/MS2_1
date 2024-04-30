@@ -10,6 +10,7 @@ import com.android.volley.RequestQueue;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.inputmethod.InputMethodManager;
@@ -50,7 +51,8 @@ public class LoginScreen extends AppCompatActivity implements OnClickListener {
     private Boolean saveLogin;
 
     private RequestQueue mQueue;
-
+    String URL = "http://coms-309-032.class.las.iastate.edu:8080";
+//    private String URL = "http://10.48.110.126";
     private String jwtToken = null;
 
 
@@ -121,12 +123,12 @@ public class LoginScreen extends AppCompatActivity implements OnClickListener {
             passwordEditText.setBackgroundTintList(null);
 
             if (username.length() == 0) {
-                Toast.makeText(LoginScreen.this, "Username is required", Toast.LENGTH_LONG).show();
+                Toast.makeText(LoginScreen.this, "Username is required", Toast.LENGTH_SHORT).show();
                 usernameEditText.setBackgroundTintList(ColorStateList.valueOf(Color.RED));
 
             }
             else if (password.length() == 0) {
-                Toast.makeText(LoginScreen.this, "password is required", Toast.LENGTH_LONG).show();
+                Toast.makeText(LoginScreen.this, "password is required", Toast.LENGTH_SHORT).show();
                 passwordEditText.setBackgroundTintList(ColorStateList.valueOf(Color.RED));
             }
             else {
@@ -173,7 +175,6 @@ public class LoginScreen extends AppCompatActivity implements OnClickListener {
 
         // Connect to backend in order to check if credentials are valid
         JSONObject jsonBody = new JSONObject();
-        String checkCredsURL = "http://coms-309-032.class.las.iastate.edu:8080";
 
         try {
             jsonBody.put("username", username);
@@ -185,7 +186,7 @@ public class LoginScreen extends AppCompatActivity implements OnClickListener {
 
         JsonObjectRequest request = new JsonObjectRequest(
                 Request.Method.POST,
-                checkCredsURL + "/auth/login",
+                URL + "/auth/login",
                 jsonBody,
                 new Response.Listener<JSONObject>() {
                     @Override
@@ -208,7 +209,7 @@ public class LoginScreen extends AppCompatActivity implements OnClickListener {
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        Toast.makeText(LoginScreen.this, "The username or password is incorrect, please try again!", Toast.LENGTH_LONG).show();
+                        Toast.makeText(LoginScreen.this, "The username or password is incorrect, please try again!", Toast.LENGTH_SHORT).show();
                         jwtToken = null;
 //                        Log.e("JWT", error.toString());
                     }

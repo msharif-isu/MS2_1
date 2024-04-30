@@ -20,21 +20,24 @@ import harmonize.ErrorHandling.Exceptions.EntityNotFoundException;
 import harmonize.ErrorHandling.Exceptions.InvalidArgumentException;
 import harmonize.ErrorHandling.Exceptions.UserNotFriendException;
 import harmonize.Repositories.RoleRepository;
+import harmonize.Repositories.SongRepository;
 import harmonize.Repositories.UserRepository;
 
 @Service
 public class UserService {
     private UserRepository userRepository;
     private RoleRepository roleRepository;
+    private SongRepository songRepository;
 
     private ConversationService conversationService;
     private MusicService musicService;
 
     @Autowired
-    public UserService(UserRepository userRepository, RoleRepository roleRepository, 
+    public UserService(UserRepository userRepository, RoleRepository roleRepository, SongRepository songRepository,
                         ConversationService conversationService, MusicService musicService) {
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
+        this.songRepository = songRepository;
         this.conversationService = conversationService;
         this.musicService = musicService;
     }
@@ -269,7 +272,8 @@ public class UserService {
 
         user.getLikedSongs().add(connection);
         userRepository.save(user);
-        
+        updateTopArtist(user);
+
         return new String(String.format("\"%s\" favorited \"%s\"", user.getUsername(), song.getTitle()));
     }
 
@@ -288,7 +292,19 @@ public class UserService {
 
         user.getLikedSongs().remove(connection);
         userRepository.save(user);
+        updateTopArtist(user);
         
         return new String(String.format("\"%s\" removed \"%s\"", user.getUsername(), song.getTitle()));
+    }
+
+    private void updateTopArtist(User user) {
+        List<String> topArtists = songRepository.findTopArtists(user.getLikedSongs());
+
+        user.getTopArtists().clear();
+
+        for(int i = 0; i < topArtists.size(); i++)
+            user.getTopArtists().add(topArtists.get(i));
+
+        userRepository.save(user);
     }
 }

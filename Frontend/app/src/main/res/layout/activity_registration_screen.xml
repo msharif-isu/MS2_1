@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
     tools:context=".LoginScreen"
-    android:background="@color/cambridge_blue">
+    android:background="@color/Indian_red">
 
 
 
@@ -52,7 +52,7 @@
         android:layout_marginTop="250dp"
         app:cornerRadius="5dp"
         android:text="Register"
-        android:textColor="@color/cool_grey"
+        android:textColor="@color/Ebony"
         android:backgroundTint="@color/mint_cream"/>
 
     <Button
@@ -63,7 +63,7 @@
         android:layout_marginTop="400dp"
         android:text="Login"
         app:cornerRadius="5dp"
-        android:textColor="@color/cool_grey"
+        android:textColor="@color/Ebony"
         android:backgroundTint="@color/mint_cream"
         />
 

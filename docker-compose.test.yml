@@ -1,0 +1,44 @@
+name: ${TEST_ID}-harmonize-test
+
+services:
+  harmonize-db:
+    build: ./Backend/db
+    networks:
+      - ${TEST_ID}-harmonize-net-test
+    environment:
+      MYSQL_ROOT_PASSWORD: adminpw
+      MYSQL_DATABASE: harmonize-db
+      MYSQL_USER: harmonize
+      MYSQL_PASSWORD: harmonizepw
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p$MYSQL_ROOT_PASSWORD"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  coms-309-032.class.las.iastate.edu:
+    build: ./Backend/api
+    entrypoint: /bin/bash -c "mvn test && java -jar /home/target/harmonize-api-1.0.0.jar"
+    networks:
+      - ${TEST_ID}-harmonize-net-test
+    depends_on:
+      harmonize-db:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "localhost:8080"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  harmonize-frontend:
+    build: Frontend
+    entrypoint: /bin/bash -c "export GRADLE_USER_HOME=/home/.gradle && chmod +x /home/gradlew && /home/gradlew test"
+    networks:
+      - ${TEST_ID}-harmonize-net-test
+    depends_on:
+      coms-309-032.class.las.iastate.edu:
+        condition: service_healthy
+
+networks:
+  ${TEST_ID}-harmonize-net-test:
+    driver: bridge

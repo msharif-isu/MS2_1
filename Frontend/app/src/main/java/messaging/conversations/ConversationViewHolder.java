@@ -19,6 +19,7 @@ public class ConversationViewHolder  extends RecyclerView.ViewHolder{
         friendName = itemView.findViewById(R.id.FriendName);
         lastMessage = itemView.findViewById(R.id.lastMessage);
         lastMessageTime = itemView.findViewById(R.id.lastMessageDate);
+        friendPfp = itemView.findViewById(R.id.profile_Picture);
     }
 
     public TextView getFriendName() {

@@ -5,9 +5,11 @@ import android.util.Log;
 import com.google.gson.annotations.SerializedName;
 
 import UserInfo.Member;
+import UserInfo.UserSession;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * DTO for conversation data incoming/outgoing from the server
@@ -77,8 +79,16 @@ public class ConversationDTO{
 
     }
 
-    public Member getFriend() {
-        return this.data.getMembers().get(0);
+    public ArrayList<Member> getFriends() {
+        ArrayList<Member> friends = new ArrayList<>();
+        for (Member member : this.data.members) {
+            if (!Objects.equals(member.getUsername(), UserSession.getInstance().getCurrentUser().getUsername())) {
+                friends.add(member);
+            }
+        }
+
+        return friends;
+//        return this.data.getMembers().get(0);
     }
 
 

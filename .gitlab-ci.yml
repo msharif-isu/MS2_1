@@ -47,7 +47,7 @@ backend-docker-deploy:
       - $CI_PIPELINE_SOURCE == "web"
       - $CI_COMMIT_REF_NAME == "main"
 
-frontedn-docker-build:
+frontend-docker-build:
   stage: frontendDockerBuild
   needs: []
   image: afirefly/android-ci:java17

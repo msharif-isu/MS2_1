@@ -224,20 +224,32 @@ public class HomeFragment extends Fragment implements WebSocketListener, FeedAda
             JsonObject jsonObject = gson.fromJson(message, JsonObject.class);
             String messageType = jsonObject.get("type").getAsString();
 
-            if (messageType.equals("com.fasterxml.jackson.databind.node.ObjectNode")) {
+            switch (messageType) {
+                case "com.fasterxml.jackson.databind.node.ObjectNode":
 
-                feedSize = jsonObject.getAsJsonObject("data").get("size").getAsInt();
-                loadInitialItems();
+                    feedSize = jsonObject.getAsJsonObject("data").get("size").getAsInt();
+                    loadInitialItems();
 
-            } else if (messageType.equals("harmonize.DTOs.FeedDTO")) {
+                    break;
+                case "harmonize.DTOs.FeedDTO":
 
-                FeedDTO feedDTO = gson.fromJson(jsonObject, FeedDTO.class);
-                updateFeedItems(feedDTO);
+                    FeedDTO feedDTO = gson.fromJson(jsonObject, FeedDTO.class);
+                    updateFeedItems(feedDTO);
 
-            } else {
+                    break;
+                case "harmonize.Enum.FeedEnum":
 
-                Log.e("WebSocket", "Unknown message type: " + messageType);
+                    String data = jsonObject.get("data").getAsString();
+                    if (data.equals("NEW_POST")) {
+                        Toast.makeText(getActivity(), "A friend just posted!", Toast.LENGTH_SHORT).show();
+                    }
 
+                    break;
+                default:
+
+                    Log.e("WebSocket", "Unknown message type: " + messageType);
+
+                    break;
             }
         });
     }

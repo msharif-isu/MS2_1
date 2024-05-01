@@ -35,9 +35,11 @@ import UserInfo.UserSession;
 /**
  * This adapter is responsible for creating and binding views for each item in the RecyclerView.
  */
-public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.FeedViewHolder> {
+public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
+    private static final int VIEW_TYPE_ITEM = 0;
+    private static final int VIEW_TYPE_POST = 1;
     private List<FeedDTO> feedItems;
-    private OnAddTrackListener onAddTrackListener;
+    private static OnAddTrackListener onAddTrackListener;
 
     public interface OnAddTrackListener {
         void onAddTrack(FeedDTO feedItem);
@@ -52,6 +54,14 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.FeedViewHolder
         this.onAddTrackListener = onAddTrackListener;
     }
 
+    public int getItemViewType(int position) {
+        FeedDTO feedItem = feedItems.get(position);
+        if (feedItem.getData().getItem().getType().equals("POST")) {
+            return VIEW_TYPE_POST;
+        } else {
+            return VIEW_TYPE_ITEM;
+        }
+    }
     /**
      * This method is called by the RecyclerView when it needs to create a new view holder for an item.
      * It inflates the item_feed layout using the LayoutInflater and creates a new instance of the FeedViewHolder class, passing the inflated view as a parameter.
@@ -61,11 +71,14 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.FeedViewHolder
      */
     @NonNull
     @Override
-    public FeedViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.feed_item, parent, false);
-        return new FeedViewHolder(view);
-
+    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        if (viewType == VIEW_TYPE_POST) {
+            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.feed_post_item, parent, false);
+            return new PostViewHolder(view);
+        } else {
+            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.feed_item, parent, false);
+            return new FeedViewHolder(view);
+        }
     }
 
     /**
@@ -76,19 +89,9 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.FeedViewHolder
      * @param position The position of the item within the adapter's data set.
      */
     @Override
-    public void onBindViewHolder(@NonNull FeedViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         FeedDTO feedItem = feedItems.get(position);
         holder.bind(feedItem);
-
-        // Set click listener for the add button
-        holder.addButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (onAddTrackListener != null) {
-                    onAddTrackListener.onAddTrack(feedItem);
-                }
-            }
-        });
     }
 
     /**
@@ -100,11 +103,84 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.FeedViewHolder
         return feedItems.size();
     }
 
+    // ViewHolder class
+    abstract static class ViewHolder extends RecyclerView.ViewHolder {
+        ViewHolder(@NonNull View itemView) {
+            super(itemView);
+        }
+
+        abstract void bind(FeedDTO feedItem);
+    }
+
+    static class PostViewHolder extends ViewHolder {
+        private ImageView profileImageView;
+        private TextView usernameTextView;
+        private TextView postTextView;
+
+        PostViewHolder(@NonNull View itemView) {
+            super(itemView);
+            profileImageView = itemView.findViewById(R.id.profileImageView);
+            usernameTextView = itemView.findViewById(R.id.usernameTextView);
+            postTextView = itemView.findViewById(R.id.postTextView);
+        }
+
+        void bind(FeedDTO feedItem) {
+            int userId = feedItem.getData().getItem().getUser().getId();
+
+            // Make API request to retrieve user information
+            String userUrl = "http://coms-309-032.class.las.iastate.edu:8080/users/id/" + userId;
+            JsonObjectRequest userRequest = new JsonObjectRequest(Request.Method.GET, userUrl, null,
+                    new Response.Listener<JSONObject>() {
+                        @Override
+                        public void onResponse(JSONObject response) {
+                            try {
+                                // Parse the JSON response and update views with user information
+                                String username = response.getString("username");
+                                //String profileImageUrl = response.getString("profileImageUrl");
+
+                                usernameTextView.setText(username);
+
+                                // Load profile image using Glide
+//                                Glide.with(itemView.getContext())
+//                                        .load(profileImageUrl)
+//                                        .into(profileImageView);
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                                // Handle JSON parsing error
+                                usernameTextView.setText("User not found");
+                                profileImageView.setImageResource(R.drawable.placeholder_image);
+                            }
+                        }
+                    },
+                    new Response.ErrorListener() {
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+                            error.printStackTrace();
+                            // Handle network error
+                            usernameTextView.setText("Failed to load user");
+                            profileImageView.setImageResource(R.drawable.placeholder_image);
+                        }
+                    }) {
+                @Override
+                public HashMap<String, String> getHeaders() throws AuthFailureError {
+                    HashMap<String, String> headers = new HashMap<>();
+                    headers.put("Authorization", UserSession.getInstance().getJwtToken());
+                    return headers;
+                }
+            };
+
+            // Add the request to the RequestQueue
+            Volley.newRequestQueue(itemView.getContext()).add(userRequest);
+
+            postTextView.setText(feedItem.getData().getItem().getPost().getPost());
+        }
+    }
+
     /**
      * This constructor takes the inflated view item as a parameter and initializes the views.
      * This class represents a single item view in the RecyclerView and holds references to the views within that item view.
      */
-    static class FeedViewHolder extends RecyclerView.ViewHolder {
+    static class FeedViewHolder extends ViewHolder {
         private ImageView albumCoverImageView;
         private TextView feedItemTypeTextView;
         private TextView artistNameTextView;
@@ -182,7 +258,17 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.FeedViewHolder
             };
 
             // Add the request to the RequestQueue
-            requestQueue.add(trackRequest);
+            Volley.newRequestQueue(itemView.getContext()).add(trackRequest);
+
+            // Set click listener for the add button
+            addButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (onAddTrackListener != null) {
+                        onAddTrackListener.onAddTrack(feedItem);
+                    }
+                }
+            });
         }
     }
 

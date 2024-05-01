@@ -1,9 +1,11 @@
 package com.example.harmonizefrontend;
 
+import android.graphics.Bitmap;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,6 +21,7 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.android.volley.toolbox.ImageRequest;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
@@ -28,6 +31,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -177,6 +181,60 @@ public class FindFragment extends Fragment {
                 TextView sharedInterestsTextView = userItemView.findViewById(R.id.sharedInterestsTextView);
                 ImageButton addFriendButton = userItemView.findViewById(R.id.addFriendButton);
 
+                ImageRequest imageRequest = new ImageRequest(
+                        UserSession.getInstance().getURL() + "/users/icons/" + user.getId(),
+                        new Response.Listener<Bitmap>() {
+                            @Override
+                            public void onResponse(Bitmap response) {
+                                // Display the image in the ImageView
+
+                                profileImageView.setImageBitmap(response);
+                                Log.d("Image", "Got the image");
+                            }
+                        },
+                        0, // Width, set to 0 to get the original width
+                        0, // Height, set to 0 to get the original height
+                        ImageView.ScaleType.FIT_XY, // ScaleType
+                        Bitmap.Config.RGB_565, // Bitmap config
+
+                        new Response.ErrorListener() {
+                            @Override
+                            public void onErrorResponse(VolleyError error) {
+                                if (error == null || error.networkResponse == null) {
+                                    return;
+                                }
+                                String body = "";
+                                final String statusCode = String.valueOf(error.networkResponse.statusCode);
+                                try {
+                                    body = new String(error.networkResponse.data,"UTF-8");
+                                } catch (UnsupportedEncodingException e) {
+                                    // exception
+                                }
+                                Log.e("Image", body);
+                                Log.e("Image", statusCode);
+                                if (statusCode.equals("404")) {
+                                    profileImageView.setImageResource(R.drawable.ic_launcher_foreground);
+                                }
+                            }
+                        }
+
+                )
+
+                {
+                    @Override
+                    public Map<String, String> getHeaders() throws AuthFailureError {
+                        HashMap<String, String> headers = new HashMap<String, String>();
+                        headers.put("Authorization", UserSession.getInstance().getJwtToken());
+                        return headers;
+                    }
+
+                };
+
+                // Adding request to request queue
+                mQueue.add(imageRequest);
+
+
+
                 //Replace .getProfileImageUrl with correct method
                 //Glide.with(requireContext()).load(user.getProfileImageUrl()).into(profileImageView);
 
@@ -246,6 +304,59 @@ public class FindFragment extends Fragment {
 
         // Add the request to the requestQueue
         mQueue.add(stringRequest);
+    }
 
+    private void makeImageRequest(int id, ImageView imageView) {
+        ImageRequest imageRequest = new ImageRequest(
+                UserSession.getInstance().getURL() + "/users/icons/" + id,
+                new Response.Listener<Bitmap>() {
+                    @Override
+                    public void onResponse(Bitmap response) {
+                        // Display the image in the ImageView
+
+                        imageView.setImageBitmap(response);
+                        Log.d("Image", response.toString());
+                    }
+                },
+                0, // Width, set to 0 to get the original width
+                0, // Height, set to 0 to get the original height
+                ImageView.ScaleType.FIT_XY, // ScaleType
+                Bitmap.Config.RGB_565, // Bitmap config
+
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        if (error == null || error.networkResponse == null) {
+                            return;
+                        }
+                        String body = "";
+                        final String statusCode = String.valueOf(error.networkResponse.statusCode);
+                        try {
+                            body = new String(error.networkResponse.data,"UTF-8");
+                        } catch (UnsupportedEncodingException e) {
+                            // exception
+                        }
+                        Log.e("Image", body);
+                        Log.e("Image", statusCode);
+                        if (statusCode.equals("404")) {
+                            imageView.setImageResource(R.drawable.ic_launcher_foreground);
+                        }
+                    }
+                }
+
+        )
+
+        {
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                HashMap<String, String> headers = new HashMap<String, String>();
+                headers.put("Authorization", UserSession.getInstance().getJwtToken());
+                return headers;
+            }
+
+        };
+
+        // Adding request to request queue
+        mQueue.add(imageRequest);
     }
 }

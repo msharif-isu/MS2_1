@@ -138,13 +138,14 @@ public class UserService {
             }
         }
 
-        for (User friend : user.getFriends()) {
-            friend.getFriends().remove(user);
+        List<User> friendCopy = new ArrayList<>(user.getFriends());
+        for (User friend : friendCopy) {
+            removeFriend(user.getId(), friend.getId());
             userRepository.save(friend);
         }
         
         List<Conversation> conversationCopy = new ArrayList<>(user.getConversations());
-        conversationCopy.stream().forEach(conversation -> conversationService.removeMember(conversation, user));
+        conversationCopy.stream().forEach(conversation -> leaveConversation(user.getId(), conversation.getId()));
             
         userRepository.delete(user);
         

@@ -23,6 +23,7 @@ import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.StringRequest;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
@@ -295,12 +296,12 @@ public class HomeFragment extends Fragment implements WebSocketListener, FeedAda
         String trackId = feedItem.getData().getItem().getSong().getId();
 
         // Make an API request to add the track to the user's liked songs
-        String url = "http://coms-309-032.class.las.iastate.edu:8080/users/songs/" + feedItem.getData().getItem().getSong().getId();
+        String url = "http://coms-309-032.class.las.iastate.edu:8080/users/songs/" + trackId;
 
-        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, url, null,
-                new Response.Listener<JSONObject>() {
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, url,
+                new Response.Listener<String>() {
                     @Override
-                    public void onResponse(JSONObject response) {
+                    public void onResponse(String response) {
                         // Track added successfully
                         Toast.makeText(getActivity(), "Track added to liked songs", Toast.LENGTH_SHORT).show();
                     }
@@ -320,7 +321,7 @@ public class HomeFragment extends Fragment implements WebSocketListener, FeedAda
             }
         };
 
-        mQueue.add(jsonObjectRequest);
+        mQueue.add(stringRequest);
     }
 
     private void showPostInputDialog() {

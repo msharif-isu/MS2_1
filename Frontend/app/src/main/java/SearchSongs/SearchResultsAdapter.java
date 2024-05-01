@@ -76,7 +76,7 @@ public class SearchResultsAdapter extends RecyclerView.Adapter<SearchResultsAdap
             });
 
             Glide.with(itemView)
-                    .load(albumCoverImageView)
+                    .load(track.getAlbumCoverLink())
                     .placeholder(R.drawable.placeholder_image)
                     .error(R.drawable.error_image)
                     .into(albumCoverImageView);

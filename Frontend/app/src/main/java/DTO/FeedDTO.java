@@ -29,6 +29,7 @@ public class FeedDTO {
         private String type;
         private User user;
         private Song song;
+        private Post post;
 
         public Item(int id, String type, User user, Song song) {
             this.id = id;
@@ -52,6 +53,7 @@ public class FeedDTO {
         public Song getSong() {
             return song;
         }
+        public Post getPost() { return post; }
     }
 
     public static class User {
@@ -82,6 +84,26 @@ public class FeedDTO {
         public String getArtistId() {
             return artistId;
         }
+    }
+
+    public static class Post {
+        private int id;
+        private String time;
+        private User poster;
+        private String post;
+
+        public Post(int id, String time, User poster, String post) {
+            this.id = id;
+            this.time = time;
+            this.poster = poster;
+            this.post = post;
+        }
+
+        public int getId() { return id; }
+        public String getTime() { return time; }
+        public User getPoster() { return poster; }
+        public String getPost() { return post; }
+
     }
 
     public FeedDTO(String type, Data data) {

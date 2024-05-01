@@ -21,7 +21,9 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import harmonize.DTOs.SongRecDTO;
+import harmonize.DTOs.ArtistDTO;
 import harmonize.DTOs.SearchDTO;
+import harmonize.DTOs.SongDTO;
 import harmonize.Entities.Album;
 import harmonize.Entities.Artist;
 import harmonize.Entities.ArtistFreq;
@@ -125,7 +127,12 @@ public class MusicService {
         return responseJson;
     }
 
-    public JsonNode getSong(String id) {
+    public SongDTO getSong(String id) {
+        Song song = songRepository.findReferenceById(id);
+
+        if(song != null)
+            return new SongDTO(song);
+
         String urlEnd = "/tracks/" + id;
 
         HttpHeaders headers = new HttpHeaders();
@@ -135,121 +142,67 @@ public class MusicService {
         JsonNode responseJson;
 
         try {
-            responseJson = objectMapper.readTree("{\r\n" + //
-                        "    \"album\": {\r\n" + //
-                        "        \"album_type\": \"album\",\r\n" + //
-                        "        \"artists\": [\r\n" + //
-                        "            {\r\n" + //
-                        "                \"external_urls\": {\r\n" + //
-                        "                    \"spotify\": \"https://open.spotify.com/artist/06HL4z0CvFAxyc27GXpf02\"\r\n" + //
-                        "                },\r\n" + //
-                        "                \"href\": \"https://api.spotify.com/v1/artists/06HL4z0CvFAxyc27GXpf02\",\r\n" + //
-                        "                \"id\": \"06HL4z0CvFAxyc27GXpf02\",\r\n" + //
-                        "                \"name\": \"Taylor Swift\",\r\n" + //
-                        "                \"type\": \"artist\",\r\n" + //
-                        "                \"uri\": \"spotify:artist:06HL4z0CvFAxyc27GXpf02\"\r\n" + //
-                        "            }\r\n" + //
-                        "        ],\r\n" + //
-                        "        \"available_markets\": [\r\n" + //
-                        "            \"CA\",\r\n" + //
-                        "            \"US\"\r\n" + //
-                        "        ],\r\n" + //
-                        "        \"external_urls\": {\r\n" + //
-                        "            \"spotify\": \"https://open.spotify.com/album/2QJmrSgbdM35R67eoGQo4j\"\r\n" + //
-                        "        },\r\n" + //
-                        "        \"href\": \"https://api.spotify.com/v1/albums/2QJmrSgbdM35R67eoGQo4j\",\r\n" + //
-                        "        \"id\": \"2QJmrSgbdM35R67eoGQo4j\",\r\n" + //
-                        "        \"images\": [\r\n" + //
-                        "            {\r\n" + //
-                        "                \"height\": 640,\r\n" + //
-                        "                \"url\": \"https://i.scdn.co/image/ab67616d0000b2739abdf14e6058bd3903686148\",\r\n" + //
-                        "                \"width\": 640\r\n" + //
-                        "            },\r\n" + //
-                        "            {\r\n" + //
-                        "                \"height\": 300,\r\n" + //
-                        "                \"url\": \"https://i.scdn.co/image/ab67616d00001e029abdf14e6058bd3903686148\",\r\n" + //
-                        "                \"width\": 300\r\n" + //
-                        "            },\r\n" + //
-                        "            {\r\n" + //
-                        "                \"height\": 64,\r\n" + //
-                        "                \"url\": \"https://i.scdn.co/image/ab67616d000048519abdf14e6058bd3903686148\",\r\n" + //
-                        "                \"width\": 64\r\n" + //
-                        "            }\r\n" + //
-                        "        ],\r\n" + //
-                        "        \"name\": \"1989\",\r\n" + //
-                        "        \"release_date\": \"2014-10-27\",\r\n" + //
-                        "        \"release_date_precision\": \"day\",\r\n" + //
-                        "        \"total_tracks\": 13,\r\n" + //
-                        "        \"type\": \"album\",\r\n" + //
-                        "        \"uri\": \"spotify:album:2QJmrSgbdM35R67eoGQo4j\"\r\n" + //
-                        "    },\r\n" + //
-                        "    \"artists\": [\r\n" + //
-                        "        {\r\n" + //
-                        "            \"external_urls\": {\r\n" + //
-                        "                \"spotify\": \"https://open.spotify.com/artist/06HL4z0CvFAxyc27GXpf02\"\r\n" + //
-                        "            },\r\n" + //
-                        "            \"href\": \"https://api.spotify.com/v1/artists/06HL4z0CvFAxyc27GXpf02\",\r\n" + //
-                        "            \"id\": \"06HL4z0CvFAxyc27GXpf02\",\r\n" + //
-                        "            \"name\": \"Taylor Swift\",\r\n" + //
-                        "            \"type\": \"artist\",\r\n" + //
-                        "            \"uri\": \"spotify:artist:06HL4z0CvFAxyc27GXpf02\"\r\n" + //
-                        "        }\r\n" + //
-                        "    ],\r\n" + //
-                        "    \"available_markets\": [\r\n" + //
-                        "        \"CA\",\r\n" + //
-                        "        \"US\"\r\n" + //
-                        "    ],\r\n" + //
-                        "    \"disc_number\": 1,\r\n" + //
-                        "    \"duration_ms\": 211933,\r\n" + //
-                        "    \"explicit\": false,\r\n" + //
-                        "    \"external_ids\": {\r\n" + //
-                        "        \"isrc\": \"USCJY1431369\"\r\n" + //
-                        "    },\r\n" + //
-                        "    \"external_urls\": {\r\n" + //
-                        "        \"spotify\": \"https://open.spotify.com/track/273dCMFseLcVsoSWx59IoE\"\r\n" + //
-                        "    },\r\n" + //
-                        "    \"href\": \"https://api.spotify.com/v1/tracks/273dCMFseLcVsoSWx59IoE\",\r\n" + //
-                        "    \"id\": \"273dCMFseLcVsoSWx59IoE\",\r\n" + //
-                        "    \"is_local\": false,\r\n" + //
-                        "    \"name\": \"Bad Blood\",\r\n" + //
-                        "    \"popularity\": 67,\r\n" + //
-                        "    \"preview_url\": null,\r\n" + //
-                        "    \"track_number\": 8,\r\n" + //
-                        "    \"type\": \"track\",\r\n" + //
-                        "    \"uri\": \"spotify:track:273dCMFseLcVsoSWx59IoE\"\r\n" + //
-                        "}");
-        }
-        catch(Exception e) {
-            e.printStackTrace();
-            throw new InvalidArgumentException("BRUH");
+            ResponseEntity<String> response = restTemplate.exchange(apiURL + urlEnd, HttpMethod.GET, new HttpEntity<>(headers), String.class);
+            responseJson = objectMapper.readTree(response.getBody());
+        } catch(Exception e) {
+            throw new InvalidArgumentException("Invalid song.");
         }
 
-        // try {
-        //     ResponseEntity<String> response = restTemplate.exchange(apiURL + urlEnd, HttpMethod.GET, new HttpEntity<>(headers), String.class);
-        //     responseJson = objectMapper.readTree(response.getBody());
-        // } catch(Exception e) {
-        //     throw new InvalidArgumentException("Invalid song.");
-        // }
-        
+        return new SongDTO(saveSong(responseJson));
+    }
+
+    private Song saveSong(JsonNode responseJson) {
+        Song song = songRepository.findReferenceById(responseJson.get("id").asText());
+
+        if(song != null)
+            return song;
+
         Artist artist = new Artist(responseJson.get("artists").get(0));
         artist = artistRepository.save(artist);
 
         Album album = new Album(responseJson.get("album"), artist);
         album = albumRepository.save(album);
 
-        Song song = new Song(responseJson, artist, album);
+        song = new Song(responseJson, artist, album);
 
         artist.getAlbums().add(album);
         artist.getSongs().add(song);
         album.getSongs().add(song);
 
         songRepository.save(song);
-        responseJson = objectMapper.valueToTree(song);
 
-        return responseJson;
+        return song;
     }
 
-    public JsonNode getArtist(String id) {
+    private Song saveSong(JsonNode songJson, JsonNode albumJson) {
+        Song song = songRepository.findReferenceById(songJson.get("id").asText());
+
+        if(song != null)
+            return song;
+
+        Artist artist = new Artist(songJson.get("artists").get(0));
+        artist = artistRepository.save(artist);
+
+        Album album = new Album(albumJson, artist);
+        album = albumRepository.save(album);
+
+        song = new Song(songJson, artist, album);
+
+        artist.getAlbums().add(album);
+        artist.getSongs().add(song);
+        album.getSongs().add(song);
+
+        songRepository.save(song);
+
+        return song;
+    }
+
+    public ArtistDTO getArtist(String id) {
+        Artist artist = artistRepository.findReferenceById(id);
+
+        if(artist != null)
+            return new ArtistDTO(artist);
+
         String urlEnd = "/artists/" + id;
 
         HttpHeaders headers = new HttpHeaders();
@@ -265,9 +218,9 @@ public class MusicService {
             throw new InvalidArgumentException("Invalid artist.");
         }
 
-        artistRepository.save(new Artist(responseJson));
+        artist = artistRepository.save(new Artist(responseJson));
 
-        return responseJson;
+        return new ArtistDTO(artist);
     }
 
     public JsonNode getArtistAlbums(SearchDTO search) {
@@ -364,7 +317,7 @@ public class MusicService {
                 if(Integer.parseInt(releaseYear) != Year.now().getValue())
                     break;
                     
-                newReleases.addAll(getAlbumSongs(albums.get("items").get(i).get("id").asText()));
+                newReleases.addAll(getAlbumSongs(albums.get("items").get(i)));
             }
 
             offset += limit;
@@ -373,18 +326,19 @@ public class MusicService {
         return newReleases;
     }
 
-    private List<Song> getAlbumSongs(String albumId) {
+    private List<Song> getAlbumSongs(JsonNode album) {
         int limit = 50;
         int offset = 0;
         List<Song> songs = new ArrayList<>();
-        JsonNode album;
 
         do {
-            SearchDTO search = new SearchDTO(albumId, "track", Integer.toString(limit), Integer.toString(offset));
-            album = getAlbumSongs(search);
+            SearchDTO search = new SearchDTO(album.get("id").asText(), "track", Integer.toString(limit), Integer.toString(offset));
+            JsonNode albumSongs = getAlbumSongs(search);
 
-            for(int i = 0; i < album.get("items").size(); i++)
-                songs.add(new Song(album.get("items").get(i)));
+            for(int i = 0; i < albumSongs.get("items").size(); i++) {
+                saveSong(albumSongs.get("items").get(i), album);
+                songs.add(new Song(albumSongs.get("items").get(i)));
+            }
 
             offset += limit;
         } while(album.get("items").size() == limit);
@@ -410,8 +364,10 @@ public class MusicService {
 
         JsonNode recommendations = getRecommendations(new SongRecDTO(Integer.toString(100), artistIds, songIds));
         
-        for(int i = 0; i < recommendations.get("tracks").size(); i++)
+        for(int i = 0; i < recommendations.get("tracks").size(); i++) {
+            saveSong(recommendations.get("tracks").get(i));
             songRec.add(new Song(recommendations.get("tracks").get(i)));
+        }
 
         return songRec;
     }

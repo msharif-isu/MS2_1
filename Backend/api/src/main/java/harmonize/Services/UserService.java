@@ -35,6 +35,7 @@ import harmonize.ErrorHandling.Exceptions.UserNotFriendException;
 import harmonize.Repositories.ConversationRepository;
 import harmonize.Repositories.ArtistFreqRepository;
 import harmonize.Repositories.RoleRepository;
+import harmonize.Repositories.SongRepository;
 import harmonize.Repositories.UserRepository;
 
 @Service
@@ -42,6 +43,7 @@ public class UserService {
     private UserRepository userRepository;
     private RoleRepository roleRepository;
     private ConversationRepository conversationRepository;
+    private SongRepository songRepository;
     private ArtistFreqRepository artistFreqRepository;
 
     private ConversationService conversationService;
@@ -49,13 +51,14 @@ public class UserService {
 
     @Autowired
     public UserService(UserRepository userRepository, RoleRepository roleRepository, ConversationRepository conversationRepository, ArtistFreqRepository artistFreqRepository,
-                        ConversationService conversationService, MusicService musicService) {
+                        ConversationService conversationService, MusicService musicService, SongRepository songRepository) {
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
         this.conversationRepository = conversationRepository;
         this.artistFreqRepository = artistFreqRepository;
         this.conversationService = conversationService;
         this.musicService = musicService;
+        this.songRepository = songRepository;
     }
 
     @NonNull
@@ -316,7 +319,7 @@ public class UserService {
         if(user == null)
             throw new EntityNotFoundException("User " + id + " not found.");
 
-        Song song = new Song(musicService.getSong(songId));
+        Song song = songRepository.findReferenceById(musicService.getSong(songId).getId());
 
         LikedSong connection = new LikedSong(user, song);
 
@@ -336,7 +339,7 @@ public class UserService {
         if(user == null)
             throw new EntityNotFoundException("User " + id + " not found.");
 
-        Song song = new Song(musicService.getSong(songId));
+        Song song = songRepository.findReferenceById(musicService.getSong(songId).getId());
 
         LikedSong connection = new LikedSong(user, song);
 

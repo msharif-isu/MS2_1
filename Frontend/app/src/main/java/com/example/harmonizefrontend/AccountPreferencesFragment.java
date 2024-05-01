@@ -206,11 +206,16 @@ public class AccountPreferencesFragment extends Fragment {
                 Log.d("jwt", "OG jwt: " + jwtToken);
                 UserSession.getInstance().setmQueue(mQueue);
                 Log.e("msg", currentUser.getUsername() + " " + currentUser.getFirstName() + " " + currentUser.getLastName() + " " + currentUser.getBio());
-                checkRoles();
-                Log.e("Mod", "Num roles: " + String.valueOf(UserSession.getInstance().getRoles().size()));
-                if (UserSession.getInstance().getRoles().size() > 1) {
-                    seeReportsBtn.setVisibility(View.VISIBLE);
-                }
+                checkRoles(new VolleyCallBack() {
+                    @Override
+                    public void onSuccess() {
+                        Log.e("Mod", "roles: " + String.valueOf(UserSession.getInstance().getRoles()));
+                        if (UserSession.getInstance().getRoles().contains("MODERATOR")) {
+                            seeReportsBtn.setVisibility(View.VISIBLE);
+                        }
+                    }
+                });
+
             }
 
         });
@@ -561,7 +566,7 @@ public class AccountPreferencesFragment extends Fragment {
         mQueue.add(jsonObjReq);
     }
 
-    private void checkRoles() {
+    private void checkRoles(VolleyCallBack volleyCallBack) {
         JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(
                 Request.Method.GET,
                 URL + "/users/roles",
@@ -576,6 +581,7 @@ public class AccountPreferencesFragment extends Fragment {
                             roles.add(role);
                         }
                         UserSession.getInstance().setRoles(roles);
+                        volleyCallBack.onSuccess();
                     }
                     catch (Exception e) {
                         e.printStackTrace();

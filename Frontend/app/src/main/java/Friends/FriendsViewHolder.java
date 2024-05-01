@@ -1,5 +1,7 @@
 package Friends;
 
+import static android.view.View.GONE;
+
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -22,6 +24,8 @@ public class FriendsViewHolder extends RecyclerView.ViewHolder{
         message = itemView.findViewById(R.id.messageFriend);
         removeFriend = itemView.findViewById(R.id.deleteFriend);
         friendPfp = itemView.findViewById(R.id.profile_Picture);
+        removeFriend.setVisibility(GONE);
+        message.setVisibility(GONE);
     }
 
     public TextView getFriendName() {

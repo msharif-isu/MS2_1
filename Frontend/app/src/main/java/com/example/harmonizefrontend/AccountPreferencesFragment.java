@@ -68,6 +68,7 @@ public class AccountPreferencesFragment extends Fragment {
     private String mParam2;
 
     private ImageView profilePicture;
+    private int id;
     private String username, password, firstName, lastName, bio;
     private EditText usernameText, bioText, firstNameText, lastNameText;
     private TextView passwordView;
@@ -199,7 +200,7 @@ public class AccountPreferencesFragment extends Fragment {
                 bioText.setText(bio);
                 passwordView.setText(password);
 
-                Member currentUser = new Member(99999, firstName, lastName, username, bio);
+                Member currentUser = new Member(id, firstName, lastName, username, bio);
                 UserSession.getInstance().setCurrentUser(currentUser);
                 UserSession.getInstance().setPassword(password);
                 UserSession.getInstance().setJwtToken(jwtToken);
@@ -317,7 +318,7 @@ public class AccountPreferencesFragment extends Fragment {
                             lastNameText.setText(lastName);
                             bioText.setText(bio);
 
-                            currentUser = new Member(99999, firstName, lastName, username, bio);
+                            currentUser = new Member(id, firstName, lastName, username, bio);
                             UserSession.getInstance().setCurrentUser(currentUser);
                             UserSession.getInstance().setPassword(password);
                             UserSession.getInstance().setJwtToken(jwtToken);
@@ -349,6 +350,7 @@ public class AccountPreferencesFragment extends Fragment {
                     public void onResponse(JSONObject response) {
                         try {
                             Log.e("JWT", "Accessed user details");
+                            id = response.getInt("id");
 
                             username = response.getString("username");
 
@@ -516,6 +518,7 @@ public class AccountPreferencesFragment extends Fragment {
                     public void onResponse(JSONObject response) {
                         try {
                             Log.e("JWT", "Updating user details!");
+                            id = response.getInt("id");
                             username = response.getString("username");
                             firstName = response.getString("firstName");
                             lastName = response.getString("lastName");

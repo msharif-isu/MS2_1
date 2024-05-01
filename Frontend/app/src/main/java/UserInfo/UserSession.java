@@ -27,7 +27,8 @@ public class UserSession {
     private ConversationDTO currentConversation;
     private RequestQueue mQueue;
 
-    private ArrayList<ConversationDTO> selectedConversations = new ArrayList<>();
+    private ArrayList<Integer> selectedFriendsIds = new ArrayList<>();
+
 
     private String URL = "http://coms-309-032.class.las.iastate.edu:8080";
 
@@ -126,11 +127,12 @@ public class UserSession {
         return URL;
     }
 
-    public void setSelectedconversations(ArrayList<ConversationDTO> selectedConversations) {
-        this.selectedConversations = selectedConversations;
+    public void setSelectedFriendsIds(ArrayList<Integer> list) {
+        selectedFriendsIds = list;
     }
 
-    public ArrayList<ConversationDTO> getSelectedConversations() {
-        return selectedConversations;
+    public ArrayList<Integer> getSelectedFriendsIds() {
+        return selectedFriendsIds;
     }
+
 }

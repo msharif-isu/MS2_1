@@ -50,6 +50,7 @@ public class ConversationsFragment extends Fragment implements WebSocketListener
     private List<ConversationDTO> conversations;
     private Map<Integer, ConversationDTO> listConversations;
 
+    private ImageButton addGC;
 
     private RequestQueue mQueue = UserSession.getInstance().getmQueue();
 
@@ -120,11 +121,21 @@ public class ConversationsFragment extends Fragment implements WebSocketListener
         view = inflater.inflate(R.layout.fragment_conversation_list, container, false);
 
         recyclerView = view.findViewById(R.id.recycler);
+        addGC = view.findViewById(R.id.addGroupChat);
 //        view.findViewById(R.id.deleteConvo).setVisibility(View.GONE);
         conversations = getConversations();
         conversationListAdapter = new ConversationListAdapter(conversations, clickListener);
         recyclerView.setAdapter(conversationListAdapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+
+        addGC.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ((navBar) getActivity()).loadFragment(new MakeGroupChatFragment());
+            }
+        });
+
+
 
 
         return view;
@@ -272,6 +283,4 @@ public class ConversationsFragment extends Fragment implements WebSocketListener
         };
         mQueue.add(stringRequest);
         }
-
-
     }

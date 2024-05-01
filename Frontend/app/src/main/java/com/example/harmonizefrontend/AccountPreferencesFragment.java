@@ -36,6 +36,7 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import org.json.JSONObject;
 
 import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.sql.Array;
 import java.util.ArrayList;
 import java.io.IOException;
@@ -505,11 +506,9 @@ public class AccountPreferencesFragment extends Fragment {
     private void updateUserDetails(VolleyCallBack callBackDetails) {
         JSONObject jsonBody = new JSONObject();
         try {
-            if (!username.equals(usernameText.getText().toString())) {
-                jsonBody.put("username", usernameText.getText().toString());
-            }
             jsonBody.put("firstName", firstNameText.getText().toString());
             jsonBody.put("lastName", lastNameText.getText().toString());
+            jsonBody.put("username", usernameText.getText().toString());
             jsonBody.put("bio", bioText.getText().toString());
         } catch (Exception e) {
             e.printStackTrace();
@@ -517,33 +516,41 @@ public class AccountPreferencesFragment extends Fragment {
 
         JsonObjectRequest jsonObjReq = new JsonObjectRequest(
                 Request.Method.PUT,
-                URL + "/users",
+                UserSession.getInstance().getURL() + "/users",
                 jsonBody, // Pass null as the request body since it's a GET request
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
                         try {
                             Log.e("JWT", "Updating user details!");
-                            id = response.getInt("id");
-                            username = response.getString("username");
-                            firstName = response.getString("firstName");
-                            lastName = response.getString("lastName");
-                            bio = response.getString("bio");
                             callBackDetails.onSuccess();
 
                         }
                         catch (Exception e) {
-                            e.printStackTrace();
+
                         }
                     }
                 },
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        Log.e("JWT", error.toString());
-                        // Gets: com.android.volley.ParseError: org.json.JSONException: Value First of type java.lang.String cannot be converted to JSONObject
-                        // The backend still takes the request and updates the details
+                        // Log the exception
+                        error.printStackTrace();
+
+                        // Log detailed error information
+                        if (error.networkResponse != null) {
+                            // Get the status code
+                            int statusCode = error.networkResponse.statusCode;
+                            Log.e("JWT", "Status Code: " + statusCode);
+
+                            // Try to convert byte[] data to a string
+                            String responseBody = new String(error.networkResponse.data, StandardCharsets.UTF_8);
+                            Log.e("JWT", "Response Body: " + responseBody);
+                        } else {
+                            Log.e("JWT", "No response from server");
+                        }
                     }
+
                 }
         )
 
@@ -551,17 +558,11 @@ public class AccountPreferencesFragment extends Fragment {
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
                 HashMap<String, String> headers = new HashMap<String, String>();
-                headers.put("Authorization", jwtToken);
+                Log.e("JWT header", UserSession.getInstance().getJwtToken());
+                headers.put("Authorization", UserSession.getInstance().getJwtToken());
                 return headers;
             }
 
-            @Override
-            protected Map<String, String> getParams() {
-                Map<String, String> params = new HashMap<String, String>();
-//                params.put("param1", "value1");
-//                params.put("param2", "value2");
-                return params;
-            }
         };
         mQueue.add(jsonObjReq);
     }

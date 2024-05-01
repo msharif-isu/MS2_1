@@ -1,8 +1,12 @@
 package harmonize.DTOs;
 
 import harmonize.Entities.Album;
+import lombok.AllArgsConstructor;
+import lombok.Data;
 import lombok.NonNull;
 
+@Data
+@AllArgsConstructor
 public class AlbumDTO {
     @NonNull
     private String id;

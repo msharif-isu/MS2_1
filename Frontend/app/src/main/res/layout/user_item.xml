@@ -13,12 +13,19 @@
         android:layout_height="wrap_content"
         android:padding="16dp">
 
-        <ImageView
+<!--        <ImageView-->
+<!--            android:id="@+id/profileImageView"-->
+<!--            android:layout_width="80dp"-->
+<!--            android:layout_height="80dp"-->
+<!--            android:scaleType="centerCrop"-->
+<!--            android:src="@drawable/placeholder_image" />-->
+
+        <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/profileImageView"
             android:layout_width="80dp"
             android:layout_height="80dp"
             android:scaleType="centerCrop"
-            android:src="@drawable/placeholder_image" />
+            android:src="@drawable/ic_launcher_foreground"/>
 
         <LinearLayout
             android:layout_width="match_parent"

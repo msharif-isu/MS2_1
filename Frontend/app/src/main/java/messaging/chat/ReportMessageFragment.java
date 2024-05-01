@@ -49,7 +49,7 @@ public class ReportMessageFragment extends Fragment {
 
     private RequestQueue mQueue;
 
-    private String URL = "http://coms-309-032.class.las.iastate.edu:8080";
+//    private String URL = "http://coms-309-032.class.las.iastate.edu:8080";
 
 
 
@@ -159,7 +159,7 @@ public class ReportMessageFragment extends Fragment {
 
         JsonObjectRequest jsonObjReq = new JsonObjectRequest(
                 Request.Method.POST,
-                URL + "/users/reports",
+                UserSession.getInstance().getURL() + "/users/reports",
                 jsonBody, // Pass null as the request body since it's a GET request
                 new Response.Listener<JSONObject>() {
                     @Override

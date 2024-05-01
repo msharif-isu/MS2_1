@@ -21,13 +21,17 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import harmonize.DTOs.SongRecDTO;
+import harmonize.DTOs.ArtistDTO;
 import harmonize.DTOs.SearchDTO;
+import harmonize.DTOs.SongDTO;
+import harmonize.Entities.Album;
 import harmonize.Entities.Artist;
 import harmonize.Entities.ArtistFreq;
 import harmonize.Entities.LikedSong;
 import harmonize.Entities.Song;
 import harmonize.Entities.User;
 import harmonize.ErrorHandling.Exceptions.InvalidArgumentException;
+import harmonize.Repositories.AlbumRepository;
 import harmonize.Repositories.ArtistRepository;
 import harmonize.Repositories.SongRepository;
 
@@ -47,14 +51,17 @@ public class MusicService {
 
     private ArtistRepository artistRepository;
 
+    private AlbumRepository albumRepository;
+
     @Autowired
-    public MusicService(RestTemplate restTemplate, SongRepository songRepository, ArtistRepository artistRepository) {
+    public MusicService(RestTemplate restTemplate, SongRepository songRepository, ArtistRepository artistRepository, AlbumRepository albumRepository) {
         this.restTemplate = restTemplate;
         this.objectMapper = new ObjectMapper();
         this.apiURL = "https://api.spotify.com/v1";
         this.apiExpiration = 0;
         this.songRepository = songRepository;
         this.artistRepository = artistRepository;
+        this.albumRepository = albumRepository;
     }
 
     public String getAPIToken() {
@@ -120,7 +127,12 @@ public class MusicService {
         return responseJson;
     }
 
-    public JsonNode getSong(String id) {
+    public SongDTO getSong(String id) {
+        Song song = songRepository.findReferenceById(id);
+
+        if(song != null)
+            return new SongDTO(song);
+
         String urlEnd = "/tracks/" + id;
 
         HttpHeaders headers = new HttpHeaders();
@@ -135,18 +147,62 @@ public class MusicService {
         } catch(Exception e) {
             throw new InvalidArgumentException("Invalid song.");
         }
-        
+
+        return new SongDTO(saveSong(responseJson));
+    }
+
+    private Song saveSong(JsonNode responseJson) {
+        Song song = songRepository.findReferenceById(responseJson.get("id").asText());
+
+        if(song != null)
+            return song;
+
         Artist artist = new Artist(responseJson.get("artists").get(0));
-        Song song = new Song(responseJson, artistRepository.save(artist));
-        song.setArtist(artist);
+        artist = artistRepository.save(artist);
+
+        Album album = new Album(responseJson.get("album"), artist);
+        album = albumRepository.save(album);
+
+        song = new Song(responseJson, artist, album);
+
+        artist.getAlbums().add(album);
         artist.getSongs().add(song);
+        album.getSongs().add(song);
 
         songRepository.save(song);
 
-        return responseJson;
+        return song;
     }
 
-    public JsonNode getArtist(String id) {
+    private Song saveSong(JsonNode songJson, JsonNode albumJson) {
+        Song song = songRepository.findReferenceById(songJson.get("id").asText());
+
+        if(song != null)
+            return song;
+
+        Artist artist = new Artist(songJson.get("artists").get(0));
+        artist = artistRepository.save(artist);
+
+        Album album = new Album(albumJson, artist);
+        album = albumRepository.save(album);
+
+        song = new Song(songJson, artist, album);
+
+        artist.getAlbums().add(album);
+        artist.getSongs().add(song);
+        album.getSongs().add(song);
+
+        songRepository.save(song);
+
+        return song;
+    }
+
+    public ArtistDTO getArtist(String id) {
+        Artist artist = artistRepository.findReferenceById(id);
+
+        if(artist != null)
+            return new ArtistDTO(artist);
+
         String urlEnd = "/artists/" + id;
 
         HttpHeaders headers = new HttpHeaders();
@@ -162,9 +218,9 @@ public class MusicService {
             throw new InvalidArgumentException("Invalid artist.");
         }
 
-        artistRepository.save(new Artist(responseJson));
+        artist = artistRepository.save(new Artist(responseJson));
 
-        return responseJson;
+        return new ArtistDTO(artist);
     }
 
     public JsonNode getArtistAlbums(SearchDTO search) {
@@ -261,7 +317,7 @@ public class MusicService {
                 if(Integer.parseInt(releaseYear) != Year.now().getValue())
                     break;
                     
-                newReleases.addAll(getAlbumSongs(albums.get("items").get(i).get("id").asText()));
+                newReleases.addAll(getAlbumSongs(albums.get("items").get(i)));
             }
 
             offset += limit;
@@ -270,21 +326,23 @@ public class MusicService {
         return newReleases;
     }
 
-    private List<Song> getAlbumSongs(String albumId) {
+    private List<Song> getAlbumSongs(JsonNode album) {
         int limit = 50;
         int offset = 0;
         List<Song> songs = new ArrayList<>();
-        JsonNode album;
+        JsonNode albumSongs;
 
         do {
-            SearchDTO search = new SearchDTO(albumId, "track", Integer.toString(limit), Integer.toString(offset));
-            album = getAlbumSongs(search);
+            SearchDTO search = new SearchDTO(album.get("id").asText(), "track", Integer.toString(limit), Integer.toString(offset));
+            albumSongs = getAlbumSongs(search);
 
-            for(int i = 0; i < album.get("items").size(); i++)
-                songs.add(new Song(album.get("items").get(i)));
+            for(int i = 0; i < albumSongs.get("items").size(); i++) {
+                saveSong(albumSongs.get("items").get(i), album);
+                songs.add(new Song(albumSongs.get("items").get(i)));
+            }
 
             offset += limit;
-        } while(album.get("items").size() == limit);
+        } while(albumSongs.get("items").size() == limit);
 
         return songs;
     }
@@ -307,8 +365,10 @@ public class MusicService {
 
         JsonNode recommendations = getRecommendations(new SongRecDTO(Integer.toString(100), artistIds, songIds));
         
-        for(int i = 0; i < recommendations.get("tracks").size(); i++)
+        for(int i = 0; i < recommendations.get("tracks").size(); i++) {
+            saveSong(recommendations.get("tracks").get(i));
             songRec.add(new Song(recommendations.get("tracks").get(i)));
+        }
 
         return songRec;
     }

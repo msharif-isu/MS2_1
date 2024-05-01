@@ -19,6 +19,7 @@ public class ReportViewHolder extends RecyclerView.ViewHolder {
         reportedMessage = itemView.findViewById(R.id.ReportedMessage);
         reportedMessageDate = itemView.findViewById(R.id.ReportedMessageDate);
         reportedReason = itemView.findViewById(R.id.ReportReason);
+        reportedImage = itemView.findViewById(R.id.profile_Picture);
     }
 
 

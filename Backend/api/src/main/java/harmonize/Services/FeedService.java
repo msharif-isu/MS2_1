@@ -230,6 +230,7 @@ public class FeedService {
             for(Song song : musicService.getNewReleases(topArtists.get(i).getArtist().getId())) {
                 if(user.getLikedSongs().contains(new LikedSong(user, song)))
                     continue;
+
                 feed.add(new SongFeedItem(FeedEnum.NEW_RELEASE, song, user));
             }
         }

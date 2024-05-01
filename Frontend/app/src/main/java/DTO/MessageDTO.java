@@ -12,7 +12,7 @@ public class MessageDTO {
 
     public static class Data {
         private int id;
-        private long unixTime;
+        private long time;
         private Member sender;
         private ConversationDTO.Data conversation;
 
@@ -27,7 +27,7 @@ public class MessageDTO {
          */
         public Data(int id, long unixTime, Member sender, ConversationDTO.Data conversation, String text) {
             this.id = id;
-            this.unixTime = unixTime;
+            this.time = unixTime;
             this.sender = sender;
             this.conversation = conversation;
             this.text = text;
@@ -41,7 +41,7 @@ public class MessageDTO {
         }
 
         public long getDataUnixTime() {
-            return unixTime;
+            return time;
         }
 
         public Member getDataSender() {

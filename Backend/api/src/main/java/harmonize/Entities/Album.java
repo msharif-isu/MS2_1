@@ -1,8 +1,6 @@
 package harmonize.Entities;
 
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -13,50 +11,50 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
-import jakarta.persistence.OrderBy;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "artists")
+@Table(name = "albums")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class Artist {
+public class Album {
     @Id
     @Column(unique = true)
     private String id;
 
     private String name;
 
+    private String imageUrl;
+
     @JsonIgnore
-    @OneToMany(mappedBy="artist", fetch = FetchType.EAGER)
+    @ManyToOne(cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
+    @JoinColumn(name="artist_id", referencedColumnName = "id")
+    private Artist artist;
+
+    @JsonIgnore
+    @OneToMany(mappedBy="album", fetch = FetchType.LAZY)
     private Set<Song> songs = new HashSet<>();
 
-    @JsonIgnore
-    @OneToMany(mappedBy="artist", fetch = FetchType.LAZY)
-    private Set<Album> albums = new HashSet<>();
-
-    @JsonIgnore
-    @OneToMany(mappedBy = "artist", fetch = FetchType.EAGER, cascade = { CascadeType.MERGE, CascadeType.REMOVE }, 
-                orphanRemoval = true)
-    @OrderBy("frequency ASC")
-    private List<ArtistFreq> topListeners = new ArrayList<>();
-
-    public Artist(JsonNode artist) {
-        this.id = artist.get("id").asText();
-        this.name = artist.get("name").asText();
+    public Album(JsonNode album, Artist artist) {
+        this.id = album.get("id").asText();
+        this.name = album.get("name").asText();
+        this.imageUrl = album.get("images").get(0).get("url").asText();
+        this.artist = artist;
     }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Artist artist = (Artist) o;
-        return this.id.equals(artist.id);
+        Album album = (Album) o;
+        return this.id.equals(album.id);
     }
     
     @Override

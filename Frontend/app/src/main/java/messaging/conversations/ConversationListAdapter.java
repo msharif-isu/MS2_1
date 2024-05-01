@@ -1,5 +1,6 @@
 package messaging.conversations;
 
+import android.annotation.SuppressLint;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.util.Log;
@@ -21,6 +22,7 @@ import com.android.volley.toolbox.ImageRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.example.harmonizefrontend.R;
 
+import java.io.UnsupportedEncodingException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -47,7 +49,7 @@ public class ConversationListAdapter extends RecyclerView.Adapter<RecyclerView.V
     private ClickListener clickListener;
 
     private RequestQueue mQueue = UserSession.getInstance().getmQueue();
-    private Bitmap friendPic;
+    private ImageView friendPic;
     private Boolean isSelected = false;
     ArrayList<ConversationDTO> selectedConversations = new ArrayList<>();
 
@@ -72,7 +74,7 @@ public class ConversationListAdapter extends RecyclerView.Adapter<RecyclerView.V
     }
 
     @Override
-    public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, @SuppressLint("RecyclerView") int position) {
         ConversationDTO conversation = conversationList.get(position);
 
         SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy");
@@ -86,6 +88,7 @@ public class ConversationListAdapter extends RecyclerView.Adapter<RecyclerView.V
         try {
             MessageDTO message = conversation.getMessageList().get(conversation.getMessageList().size() - 1);
             lastMessage = message.getText();
+            Log.e("Time", String.valueOf(message.getData().getDataUnixTime()));
             Date dateUnix = new Date(message.getData().getDataUnixTime());
 
             String lastMessageDate = dateFormat.format(dateUnix);
@@ -98,27 +101,29 @@ public class ConversationListAdapter extends RecyclerView.Adapter<RecyclerView.V
 
         final int index = holder.getAdapterPosition(); // Find alternative to getAdapterPosition
         ConversationViewHolder viewHolder = (ConversationViewHolder) holder;
-        if (conversation.getFriends().size() > 1) {
-            ArrayList<Member> friends = conversation.getFriends();
-            for (int i = 0; i < friends.size() - 2; i++) { // Iterate until last friend
-                friendUsername += friends.get(i).getUsername() + ", ";
+        ArrayList<Member> friends = conversation.getFriends();
+        Log.e("Profile Picture", String.valueOf(friends.size()));
+        StringBuilder name = new StringBuilder();
+        if (friends.size() > 1) {
+            for (int i = 0; i < friends.size() - 1; i++) { // Iterate until last friend
+                String tempName = friends.get(i).getUsername();
+                if (!tempName.equals(UserSession.getInstance().getCurrentUser().getUsername())) {
+                    name.append(friends.get(i).getUsername()).append(", ");
+                }
             }
-            friendUsername += friends.get(friends.size() - 1).getUsername();
-        } else {
-            friendUsername = conversation.getFriends().get(conversation.getFriends().size() - 1).getUsername();
+            name.append(friends.get(friends.size() - 1).getUsername());
+            viewHolder.friendPfp.setImageResource(R.drawable.baseline_groups_24);
         }
+        else if (!friends.get(friends.size() - 1).getUsername().equals(UserSession.getInstance().getCurrentUser().getUsername())) {
+                name.append(friends.get(friends.size() - 1).getUsername());
+                makeImageRequest(friends.get(friends.size() - 1).getid(), viewHolder.friendPfp);
+            }
 
 //        if (conversation.get)
-        viewHolder.friendName.setText(friendUsername);
+        viewHolder.friendName.setText(name);
         viewHolder.lastMessage.setText(lastMessage);
         viewHolder.lastMessageTime.setText(lastMessageDateTime);
 
-        requestFriendImage(new VolleyCallBack() {
-            @Override
-            public void onSuccess() {
-                viewHolder.friendPfp.setImageBitmap(friendPic);
-            }
-        });
 
         viewHolder.delete.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -129,6 +134,8 @@ public class ConversationListAdapter extends RecyclerView.Adapter<RecyclerView.V
                     @Override
                     public void onSuccess() {
                         conversationList.remove(position);
+                        UserSession.getInstance().removeConversation(conversation);
+                        Log.e("Conversation", String.valueOf(UserSession.getInstance().getConversations().size()));
                         notifyItemRemoved(position);
                     }
                 });
@@ -233,22 +240,16 @@ public class ConversationListAdapter extends RecyclerView.Adapter<RecyclerView.V
         return conversationList.get(index);
     }
 
-    private void requestFriendImage(final VolleyCallBack callBack) {
-
-
+    private void makeImageRequest(int id, ImageView imageView) {
         ImageRequest imageRequest = new ImageRequest(
-                UserSession.getInstance().getURL() + "/users/1/image", // Do change
+                UserSession.getInstance().getURL() + "/users/icons/" + id,
                 new Response.Listener<Bitmap>() {
                     @Override
                     public void onResponse(Bitmap response) {
                         // Display the image in the ImageView
-                        if (response == null) {
-                            // TODO
-                        } else {
-                            // TODO
-                            friendPic = response;
-                        }
-                        callBack.onSuccess();
+
+                        imageView.setImageBitmap(response);
+                        Log.d("Image", response.toString());
                     }
                 },
                 0, // Width, set to 0 to get the original width
@@ -259,12 +260,42 @@ public class ConversationListAdapter extends RecyclerView.Adapter<RecyclerView.V
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        // Handle errors here
-                        Log.e("Volley Error", error.toString());
+                        if (error == null || error.networkResponse == null) {
+                            return;
+                        }
+                        String body = "";
+                        final String statusCode = String.valueOf(error.networkResponse.statusCode);
+                        try {
+                            body = new String(error.networkResponse.data,"UTF-8");
+                        } catch (UnsupportedEncodingException e) {
+                            // exception
+                        }
+                        Log.e("Image", body);
+                        Log.e("Image", statusCode);
+                        if (statusCode.equals("404")) {
+                            imageView.setImageResource(R.drawable.ic_launcher_foreground);
+                        }
                     }
                 }
 
-        );
+        )
+
+        {
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                HashMap<String, String> headers = new HashMap<String, String>();
+                headers.put("Authorization", UserSession.getInstance().getJwtToken());
+                return headers;
+            }
+
+            @Override
+            protected Map<String, String> getParams() {
+                Map<String, String> params = new HashMap<String, String>();
+//                params.put("param1", "value1");
+//                params.put("param2", "value2");
+                return params;
+            }
+        };
 
         // Adding request to request queue
         mQueue.add(imageRequest);

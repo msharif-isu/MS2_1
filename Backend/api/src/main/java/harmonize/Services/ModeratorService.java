@@ -40,15 +40,20 @@ public class ModeratorService {
         }
         return result;
     }
-    
+
     @NonNull
     public UserDTO getUser(int id) {
+        return getUser(id, true);
+    }
+
+    @NonNull
+    public UserDTO getUser(int id, boolean roleChecking) {
         User user = userRepository.findReferenceById(id);
 
-        if (user == null ||
+        if (user == null || (roleChecking &&
             (!user.getRoles().contains(roleRepository.findByName("USER")) && 
              !user.getRoles().contains(roleRepository.findByName("MODERATOR")))
-            )
+            ))
             throw new EntityNotFoundException("User " + id + " not found.");
             
         return new UserDTO(user);

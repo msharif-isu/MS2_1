@@ -35,6 +35,7 @@ import harmonize.ErrorHandling.Exceptions.UserNotFriendException;
 import harmonize.Repositories.ConversationRepository;
 import harmonize.Repositories.ArtistFreqRepository;
 import harmonize.Repositories.RoleRepository;
+import harmonize.Repositories.SongRepository;
 import harmonize.Repositories.UserRepository;
 
 @Service
@@ -42,6 +43,7 @@ public class UserService {
     private UserRepository userRepository;
     private RoleRepository roleRepository;
     private ConversationRepository conversationRepository;
+    private SongRepository songRepository;
     private ArtistFreqRepository artistFreqRepository;
 
     private ConversationService conversationService;
@@ -49,13 +51,14 @@ public class UserService {
 
     @Autowired
     public UserService(UserRepository userRepository, RoleRepository roleRepository, ConversationRepository conversationRepository, ArtistFreqRepository artistFreqRepository,
-                        ConversationService conversationService, MusicService musicService) {
+                        ConversationService conversationService, MusicService musicService, SongRepository songRepository) {
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
         this.conversationRepository = conversationRepository;
         this.artistFreqRepository = artistFreqRepository;
         this.conversationService = conversationService;
         this.musicService = musicService;
+        this.songRepository = songRepository;
     }
 
     @NonNull
@@ -75,9 +78,14 @@ public class UserService {
 
     @NonNull
     public UserDTO getUser(String username) {
+        return getUser(username, true);
+    }
+
+    @NonNull
+    public UserDTO getUser(String username, boolean roleChecking) {
         User user = userRepository.findByUsername(username);
         
-        if(user == null || !user.getRoles().contains(roleRepository.findByName("USER")))
+        if(user == null || (roleChecking && !user.getRoles().contains(roleRepository.findByName("USER"))))
             throw new EntityNotFoundException("User " + username + " not found.");
 
         return new UserDTO(user);
@@ -316,7 +324,7 @@ public class UserService {
         if(user == null)
             throw new EntityNotFoundException("User " + id + " not found.");
 
-        Song song = new Song(musicService.getSong(songId));
+        Song song = songRepository.findReferenceById(musicService.getSong(songId).getId());
 
         LikedSong connection = new LikedSong(user, song);
 
@@ -336,7 +344,7 @@ public class UserService {
         if(user == null)
             throw new EntityNotFoundException("User " + id + " not found.");
 
-        Song song = new Song(musicService.getSong(songId));
+        Song song = songRepository.findReferenceById(musicService.getSong(songId).getId());
 
         LikedSong connection = new LikedSong(user, song);
 
@@ -380,7 +388,6 @@ public class UserService {
 
         Set<User> members = new HashSet<>() {};
         members.add(user);
-        user.getFriends().stream().forEach(friend -> System.err.println("Friend:" + new UserDTO(friend)));
         for (int memberId : memberIds) {
             User other = userRepository.findReferenceById(memberId);
             if(user.getId() != other.getId() && user.getFriends().stream().noneMatch(friend -> friend.getId() == other.getId()))

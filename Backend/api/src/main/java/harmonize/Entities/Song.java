@@ -26,9 +26,13 @@ public class Song {
 
     private String title;
 
-    @ManyToOne(cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
+    @ManyToOne(cascade = CascadeType.PERSIST, fetch = FetchType.EAGER)
     @JoinColumn(name="artist_id", referencedColumnName = "id")
     private Artist artist;
+
+    @ManyToOne(cascade = CascadeType.PERSIST, fetch = FetchType.EAGER)
+    @JoinColumn(name="album_id", referencedColumnName = "id")
+    private Album album;
 
     public Song(JsonNode song) {
         this.id = song.get("id").asText();
@@ -36,10 +40,11 @@ public class Song {
         this.artist = new Artist(song.get("artists").get(0));
     }
 
-    public Song(JsonNode song, Artist artist) {
+    public Song(JsonNode song, Artist artist, Album album) {
         this.id = song.get("id").asText();
         this.title = song.get("name").asText();
         this.artist = artist;
+        this.album = album;
     }
 
     @Override

@@ -51,7 +51,7 @@ public class ModeratorController {
 
     @DeleteMapping(path = "")
     public ResponseEntity<String> deleteSelf(Principal principal){
-        return ResponseEntity.ok(userService.deleteUser(moderatorService.getUser(principal.getName()).getId()));
+        return ResponseEntity.ok(userService.deleteUser(moderatorService.getUser(principal.getName(), false).getId()));
     }
 
     @GetMapping(path = "/users/{id}")
@@ -66,7 +66,7 @@ public class ModeratorController {
 
     @GetMapping(path = "/users/icons", produces = MediaType.IMAGE_JPEG_VALUE)
     public ResponseEntity<byte[]> getIcon(Principal principal){
-        return ResponseEntity.ok(moderatorService.getIcon(moderatorService.getUser(principal.getName()).getId()));
+        return ResponseEntity.ok(moderatorService.getIcon(moderatorService.getUser(principal.getName(), false).getId()));
     }
 
     @GetMapping(path = "/users/icons/{id}", produces = MediaType.IMAGE_JPEG_VALUE)
@@ -106,7 +106,7 @@ public class ModeratorController {
 
     @GetMapping(path = "/posts/{id}")
     public ResponseEntity<List<PostDTO>> getPosts(Principal principal, @PathVariable int id){
-        return ResponseEntity.ok(postService.getPosts(moderatorService.getUser(principal.getName()).getId(), id));
+        return ResponseEntity.ok(postService.getPosts(moderatorService.getUser(principal.getName(), false).getId(), id));
     }
 
     @DeleteMapping(path = "/posts/{id}") ResponseEntity<PostDTO> deletePost(@PathVariable int id) {

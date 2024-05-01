@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="75dp"
+    android:background="@color/Indian_red">
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/profile_Picture"
+        android:layout_width="35dp"
+        android:layout_height="35dp"
+        android:layout_alignParentStart="true"
+        android:layout_centerVertical="true"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginLeft="7dp"
+        android:src="@drawable/ic_launcher_foreground" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:id="@+id/username"
+        android:textSize="16sp"
+        android:layout_marginStart="50dp"
+        android:text="Friend Name"
+        android:textColor="@color/Jet"
+        android:layout_marginEnd="20dp"
+        android:maxLines="1"
+        android:layout_marginTop="17dp"
+        android:layout_height="wrap_content"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:id="@+id/name"
+        android:textSize="10sp"
+        android:layout_marginStart="50dp"
+        android:text="Friend Name"
+        android:textColor="@color/Timberwolf"
+        android:layout_marginEnd="20dp"
+        android:maxLines="1"
+        android:layout_marginTop="41dp"
+        android:layout_height="wrap_content"/>
+
+    <TextView
+        android:id="@+id/border2"
+        android:layout_width="match_parent"
+        android:layout_height=".75dp"
+        android:layout_alignParentBottom="true"
+        android:layout_marginRight="10px"
+        android:layout_marginLeft="10px"
+        android:background="@color/cool_grey"/>
+
+
+</RelativeLayout> 

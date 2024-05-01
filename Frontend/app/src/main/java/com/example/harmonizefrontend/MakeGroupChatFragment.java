@@ -187,9 +187,7 @@ public class MakeGroupChatFragment extends Fragment {
         ConversationDTO convo = new ConversationDTO("harmonize.DTOs.ConversationDTO", data);
         convo.ArrayListInitializer();
         return convo;
-    }
-
-    ;
+    };
 
     private void getFriends(VolleyCallBack volleyCallBack) {
 

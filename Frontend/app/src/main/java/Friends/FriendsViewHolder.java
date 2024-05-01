@@ -24,9 +24,6 @@ public class FriendsViewHolder extends RecyclerView.ViewHolder{
         message = itemView.findViewById(R.id.messageFriend);
         removeFriend = itemView.findViewById(R.id.deleteFriend);
         friendPfp = itemView.findViewById(R.id.profile_Picture);
-        friendPfp.setImageResource(R.drawable.ic_launcher_foreground);
-        removeFriend.setVisibility(GONE);
-        message.setVisibility(GONE);
     }
 
     public TextView getFriendName() {

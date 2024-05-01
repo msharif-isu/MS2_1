@@ -172,13 +172,17 @@ public class MessageFragment extends Fragment implements WebSocketListener {
         StringBuilder tempNames = new StringBuilder();
         ConversationDTO tempConvo = UserSession.getInstance().getCurrentConversation();
 
-        if (tempConvo.getFriends().size() > 2) {
+        if (tempConvo.getFriends().size() > 1) {
             ArrayList<Member> friends = tempConvo.getFriends();
             for (int i = 0; i < friends.size() - 1; i++) { // Iterate until last friend
-                tempNames.append(friends.get(i).getUsername()).append(", ");
+                String tempName = friends.get(i).getUsername();
+                if (!tempName.equals(UserSession.getInstance().getCurrentUser().getUsername())) {
+                    tempNames.append(friends.get(i).getUsername()).append(", ");
+                }
             }
-            tempNames.append(friends.get(friends.size() - 1).getUsername());
-            friendPfp.setImageResource(R.drawable.baseline_groups_24);
+            if (!friends.get(friends.size() - 1).getUsername().equals(UserSession.getInstance().getCurrentUser().getUsername())) {
+                tempNames.append(friends.get(friends.size() - 1).getUsername());
+            }
         }
         else {
             tempNames = new StringBuilder(tempConvo.getFriends().get(tempConvo.getFriends().size() - 1).getUsername());

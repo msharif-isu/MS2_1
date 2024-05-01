@@ -88,6 +88,7 @@ public class ConversationListAdapter extends RecyclerView.Adapter<RecyclerView.V
         try {
             MessageDTO message = conversation.getMessageList().get(conversation.getMessageList().size() - 1);
             lastMessage = message.getText();
+            Log.e("Time", String.valueOf(message.getData().getDataUnixTime()));
             Date dateUnix = new Date(message.getData().getDataUnixTime());
 
             String lastMessageDate = dateFormat.format(dateUnix);
@@ -100,26 +101,20 @@ public class ConversationListAdapter extends RecyclerView.Adapter<RecyclerView.V
 
         final int index = holder.getAdapterPosition(); // Find alternative to getAdapterPosition
         ConversationViewHolder viewHolder = (ConversationViewHolder) holder;
-        if (conversation.getFriends().size() > 2) {
             ArrayList<Member> friends = conversation.getFriends();
+            StringBuilder name = new StringBuilder();
             for (int i = 0; i < friends.size() - 1; i++) { // Iterate until last friend
-                friendUsername += friends.get(i).getUsername() + ", ";
-            }
-            friendUsername += friends.get(friends.size() - 1).getUsername();
-            viewHolder.friendPfp.setImageResource(R.drawable.baseline_groups_24);
-        } else {
-            friendUsername = conversation.getFriends().get(conversation.getFriends().size() - 1).getUsername();
-            int id = 9999;
-            for (Member friend : conversation.getFriends()) {
-                if (!friend.getUsername().equals(UserSession.getInstance().getCurrentUser().getUsername())) {
-                    id = friend.getid();
-                    makeImageRequest(id, viewHolder.friendPfp);
+                String tempName = friends.get(i).getUsername();
+                if (!tempName.equals(UserSession.getInstance().getCurrentUser().getUsername())) {
+                    name.append(friends.get(i).getUsername()).append(", ");
                 }
             }
-        }
+            if (!friends.get(friends.size() - 1).getUsername().equals(UserSession.getInstance().getCurrentUser().getUsername())) {
+                name.append(friends.get(friends.size() - 1).getUsername());
+            }
 
 //        if (conversation.get)
-        viewHolder.friendName.setText(friendUsername);
+        viewHolder.friendName.setText(name);
         viewHolder.lastMessage.setText(lastMessage);
         viewHolder.lastMessageTime.setText(lastMessageDateTime);
 

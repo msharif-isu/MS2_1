@@ -180,9 +180,8 @@ public class MessageFragment extends Fragment implements WebSocketListener {
                     tempNames.append(friends.get(i).getUsername()).append(", ");
                 }
             }
-            if (!friends.get(friends.size() - 1).getUsername().equals(UserSession.getInstance().getCurrentUser().getUsername())) {
-                tempNames.append(friends.get(friends.size() - 1).getUsername());
-            }
+            tempNames.append(friends.get(friends.size() - 1).getUsername());
+            friendPfp.setImageResource(R.drawable.baseline_groups_24);
         }
         else {
             tempNames = new StringBuilder(tempConvo.getFriends().get(tempConvo.getFriends().size() - 1).getUsername());

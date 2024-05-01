@@ -53,7 +53,7 @@ public class GroupListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         View view;
         Log.e("convo", "Creating viewholder");
         RecyclerView.ViewHolder viewHolder;
-        view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_current_friend, parent, false);
+        view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_add_to_groupchat, parent, false);
         viewHolder = new GroupViewHolder(view);
         Log.e("convo", "viewholder created");
         return viewHolder;
@@ -69,6 +69,8 @@ public class GroupListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
         String name = friend.getFirstName() + " " + friend.getLastName();
         viewHolder.friendName.setText(name);
+        Log.e("Groupchat", name);
+        viewHolder.friendUsername.setText(friend.getUsername());
 
 
 
@@ -82,6 +84,7 @@ public class GroupListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Log.e("GroupChats", "Clicked");
                     if (friends.contains(friend)) {
                         friends.remove(friend);
                         viewHolder.itemView.setBackgroundColor(Color.TRANSPARENT);
@@ -89,6 +92,12 @@ public class GroupListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                         friends.add(friend);
                         viewHolder.itemView.setBackgroundColor(Color.rgb(200, 120, 106));
                     }
+
+                    ArrayList<Integer> ids = new ArrayList<>();
+                    for (Member friend : friends) {
+                        ids.add(friend.getid());
+                    }
+                    UserSession.getInstance().setSelectedFriendsIds(ids);
             }
         });
 

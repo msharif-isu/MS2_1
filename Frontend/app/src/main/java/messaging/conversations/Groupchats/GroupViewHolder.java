@@ -11,17 +11,14 @@ import com.example.harmonizefrontend.R;
 
 public class GroupViewHolder extends RecyclerView.ViewHolder{
 
-    protected TextView friendName;
+    protected TextView friendUsername, friendName;
     protected ImageView friendPfp;
-    protected ImageButton message;
-    protected ImageButton removeFriend;
 
     public GroupViewHolder(View itemView) {
         super(itemView);
-        friendName = itemView.findViewById(R.id.FriendName);
+        friendUsername = itemView.findViewById(R.id.username);
+        friendName = itemView.findViewById(R.id.name);
         friendPfp = itemView.findViewById(R.id.profile_Picture);
-        message = itemView.findViewById(R.id.messageFriend);
-        removeFriend = itemView.findViewById(R.id.deleteFriend);
     }
 
     public TextView getFriendName() {

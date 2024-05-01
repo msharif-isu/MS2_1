@@ -220,11 +220,12 @@ public class MessageFragment extends Fragment implements WebSocketListener {
     private List<MessageDTO> getMessages() {
         List<MessageDTO> list = new ArrayList<>();
         list = UserSession.getInstance().getCurrentConversation().getMessageList();
-
-        for (MessageDTO message : list) {
-            int id = message.getData().getDataId();
-            if (!listMap.containsKey(id)) {
-                listMap.put(id, message);
+        if (list.size() != 0) {
+            for (MessageDTO message : list) {
+                int id = message.getData().getDataId();
+                if (!listMap.containsKey(id)) {
+                    listMap.put(id, message);
+                }
             }
         }
 

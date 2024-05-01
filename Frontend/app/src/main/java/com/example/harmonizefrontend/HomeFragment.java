@@ -1,5 +1,6 @@
 package com.example.harmonizefrontend;
 
+import android.app.AlertDialog;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -12,6 +13,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
@@ -20,11 +23,13 @@ import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 
 import org.java_websocket.WebSocket;
 import org.java_websocket.handshake.ServerHandshake;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
@@ -35,6 +40,7 @@ import Connections.WebSocketListener;
 import Connections.WebSocketManagerFeed;
 import HomeFeed.FeedAdapter;
 import DTO.FeedDTO;
+import HomeFeed.FeedEnum;
 import HomeFeed.FeedRequest;
 
 import UserInfo.UserSession;
@@ -59,6 +65,9 @@ public class HomeFragment extends Fragment implements WebSocketListener, FeedAda
     private int feedSize;
     private boolean isLoading = false;
     private boolean hasMore = true;
+
+    private FloatingActionButton createPostFab;
+    private AlertDialog postInputDialog;
     /**
      * required empty constructor
      */
@@ -151,6 +160,14 @@ public class HomeFragment extends Fragment implements WebSocketListener, FeedAda
             }
         });
 
+        createPostFab = view.findViewById(R.id.createPostFab);
+        createPostFab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showPostInputDialog();
+            }
+        });
+
         return view;
     }
 
@@ -161,7 +178,7 @@ public class HomeFragment extends Fragment implements WebSocketListener, FeedAda
 
         isLoading = true;
         offset += LIMIT;
-        FeedRequest request = new FeedRequest(FeedRequest.RequestType.FEED_ITEMS, LIMIT, offset);
+        FeedRequest request = new FeedRequest(FeedEnum.NEW_PAGE, LIMIT, offset);
         sendWebSocketRequest(request);
 
     }
@@ -231,7 +248,7 @@ public class HomeFragment extends Fragment implements WebSocketListener, FeedAda
 
         isLoading = true;
         offset = 0;
-        FeedRequest request = new FeedRequest(FeedRequest.RequestType.FEED_ITEMS, LIMIT, offset);
+        FeedRequest request = new FeedRequest(FeedEnum.NEW_PAGE, LIMIT, offset);
         sendWebSocketRequest(request);
 
     }
@@ -263,7 +280,7 @@ public class HomeFragment extends Fragment implements WebSocketListener, FeedAda
 
         isLoading = true;
         offset = 0;
-        FeedRequest request = new FeedRequest(FeedRequest.RequestType.REFRESH_FEED, LIMIT, offset);
+        FeedRequest request = new FeedRequest(FeedEnum.REFRESH, LIMIT, offset);
         sendWebSocketRequest(request);
 
     }
@@ -293,6 +310,63 @@ public class HomeFragment extends Fragment implements WebSocketListener, FeedAda
                     public void onErrorResponse(VolleyError error) {
                         // Handle the error
                         Toast.makeText(getActivity(), "Failed to add track to liked songs", Toast.LENGTH_SHORT).show();
+                    }
+                }) {
+            @Override
+            public HashMap<String, String> getHeaders() throws AuthFailureError {
+                HashMap<String, String> headers = new HashMap<>();
+                headers.put("Authorization", UserSession.getInstance().getJwtToken());
+                return headers;
+            }
+        };
+
+        mQueue.add(jsonObjectRequest);
+    }
+
+    private void showPostInputDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        View view = getLayoutInflater().inflate(R.layout.layout_post_input, null);
+        EditText postInputEditText = view.findViewById(R.id.postInputEditText);
+        Button postButton = view.findViewById(R.id.postButton);
+
+        builder.setView(view);
+        postInputDialog = builder.create();
+
+        postButton.setOnClickListener(v -> {
+            String postText = postInputEditText.getText().toString().trim();
+            if (!postText.isEmpty()) {
+                createPost(postText);
+                postInputDialog.dismiss();
+            }
+        });
+
+        postInputDialog.show();
+    }
+
+    private void createPost(String postText) {
+        String url = "http://coms-309-032.class.las.iastate.edu:8080/users/posts";
+
+        JSONObject postData = new JSONObject();
+        try {
+            postData.put("post", postText);
+        } catch (JSONException e) {
+            e.printStackTrace();
+            return;
+        }
+
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, url, postData,
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        // Posted successfully
+                        Toast.makeText(getActivity(), "Successfully Posted!", Toast.LENGTH_SHORT).show();
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        // Handle the error
+                        Toast.makeText(getActivity(), "Failed to post.", Toast.LENGTH_SHORT).show();
                     }
                 }) {
             @Override

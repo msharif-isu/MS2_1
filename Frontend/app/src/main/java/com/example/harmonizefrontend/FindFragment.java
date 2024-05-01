@@ -210,6 +210,11 @@ public class FindFragment extends Fragment {
 
                 // This binds the user information to the user item view
                 TextView usernameTextView = userItemView.findViewById(R.id.usernameTextView);
+
+                TextView sharedInterestsTextView = userItemView.findViewById(R.id.sharedInterestsTextView);
+                String sharedInterests = "You both like: " + user.getArtistName();
+                sharedInterestsTextView.setText(sharedInterests);
+
                 Button addFriendButton = userItemView.findViewById(R.id.addFriendButton);
 
                 usernameTextView.setText(user.getUsername());

@@ -139,13 +139,12 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.FeedViewHolder
                         public void onResponse(JSONObject response) {
                             try {
                                 // Parse the JSON response and update views with track information
-                                String trackName = response.getString("name");
-                                JSONArray artistsArray = response.getJSONArray("artists");
-                                String artistName = artistsArray.getJSONObject(0).getString("name");
+                                String trackName = response.getString("title");
+                                JSONObject artist = response.getJSONObject("artist");
+                                String artistName = artist.getString("name");
                                 JSONObject albumObject = response.getJSONObject("album");
                                 String albumName = albumObject.getString("name");
-                                JSONArray imagesArray = albumObject.getJSONArray("images");
-                                String albumCoverUrl = imagesArray.getJSONObject(0).getString("url");
+                                String albumImage = albumObject.getString("imageUrl");
 
                                 trackNameTextView.setText(trackName);
                                 artistNameTextView.setText(artistName);
@@ -153,7 +152,7 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.FeedViewHolder
 
                                 // Load album cover image using Glide
                                 Glide.with(itemView)
-                                        .load(albumCoverUrl)
+                                        .load(albumImage)
                                         .placeholder(R.drawable.placeholder_image)
                                         .error(R.drawable.error_image)
                                         .into(albumCoverImageView);

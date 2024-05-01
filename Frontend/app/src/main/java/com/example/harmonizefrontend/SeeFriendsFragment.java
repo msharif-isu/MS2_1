@@ -10,6 +10,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.ImageButton;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
@@ -43,6 +45,7 @@ public class SeeFriendsFragment extends Fragment {
     private RequestQueue mQueue = UserSession.getInstance().getmQueue();
 
     private View view;
+    private ImageButton addFriendsPageButton;
 
 
     public SeeFriendsFragment() {
@@ -76,6 +79,19 @@ public class SeeFriendsFragment extends Fragment {
         friendsListAdapter = new FriendsListAdapter(friends);
         recyclerView.setAdapter(friendsListAdapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+
+        // Initialize the button
+        addFriendsPageButton = view.findViewById(R.id.addNewFriends);
+
+        // Set click listener for the button
+        addFriendsPageButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Handle button click event
+                ((navBar) getActivity()).loadFragment(new FindFragment());
+            }
+        });
+
         return view;
 
     }

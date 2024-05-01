@@ -7,11 +7,20 @@
 
     <!-- User information display -->
     <TextView
+        android:id="@+id/usernameTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/usernameTextView">
+        android:textSize="18sp"
+        android:textStyle="bold" />
 
-    </TextView>
+    <!-- Shared interests text -->
+    <TextView
+        android:id="@+id/sharedInterestsTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/usernameTextView"
+        android:layout_marginTop="8dp"
+        android:textSize="14sp" />
 
     <Button
         android:id="@+id/addFriendButton"
@@ -19,4 +28,5 @@
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
         android:text="Add Friend" />
+
 </RelativeLayout>

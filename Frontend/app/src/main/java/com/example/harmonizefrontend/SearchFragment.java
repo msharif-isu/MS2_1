@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -19,6 +20,7 @@ import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 
 import org.json.JSONArray;
@@ -35,7 +37,7 @@ import SearchSongs.SearchResultsAdapter;
 
 import UserInfo.UserSession;
 
-public class SearchFragment extends Fragment {
+public class SearchFragment extends Fragment implements SearchResultsAdapter.OnAddTrackListener {
 
     private EditText searchEditText;
     private RecyclerView searchResultsRecyclerView;
@@ -51,6 +53,7 @@ public class SearchFragment extends Fragment {
         searchResultsRecyclerView = view.findViewById(R.id.searchResultsRecyclerView);
         searchResults = new ArrayList<>();
         searchResultsAdapter = new SearchResultsAdapter(searchResults);
+        searchResultsAdapter.setOnAddTrackListener(this);
         searchResultsRecyclerView.setAdapter(searchResultsAdapter);
         searchResultsRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
@@ -104,9 +107,23 @@ public class SearchFragment extends Fragment {
                             for (int i = 0; i < itemsArray.length(); i++) {
                                 JSONObject trackObject = itemsArray.getJSONObject(i);
                                 String trackName = trackObject.getString("name");
-                                String artistName = trackObject.getJSONArray("artists").getJSONObject(0).getString("name");
-                                // Parse other track details as needed
-                                Track track = new Track(trackName, artistName);
+                                String trackId = trackObject.getString("id");
+
+                                JSONArray artistsArray = trackObject.getJSONArray("artists");
+                                String artistName = artistsArray.getJSONObject(0).getString("name");
+
+                                String albumCoverLink = "";
+                                if (trackObject.has("album")) {
+                                    JSONObject albumObject = trackObject.getJSONObject("album");
+                                    if (albumObject.has("images")) {
+                                        JSONArray imagesArray = albumObject.getJSONArray("images");
+                                        if (imagesArray.length() > 0) {
+                                            albumCoverLink = imagesArray.getJSONObject(0).getString("url");
+                                        }
+                                    }
+                                }
+
+                                Track track = new Track(trackName, artistName, trackId, albumCoverLink, null, null);
                                 searchResults.add(track);
                             }
                             searchResultsAdapter.notifyDataSetChanged();
@@ -131,6 +148,40 @@ public class SearchFragment extends Fragment {
         };
 
         mQueue.add(jsonObjectRequest);
+    }
+
+    @Override
+    public void onAddTrack(Track track) {
+        addTrackToLikedSongs(track);
+    }
+
+    private void addTrackToLikedSongs(Track track) {
+        String url = "http://coms-309-032.class.las.iastate.edu:8080/users/songs/" + track.getTrackId();
+
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, url,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        // Track added successfully
+                        Toast.makeText(getActivity(), "Track added to liked songs", Toast.LENGTH_SHORT).show();
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        // Handle the error
+                        Toast.makeText(getActivity(), "Failed to add track to liked songs", Toast.LENGTH_SHORT).show();
+                    }
+                }) {
+            @Override
+            public HashMap<String, String> getHeaders() throws AuthFailureError {
+                HashMap<String, String> headers = new HashMap<>();
+                headers.put("Authorization", UserSession.getInstance().getJwtToken());
+                return headers;
+            }
+        };
+
+        mQueue.add(stringRequest);
     }
 
 }

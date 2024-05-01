@@ -68,7 +68,7 @@ public class LikedSongsFragment extends Fragment {
                                 String title = songObject.getString("title");
                                 String artist = songObject.getString("artist");
 
-                                Track likedSong = new Track(id, artistId, title, artist);
+                                Track likedSong = new Track(title, artist, id, null, null, artistId);
                                 likedSongs.add(likedSong);
                             } catch (JSONException e) {
                                 e.printStackTrace();

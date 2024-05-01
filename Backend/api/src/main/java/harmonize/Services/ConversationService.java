@@ -61,8 +61,6 @@ public class ConversationService {
     }
 
     public void removeMember(Conversation conversation, User member) {
-        conversation.getMembers().remove(member);
-
         List<Message> messagesCopy = new ArrayList<>(conversation.getMessages());
         for (Message message : messagesCopy) {
             if (message.getSender().equals(member)) {
@@ -71,6 +69,8 @@ public class ConversationService {
                 messageService.removeRecipient(message, member);
             }
         }
+
+        conversation.getMembers().remove(member);
         if (conversation.getMembers().size() <= 1)
             deleteConversation(conversation);
         else

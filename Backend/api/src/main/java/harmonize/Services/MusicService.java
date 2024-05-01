@@ -69,8 +69,8 @@ public class MusicService {
             return apiAuthentication;
 
         final String url = "https://accounts.spotify.com/api/token";
-        final String clientID = "d3eacb5996b54e6fbb79ae2c4902a417";
-        final String clientSecret = "4838a780565949b6b02e6f4f97f4ba0b";
+        final String clientID = "6cce1fd09d2f417c9e39f7734bf8594e";
+        final String clientSecret = "2aea954e92c448999ed8335b3055f538";
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);

@@ -271,6 +271,7 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
                 public void onClick(View v) {
                     if (onAddTrackListener != null) {
                         onAddTrackListener.onAddTrack(feedItem);
+                        addButton.setImageResource(R.drawable.green_checkbox);
                     }
                 }
             });

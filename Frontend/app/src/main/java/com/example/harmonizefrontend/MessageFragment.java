@@ -303,6 +303,7 @@ public class MessageFragment extends Fragment implements WebSocketListener {
                 Log.e("msg", "Current conversationId: " + UserSession.getInstance().getCurrentConversation().getDataId());
                 if (conversationId == UserSession.getInstance().getCurrentConversation().getDataId() && !listMap.containsKey(messageDTO.getData().getDataId())) {
                     list.add(messageDTO);
+                    listMap.put(messageDTO.getData().getDataId(), messageDTO);
                     Log.e("msg", "Last message: " + list.get(list.size() - 1).toString());
                     int newItemPosition = list.size() - 1;
                     chatListAdapter.notifyItemInserted(newItemPosition);

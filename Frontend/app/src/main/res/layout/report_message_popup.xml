@@ -35,8 +35,11 @@
         android:text="Please write your report here"
         android:textColor="@color/Jet"
         app:layout_constraintBottom_toTopOf="@id/view"
-        android:foregroundGravity="center"
-        tools:layout_editor_absoluteX="115dp" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        android:foregroundGravity="center" />
+
 
     <View
         android:id="@+id/view"

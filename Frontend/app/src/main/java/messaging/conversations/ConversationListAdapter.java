@@ -86,6 +86,7 @@ public class ConversationListAdapter extends RecyclerView.Adapter<RecyclerView.V
         try {
             MessageDTO message = conversation.getMessageList().get(conversation.getMessageList().size() - 1);
             lastMessage = message.getText();
+            Log.e("Time", String.valueOf(message.getData().getDataUnixTime()));
             Date dateUnix = new Date(message.getData().getDataUnixTime());
 
             String lastMessageDate = dateFormat.format(dateUnix);
@@ -98,18 +99,20 @@ public class ConversationListAdapter extends RecyclerView.Adapter<RecyclerView.V
 
         final int index = holder.getAdapterPosition(); // Find alternative to getAdapterPosition
         ConversationViewHolder viewHolder = (ConversationViewHolder) holder;
-        if (conversation.getFriends().size() > 1) {
             ArrayList<Member> friends = conversation.getFriends();
-            for (int i = 0; i < friends.size() - 2; i++) { // Iterate until last friend
-                friendUsername += friends.get(i).getUsername() + ", ";
+            StringBuilder name = new StringBuilder();
+            for (int i = 0; i < friends.size() - 1; i++) { // Iterate until last friend
+                String tempName = friends.get(i).getUsername();
+                if (!tempName.equals(UserSession.getInstance().getCurrentUser().getUsername())) {
+                    name.append(friends.get(i).getUsername()).append(", ");
+                }
             }
-            friendUsername += friends.get(friends.size() - 1).getUsername();
-        } else {
-            friendUsername = conversation.getFriends().get(conversation.getFriends().size() - 1).getUsername();
-        }
+            if (!friends.get(friends.size() - 1).getUsername().equals(UserSession.getInstance().getCurrentUser().getUsername())) {
+                name.append(friends.get(friends.size() - 1).getUsername());
+            }
 
 //        if (conversation.get)
-        viewHolder.friendName.setText(friendUsername);
+        viewHolder.friendName.setText(name);
         viewHolder.lastMessage.setText(lastMessage);
         viewHolder.lastMessageTime.setText(lastMessageDateTime);
 

@@ -134,6 +134,8 @@ public class ConversationListAdapter extends RecyclerView.Adapter<RecyclerView.V
                     @Override
                     public void onSuccess() {
                         conversationList.remove(position);
+                        UserSession.getInstance().removeConversation(conversation);
+                        Log.e("Conversation", String.valueOf(UserSession.getInstance().getConversations().size()));
                         notifyItemRemoved(position);
                     }
                 });

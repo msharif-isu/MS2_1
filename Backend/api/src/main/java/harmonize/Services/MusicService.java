@@ -338,7 +338,7 @@ public class MusicService {
 
             for(int i = 0; i < albumSongs.get("items").size(); i++) {
                 saveSong(albumSongs.get("items").get(i), album);
-                songs.add(new Song(albumSongs.get("items").get(i)));
+                songs.add(new Song(albumSongs.get("items").get(i), album));
             }
 
             offset += limit;

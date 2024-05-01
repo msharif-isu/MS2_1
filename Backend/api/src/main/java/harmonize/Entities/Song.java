@@ -38,6 +38,14 @@ public class Song {
         this.id = song.get("id").asText();
         this.title = song.get("name").asText();
         this.artist = new Artist(song.get("artists").get(0));
+        this.album = new Album(song.get("album"), artist);
+    }
+
+    public Song(JsonNode song, JsonNode album) {
+        this.id = song.get("id").asText();
+        this.title = song.get("name").asText();
+        this.artist = new Artist(song.get("artists").get(0));
+        this.album = new Album(album, artist);
     }
 
     public Song(JsonNode song, Artist artist, Album album) {

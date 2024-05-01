@@ -34,7 +34,6 @@ public class LikedSongsFragment extends Fragment {
     private RecyclerView likedSongsRecyclerView;
     private LikedSongsAdapter likedSongsAdapter;
     private List<Track> likedSongs;
-    private String username, password, JWTtoken;
     private RequestQueue mQueue;
 
     @Override
@@ -64,11 +63,17 @@ public class LikedSongsFragment extends Fragment {
                             try {
                                 JSONObject songObject = response.getJSONObject(i);
                                 String id = songObject.getString("id");
-                                String artistId = songObject.getString("artistid");
                                 String title = songObject.getString("title");
-                                String artist = songObject.getString("artist");
 
-                                Track likedSong = new Track(id, artistId, title, artist);
+                                JSONObject artistObject = songObject.getJSONObject("artist");
+                                String artistId = artistObject.getString("id");
+                                String artistName = artistObject.getString("name");
+
+                                JSONObject albumObject = songObject.getJSONObject("album");
+                                String albumName = albumObject.getString("name");
+                                String albumCoverLink = albumObject.getString("imageUrl");
+
+                                Track likedSong = new Track(title, artistName, id, albumCoverLink, albumName, artistId);
                                 likedSongs.add(likedSong);
                             } catch (JSONException e) {
                                 e.printStackTrace();
@@ -85,9 +90,8 @@ public class LikedSongsFragment extends Fragment {
                 }) {
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
-                JWTtoken = UserSession.getInstance().getJwtToken();
                 Map<String, String> headers = new HashMap<>();
-                headers.put("Authorization", JWTtoken);
+                headers.put("Authorization", UserSession.getInstance().getJwtToken());
                 return headers;
             }
         };

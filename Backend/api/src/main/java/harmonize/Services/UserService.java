@@ -5,11 +5,11 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
 
+import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
@@ -37,6 +37,7 @@ import harmonize.Repositories.ArtistFreqRepository;
 import harmonize.Repositories.RoleRepository;
 import harmonize.Repositories.SongRepository;
 import harmonize.Repositories.UserRepository;
+import jakarta.transaction.Transactional;
 
 @Service
 public class UserService {
@@ -137,13 +138,14 @@ public class UserService {
             }
         }
 
-        for (User friend : user.getFriends()) {
-            friend.getFriends().remove(user);
+        List<User> friendCopy = new ArrayList<>(user.getFriends());
+        for (User friend : friendCopy) {
+            removeFriend(user.getId(), friend.getId());
             userRepository.save(friend);
         }
         
         List<Conversation> conversationCopy = new ArrayList<>(user.getConversations());
-        conversationCopy.stream().forEach(conversation -> conversationService.removeMember(conversation, user));
+        conversationCopy.stream().forEach(conversation -> leaveConversation(user.getId(), conversation.getId()));
             
         userRepository.delete(user);
         
@@ -166,18 +168,20 @@ public class UserService {
     }
 
     @NonNull
-    public List<FriendRecDTO> getRecommendedFriends(int id) {
+    @Transactional
+    public Set<FriendRecDTO> getRecommendedFriends(int id) {
         User user = userRepository.findReferenceById(id);
 
         if(user == null)
             throw new EntityNotFoundException("User " + id + " not found.");
 
-        List<FriendRecDTO> recommendedFriends = new ArrayList<>();
+        Set<FriendRecDTO> recommendedFriends = new HashSet<>();
         List<ArtistFreq> topArtists = user.getTopArtists();
         Random random = new Random();
 
         for(int i = 0; i < topArtists.size() && i < 10; i++) {
             List<ArtistFreq> topListeners = topArtists.get(i).getArtist().getTopListeners();
+            Hibernate.initialize(topListeners);
             
             for (int j = 0; j < 5; j++) {
                 ArtistFreq connection = topListeners.get(random.nextInt(topListeners.size()));
@@ -186,21 +190,19 @@ public class UserService {
 
                 if(connectionUser.getId() == user.getId())
                     continue;
-                
+
                 if(user.getFriends().contains(connectionUser))
                     continue;
 
-                if(connectionUser.getFriendInvites().contains(user))
+                if(!connectionUser.getRoles().contains(roleRepository.findByName("USER")))
                     continue;
 
-                if(recommendedFriends.contains(pair))
+                if(connectionUser.getFriendInvites().contains(user) || user.getFriendInvites().contains(connectionUser))
                     continue;
 
                 recommendedFriends.add(pair);
             }
         }
-
-        Collections.shuffle(recommendedFriends);
 
         return recommendedFriends;
     }

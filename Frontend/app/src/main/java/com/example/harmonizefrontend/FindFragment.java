@@ -1,13 +1,17 @@
 package com.example.harmonizefrontend;
 
+import android.graphics.Bitmap;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -17,14 +21,17 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.android.volley.toolbox.ImageRequest;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.bumptech.glide.Glide;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -32,46 +39,17 @@ import java.util.ArrayList;
 
 import Connections.VolleySingleton;
 import UserInfo.User;
+import UserInfo.UserSession;
 
 /**
  * This fragment will display all recommended friends to the user. Users will have the option to add them as friends.
- * Use the {@link FindFragment#newInstance} factory method to
- * create an instance of this fragment.
  */
 public class FindFragment extends Fragment {
-
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
-
-    private String mParam1;
-    private String mParam2;
     private ArrayList<User> userList;
-    private int id;
-    private String username;
     private RequestQueue mQueue;
-    private String jwtToken;
-    private static final String TAG = FindFragment.class.getSimpleName();
+
     public FindFragment() {
         // Required empty public constructor
-    }
-
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment FindFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static FindFragment newInstance(String param1, String param2) {
-        FindFragment fragment = new FindFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
     }
 
     /**
@@ -82,7 +60,6 @@ public class FindFragment extends Fragment {
         super.onCreate(savedInstanceState);
         userList = new ArrayList<>();
         mQueue = VolleySingleton.getInstance(getActivity()).getRequestQueue();
-        jwtToken = "Bearer " + "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ0ZXN0MSIsImV4cCI6MTcwOTQwOTIwNn0.60NflM9v-M-yWIQhuG7646xYY8pe9rZ4Uk9VE_PvMUtZszhNx_7GjdnwxhtnaIodNjx-jh7RC9pi_wO05ixe4Q";
 
     }
 
@@ -136,24 +113,24 @@ public class FindFragment extends Fragment {
             public void onResponse(JSONArray response) {
 
                 try {
-
                     for (int i = 0; i < response.length(); i++) {
-
                         JSONObject userJson = response.getJSONObject(i);
+                        JSONObject userObject = userJson.getJSONObject("user");
+                        int id = userObject.getInt("id");
+                        String username = userObject.getString("username");
 
-                        int id = userJson.getInt("id");
-                        String username = userJson.getString("username");
-                        userList.add(new User(id, username));
+                        String artistName = "";
+                        if (userJson.has("artist")) {
+                            JSONObject artistObject = userJson.getJSONObject("artist");
+                            artistName = artistObject.getString("name");
+                        }
 
+                        userList.add(new User(id, username, artistName));
                     }
 
-                    //Populate the user items
                     populateUserItems();
-
                 } catch (JSONException e) {
-
                     e.printStackTrace();
-
                 }
             }
         // the comma here is used to separate the parameters being passed to the constructor.
@@ -164,9 +141,7 @@ public class FindFragment extends Fragment {
              */
             @Override
             public void onErrorResponse(VolleyError error) {
-
                 error.printStackTrace();
-
             }
         }) {
             /**
@@ -175,10 +150,9 @@ public class FindFragment extends Fragment {
              * @throws AuthFailureError
              */
             @Override
-            public Map<String, String> getHeaders() throws AuthFailureError {
-                Map<String, String> params = new HashMap<String, String>();
-                //params.put("Content-Type", "application/json; charset=UTF-8");
-                params.put("Authorization", jwtToken);
+            public HashMap<String, String> getHeaders() throws AuthFailureError {
+                HashMap<String, String> params = new HashMap<String, String>();
+                params.put("Authorization", UserSession.getInstance().getJwtToken());
                 return params;
             }
         };
@@ -202,22 +176,77 @@ public class FindFragment extends Fragment {
                 View userItemView = inflater.inflate(R.layout.user_item, containerLayout, false);
 
                 // This binds the user information to the user item view
+                ImageView profileImageView = userItemView.findViewById(R.id.profileImageView);
                 TextView usernameTextView = userItemView.findViewById(R.id.usernameTextView);
-                Button addFriendButton = userItemView.findViewById(R.id.addFriendButton);
+                TextView sharedInterestsTextView = userItemView.findViewById(R.id.sharedInterestsTextView);
+                ImageButton addFriendButton = userItemView.findViewById(R.id.addFriendButton);
 
+                ImageRequest imageRequest = new ImageRequest(
+                        UserSession.getInstance().getURL() + "/users/icons/" + user.getId(),
+                        new Response.Listener<Bitmap>() {
+                            @Override
+                            public void onResponse(Bitmap response) {
+                                // Display the image in the ImageView
+
+                                profileImageView.setImageBitmap(response);
+                                Log.d("Image", "Got the image");
+                            }
+                        },
+                        0, // Width, set to 0 to get the original width
+                        0, // Height, set to 0 to get the original height
+                        ImageView.ScaleType.FIT_XY, // ScaleType
+                        Bitmap.Config.RGB_565, // Bitmap config
+
+                        new Response.ErrorListener() {
+                            @Override
+                            public void onErrorResponse(VolleyError error) {
+                                if (error == null || error.networkResponse == null) {
+                                    return;
+                                }
+                                String body = "";
+                                final String statusCode = String.valueOf(error.networkResponse.statusCode);
+                                try {
+                                    body = new String(error.networkResponse.data,"UTF-8");
+                                } catch (UnsupportedEncodingException e) {
+                                    // exception
+                                }
+                                Log.e("Image", body);
+                                Log.e("Image", statusCode);
+                                if (statusCode.equals("404")) {
+                                    profileImageView.setImageResource(R.drawable.ic_launcher_foreground);
+                                }
+                            }
+                        }
+
+                )
+
+                {
+                    @Override
+                    public Map<String, String> getHeaders() throws AuthFailureError {
+                        HashMap<String, String> headers = new HashMap<String, String>();
+                        headers.put("Authorization", UserSession.getInstance().getJwtToken());
+                        return headers;
+                    }
+
+                };
+
+                // Adding request to request queue
+                mQueue.add(imageRequest);
+
+
+
+                //Replace .getProfileImageUrl with correct method
+                //Glide.with(requireContext()).load(user.getProfileImageUrl()).into(profileImageView);
+
+                String sharedInterests = "You both like: " + user.getArtistName();
+                sharedInterestsTextView.setText(sharedInterests);
                 usernameTextView.setText(user.getUsername());
 
                 addFriendButton.setOnClickListener(new View.OnClickListener() {
-                    /**
-                     * on click, send a friend request to the user
-                     * @param v The view that was clicked.
-                     */
                     @Override
                     public void onClick(View v) {
-
-                        v.setVisibility(View.INVISIBLE);
+                        addFriendButton.setVisibility(View.INVISIBLE);
                         addFriend(user.getId());
-
                     }
                 });
 
@@ -234,14 +263,10 @@ public class FindFragment extends Fragment {
      * @param userId
      */
     private void addFriend(int userId) {
-
-        // Makes API requests to add friend
-        RequestQueue queue = Volley.newRequestQueue(requireContext());
         String url = "http://coms-309-032.class.las.iastate.edu:8080/users/friends/" + userId;
 
         // Request a string response
-        StringRequest stringRequest = new StringRequest(Request.Method.POST,
-                url,
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, url,
                 new Response.Listener<String>() {
                     /**
                      * on response, create a toast (a small notification)
@@ -272,14 +297,66 @@ public class FindFragment extends Fragment {
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
                 Map<String, String> params = new HashMap<String, String>();
-                //params.put("Content-Type", "application/json; charset=UTF-8");
-                params.put("Authorization", jwtToken);
+                params.put("Authorization", UserSession.getInstance().getJwtToken());
                 return params;
             }
         };
 
         // Add the request to the requestQueue
-        queue.add(stringRequest);
+        mQueue.add(stringRequest);
+    }
 
+    private void makeImageRequest(int id, ImageView imageView) {
+        ImageRequest imageRequest = new ImageRequest(
+                UserSession.getInstance().getURL() + "/users/icons/" + id,
+                new Response.Listener<Bitmap>() {
+                    @Override
+                    public void onResponse(Bitmap response) {
+                        // Display the image in the ImageView
+
+                        imageView.setImageBitmap(response);
+                        Log.d("Image", response.toString());
+                    }
+                },
+                0, // Width, set to 0 to get the original width
+                0, // Height, set to 0 to get the original height
+                ImageView.ScaleType.FIT_XY, // ScaleType
+                Bitmap.Config.RGB_565, // Bitmap config
+
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        if (error == null || error.networkResponse == null) {
+                            return;
+                        }
+                        String body = "";
+                        final String statusCode = String.valueOf(error.networkResponse.statusCode);
+                        try {
+                            body = new String(error.networkResponse.data,"UTF-8");
+                        } catch (UnsupportedEncodingException e) {
+                            // exception
+                        }
+                        Log.e("Image", body);
+                        Log.e("Image", statusCode);
+                        if (statusCode.equals("404")) {
+                            imageView.setImageResource(R.drawable.ic_launcher_foreground);
+                        }
+                    }
+                }
+
+        )
+
+        {
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                HashMap<String, String> headers = new HashMap<String, String>();
+                headers.put("Authorization", UserSession.getInstance().getJwtToken());
+                return headers;
+            }
+
+        };
+
+        // Adding request to request queue
+        mQueue.add(imageRequest);
     }
 }

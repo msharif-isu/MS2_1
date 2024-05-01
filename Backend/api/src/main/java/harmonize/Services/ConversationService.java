@@ -61,15 +61,16 @@ public class ConversationService {
     }
 
     public void removeMember(Conversation conversation, User member) {
-        conversation.getMembers().remove(member);
-
-        for (Message message : conversation.getMessages()) {
+        List<Message> messagesCopy = new ArrayList<>(conversation.getMessages());
+        for (Message message : messagesCopy) {
             if (message.getSender().equals(member)) {
                 messageService.deleteMessage(message);
             } else {
                 messageService.removeRecipient(message, member);
             }
         }
+
+        conversation.getMembers().remove(member);
         if (conversation.getMembers().size() <= 1)
             deleteConversation(conversation);
         else

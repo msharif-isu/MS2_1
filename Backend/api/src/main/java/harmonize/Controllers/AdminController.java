@@ -2,6 +2,7 @@ package harmonize.Controllers;
 
 import java.security.Principal;
 import java.util.List;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -109,7 +110,7 @@ public class AdminController {
     }
 
     @GetMapping(path = "/friends/recommended/{id}")
-    public ResponseEntity<List<FriendRecDTO>> getRecommendedFriends(@PathVariable int id) {
+    public ResponseEntity<Set<FriendRecDTO>> getRecommendedFriends(@PathVariable int id) {
         return ResponseEntity.ok(userService.getRecommendedFriends(id));
     }
 

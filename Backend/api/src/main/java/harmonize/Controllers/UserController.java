@@ -2,6 +2,7 @@ package harmonize.Controllers;
 
 import java.security.Principal;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
@@ -94,7 +95,7 @@ public class UserController {
     }
 
     @GetMapping(path = "/friends/recommended")
-    public ResponseEntity<List<FriendRecDTO>> getRecommendedFriends(Principal principal){
+    public ResponseEntity<Set<FriendRecDTO>> getRecommendedFriends(Principal principal){
         return ResponseEntity.ok(userService.getRecommendedFriends(userService.getUser(principal.getName(), false).getId()));
     }
 

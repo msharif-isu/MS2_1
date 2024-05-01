@@ -41,7 +41,7 @@ public class Artist {
     private Set<Album> albums = new HashSet<>();
 
     @JsonIgnore
-    @OneToMany(mappedBy = "artist", fetch = FetchType.EAGER, cascade = { CascadeType.MERGE, CascadeType.REMOVE }, 
+    @OneToMany(mappedBy = "artist", fetch = FetchType.LAZY, cascade = { CascadeType.MERGE, CascadeType.REMOVE }, 
                 orphanRemoval = true)
     @OrderBy("frequency ASC")
     private List<ArtistFreq> topListeners = new ArrayList<>();

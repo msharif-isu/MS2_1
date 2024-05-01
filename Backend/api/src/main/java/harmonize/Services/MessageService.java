@@ -1,6 +1,8 @@
 package harmonize.Services;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -70,12 +72,14 @@ public class MessageService {
     public String deleteMessage(Message message) {
         Conversation conversation = message.getConversation();
         
-        conversation.getMessages().remove(message);
-        for (Report report : message.getReports()) {
+        List<Report> reportCopy = new ArrayList<>(message.getReports());
+        for (Report report : reportCopy) {
             reportService.deleteReport(report);
         }
-
+        
+        conversation.getMessages().remove(message);
         conversationRepository.save(conversation);
+
         messageRepository.delete(message);
         
         return new String(String.format("Message %d was deleted.", message.getId()));

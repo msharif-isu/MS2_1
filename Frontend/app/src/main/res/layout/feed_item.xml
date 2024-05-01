@@ -7,55 +7,72 @@
     app:cardCornerRadius="8dp"
     app:cardElevation="4dp">
 
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:padding="16dp">
-
-        <ImageView
-            android:id="@+id/albumCoverImageView"
-            android:layout_width="80dp"
-            android:layout_height="80dp"
-            android:scaleType="centerCrop" />
+        android:layout_height="wrap_content">
 
         <LinearLayout
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_weight="1"
-            android:orientation="vertical">
+            android:orientation="horizontal"
+            android:padding="16dp">
 
-            <TextView
-                android:id="@+id/feedItemTypeTextView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textSize="14sp"
-                android:textStyle="bold" />
+            <ImageView
+                android:id="@+id/albumCoverImageView"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:scaleType="centerCrop" />
 
-            <TextView
-                android:id="@+id/artistNameTextView"
-                android:layout_width="wrap_content"
+            <LinearLayout
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:textSize="16sp" />
+                android:layout_marginStart="16dp"
+                android:layout_weight="1"
+                android:orientation="vertical">
 
-            <TextView
-                android:id="@+id/albumNameTextView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
-                android:textSize="14sp" />
+                <TextView
+                    android:id="@+id/feedItemTypeTextView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="14sp"
+                    android:textStyle="bold" />
 
-            <TextView
-                android:id="@+id/trackNameTextView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
-                android:textSize="14sp" />
+                <TextView
+                    android:id="@+id/artistNameTextView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:textSize="16sp" />
+
+                <TextView
+                    android:id="@+id/albumNameTextView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:textSize="14sp" />
+
+                <TextView
+                    android:id="@+id/trackNameTextView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:textSize="14sp" />
+
+            </LinearLayout>
 
         </LinearLayout>
 
-    </LinearLayout>
+        <ImageButton
+            android:id="@+id/addButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentTop="true"
+            android:layout_margin="8dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:src="@drawable/ic_add"
+            android:contentDescription="Add" />
+
+    </RelativeLayout>
 
 </androidx.cardview.widget.CardView>

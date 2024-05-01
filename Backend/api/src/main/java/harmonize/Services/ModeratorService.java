@@ -22,11 +22,13 @@ import harmonize.Repositories.UserRepository;
 public class ModeratorService {
     private UserRepository userRepository;
     private RoleRepository roleRepository;
+    private UserService userService;
 
     @Autowired
-    public ModeratorService(UserRepository userRepository, RoleRepository roleRepository) {
+    public ModeratorService(UserRepository userRepository, RoleRepository roleRepository, UserService userService) {
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
+        this.userService = userService;
     }
 
     @NonNull
@@ -90,7 +92,7 @@ public class ModeratorService {
             throw new UnauthorizedException("Moderators may not delete other moderators.");
 
             
-        userRepository.delete(user);
+        userService.deleteUser(id);
         
         return new String(String.format("\"%s\" was deleted.", user.getUsername()));
     }

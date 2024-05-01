@@ -38,7 +38,7 @@ public class MessageService {
 
     public Message createMessage(User sender, Conversation conversation, String text, String privateKey) throws Exception {
         Message message = new Message();
-        message.setTime(new Date());
+        message.setTime(new Date(System.currentTimeMillis()));
         message.setSender(sender);
         message.setHash(encoder.encode(text));
         message.setConversation(conversation);

@@ -330,10 +330,11 @@ public class MusicService {
         int limit = 50;
         int offset = 0;
         List<Song> songs = new ArrayList<>();
+        JsonNode albumSongs;
 
         do {
             SearchDTO search = new SearchDTO(album.get("id").asText(), "track", Integer.toString(limit), Integer.toString(offset));
-            JsonNode albumSongs = getAlbumSongs(search);
+            albumSongs = getAlbumSongs(search);
 
             for(int i = 0; i < albumSongs.get("items").size(); i++) {
                 saveSong(albumSongs.get("items").get(i), album);
@@ -341,7 +342,7 @@ public class MusicService {
             }
 
             offset += limit;
-        } while(album.get("items").size() == limit);
+        } while(albumSongs.get("items").size() == limit);
 
         return songs;
     }

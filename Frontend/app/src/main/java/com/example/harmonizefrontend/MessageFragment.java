@@ -1,5 +1,6 @@
 package com.example.harmonizefrontend;
 
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.Message;
 import android.util.Log;
@@ -15,12 +16,18 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.android.volley.AuthFailureError;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.ImageRequest;
 import com.google.gson.Gson;
 
 import org.java_websocket.handshake.ServerHandshake;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -30,6 +37,7 @@ import Connections.WebSocketListener;
 import Connections.WebSocketManagerChat;
 import DTO.SendDTO;
 import UserInfo.Member;
+import UserInfo.User;
 import messaging.chat.ChatListAdapter;
 import messaging.chat.ReportMessageFragment;
 import DTO.ConversationDTO;
@@ -61,6 +69,7 @@ public class MessageFragment extends Fragment implements WebSocketListener {
     private EditText writeMsg;
     private Button sendBtn;
     private ImageView backBtn;
+    private RequestQueue mQueue = UserSession.getInstance().getmQueue();
 
     private List<MessageDTO> list;
 
@@ -69,6 +78,8 @@ public class MessageFragment extends Fragment implements WebSocketListener {
     private String username, password, JWTtoken;
 
     private TextView friendUsername;
+
+    private ImageView friendPfp;
 
 
 
@@ -147,6 +158,7 @@ public class MessageFragment extends Fragment implements WebSocketListener {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.chat_list_activity, container, false);
 
+        friendPfp = view.findViewById(R.id.profile_Picture);
         writeMsg = view.findViewById(R.id.edit_message);
         backBtn = view.findViewById(R.id.back_button);
         sendBtn = view.findViewById(R.id.button_send);
@@ -160,18 +172,21 @@ public class MessageFragment extends Fragment implements WebSocketListener {
         StringBuilder tempNames = new StringBuilder();
         ConversationDTO tempConvo = UserSession.getInstance().getCurrentConversation();
 
-        if (tempConvo.getFriends().size() > 1) {
+        if (tempConvo.getFriends().size() > 2) {
             ArrayList<Member> friends = tempConvo.getFriends();
-            for (int i = 0; i < friends.size() - 2; i++) { // Iterate until last friend
+            for (int i = 0; i < friends.size() - 1; i++) { // Iterate until last friend
                 tempNames.append(friends.get(i).getUsername()).append(", ");
             }
             tempNames.append(friends.get(friends.size() - 1).getUsername());
+            friendPfp.setImageResource(R.drawable.baseline_groups_24);
         }
         else {
             tempNames = new StringBuilder(tempConvo.getFriends().get(tempConvo.getFriends().size() - 1).getUsername());
+            makeImageRequest(tempConvo.getFriends().get(tempConvo.getFriends().size() - 1).getid(), friendPfp);
         }
 
         friendUsername.setText(tempNames.toString());
+
 
         backBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -333,6 +348,67 @@ public class MessageFragment extends Fragment implements WebSocketListener {
     public void onWebSocketError(Exception ex) {
         Log.e("msg", "Websocket error: " + ex.toString());
 
+    }
+
+    private void makeImageRequest(int id, ImageView imageView) {
+        ImageRequest imageRequest = new ImageRequest(
+                UserSession.getInstance().getURL() + "/users/icons/" + id,
+                new Response.Listener<Bitmap>() {
+                    @Override
+                    public void onResponse(Bitmap response) {
+                        // Display the image in the ImageView
+
+                        imageView.setImageBitmap(response);
+                        Log.d("Image", response.toString());
+                    }
+                },
+                0, // Width, set to 0 to get the original width
+                0, // Height, set to 0 to get the original height
+                ImageView.ScaleType.FIT_XY, // ScaleType
+                Bitmap.Config.RGB_565, // Bitmap config
+
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        if (error == null || error.networkResponse == null) {
+                            return;
+                        }
+                        String body = "";
+                        final String statusCode = String.valueOf(error.networkResponse.statusCode);
+                        try {
+                            body = new String(error.networkResponse.data,"UTF-8");
+                        } catch (UnsupportedEncodingException e) {
+                            // exception
+                        }
+                        Log.e("Image", body);
+                        Log.e("Image", statusCode);
+                        if (statusCode.equals("404")) {
+                            imageView.setImageResource(R.drawable.ic_launcher_foreground);
+                        }
+                    }
+                }
+
+        )
+
+        {
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                HashMap<String, String> headers = new HashMap<String, String>();
+                headers.put("Authorization", UserSession.getInstance().getJwtToken());
+                return headers;
+            }
+
+            @Override
+            protected Map<String, String> getParams() {
+                Map<String, String> params = new HashMap<String, String>();
+//                params.put("param1", "value1");
+//                params.put("param2", "value2");
+                return params;
+            }
+        };
+
+        // Adding request to request queue
+        mQueue.add(imageRequest);
     }
 
 

@@ -31,6 +31,7 @@ import com.example.harmonizefrontend.navBar;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -176,7 +177,7 @@ public class SeePictureFragment extends Fragment {
     private void deleteImage() {
         MultipartRequest multipartRequest = new MultipartRequest(
                 Request.Method.DELETE,
-                URL + "/delete", // CHANGE
+                URL + "/users/icons",
                 null,
                 response -> {
                     // Handle response
@@ -221,8 +222,16 @@ public class SeePictureFragment extends Fragment {
                     Log.d("Upload", "Response: " + response);
                 },
                 error -> {
-                    // Handle error
-                    Log.e("Upload", "Error: " + error.getMessage());
+                    if (error == null || error.networkResponse == null) {
+                        return;
+                    }
+                    String body = "";
+                    final String statusCode = String.valueOf(error.networkResponse.statusCode);
+                    try {
+                        body = new String(error.networkResponse.data,"UTF-8");
+                    } catch (UnsupportedEncodingException e) {
+                        // exception
+                    }
                 }
         )
 

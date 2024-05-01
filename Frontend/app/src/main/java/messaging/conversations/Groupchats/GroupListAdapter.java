@@ -24,6 +24,7 @@ import com.example.harmonizefrontend.R;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -38,7 +39,7 @@ public class GroupListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 //    private ClickListener clickListener;
 
     private RequestQueue mQueue = UserSession.getInstance().getmQueue();
-    private Bitmap friendPic;
+
 
 
     public GroupListAdapter(ArrayList<Member> friendsList) {
@@ -72,14 +73,7 @@ public class GroupListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         Log.e("Groupchat", name);
         viewHolder.friendUsername.setText(friend.getUsername());
 
-
-
-        requestFriendImage(new VolleyCallBack() {
-            @Override
-            public void onSuccess() {
-                viewHolder.friendPfp.setImageBitmap(friendPic);
-            }
-        });
+        makeImageRequest(friend.getid(), viewHolder.friendPfp);
 
         viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -158,22 +152,16 @@ public class GroupListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         return friends.get(index);
     }
 
-    private void requestFriendImage(final VolleyCallBack callBack) {
-
-
+    private void makeImageRequest(int id, ImageView imageView) {
         ImageRequest imageRequest = new ImageRequest(
-                UserSession.getInstance().getURL() + "/users/1/image", // Do change
+                UserSession.getInstance().getURL() + "/users/icons/" + id,
                 new Response.Listener<Bitmap>() {
                     @Override
                     public void onResponse(Bitmap response) {
                         // Display the image in the ImageView
-                        if (response == null) {
-                            // TODO
-                        } else {
-                            // TODO
-                            friendPic = response;
-                        }
-                        callBack.onSuccess();
+
+                        imageView.setImageBitmap(response);
+                        Log.d("Image", response.toString());
                     }
                 },
                 0, // Width, set to 0 to get the original width
@@ -184,12 +172,42 @@ public class GroupListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        // Handle errors here
-                        Log.e("Volley Error", error.toString());
+                        if (error == null || error.networkResponse == null) {
+                            return;
+                        }
+                        String body = "";
+                        final String statusCode = String.valueOf(error.networkResponse.statusCode);
+                        try {
+                            body = new String(error.networkResponse.data,"UTF-8");
+                        } catch (UnsupportedEncodingException e) {
+                            // exception
+                        }
+                        Log.e("Image", body);
+                        Log.e("Image", statusCode);
+                        if (statusCode.equals("404")) {
+                            imageView.setImageResource(R.drawable.ic_launcher_foreground);
+                        }
                     }
                 }
 
-        );
+        )
+
+        {
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                HashMap<String, String> headers = new HashMap<String, String>();
+                headers.put("Authorization", UserSession.getInstance().getJwtToken());
+                return headers;
+            }
+
+            @Override
+            protected Map<String, String> getParams() {
+                Map<String, String> params = new HashMap<String, String>();
+//                params.put("param1", "value1");
+//                params.put("param2", "value2");
+                return params;
+            }
+        };
 
         // Adding request to request queue
         mQueue.add(imageRequest);

@@ -35,6 +35,7 @@ import com.android.volley.toolbox.JsonObjectRequest;
 
 import org.json.JSONObject;
 
+import java.io.UnsupportedEncodingException;
 import java.sql.Array;
 import java.util.ArrayList;
 import java.io.IOException;
@@ -183,10 +184,8 @@ public class AccountPreferencesFragment extends Fragment {
 
         // Get the rest of the user details from server
         Log.e("JWT", "Running getUserDetails");
+        makeImageRequest();
 
-/**
- * Syncronous call to get user details
- */
         getUserDetails(new VolleyCallBack() {
 
             @Override
@@ -212,7 +211,6 @@ public class AccountPreferencesFragment extends Fragment {
                 if (UserSession.getInstance().getRoles().size() > 1) {
                     seeReportsBtn.setVisibility(View.VISIBLE);
                 }
-                makeImageRequest();
             }
 
         });
@@ -223,12 +221,6 @@ public class AccountPreferencesFragment extends Fragment {
                 ((navBar) getActivity()).loadFragment(new SeeReportsFragment());
             }
         });
-
-
-
-
-
-
 
 
         //When changeBtn is clicked, give the user the option to upload their own picture and change the profile picture
@@ -402,12 +394,8 @@ public class AccountPreferencesFragment extends Fragment {
                     @Override
                     public void onResponse(Bitmap response) {
                         // Display the image in the ImageView
-                        if (response == null) {
-                            profilePicture.setImageResource(R.drawable.ic_launcher_foreground);
-                        }
-                        else {
-                            profilePicture.setImageBitmap(response);
-                        }
+
+                        profilePicture.setImageBitmap(response);
                         Log.d("Image", response.toString());
                     }
                 },
@@ -419,8 +407,21 @@ public class AccountPreferencesFragment extends Fragment {
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        // Handle errors here
-                        Log.e("Volley Error", error.toString());
+                        if (error == null || error.networkResponse == null) {
+                            return;
+                        }
+                        String body = "";
+                        final String statusCode = String.valueOf(error.networkResponse.statusCode);
+                        try {
+                            body = new String(error.networkResponse.data,"UTF-8");
+                        } catch (UnsupportedEncodingException e) {
+                            // exception
+                        }
+                        Log.e("Image", body);
+                        Log.e("Image", statusCode);
+                        if (statusCode.equals("404")) {
+                            profilePicture.setImageResource(R.drawable.ic_launcher_foreground);
+                        }
                     }
                 }
 

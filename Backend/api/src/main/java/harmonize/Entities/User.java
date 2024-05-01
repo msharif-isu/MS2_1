@@ -18,6 +18,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.OrderBy;
 import jakarta.persistence.Table;
 import lombok.Data;
@@ -65,23 +66,27 @@ public class User {
     private List<ArtistFreq> topArtists = new ArrayList<>();
 
     @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(name = "userRoles", joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),
-                            inverseJoinColumns = @JoinColumn(name = "role_id", referencedColumnName = "id"))
+    @JoinTable(name = "userRoles",
+        joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),
+        inverseJoinColumns = @JoinColumn(name = "role_id", referencedColumnName = "id"))
     private Set<Role> roles = new HashSet<>();
 
     @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(name = "friends", joinColumns = @JoinColumn(name = "user_id",   referencedColumnName = "id"),
-                        inverseJoinColumns = @JoinColumn(name = "friend_id", referencedColumnName = "id"))
+    @JoinTable(name = "friends",
+        joinColumns = @JoinColumn(name = "user_id",   referencedColumnName = "id"),
+        inverseJoinColumns = @JoinColumn(name = "friend_id", referencedColumnName = "id"))
     private Set<User> friends = new HashSet<>();
 
     @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(name = "friendInvites", joinColumns = @JoinColumn(name = "user_id",    referencedColumnName = "id"),
-                                inverseJoinColumns = @JoinColumn(name = "inviter_id", referencedColumnName = "id"))
+    @JoinTable(name = "friendInvites",
+        joinColumns = @JoinColumn(name = "user_id",    referencedColumnName = "id"),
+        inverseJoinColumns = @JoinColumn(name = "inviter_id", referencedColumnName = "id"))
     private Set<User> friendInvites = new HashSet<>();
 
     @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(name = "conversation_members", joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),
-                                    inverseJoinColumns = @JoinColumn(name = "conversation_id", referencedColumnName = "id"))
+    @JoinTable(name = "conversation_members", 
+        joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),
+        inverseJoinColumns = @JoinColumn(name = "conversation_id", referencedColumnName = "id"))
     private Set<Conversation> conversations = new HashSet<>();
 
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
@@ -93,11 +98,15 @@ public class User {
     @OneToMany(mappedBy = "poster", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Post> sentPosts = new HashSet<>();
 
-    @OneToMany(fetch = FetchType.EAGER)
+    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Report> sentReports = new HashSet<>();
 
-    @OneToMany(fetch = FetchType.EAGER)
+    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Report> receivedReports = new HashSet<>();
+
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "image_id", referencedColumnName = "id")
+    private Image icon;
 
     public User(String firstName, String lastName, String username, String password) {
         this.firstName = firstName;

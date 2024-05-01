@@ -14,7 +14,6 @@ import harmonize.Entities.Report;
 import harmonize.Entities.User;
 import harmonize.ErrorHandling.Exceptions.EntityNotFoundException;
 import harmonize.ErrorHandling.Exceptions.InvalidArgumentException;
-import harmonize.ErrorHandling.Exceptions.UnauthorizedException;
 import harmonize.Repositories.MessageRepository;
 import harmonize.Repositories.ReportRepository;
 import harmonize.Repositories.UserRepository;
@@ -93,7 +92,7 @@ public class ReportService {
             throw new EntityNotFoundException("Message " + reportDTO.getMessage().getId() + " not found.");
         User reported = message.getSender();
         if (!message.getConversation().getMembers().contains(reporter))
-            throw new UnauthorizedException("User " + reporter.getId() + " does not have access to message " + message.getId());
+            throw new EntityNotFoundException("Message " + reportDTO.getMessage().getId() + " not found");
         if (!encoder.matches(reportDTO.getMessage().getText(), message.getHash()))
             throw new InvalidArgumentException("Message text is incorrect.");
 

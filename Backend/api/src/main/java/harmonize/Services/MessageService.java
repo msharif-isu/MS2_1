@@ -38,7 +38,7 @@ public class MessageService {
 
     public Message createMessage(User sender, Conversation conversation, String text, String privateKey) throws Exception {
         Message message = new Message();
-        message.setTime(new Date());
+        message.setTime(new Date(System.currentTimeMillis()));
         message.setSender(sender);
         message.setHash(encoder.encode(text));
         message.setConversation(conversation);
@@ -64,6 +64,10 @@ public class MessageService {
         Message message = messageRepository.findReferenceById(id);
         if (message == null)
             throw new EntityNotFoundException("Message " + id + " not found.");
+        return deleteMessage(message);
+    }
+
+    public String deleteMessage(Message message) {
         Conversation conversation = message.getConversation();
         
         conversation.getMessages().remove(message);
@@ -75,6 +79,11 @@ public class MessageService {
         messageRepository.delete(message);
         
         return new String(String.format("Message %d was deleted.", message.getId()));
+    }
+
+    public void removeRecipient(Message message, User recipient) {
+        message.getEncryptions().remove(recipient);
+        messageRepository.save(message);
     }
     
 }

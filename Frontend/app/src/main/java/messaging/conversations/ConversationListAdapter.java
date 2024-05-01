@@ -101,16 +101,22 @@ public class ConversationListAdapter extends RecyclerView.Adapter<RecyclerView.V
 
         final int index = holder.getAdapterPosition(); // Find alternative to getAdapterPosition
         ConversationViewHolder viewHolder = (ConversationViewHolder) holder;
-            ArrayList<Member> friends = conversation.getFriends();
-            StringBuilder name = new StringBuilder();
+        ArrayList<Member> friends = conversation.getFriends();
+        Log.e("Profile Picture", String.valueOf(friends.size()));
+        StringBuilder name = new StringBuilder();
+        if (friends.size() > 1) {
             for (int i = 0; i < friends.size() - 1; i++) { // Iterate until last friend
                 String tempName = friends.get(i).getUsername();
                 if (!tempName.equals(UserSession.getInstance().getCurrentUser().getUsername())) {
                     name.append(friends.get(i).getUsername()).append(", ");
                 }
             }
-            if (!friends.get(friends.size() - 1).getUsername().equals(UserSession.getInstance().getCurrentUser().getUsername())) {
+            name.append(friends.get(friends.size() - 1).getUsername());
+            viewHolder.friendPfp.setImageResource(R.drawable.baseline_groups_24);
+        }
+        else if (!friends.get(friends.size() - 1).getUsername().equals(UserSession.getInstance().getCurrentUser().getUsername())) {
                 name.append(friends.get(friends.size() - 1).getUsername());
+                makeImageRequest(friends.get(friends.size() - 1).getid(), viewHolder.friendPfp);
             }
 
 //        if (conversation.get)

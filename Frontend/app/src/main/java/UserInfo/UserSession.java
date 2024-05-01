@@ -1,5 +1,7 @@
 package UserInfo;
 
+import android.util.Log;
+
 import com.android.volley.RequestQueue;
 
 import java.util.ArrayList;
@@ -27,7 +29,8 @@ public class UserSession {
     private ConversationDTO currentConversation;
     private RequestQueue mQueue;
 
-    private ArrayList<ConversationDTO> selectedConversations = new ArrayList<>();
+    private ArrayList<Integer> selectedFriendsIds = new ArrayList<>();
+
 
     private String URL = "http://coms-309-032.class.las.iastate.edu:8080";
 
@@ -82,6 +85,15 @@ public class UserSession {
         conversations.put(conversation.getDataId(), conversation);
     }
 
+    public void removeConversation(ConversationDTO conversation) {
+        if (conversations.containsKey(conversation.getDataId())) {
+            conversations.remove(conversation.getDataId());
+        }
+        else {
+            Log.e("Conversation", "Error removing conversation, cannot find key");
+        }
+    }
+
     public List<ConversationDTO> getConversations() {
         List<ConversationDTO> convos = new ArrayList<>();
         for (Integer key : conversations.keySet()) {
@@ -126,11 +138,12 @@ public class UserSession {
         return URL;
     }
 
-    public void setSelectedconversations(ArrayList<ConversationDTO> selectedConversations) {
-        this.selectedConversations = selectedConversations;
+    public void setSelectedFriendsIds(ArrayList<Integer> list) {
+        selectedFriendsIds = list;
     }
 
-    public ArrayList<ConversationDTO> getSelectedConversations() {
-        return selectedConversations;
+    public ArrayList<Integer> getSelectedFriendsIds() {
+        return selectedFriendsIds;
     }
+
 }

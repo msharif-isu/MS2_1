@@ -4,36 +4,16 @@ public class FeedRequest {
     private String type;
     private FeedData data;
 
-    public enum RequestType {
+    public FeedRequest(FeedEnum requestType, int limit, int offset) {
 
-        FEED_ITEMS(3),
-        REFRESH_FEED(4);
-
-        private int value;
-
-        RequestType(int value) {
-
-            this.value = value;
-
-        }
-
-        public int getValue() {
-
-            return value;
-
-        }
-
-    }
-
-    public FeedRequest(RequestType requestType, int limit, int offset) {
-
-        if (requestType == RequestType.FEED_ITEMS) {
+        if (requestType == FeedEnum.NEW_PAGE) {
 
             this.type = "harmonize.DTOs.FeedDTO";
 
-        } else if (requestType == RequestType.REFRESH_FEED) {
+        } else if (requestType == FeedEnum.REFRESH) {
 
-            this.type = "com.fasterxml.jackson.databind.node.ObjectNode";
+            this.type = "harmonize.DTOs.FeedDTO";
+            //this.type = "com.fasterxml.jackson.databind.node.ObjectNode";
 
         } else {
 
@@ -49,8 +29,8 @@ public class FeedRequest {
         private int requestType;
         private Page page;
 
-        public FeedData(RequestType requestType, int limit, int offset) {
-            this.requestType = requestType.getValue();
+        public FeedData(FeedEnum requestType, int limit, int offset) {
+            this.requestType = requestType.ordinal();
             this.page = new Page(limit, offset);
         }
 

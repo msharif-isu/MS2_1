@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -19,6 +20,8 @@ import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -29,15 +32,17 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import Connections.VolleySingleton;
 import SearchSongs.SearchResultsAdapter;
 
-public class SearchFragment extends Fragment {
+import UserInfo.UserSession;
+
+public class SearchFragment extends Fragment implements SearchResultsAdapter.OnAddTrackListener {
 
     private EditText searchEditText;
     private RecyclerView searchResultsRecyclerView;
     private SearchResultsAdapter searchResultsAdapter;
     private List<Track> searchResults;
-    private String username, password, JWTtoken;
     private RequestQueue mQueue;
 
     @Override
@@ -48,18 +53,11 @@ public class SearchFragment extends Fragment {
         searchResultsRecyclerView = view.findViewById(R.id.searchResultsRecyclerView);
         searchResults = new ArrayList<>();
         searchResultsAdapter = new SearchResultsAdapter(searchResults);
+        searchResultsAdapter.setOnAddTrackListener(this);
         searchResultsRecyclerView.setAdapter(searchResultsAdapter);
         searchResultsRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
-        navBar navBar = (navBar) getActivity();
-        if (navBar != null) {
-            username = navBar.username;
-            password = navBar.password;
-            JWTtoken = navBar.jwtToken;
-            mQueue = navBar.mQueue;
-        } else {
-            Log.e("msg", "navBar is null, JWT token not set");
-        }
+        mQueue = VolleySingleton.getInstance(getActivity()).getRequestQueue();
 
         searchEditText.addTextChangedListener(new TextWatcher() {
             @Override
@@ -92,13 +90,13 @@ public class SearchFragment extends Fragment {
         try {
             requestBody.put("q", query);
             requestBody.put("type", "track");
-            requestBody.put("limit", "5");
+            requestBody.put("limit", "10");
             requestBody.put("offset", "0");
         } catch (JSONException e) {
             e.printStackTrace();
         }
 
-        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url, requestBody,
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, url, requestBody,
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
@@ -109,9 +107,23 @@ public class SearchFragment extends Fragment {
                             for (int i = 0; i < itemsArray.length(); i++) {
                                 JSONObject trackObject = itemsArray.getJSONObject(i);
                                 String trackName = trackObject.getString("name");
-                                String artistName = trackObject.getJSONArray("artists").getJSONObject(0).getString("name");
-                                // Parse other track details as needed
-                                Track track = new Track(trackName, artistName);
+                                String trackId = trackObject.getString("id");
+
+                                JSONArray artistsArray = trackObject.getJSONArray("artists");
+                                String artistName = artistsArray.getJSONObject(0).getString("name");
+
+                                String albumCoverLink = "";
+                                if (trackObject.has("album")) {
+                                    JSONObject albumObject = trackObject.getJSONObject("album");
+                                    if (albumObject.has("images")) {
+                                        JSONArray imagesArray = albumObject.getJSONArray("images");
+                                        if (imagesArray.length() > 0) {
+                                            albumCoverLink = imagesArray.getJSONObject(0).getString("url");
+                                        }
+                                    }
+                                }
+
+                                Track track = new Track(trackName, artistName, trackId, albumCoverLink, null, null);
                                 searchResults.add(track);
                             }
                             searchResultsAdapter.notifyDataSetChanged();
@@ -129,13 +141,47 @@ public class SearchFragment extends Fragment {
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
                 HashMap<String, String> headers = new HashMap<>();
-                Log.d("SearchFragment", "JWTtoken: " + JWTtoken);
-                headers.put("Authorization", JWTtoken);
+                Log.d("SearchFragment", "JWTtoken: " + UserSession.getInstance().getJwtToken());
+                headers.put("Authorization", UserSession.getInstance().getJwtToken());
                 return headers;
             }
         };
 
         mQueue.add(jsonObjectRequest);
+    }
+
+    @Override
+    public void onAddTrack(Track track) {
+        addTrackToLikedSongs(track);
+    }
+
+    private void addTrackToLikedSongs(Track track) {
+        String url = "http://coms-309-032.class.las.iastate.edu:8080/users/songs/" + track.getTrackId();
+
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, url,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        // Track added successfully
+                        Toast.makeText(getActivity(), "Track added to liked songs", Toast.LENGTH_SHORT).show();
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        // Handle the error
+                        Toast.makeText(getActivity(), "Failed to add track to liked songs", Toast.LENGTH_SHORT).show();
+                    }
+                }) {
+            @Override
+            public HashMap<String, String> getHeaders() throws AuthFailureError {
+                HashMap<String, String> headers = new HashMap<>();
+                headers.put("Authorization", UserSession.getInstance().getJwtToken());
+                return headers;
+            }
+        };
+
+        mQueue.add(stringRequest);
     }
 
 }

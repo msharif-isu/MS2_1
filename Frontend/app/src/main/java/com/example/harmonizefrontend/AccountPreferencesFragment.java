@@ -35,6 +35,8 @@ import com.android.volley.toolbox.JsonObjectRequest;
 
 import org.json.JSONObject;
 
+import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.sql.Array;
 import java.util.ArrayList;
 import java.io.IOException;
@@ -68,12 +70,13 @@ public class AccountPreferencesFragment extends Fragment {
     private String mParam2;
 
     private ImageView profilePicture;
+    private int id;
     private String username, password, firstName, lastName, bio;
     private EditText usernameText, bioText, firstNameText, lastNameText;
     private TextView passwordView;
     private boolean hidden = true;
     private boolean allowEdit = false;
-    private Button updatePrefsBtn, logoutBtn, delAccBtn, seeReportsBtn;
+    private Button updatePrefsBtn, logoutBtn, delAccBtn, seeReportsBtn, addSongsBtn;
 
     private ImageButton changePicBtn, editInfoBtn, unhidePass;
 
@@ -153,6 +156,7 @@ public class AccountPreferencesFragment extends Fragment {
         bioText = rootView.findViewById(R.id.bio);
 
         updatePrefsBtn = rootView.findViewById(R.id.updatePrefs);
+        addSongsBtn = rootView.findViewById(R.id.addSongs);
         logoutBtn = rootView.findViewById(R.id.logOut);
         delAccBtn = rootView.findViewById(R.id.delAccount);
         changePicBtn = rootView.findViewById(R.id.changePicture);
@@ -182,10 +186,8 @@ public class AccountPreferencesFragment extends Fragment {
 
         // Get the rest of the user details from server
         Log.e("JWT", "Running getUserDetails");
+        makeImageRequest();
 
-/**
- * Syncronous call to get user details
- */
         getUserDetails(new VolleyCallBack() {
 
             @Override
@@ -199,19 +201,23 @@ public class AccountPreferencesFragment extends Fragment {
                 bioText.setText(bio);
                 passwordView.setText(password);
 
-                Member currentUser = new Member(99999, firstName, lastName, username, bio);
+                Member currentUser = new Member(id, firstName, lastName, username, bio);
                 UserSession.getInstance().setCurrentUser(currentUser);
                 UserSession.getInstance().setPassword(password);
                 UserSession.getInstance().setJwtToken(jwtToken);
                 Log.d("jwt", "OG jwt: " + jwtToken);
                 UserSession.getInstance().setmQueue(mQueue);
                 Log.e("msg", currentUser.getUsername() + " " + currentUser.getFirstName() + " " + currentUser.getLastName() + " " + currentUser.getBio());
-                checkRoles();
-                Log.e("Mod", "Num roles: " + String.valueOf(UserSession.getInstance().getRoles().size()));
-                if (UserSession.getInstance().getRoles().size() > 1) {
-                    seeReportsBtn.setVisibility(View.VISIBLE);
-                }
-                makeImageRequest();
+                checkRoles(new VolleyCallBack() {
+                    @Override
+                    public void onSuccess() {
+                        Log.e("Mod", "roles: " + String.valueOf(UserSession.getInstance().getRoles()));
+                        if (UserSession.getInstance().getRoles().contains("MODERATOR")) {
+                            seeReportsBtn.setVisibility(View.VISIBLE);
+                        }
+                    }
+                });
+
             }
 
         });
@@ -222,12 +228,6 @@ public class AccountPreferencesFragment extends Fragment {
                 ((navBar) getActivity()).loadFragment(new SeeReportsFragment());
             }
         });
-
-
-
-
-
-
 
 
         //When changeBtn is clicked, give the user the option to upload their own picture and change the profile picture
@@ -242,12 +242,19 @@ public class AccountPreferencesFragment extends Fragment {
         });
 
         // When update preferences is clicked, take user to the change preferences screen
-//        updatePrefsBtn.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                // Send PUT request to server
-//            }
-//        });
+        updatePrefsBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ((navBar) getActivity()).loadFragment(new LikedSongsFragment());
+            }
+        });
+
+        addSongsBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ((navBar) getActivity()).loadFragment(new SearchFragment());
+            }
+        });
 
         // When logout is clicked, change intent to login screen
         logoutBtn.setOnClickListener(new View.OnClickListener() {
@@ -317,7 +324,7 @@ public class AccountPreferencesFragment extends Fragment {
                             lastNameText.setText(lastName);
                             bioText.setText(bio);
 
-                            currentUser = new Member(99999, firstName, lastName, username, bio);
+                            currentUser = new Member(id, firstName, lastName, username, bio);
                             UserSession.getInstance().setCurrentUser(currentUser);
                             UserSession.getInstance().setPassword(password);
                             UserSession.getInstance().setJwtToken(jwtToken);
@@ -349,6 +356,7 @@ public class AccountPreferencesFragment extends Fragment {
                     public void onResponse(JSONObject response) {
                         try {
                             Log.e("JWT", "Accessed user details");
+                            id = response.getInt("id");
 
                             username = response.getString("username");
 
@@ -400,12 +408,8 @@ public class AccountPreferencesFragment extends Fragment {
                     @Override
                     public void onResponse(Bitmap response) {
                         // Display the image in the ImageView
-                        if (response == null) {
-                            profilePicture.setImageResource(R.drawable.ic_launcher_foreground);
-                        }
-                        else {
-                            profilePicture.setImageBitmap(response);
-                        }
+
+                        profilePicture.setImageBitmap(response);
                         Log.d("Image", response.toString());
                     }
                 },
@@ -417,8 +421,21 @@ public class AccountPreferencesFragment extends Fragment {
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        // Handle errors here
-                        Log.e("Volley Error", error.toString());
+                        if (error == null || error.networkResponse == null) {
+                            return;
+                        }
+                        String body = "";
+                        final String statusCode = String.valueOf(error.networkResponse.statusCode);
+                        try {
+                            body = new String(error.networkResponse.data,"UTF-8");
+                        } catch (UnsupportedEncodingException e) {
+                            // exception
+                        }
+                        Log.e("Image", body);
+                        Log.e("Image", statusCode);
+                        if (statusCode.equals("404")) {
+                            profilePicture.setImageResource(R.drawable.ic_launcher_foreground);
+                        }
                     }
                 }
 
@@ -497,11 +514,9 @@ public class AccountPreferencesFragment extends Fragment {
     private void updateUserDetails(VolleyCallBack callBackDetails) {
         JSONObject jsonBody = new JSONObject();
         try {
-            if (!username.equals(usernameText.getText().toString())) {
-                jsonBody.put("username", usernameText.getText().toString());
-            }
             jsonBody.put("firstName", firstNameText.getText().toString());
             jsonBody.put("lastName", lastNameText.getText().toString());
+            jsonBody.put("username", usernameText.getText().toString());
             jsonBody.put("bio", bioText.getText().toString());
         } catch (Exception e) {
             e.printStackTrace();
@@ -509,32 +524,41 @@ public class AccountPreferencesFragment extends Fragment {
 
         JsonObjectRequest jsonObjReq = new JsonObjectRequest(
                 Request.Method.PUT,
-                URL + "/users",
+                UserSession.getInstance().getURL() + "/users",
                 jsonBody, // Pass null as the request body since it's a GET request
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
                         try {
                             Log.e("JWT", "Updating user details!");
-                            username = response.getString("username");
-                            firstName = response.getString("firstName");
-                            lastName = response.getString("lastName");
-                            bio = response.getString("bio");
                             callBackDetails.onSuccess();
 
                         }
                         catch (Exception e) {
-                            e.printStackTrace();
+
                         }
                     }
                 },
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        Log.e("JWT", error.toString());
-                        // Gets: com.android.volley.ParseError: org.json.JSONException: Value First of type java.lang.String cannot be converted to JSONObject
-                        // The backend still takes the request and updates the details
+                        // Log the exception
+                        error.printStackTrace();
+
+                        // Log detailed error information
+                        if (error.networkResponse != null) {
+                            // Get the status code
+                            int statusCode = error.networkResponse.statusCode;
+                            Log.e("JWT", "Status Code: " + statusCode);
+
+                            // Try to convert byte[] data to a string
+                            String responseBody = new String(error.networkResponse.data, StandardCharsets.UTF_8);
+                            Log.e("JWT", "Response Body: " + responseBody);
+                        } else {
+                            Log.e("JWT", "No response from server");
+                        }
                     }
+
                 }
         )
 
@@ -542,22 +566,16 @@ public class AccountPreferencesFragment extends Fragment {
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
                 HashMap<String, String> headers = new HashMap<String, String>();
-                headers.put("Authorization", jwtToken);
+                Log.e("JWT header", UserSession.getInstance().getJwtToken());
+                headers.put("Authorization", UserSession.getInstance().getJwtToken());
                 return headers;
             }
 
-            @Override
-            protected Map<String, String> getParams() {
-                Map<String, String> params = new HashMap<String, String>();
-//                params.put("param1", "value1");
-//                params.put("param2", "value2");
-                return params;
-            }
         };
         mQueue.add(jsonObjReq);
     }
 
-    private void checkRoles() {
+    private void checkRoles(VolleyCallBack volleyCallBack) {
         JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(
                 Request.Method.GET,
                 URL + "/users/roles",
@@ -572,6 +590,7 @@ public class AccountPreferencesFragment extends Fragment {
                             roles.add(role);
                         }
                         UserSession.getInstance().setRoles(roles);
+                        volleyCallBack.onSuccess();
                     }
                     catch (Exception e) {
                         e.printStackTrace();

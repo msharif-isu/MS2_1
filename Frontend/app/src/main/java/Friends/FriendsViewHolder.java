@@ -1,5 +1,7 @@
 package Friends;
 
+import static android.view.View.GONE;
+
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ImageView;

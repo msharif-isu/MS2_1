@@ -44,7 +44,7 @@ public class SeeReportsFragment extends Fragment {
 
     private RequestQueue mQueue;
 
-    private String URL = "http://coms-309-032.class.las.iastate.edu:8080";
+//    private String URL = "http://coms-309-032.class.las.iastate.edu:8080";
 
 
     public SeeReportsFragment() {
@@ -109,7 +109,7 @@ public class SeeReportsFragment extends Fragment {
     private void getReports(VolleyCallBack volleyCallBack) {
         JsonArrayRequest jsonArrayReq = new JsonArrayRequest(
                 Request.Method.GET,
-                URL + "/admins/reports",
+                UserSession.getInstance().getURL() + "/moderators/reports",
                 null,
                 response -> {
                     try {

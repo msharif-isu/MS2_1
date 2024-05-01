@@ -1,5 +1,6 @@
 package Reports;
 
+import android.annotation.SuppressLint;
 import android.graphics.Bitmap;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -62,7 +63,7 @@ public class ReportedListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
 
     @Override
-    public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, @SuppressLint("RecyclerView") int position) {
         Report report = reportList.get(position);
 
         SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy");

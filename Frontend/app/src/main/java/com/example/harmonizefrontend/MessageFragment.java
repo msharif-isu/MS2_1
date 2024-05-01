@@ -162,10 +162,15 @@ public class MessageFragment extends Fragment implements WebSocketListener {
 
         if (tempConvo.getFriends().size() > 1) {
             ArrayList<Member> friends = tempConvo.getFriends();
-            for (int i = 0; i < friends.size() - 2; i++) { // Iterate until last friend
-                tempNames.append(friends.get(i).getUsername()).append(", ");
+            for (int i = 0; i < friends.size() - 1; i++) { // Iterate until last friend
+                String tempName = friends.get(i).getUsername();
+                if (!tempName.equals(UserSession.getInstance().getCurrentUser().getUsername())) {
+                    tempNames.append(friends.get(i).getUsername()).append(", ");
+                }
             }
-            tempNames.append(friends.get(friends.size() - 1).getUsername());
+            if (!friends.get(friends.size() - 1).getUsername().equals(UserSession.getInstance().getCurrentUser().getUsername())) {
+                tempNames.append(friends.get(friends.size() - 1).getUsername());
+            }
         }
         else {
             tempNames = new StringBuilder(tempConvo.getFriends().get(tempConvo.getFriends().size() - 1).getUsername());

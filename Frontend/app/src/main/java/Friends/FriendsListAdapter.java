@@ -24,11 +24,13 @@ import com.example.harmonizefrontend.ClickListener;
 import com.example.harmonizefrontend.MessageFragment;
 import com.example.harmonizefrontend.R;
 import com.example.harmonizefrontend.navBar;
+import com.google.gson.Gson;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.UnsupportedEncodingException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -122,13 +124,22 @@ public class FriendsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                 // TODO: Allow ability to create new conversations
                 int friendId = friend.getid();
                 int userId = UserSession.getInstance().getCurrentUser().getid();
-                Integer[] ids = {friendId, userId};
-//                createConversation(ids, new VolleyCallBack() {
-//                    @Override
-//                    public void onSuccess() {
-//
-//                    }
-//                });
+                List<Integer> ids = new ArrayList<>();
+                ids.add(friendId);
+                ids.add(userId);
+                JSONObject jsonObject = new JSONObject();
+                try {
+                    JSONArray jsonArray = new JSONArray(ids);
+                    jsonObject.put("memberIds", jsonArray);
+                } catch (JSONException e) {
+                    throw new RuntimeException(e);
+                }
+                createGroupchat(jsonObject, new VolleyCallBack() {
+                    @Override
+                    public void onSuccess() {
+//                        ((navBar) getActivity()).loadFragment(new MessageFragment());
+                    }
+                });
 
 
             }
@@ -136,6 +147,71 @@ public class FriendsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         });
 
     }
+
+    private void createGroupchat(JSONObject jsonObject, VolleyCallBack volleyCallBack) {
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(
+                Request.Method.POST,
+                UserSession.getInstance().getURL() + "/users/conversations",
+                jsonObject,
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        Log.e("Groupchat", "Created groupchat");
+                        ConversationDTO convo = null;
+                        try {
+                            convo = parseConversation(response);
+                        } catch (JSONException e) {
+                            throw new RuntimeException(e);
+                        }
+
+//                        int convoId = convo.getDataId();
+//                        int messageNum = convo.getMessageList().size();
+//                        Log.e("msg", "Conversation Id: " + convoId);
+//                        Log.e("msg", "num of messages: " + messageNum);
+                        UserSession.getInstance().setcurrentConversation(convo);
+                        volleyCallBack.onSuccess();
+                    }
+                },
+
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        if (error == null || error.networkResponse == null) {
+                            return;
+                        }
+
+                        String body = "";
+                        //get status code here
+                        final String statusCode = String.valueOf(error.networkResponse.statusCode);
+                        //get response body and parse with appropriate encoding
+                        try {
+                            body = new String(error.networkResponse.data,"UTF-8");
+                        } catch (UnsupportedEncodingException e) {
+                            // exception
+                        }
+                        Log.e("Groupchat", body);
+                        //do stuff with the body...
+                    }
+                }
+        ) {
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                HashMap<String, String> headers = new HashMap<>();
+                headers.put("Authorization", UserSession.getInstance().getJwtToken());
+                return headers;
+            }
+
+        };
+        mQueue.add(jsonObjectRequest);
+    }
+
+    private ConversationDTO parseConversation(JSONObject response) throws JSONException {
+        Gson gson = new Gson();
+        ConversationDTO.Data data = gson.fromJson(response.toString(), ConversationDTO.Data.class);
+        ConversationDTO convo = new ConversationDTO("harmonize.DTOs.ConversationDTO", data);
+        convo.ArrayListInitializer();
+        return convo;
+    };
 
     private void removeFriend(int friendId, VolleyCallBack volleyCallBack) {
         StringRequest stringRequest = new StringRequest(

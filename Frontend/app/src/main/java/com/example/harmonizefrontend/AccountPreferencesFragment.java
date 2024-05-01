@@ -525,7 +525,7 @@ public class AccountPreferencesFragment extends Fragment {
         JsonObjectRequest jsonObjReq = new JsonObjectRequest(
                 Request.Method.PUT,
                 UserSession.getInstance().getURL() + "/users",
-                jsonBody, // Pass null as the request body since it's a GET request
+                jsonBody,
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {

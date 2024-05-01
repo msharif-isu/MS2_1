@@ -10,10 +10,12 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.google.gson.Gson;
 
@@ -21,7 +23,9 @@ import org.java_websocket.handshake.ServerHandshake;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Array;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -31,6 +35,7 @@ import Connections.VolleyCallBack;
 import Connections.WebSocketListener;
 import Connections.WebSocketManagerChat;
 import DTO.MessageDTO;
+import UserInfo.Member;
 import UserInfo.UserSession;
 import messaging.conversations.ConversationListAdapter;
 
@@ -124,6 +129,7 @@ public class ConversationsFragment extends Fragment implements WebSocketListener
         addGC = view.findViewById(R.id.addGroupChat);
 //        view.findViewById(R.id.deleteConvo).setVisibility(View.GONE);
         conversations = getConversations();
+        Log.e("Report", String.valueOf(conversations.size()));
         conversationListAdapter = new ConversationListAdapter(conversations, clickListener);
         recyclerView.setAdapter(conversationListAdapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
@@ -136,8 +142,6 @@ public class ConversationsFragment extends Fragment implements WebSocketListener
         });
 
 
-
-
         return view;
 
 
@@ -146,16 +150,70 @@ public class ConversationsFragment extends Fragment implements WebSocketListener
     private List<ConversationDTO> getConversations() {
         List<ConversationDTO> conversations = new ArrayList<ConversationDTO>();
         conversations = UserSession.getInstance().getConversations();
+        Boolean flag = false;
 
         for (ConversationDTO convo : conversations) {
             int id = convo.getDataId();
-            if (!listConversations.containsKey(id)) {
+            if (!listConversations.containsKey(id) && convo.getFriends().size() > 0) {
                 listConversations.put(id, convo);
             }
         }
 
         return conversations;
     }
+
+    private boolean checkUserExists(int id) {
+        final Boolean[] returnVal = new Boolean[0];
+        JsonObjectRequest jsonObjReq = new JsonObjectRequest(
+                Request.Method.PUT,
+                UserSession.getInstance().getURL() + "/users" + String.valueOf(id),
+                null,
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                            Log.e("Report", "User exits");
+                            returnVal[0] = true;
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        if (error == null || error.networkResponse == null) {
+                            return;
+                        }
+                        String body = "";
+                        final String statusCode = String.valueOf(error.networkResponse.statusCode);
+                        try {
+                            body = new String(error.networkResponse.data,"UTF-8");
+                        } catch (UnsupportedEncodingException e) {
+                            // exception
+                        }
+                        Log.e("Image", body);
+                        Log.e("Image", statusCode);
+                        if (statusCode.equals("404")) {
+                            Log.e("Report", "User not found");
+                            returnVal[0] = false;
+                        }
+
+
+                    }
+                }
+        )
+
+        {
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                HashMap<String, String> headers = new HashMap<String, String>();
+                Log.e("JWT header", UserSession.getInstance().getJwtToken());
+                headers.put("Authorization", UserSession.getInstance().getJwtToken());
+                return headers;
+            }
+
+        };
+        mQueue.add(jsonObjReq);
+
+        return returnVal[0];
+    };
 
 
 

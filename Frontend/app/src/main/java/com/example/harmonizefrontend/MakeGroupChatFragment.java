@@ -101,6 +101,7 @@ public class MakeGroupChatFragment extends Fragment {
                 List<Integer> ids = new ArrayList<>();
                 ids.add(UserSession.getInstance().getCurrentUser().getid());
                 ids.addAll(UserSession.getInstance().getSelectedFriendsIds());
+                Log.e("Groupchat", String.valueOf(ids.size()));
                 if (ids.size() > 2) {
                     Log.e("Groupchat", String.valueOf(ids));
                     JSONObject jsonObject = new JSONObject();

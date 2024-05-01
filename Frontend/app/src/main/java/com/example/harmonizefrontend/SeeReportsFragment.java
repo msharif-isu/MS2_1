@@ -141,7 +141,7 @@ public class SeeReportsFragment extends Fragment {
         JSONObject JSONreportedMember = reportObject.getJSONObject("reported");
         Log.e("report", "ReportedMember: " + JSONreportedMember.toString());
         Member reportedMember = gson.fromJson(JSONreportedMember.toString(), Member.class);
-
+        int id = reportObject.getInt("id");
         JSONObject reportedMessage = reportObject.getJSONObject("message");
         String reportedTextMessage = reportedMessage.getString("text");
         String reportedReason = reportObject.getString("reportText");
@@ -149,6 +149,7 @@ public class SeeReportsFragment extends Fragment {
         String reportedTime = reportedMessage.getString("time");
 
         return new Report(
+                id,
                 reportedMember,
                 reportedTextMessage,
                 reportedReason,

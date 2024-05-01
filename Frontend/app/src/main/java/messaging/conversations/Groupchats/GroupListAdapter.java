@@ -40,6 +40,8 @@ public class GroupListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
     private RequestQueue mQueue = UserSession.getInstance().getmQueue();
 
+    private ArrayList<Member> gcList = new ArrayList<>();
+
 
 
     public GroupListAdapter(ArrayList<Member> friendsList) {
@@ -79,18 +81,20 @@ public class GroupListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
             @Override
             public void onClick(View v) {
                 Log.e("GroupChats", "Clicked");
-                    if (friends.contains(friend)) {
-                        friends.remove(friend);
+                    if (gcList.contains(friend)) {
+                        gcList.remove(friend);
                         viewHolder.itemView.setBackgroundColor(Color.TRANSPARENT);
                     } else {
-                        friends.add(friend);
+                        gcList.add(friend);
                         viewHolder.itemView.setBackgroundColor(Color.rgb(200, 120, 106));
                     }
 
                     ArrayList<Integer> ids = new ArrayList<>();
-                    for (Member friend : friends) {
+                    for (Member friend : gcList) {
                         ids.add(friend.getid());
+                        //Log.e("Report", "Ids: " + String.valueOf(ids));
                     }
+                    Log.e("Report", "Ids: " + String.valueOf(ids));
                     UserSession.getInstance().setSelectedFriendsIds(ids);
             }
         });

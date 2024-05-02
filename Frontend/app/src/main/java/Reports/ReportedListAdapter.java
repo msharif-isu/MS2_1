@@ -65,6 +65,7 @@ public class ReportedListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, @SuppressLint("RecyclerView") int position) {
         Report report = reportList.get(position);
+        Log.e("Report", "Report id: " + report.getId());
 
         SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy");
         SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm");
@@ -104,7 +105,7 @@ public class ReportedListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                deleteUser(reportedId, new VolleyCallBack() {
+                deleteReport(report.getId(), new VolleyCallBack() {
                     @Override
                     public void onSuccess() {
                         reportList.remove(position);
@@ -229,10 +230,10 @@ public class ReportedListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         mQueue.add(jsonObjReq);
     }
 
-    private void deleteUser(int id, VolleyCallBack volleyCallBack) {
+    private void deleteReport(int id, VolleyCallBack volleyCallBack) {
         StringRequest stringRequest = new StringRequest(
                 Request.Method.DELETE,
-                UserSession.getInstance().getURL() + "/moderators/users/" + String.valueOf(id),
+                UserSession.getInstance().getURL() + "/moderators/reports/" + String.valueOf(id),
                 new Response.Listener<String>() {
 
                     @Override

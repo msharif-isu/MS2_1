@@ -54,6 +54,8 @@ import UserInfo.Member;
 }
  */
 public class Report {
+
+    private int id;
     private Member reportedMember;
 //    private String reportedName;
     private String reportedMessage;
@@ -61,7 +63,8 @@ public class Report {
     private String reportReason;
     private String time;
 
-    public Report(Member reportedMember, String reportedMessage, String reportReason, String time) {
+    public Report(int id, Member reportedMember, String reportedMessage, String reportReason, String time) {
+        this.id = id;
         this.reportedMember = reportedMember;
         this.reportedMessage = reportedMessage;
         this.reportReason = reportReason;
@@ -82,6 +85,10 @@ public class Report {
 
     public String getReportReason() {
        return reportReason;
+    }
+
+    public int getId() {
+        return id;
     }
 
 

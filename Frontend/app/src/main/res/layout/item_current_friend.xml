@@ -57,11 +57,11 @@
     <TextView
         android:id="@+id/border2"
         android:layout_width="match_parent"
-        android:layout_height=".75dp"
+        android:layout_height="1dp"
         android:layout_alignParentBottom="true"
         android:layout_marginRight="10px"
         android:layout_marginLeft="10px"
-        android:background="@color/cool_grey"/>
+        android:background="@color/Ebony"/>
 
 
 </RelativeLayout> 

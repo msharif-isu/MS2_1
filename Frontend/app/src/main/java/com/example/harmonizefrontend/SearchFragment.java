@@ -84,7 +84,7 @@ public class SearchFragment extends Fragment implements SearchResultsAdapter.OnA
     }
 
     private void performSearch(String query) {
-        String url = "http://coms-309-032.class.las.iastate.edu:8080/music";
+        String url = UserSession.getInstance().getURL() + "/music";
 
         JSONObject requestBody = new JSONObject();
         try {
@@ -156,7 +156,7 @@ public class SearchFragment extends Fragment implements SearchResultsAdapter.OnA
     }
 
     private void addTrackToLikedSongs(Track track) {
-        String url = "http://coms-309-032.class.las.iastate.edu:8080/users/songs/" + track.getTrackId();
+        String url = UserSession.getInstance().getURL()  + "/users/songs/" + track.getTrackId();
 
         StringRequest stringRequest = new StringRequest(Request.Method.POST, url,
                 new Response.Listener<String>() {

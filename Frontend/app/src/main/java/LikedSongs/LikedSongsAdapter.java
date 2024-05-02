@@ -55,7 +55,7 @@ public class LikedSongsAdapter extends RecyclerView.Adapter<LikedSongsAdapter.Li
                 if (adapterPosition != RecyclerView.NO_POSITION) {
 
                     // Make the DELETE request to remove the liked song
-                    String url = "http://coms-309-032.class.las.iastate.edu:8080/users/songs/" + likedSong.getTrackId();
+                    String url = UserSession.getInstance().getURL() + "/users/songs/" + likedSong.getTrackId();
 
                     StringRequest deleteRequest = new StringRequest(Request.Method.DELETE, url,
                             new Response.Listener<String>() {

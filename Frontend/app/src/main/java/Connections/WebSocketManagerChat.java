@@ -2,11 +2,20 @@ package Connections;
 
 import android.util.Log;
 
+import org.apache.hc.client5.http.ssl.TrustAllStrategy;
+import org.apache.hc.core5.ssl.SSLContexts;
 import org.java_websocket.client.WebSocketClient;
 import org.java_websocket.handshake.ServerHandshake;
 import org.json.JSONException;
 
+
 import java.net.URI;
+import java.security.KeyManagementException;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+
+import javax.net.ssl.SSLContext;
+
 
 /**
  * Singleton WebSocketManager instance used for managing WebSocket connections
@@ -69,7 +78,7 @@ public class WebSocketManagerChat {
 
             webSocketClient = new MyWebSocketClient(serverUri);
             webSocketClient.connect();
-            Log.e("msg", "Connected to the websocket server");
+            Log.e("msg", "Connected to the websocket server " + serverUrl);
 
         } catch (Exception e) {
             Log.e("msg", "Error connecting to the websocket server");
@@ -117,8 +126,12 @@ public class WebSocketManagerChat {
      */
     private class MyWebSocketClient extends WebSocketClient {
 
-        private MyWebSocketClient(URI serverUri) {
+        private MyWebSocketClient(URI serverUri) throws NoSuchAlgorithmException, KeyStoreException, KeyManagementException {
             super(serverUri);
+            SSLContext sslcontext = SSLContexts.custom()
+                    .loadTrustMaterial(null, new TrustAllStrategy())
+                    .build();
+            setSocketFactory(sslcontext.getSocketFactory());
         }
 
         /**

@@ -32,7 +32,7 @@ public class UserSession {
     private ArrayList<Integer> selectedFriendsIds = new ArrayList<>();
 
 
-    private String URL = "http://coms-309-032.class.las.iastate.edu:8080";
+    private String URL = "https://coms-309-032.class.las.iastate.edu:8443";
 
     private UserSession() {
         conversations = new java.util.HashMap<>();

@@ -52,7 +52,7 @@ public class LikedSongsFragment extends Fragment {
     }
 
     private void fetchLikedSongs() {
-        String url = "http://coms-309-032.class.las.iastate.edu:8080/users/songs";
+        String url = UserSession.getInstance().getURL()  + "/users/songs";
 
         JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(Request.Method.GET, url, null,
                 new Response.Listener<JSONArray>() {

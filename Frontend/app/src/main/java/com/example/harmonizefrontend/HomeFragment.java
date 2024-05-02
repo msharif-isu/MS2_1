@@ -58,7 +58,7 @@ public class HomeFragment extends Fragment implements WebSocketListener, FeedAda
     private FeedAdapter feedAdapter;
     private List<FeedDTO> feedItems;
     private WebSocket webSocket;
-    private static final String WEB_SOCKET_URL = "ws://coms-309-032.class.las.iastate.edu:8080/feed";
+    private static final String WEB_SOCKET_URL = "wss://coms-309-032.class.las.iastate.edu:8443/feed";
     private String username, password;
     private RequestQueue mQueue;
     private static final int LIMIT = 10;
@@ -308,7 +308,7 @@ public class HomeFragment extends Fragment implements WebSocketListener, FeedAda
         String trackId = feedItem.getData().getItem().getSong().getId();
 
         // Make an API request to add the track to the user's liked songs
-        String url = "http://coms-309-032.class.las.iastate.edu:8080/users/songs/" + trackId;
+        String url = UserSession.getInstance().getURL() + "/users/songs/" + trackId;
 
         StringRequest stringRequest = new StringRequest(Request.Method.POST, url,
                 new Response.Listener<String>() {
@@ -358,7 +358,7 @@ public class HomeFragment extends Fragment implements WebSocketListener, FeedAda
     }
 
     private void createPost(String postText) {
-        String url = "http://coms-309-032.class.las.iastate.edu:8080/users/posts";
+        String url = UserSession.getInstance().getURL() + "/users/posts";
 
         JSONObject postData = new JSONObject();
         try {

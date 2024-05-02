@@ -25,6 +25,7 @@ import org.json.JSONObject;
 
 import Connections.VolleyCallBack;
 import Connections.VolleySingleton;
+import UserInfo.UserSession;
 
 /**
  * A Registration screen that allows users to enter the application by creating an account.
@@ -164,7 +165,7 @@ public class RegistrationScreen extends AppCompatActivity implements OnClickList
 
         // Connect to backend in order to check if credentials are valid
         JSONObject jsonBody = new JSONObject();
-        String checkCredsURL = "http://coms-309-032.class.las.iastate.edu:8080";
+        String checkCredsURL = UserSession.getInstance().getURL() ;
 
         try {
             jsonBody.put("username", username);

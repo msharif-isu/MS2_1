@@ -96,7 +96,7 @@ public class FindFragment extends Fragment {
      */
     private void fetchUserList() {
 
-        String url = "http://coms-309-032.class.las.iastate.edu:8080/users/friends/recommended";
+        String url = UserSession.getInstance().getURL() + "/users/friends/recommended";
         //String url = "10:48.48.244:8080/users/friends/recommended";
 
 //        Request a string response from the url.
@@ -263,7 +263,7 @@ public class FindFragment extends Fragment {
      * @param userId
      */
     private void addFriend(int userId) {
-        String url = "http://coms-309-032.class.las.iastate.edu:8080/users/friends/" + userId;
+        String url = UserSession.getInstance().getURL() + "/users/friends/" + userId;
 
         // Request a string response
         StringRequest stringRequest = new StringRequest(Request.Method.POST, url,
@@ -274,7 +274,7 @@ public class FindFragment extends Fragment {
                      */
                     @Override
                     public void onResponse(String response) {
-                        Toast.makeText(getActivity(), response, Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getActivity(), "Friend added", Toast.LENGTH_SHORT).show();
                     }
                 },
                 new Response.ErrorListener() {

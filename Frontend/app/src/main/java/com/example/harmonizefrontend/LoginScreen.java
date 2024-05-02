@@ -31,6 +31,8 @@ import com.android.volley.toolbox.JsonObjectRequest;
 
 import Connections.VolleyCallBack;
 import Connections.VolleySingleton;
+import Https.HttpsTrustManager;
+import UserInfo.UserSession;
 
 /**
  * A login screen that allows users to enter via username/password.
@@ -51,8 +53,6 @@ public class LoginScreen extends AppCompatActivity implements OnClickListener {
     private Boolean saveLogin;
 
     private RequestQueue mQueue;
-    String URL = "http://coms-309-032.class.las.iastate.edu:8080";
-//    private String URL = "http://10.48.110.126";
     private String jwtToken = null;
 
 
@@ -186,9 +186,10 @@ public class LoginScreen extends AppCompatActivity implements OnClickListener {
         }
 
 
+        HttpsTrustManager.allowAllSSL();
         JsonObjectRequest request = new JsonObjectRequest(
                 Request.Method.POST,
-                URL + "/auth/login",
+                UserSession.getInstance().getURL() + "/auth/login",
                 jsonBody,
                 new Response.Listener<JSONObject>() {
                     @Override

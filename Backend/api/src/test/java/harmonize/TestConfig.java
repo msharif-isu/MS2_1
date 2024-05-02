@@ -1,7 +1,27 @@
 package harmonize;
 
+import java.io.FileInputStream;
+import java.security.KeyStore;
+import java.security.cert.CertificateFactory;
+import java.security.cert.X509Certificate;
+
+import javax.net.ssl.SSLContext;
+
+import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
+import org.apache.hc.client5.http.impl.classic.HttpClients;
+import org.apache.hc.client5.http.impl.io.PoolingHttpClientConnectionManagerBuilder;
+import org.apache.hc.client5.http.io.HttpClientConnectionManager;
+import org.apache.hc.client5.http.ssl.SSLConnectionSocketFactory;
+import org.apache.hc.client5.http.ssl.SSLConnectionSocketFactoryBuilder;
+import org.apache.hc.core5.ssl.SSLContexts;
+
+import org.springframework.boot.test.web.client.TestRestTemplate;
+import org.springframework.boot.test.web.client.TestRestTemplate.HttpClientOption;
+import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
+import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 
 import harmonize.Services.AdminTestService;
 import harmonize.Services.ModeratorTestService;
@@ -39,5 +59,39 @@ public class TestConfig {
     @Bean
     public MusicTestService musicTestService() {
         return new MusicTestService();
+    }
+
+    @Bean
+    public TestRestTemplate testRestTemplate() throws Exception {
+        FileInputStream inputStream = new FileInputStream("./target/test-classes/harmonize.crt");
+        CertificateFactory certificateFactory = CertificateFactory.getInstance("X.509");
+        X509Certificate serverCertificate = (X509Certificate) certificateFactory.generateCertificate(inputStream);
+        inputStream.close();
+
+        KeyStore keyStore = KeyStore.getInstance(KeyStore.getDefaultType());
+        keyStore.load(null, null);
+        keyStore.setCertificateEntry("harmonize", serverCertificate);
+
+        SSLContext sslcontext = SSLContexts.custom()
+                .loadTrustMaterial(keyStore, null)
+                .build();
+        SSLConnectionSocketFactory sslSocketFactory = SSLConnectionSocketFactoryBuilder.create()
+                .setSslContext(sslcontext)
+                .build();
+        HttpClientConnectionManager cm = PoolingHttpClientConnectionManagerBuilder.create()
+                .setSSLSocketFactory(sslSocketFactory)
+                .build();
+        CloseableHttpClient httpClient = HttpClients.custom()
+                .setConnectionManager(cm)
+                .evictExpiredConnections()
+                .build();
+        HttpComponentsClientHttpRequestFactory factory = new HttpComponentsClientHttpRequestFactory(httpClient);
+        RestTemplateBuilder rtb = new RestTemplateBuilder()
+            .requestFactory(() -> factory)
+            .messageConverters(new MappingJackson2HttpMessageConverter());
+
+        TestRestTemplate testRestTemplate = new TestRestTemplate(rtb, null, null, HttpClientOption.SSL);
+
+        return testRestTemplate;
     }
 }

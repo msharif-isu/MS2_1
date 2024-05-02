@@ -22,23 +22,23 @@ public class ChatTest extends TestUtil {
     @DisabledIfEnvironmentVariable(named = "DOCKER_RUNNING", matches = "true")
     public void connectionOkTest() throws Exception {
         todTestService.getChatSocket().connect();
-        Thread.sleep(5000);
+        Thread.sleep(1000);
         assertTrue(todTestService.getChatSocket().isOpen());
     }
 
     @Test
     @DisabledIfEnvironmentVariable(named = "DOCKER_RUNNING", matches = "true")
     public void connectionInvalidPasswordTest() throws Exception {
-        chatSocket = new WebSocketTestService(URI.create("ws://" + getHostname() + ":" + getPort() + "/chats?username=" + todTestService.getUsername() + "&password=INVALIDPASSWORD"));
-        Thread.sleep(5000);
+        chatSocket = new WebSocketTestService(URI.create("wss://" + getHostname() + ":" + getPort() + "/chats?username=" + todTestService.getUsername() + "&password=INVALIDPASSWORD"));
+        Thread.sleep(1000);
         assertFalse(todTestService.getChatSocket().isOpen());
     }
 
     @Test
     @DisabledIfEnvironmentVariable(named = "DOCKER_RUNNING", matches = "true")
     public void connectionInvalidUsernameTest() throws Exception {
-        chatSocket = new WebSocketTestService(URI.create("ws://" + getHostname() + ":" + getPort() + "/chats?username=INVALIDUSERNAME" + "&password=" + todTestService.getPassword()));
-        Thread.sleep(5000);
+        chatSocket = new WebSocketTestService(URI.create("wss://" + getHostname() + ":" + getPort() + "/chats?username=INVALIDUSERNAME" + "&password=" + todTestService.getPassword()));
+        Thread.sleep(1000);
         assertFalse(todTestService.getChatSocket().isOpen());
     }
 
@@ -93,7 +93,7 @@ public class ChatTest extends TestUtil {
         
         String text = "Hello, World!";
         todTestService.getChatSocket().send(new MessageDTO(conversation, text));
-        Thread.sleep(5000);
+        Thread.sleep(1000);
 
         assertTrue(todTestService.getChatSocket().isOpen());
         assertTrue(bobTestService.getChatSocket().isOpen());

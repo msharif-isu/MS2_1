@@ -22,6 +22,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import harmonize.DTOs.ConversationDTO;
 import harmonize.DTOs.MessageDTO;
 import harmonize.DTOs.ReportDTO;
+import harmonize.DTOs.ResponseDTO;
 import harmonize.DTOs.RoleDTO;
 
 public class UserTestService extends AbstractUserTestService {
@@ -46,8 +47,8 @@ public class UserTestService extends AbstractUserTestService {
         return requestService.requestUser(auth, url + port + "/users", HttpMethod.PUT, user);
     }
 
-    public ResponseEntity<String> deleteSelf() {
-        return requestService.requestString(auth, url + port + "/users", HttpMethod.DELETE);
+    public ResponseEntity<ResponseDTO> deleteSelf() {
+        return requestService.requestResponse(auth, url + port + "/users", HttpMethod.DELETE);
     }
 
     public ResponseEntity<UserDTO> getUserById(int id) {
@@ -70,12 +71,12 @@ public class UserTestService extends AbstractUserTestService {
         return requestService.requestUserList(auth, url + port + "/users/friends/invites", HttpMethod.GET);
     }
 
-    public ResponseEntity<String> addFriend(int id) {
-        return requestService.requestString(auth, url + port + "/users/friends/" + id, HttpMethod.POST);
+    public ResponseEntity<ResponseDTO> addFriend(int id) {
+        return requestService.requestResponse(auth, url + port + "/users/friends/" + id, HttpMethod.POST);
     }
 
-    public ResponseEntity<String> removeFriend(int id) {
-        return requestService.requestString(auth, url + port + "/users/friends/" + id, HttpMethod.DELETE);
+    public ResponseEntity<ResponseDTO> removeFriend(int id) {
+        return requestService.requestResponse(auth, url + port + "/users/friends/" + id, HttpMethod.DELETE);
     }
 
     public ResponseEntity<List<ReportDTO>> getSentReports() {
@@ -89,8 +90,8 @@ public class UserTestService extends AbstractUserTestService {
         return requestService.requestReport(auth, url + port + "/users/reports", HttpMethod.POST, body);
     }
 
-    public ResponseEntity<String> deleteReport(ReportDTO report) {
-        return requestService.requestString(auth, url + port + "/users/reports/" + report.getId(), HttpMethod.DELETE);
+    public ResponseEntity<ResponseDTO> deleteReport(ReportDTO report) {
+        return requestService.requestResponse(auth, url + port + "/users/reports/" + report.getId(), HttpMethod.DELETE);
     }
 
     public ResponseEntity<byte[]> getIcon() {

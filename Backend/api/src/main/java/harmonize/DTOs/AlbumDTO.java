@@ -1,12 +1,13 @@
 package harmonize.DTOs;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import harmonize.Entities.Album;
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NonNull;
 
 @Data
-@AllArgsConstructor
 public class AlbumDTO {
     @NonNull
     private String id;
@@ -21,6 +22,13 @@ public class AlbumDTO {
         this.id = album.getId();
         this.name = album.getName();
         this.imageUrl = album.getImageUrl();
+    }
+
+    @JsonCreator
+    public AlbumDTO(@JsonProperty("id") String id, @JsonProperty("name") String name, @JsonProperty("imageUrl") String imageUrl) {
+        this.id = id;
+        this.name = name;
+        this.imageUrl = imageUrl;
     }
 
     @Override

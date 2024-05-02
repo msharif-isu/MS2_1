@@ -19,6 +19,7 @@ import harmonize.DTOs.ConversationDTO;
 import harmonize.DTOs.RoleDTO;
 import harmonize.DTOs.SongDTO;
 import harmonize.DTOs.UserDTO;
+import harmonize.DTOs.ResponseDTO;
 import harmonize.DTOs.FriendRecDTO;
 import harmonize.Entities.Role;
 import harmonize.Entities.Song;
@@ -123,7 +124,7 @@ public class UserService {
     }
 
     @NonNull
-    public String deleteUser(int id){
+    public ResponseDTO deleteUser(int id){
         User user = userRepository.findReferenceById(id);
 
         if(user == null)
@@ -149,7 +150,7 @@ public class UserService {
             
         userRepository.delete(user);
         
-        return new String(String.format("\"%s\" was deleted.", user.getUsername()));
+        return new ResponseDTO(String.format("\"%s\" was deleted.", user.getUsername()));
     }
 
     @NonNull 
@@ -238,7 +239,7 @@ public class UserService {
     }
 
     @NonNull
-    public String addFriend(int id, int idFriend) {
+    public ResponseDTO addFriend(int id, int idFriend) {
         User user = userRepository.findReferenceById(id);
         User friend = userRepository.findReferenceById(idFriend);
 
@@ -259,7 +260,7 @@ public class UserService {
         if (!user.getFriendInvites().contains(friend)) {
             friend.getFriendInvites().add(user);
             userRepository.save(friend);
-            return new String(String.format("\"%s\" sent friend invite to \"%s\"", user.getUsername(), friend.getUsername()));
+            return new ResponseDTO(String.format("\"%s\" sent friend invite to \"%s\"", user.getUsername(), friend.getUsername()));
         }
 
         user.getFriendInvites().remove(friend);
@@ -267,12 +268,12 @@ public class UserService {
         user.getFriends().add(friend);
         userRepository.save(friend);
         userRepository.save(user);
-        return new String(String.format("\"%s\" and \"%s\" are now friends", user.getUsername(), friend.getUsername()));
+        return new ResponseDTO(String.format("\"%s\" and \"%s\" are now friends", user.getUsername(), friend.getUsername()));
     
     }
 
     @NonNull
-    public String removeFriend(int id, int idFriend) {
+    public ResponseDTO removeFriend(int id, int idFriend) {
         User user = userRepository.findReferenceById(id);
         User friend = userRepository.findReferenceById(idFriend);
 
@@ -285,13 +286,13 @@ public class UserService {
         if (friend.getFriendInvites().contains(user)) {
             friend.getFriendInvites().remove(user);
             userRepository.save(friend);
-            return new String(String.format("\"%s\" removed friend invite to \"%s\"", user.getUsername(), friend.getUsername()));
+            return new ResponseDTO(String.format("\"%s\" removed friend invite to \"%s\"", user.getUsername(), friend.getUsername()));
         }
 
         if (user.getFriendInvites().contains(friend)) {
             user.getFriendInvites().remove(friend);
             userRepository.save(user);
-            return new String(String.format("\"%s\" removed friend invite from \"%s\"", user.getUsername(), friend.getUsername()));
+            return new ResponseDTO(String.format("\"%s\" removed friend invite from \"%s\"", user.getUsername(), friend.getUsername()));
         }
 
         if (!user.getFriends().contains(friend))
@@ -303,7 +304,7 @@ public class UserService {
         friend.getFriends().remove(user);
         userRepository.save(friend);
         userRepository.save(user);
-        return new String(String.format("\"%s\" is no longer friends with \"%s\"", user.getUsername(), friend.getUsername()));
+        return new ResponseDTO(String.format("\"%s\" is no longer friends with \"%s\"", user.getUsername(), friend.getUsername()));
     }
 
     public List<SongDTO> getSongs(int id) {
@@ -320,7 +321,7 @@ public class UserService {
         return songList;
     }
 
-    public String addSong(int id, String songId) {
+    public ResponseDTO addSong(int id, String songId) {
         User user = userRepository.findReferenceById(id);
 
         if(user == null)
@@ -337,10 +338,10 @@ public class UserService {
         updateTopArtists(user, song, true);
         userRepository.save(user);
 
-        return new String(String.format("\"%s\" favorited \"%s\"", user.getUsername(), song.getTitle()));
+        return new ResponseDTO(String.format("\"%s\" favorited \"%s\"", user.getUsername(), song.getTitle()));
     }
 
-    public String removeSong(int id, String songId) {
+    public ResponseDTO removeSong(int id, String songId) {
         User user = userRepository.findReferenceById(id);
 
         if(user == null)
@@ -357,7 +358,7 @@ public class UserService {
         updateTopArtists(user, song, false);
         userRepository.save(user);
         
-        return new String(String.format("\"%s\" removed \"%s\"", user.getUsername(), song.getTitle()));
+        return new ResponseDTO(String.format("\"%s\" removed \"%s\"", user.getUsername(), song.getTitle()));
     }
 
     private void updateTopArtists(User user, Song song, Boolean add) {

@@ -18,6 +18,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import harmonize.DTOs.AuthDTO;
 import harmonize.DTOs.ConversationDTO;
 import harmonize.DTOs.ReportDTO;
+import harmonize.DTOs.ResponseDTO;
 import harmonize.DTOs.RoleDTO;
 import harmonize.DTOs.UserDTO;
 
@@ -25,20 +26,12 @@ import harmonize.DTOs.UserDTO;
 public class RequestService {
 
     @Autowired
-    private TestRestTemplate restTemplate;
-
-    public ResponseEntity<String> requestWelcome(String path) {
-        return restTemplate.exchange(
-            path,
-            HttpMethod.GET,
-            new HttpEntity<>(new HttpHeaders()),
-            String.class);
-    }
+    private TestRestTemplate testRestTemplate;
 
     public ResponseEntity<AuthDTO> requestAuth(String path, HttpMethod method) {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
-        return restTemplate.exchange(
+        return testRestTemplate.exchange(
             path,
             HttpMethod.POST,
             new HttpEntity<>(headers),
@@ -48,7 +41,7 @@ public class RequestService {
     public ResponseEntity<AuthDTO> requestAuth(String path, HttpMethod method, Object body) {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
-        return restTemplate.exchange(
+        return testRestTemplate.exchange(
             path,
             HttpMethod.POST,
             new HttpEntity<>(body, headers),
@@ -58,7 +51,7 @@ public class RequestService {
     public ResponseEntity<UserDTO> requestUser(AuthDTO auth, String path, HttpMethod method) {
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", "Bearer " + auth.getAccessToken());
-        return restTemplate.exchange(
+        return testRestTemplate.exchange(
             path,
             method,
             new HttpEntity<>(headers),
@@ -68,7 +61,7 @@ public class RequestService {
     public ResponseEntity<UserDTO> requestUser(AuthDTO auth, String path, HttpMethod method, Object body) {
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", "Bearer " + auth.getAccessToken());
-        return restTemplate.exchange(
+        return testRestTemplate.exchange(
             path,
             method,
             new HttpEntity<>(body, headers),
@@ -78,7 +71,7 @@ public class RequestService {
     public ResponseEntity<ReportDTO> requestReport(AuthDTO auth, String path, HttpMethod method) {
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", "Bearer " + auth.getAccessToken());
-        return restTemplate.exchange(
+        return testRestTemplate.exchange(
             path,
             method,
             new HttpEntity<>(headers),
@@ -88,7 +81,7 @@ public class RequestService {
     public ResponseEntity<ReportDTO> requestReport(AuthDTO auth, String path, HttpMethod method, Object body) {
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", "Bearer " + auth.getAccessToken());
-        return restTemplate.exchange(
+        return testRestTemplate.exchange(
             path,
             method,
             new HttpEntity<>(body, headers),
@@ -98,7 +91,7 @@ public class RequestService {
     public ResponseEntity<String> requestString(AuthDTO auth, String path, HttpMethod method) {
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", "Bearer " + auth.getAccessToken());
-        return restTemplate.exchange(
+        return testRestTemplate.exchange(
             path,
             method,
             new HttpEntity<>(headers),
@@ -108,7 +101,7 @@ public class RequestService {
     public ResponseEntity<String> requestString(AuthDTO auth, String path, HttpMethod method, Object body) {
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", "Bearer " + auth.getAccessToken());
-        return restTemplate.exchange(
+        return testRestTemplate.exchange(
             path,
             method,
             new HttpEntity<>(body, headers),
@@ -118,7 +111,7 @@ public class RequestService {
     public ResponseEntity<ConversationDTO> requestConversation(AuthDTO auth, String path, HttpMethod method) {
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", "Bearer " + auth.getAccessToken());
-        return restTemplate.exchange(
+        return testRestTemplate.exchange(
             path,
             method,
             new HttpEntity<>(headers),
@@ -128,7 +121,7 @@ public class RequestService {
     public ResponseEntity<ConversationDTO> requestConversation(AuthDTO auth, String path, HttpMethod method, Object body) {
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", "Bearer " + auth.getAccessToken());
-        return restTemplate.exchange(
+        return testRestTemplate.exchange(
             path,
             method,
             new HttpEntity<>(body, headers),
@@ -138,7 +131,7 @@ public class RequestService {
     public ResponseEntity<List<UserDTO>> requestUserList(AuthDTO auth, String path, HttpMethod method) {
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", "Bearer " + auth.getAccessToken());
-        return restTemplate.exchange(
+        return testRestTemplate.exchange(
             path,
             method,
             new HttpEntity<>(headers),
@@ -148,7 +141,7 @@ public class RequestService {
     public ResponseEntity<List<UserDTO>> requestUserList(AuthDTO auth, String path, HttpMethod method, Object body) {
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", "Bearer " + auth.getAccessToken());
-        return restTemplate.exchange(
+        return testRestTemplate.exchange(
             path,
             method,
             new HttpEntity<>(body, headers),
@@ -158,7 +151,7 @@ public class RequestService {
     public ResponseEntity<List<RoleDTO>> requestRolesList(AuthDTO auth, String path, HttpMethod method) {
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", "Bearer " + auth.getAccessToken());
-        return restTemplate.exchange(
+        return testRestTemplate.exchange(
             path,
             method,
             new HttpEntity<>(headers),
@@ -168,7 +161,7 @@ public class RequestService {
     public ResponseEntity<List<RoleDTO>> requestRolesList(AuthDTO auth, String path, HttpMethod method, Object body) {
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", "Bearer " + auth.getAccessToken());
-        return restTemplate.exchange(
+        return testRestTemplate.exchange(
             path,
             method,
             new HttpEntity<>(body, headers),
@@ -178,7 +171,7 @@ public class RequestService {
     public ResponseEntity<List<ReportDTO>> requestReports(AuthDTO auth, String path, HttpMethod method) {
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", "Bearer " + auth.getAccessToken());
-        return restTemplate.exchange(
+        return testRestTemplate.exchange(
             path,
             method,
             new HttpEntity<>(headers),
@@ -188,17 +181,37 @@ public class RequestService {
     public ResponseEntity<List<ReportDTO>> requestReports(AuthDTO auth, String path, HttpMethod method, Object body) {
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", "Bearer " + auth.getAccessToken());
-        return restTemplate.exchange(
+        return testRestTemplate.exchange(
             path,
             method,
             new HttpEntity<>(body, headers),
             new ParameterizedTypeReference<List<ReportDTO>>() {});
     }
     
+    public ResponseEntity<ResponseDTO> requestResponse(AuthDTO auth, String path, HttpMethod method) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization", "Bearer " + auth.getAccessToken());
+        return testRestTemplate.exchange(
+            path,
+            method,
+            new HttpEntity<>(headers),
+            ResponseDTO.class);
+    }
+
+    public ResponseEntity<ResponseDTO> requestResponse(AuthDTO auth, String path, HttpMethod method, Object body) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization", "Bearer " + auth.getAccessToken());
+        return testRestTemplate.exchange(
+            path,
+            method,
+            new HttpEntity<>(body, headers),
+            ResponseDTO.class);
+    }
+
     public ResponseEntity<JsonNode> requestJson(AuthDTO auth, String path, HttpMethod method) {
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", "Bearer " + auth.getAccessToken());
-        return restTemplate.exchange(
+        return testRestTemplate.exchange(
             path,
             method,
             new HttpEntity<>(headers),
@@ -208,7 +221,7 @@ public class RequestService {
     public ResponseEntity<JsonNode> requestJson(AuthDTO auth, String path, HttpMethod method, Object body) {
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", "Bearer " + auth.getAccessToken());
-        return restTemplate.exchange(
+        return testRestTemplate.exchange(
             path,
             method,
             new HttpEntity<>(body, headers),
@@ -218,7 +231,7 @@ public class RequestService {
     public ResponseEntity<byte[]> requestByteArray(AuthDTO auth, String path, HttpMethod method) {
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", "Bearer " + auth.getAccessToken());
-        return restTemplate.exchange(
+        return testRestTemplate.exchange(
             path,
             method,
             new HttpEntity<>(headers),
@@ -226,7 +239,7 @@ public class RequestService {
     }
 
     public ResponseEntity<byte[]> requestByteArray(AuthDTO auth, String path, HttpMethod method, HttpEntity<MultiValueMap<String, Object>> requestEntity) {
-        return restTemplate.exchange(
+        return testRestTemplate.exchange(
             path,
             method,
             requestEntity,

@@ -7,7 +7,6 @@ import org.springframework.http.ResponseEntity;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 
-import harmonize.DTOs.SearchDTO;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -27,11 +26,15 @@ public class MusicTestService {
     }
 
     public void setConnection(String hostname, int port) {
-        this.url = "http://" + hostname + ":";
+        this.url = "https://" + hostname + ":";
         this.port = port;
     }
 
-    public ResponseEntity<JsonNode> getSearch(SearchDTO search) throws JsonProcessingException {
+    public ResponseEntity<JsonNode> getSearch(Object search) throws JsonProcessingException {
         return requestService.requestJson(user.getAuth(), url + port + "/music", HttpMethod.POST, search);
+    }
+
+    public ResponseEntity<JsonNode> getSong(Object song) {
+        return requestService.requestJson(user.getAuth(), url + port + "/music/songs/" + song, HttpMethod.GET);
     }
 }

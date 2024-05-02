@@ -1,12 +1,19 @@
 package harmonize.DTOs;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import harmonize.Entities.FeedItems.AbstractFeedItem;
-import lombok.AllArgsConstructor;
 import lombok.Data;
 
 @Data
-@AllArgsConstructor
 public class FeedDTO {
     private int index;
     private AbstractFeedItem item;
+
+    @JsonCreator
+    public FeedDTO(@JsonProperty("index") int index, @JsonProperty("item") AbstractFeedItem item) {
+        this.index = index;
+        this.item = item;
+    }
 }

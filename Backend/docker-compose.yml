@@ -24,6 +24,7 @@ services:
     entrypoint: java -jar /home/target/harmonize-api-1.0.0.jar
     ports:
       - "8080:8080"
+      - "8443:8443"
     depends_on:
       harmonize-db:
         condition: service_healthy

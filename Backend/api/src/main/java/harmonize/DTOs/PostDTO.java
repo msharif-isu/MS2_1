@@ -1,13 +1,14 @@
 package harmonize.DTOs;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import harmonize.Entities.Post;
 import io.micrometer.common.lang.NonNull;
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 
 @Data
-@AllArgsConstructor
 @RequiredArgsConstructor
 public class PostDTO {
     private int id;
@@ -18,6 +19,14 @@ public class PostDTO {
     private String post;
 
     private long time;
+
+    @JsonCreator
+    public PostDTO(@JsonProperty("id") int id, @JsonProperty("poster") UserDTO poster, @JsonProperty("post") String post, @JsonProperty("time") long time) {
+        this.id = id;
+        this.poster = poster;
+        this.post = post;
+        this.time = time;
+    }
 
     public PostDTO(Post post) {
         this.id = post.getId();

@@ -303,6 +303,7 @@ public class AccountPreferencesFragment extends Fragment {
             public void onClick(View v) {
                 if (allowEdit == false) {
                     allowEdit = true;
+                    editInfoBtn.setImageResource(R.drawable.edit_mode);
                     usernameText.setEnabled(allowEdit);
                     firstNameText.setEnabled(allowEdit);
                     lastNameText.setEnabled(allowEdit);
@@ -319,10 +320,10 @@ public class AccountPreferencesFragment extends Fragment {
                         @Override
                         public void onSuccess() {
                             Log.e("JWT", "Updated user details!");
-                            usernameText.setText(username);
-                            firstNameText.setText(firstName);
-                            lastNameText.setText(lastName);
-                            bioText.setText(bio);
+//                            usernameText.setText(username);
+//                            firstNameText.setText(firstName);
+//                            lastNameText.setText(lastName);
+//                            bioText.setText(bio);
 
                             currentUser = new Member(id, firstName, lastName, username, bio);
                             UserSession.getInstance().setCurrentUser(currentUser);
@@ -330,10 +331,11 @@ public class AccountPreferencesFragment extends Fragment {
                             UserSession.getInstance().setJwtToken(jwtToken);
                             Log.e("msg", currentUser.getUsername() + " " + currentUser.getFirstName() + " " + currentUser.getLastName() + " " + currentUser.getBio());
                             // SET ID TO MAX BECAUSE CURRENTLY DO NOT HAVE A REQUEST TO GET ID
+                            editInfoBtn.setImageResource(R.drawable.finish_mode);
                         }
                     });
 
-                    editInfoBtn.setImageResource(R.drawable.green_checkbox);
+
 
                 }
 
@@ -532,6 +534,10 @@ public class AccountPreferencesFragment extends Fragment {
                         try {
                             Log.e("JWT", "Updating user details!");
                             callBackDetails.onSuccess();
+                            username = usernameText.getText().toString();
+                            firstName = firstNameText.getText().toString();
+                            lastName = lastNameText.getText().toString();
+                            bio = bioText.getText().toString();
 
                         }
                         catch (Exception e) {

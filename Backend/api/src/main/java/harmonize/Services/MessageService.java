@@ -1,6 +1,8 @@
 package harmonize.Services;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -39,7 +41,7 @@ public class MessageService {
 
     public Message createMessage(User sender, Conversation conversation, String text, String privateKey) throws Exception {
         Message message = new Message();
-        message.setTime(new Date());
+        message.setTime(new Date(System.currentTimeMillis()));
         message.setSender(sender);
         message.setHash(encoder.encode(text));
         message.setConversation(conversation);
@@ -71,12 +73,14 @@ public class MessageService {
     public ResponseDTO deleteMessage(Message message) {
         Conversation conversation = message.getConversation();
         
-        conversation.getMessages().remove(message);
-        for (Report report : message.getReports()) {
+        List<Report> reportCopy = new ArrayList<>(message.getReports());
+        for (Report report : reportCopy) {
             reportService.deleteReport(report);
         }
-
+        
+        conversation.getMessages().remove(message);
         conversationRepository.save(conversation);
+
         messageRepository.delete(message);
         
         return new ResponseDTO(String.format("Message %d was deleted.", message.getId()));

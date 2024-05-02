@@ -7,18 +7,18 @@ public class User {
 
     private String username;
     private int id;
-    private String firstName;
-    private String lastName;
+    private String artistName;
 
     /**
      * creates a user
      * @param id
      * @param username
      */
-    public User(int id, String username) {
+    public User(int id, String username, String artistName) {
 
         this.id = id;
         this.username = username;
+        this.artistName = artistName;
 
     }
 
@@ -39,6 +39,16 @@ public class User {
     public int getId() {
 
         return id;
+
+    }
+
+    /**
+     * returns artistName
+     * @return
+     */
+    public String getArtistName() {
+
+        return artistName;
 
     }
 

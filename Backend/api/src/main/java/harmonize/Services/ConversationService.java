@@ -1,5 +1,7 @@
 package harmonize.Services;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,22 +55,22 @@ public class ConversationService {
             userRepository.save(user);
         }
         chatService.notifyUsers(conversation, true);
-        for (Message message : conversation.getMessages()) {
-            messageService.deleteMessage(message);
-        }
+        List<Message> messagesCopy = new ArrayList<>(conversation.getMessages());
+        messagesCopy.stream().forEach(message -> messageService.deleteMessage(message));
         conversationRepository.delete(conversation);
     }
 
     public void removeMember(Conversation conversation, User member) {
-        conversation.getMembers().remove(member);
-
-        for (Message message : conversation.getMessages()) {
+        List<Message> messagesCopy = new ArrayList<>(conversation.getMessages());
+        for (Message message : messagesCopy) {
             if (message.getSender().equals(member)) {
                 messageService.deleteMessage(message);
             } else {
                 messageService.removeRecipient(message, member);
             }
         }
+
+        conversation.getMembers().remove(member);
         if (conversation.getMembers().size() <= 1)
             deleteConversation(conversation);
         else

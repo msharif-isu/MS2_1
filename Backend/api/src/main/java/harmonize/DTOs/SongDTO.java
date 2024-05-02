@@ -17,34 +17,31 @@ public class SongDTO {
     private String id;
 
     @NonNull
-    private String artistid;
-
-    @NonNull
     private String title;
 
-    //For Testing
-    @Deprecated
-    private String artist;
+    private ArtistDTO artist;
+
+    private AlbumDTO album;
 
     public SongDTO(Song song) {
         this.id = song.getId();
-        this.artistid = song.getArtistId();
         this.title = song.getTitle();
-        this.artist = song.getArtist();
+        this.artist = new ArtistDTO(song.getArtist().getId(), song.getArtist().getName());
+        this.album = new AlbumDTO(song.getAlbum());
     }
 
     public SongDTO(LikedSong connection) {
         this.id = connection.getSong().getId();
-        this.artistid = connection.getSong().getArtistId();
         this.title = connection.getSong().getTitle();
-        this.artist = connection.getSong().getArtist();
+        this.artist = new ArtistDTO(connection.getSong().getArtist().getId(), connection.getSong().getArtist().getName());
+        this.album = new AlbumDTO(connection.getSong().getAlbum());
     }
 
     @JsonCreator
-    public SongDTO(@JsonProperty("id") String id, @JsonProperty("artistid") String artistid, @JsonProperty("title") String title, @JsonProperty("artist") String artist) {
+    public SongDTO(@JsonProperty("id") String id, @JsonProperty("title") String title, @JsonProperty("artist") ArtistDTO artist, @JsonProperty("album") AlbumDTO album) {
         this.id = id;
-        this.artistid = artistid;
         this.title = title;
         this.artist = artist;
+        this.album = album;
     }
 }

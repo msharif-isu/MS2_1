@@ -11,7 +11,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
+import harmonize.DTOs.ArtistDTO;
 import harmonize.DTOs.SearchDTO;
+import harmonize.DTOs.SongDTO;
 import harmonize.Services.MusicService;
 
 @RestController
@@ -30,12 +32,12 @@ public class MusicController {
     }
 
     @GetMapping(path = "/songs/{id}")
-    public ResponseEntity<JsonNode> getSong(@PathVariable String id) {
+    public ResponseEntity<SongDTO> getSong(@PathVariable String id) {
         return ResponseEntity.ok(musicService.getSong(id));
     }
 
     @GetMapping(path = "/artists/{id}")
-    public ResponseEntity<JsonNode> getArtist(@PathVariable String id) {
+    public ResponseEntity<ArtistDTO> getArtist(@PathVariable String id) {
         return ResponseEntity.ok(musicService.getArtist(id));
     }
 

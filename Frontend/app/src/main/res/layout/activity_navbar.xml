@@ -4,7 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".navBar">
+    tools:context=".navBar"
+    android:background="@color/white">
 
     <FrameLayout
         android:id="@+id/frame_layout"
@@ -26,7 +27,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        android:background="@color/mint_cream"
+        android:background="@color/white"
         app:menu="@menu/bottom_nav_menu"
         app:labelVisibilityMode="labeled"/>
 
@@ -40,6 +41,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        android:visibility="gone"
         >
     </FrameLayout>
 <!--            android:background="@drawable/rounded_corners"-->

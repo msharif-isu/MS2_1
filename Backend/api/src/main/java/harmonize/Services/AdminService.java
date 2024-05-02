@@ -1,5 +1,8 @@
 package harmonize.Services;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,6 +16,7 @@ import harmonize.Entities.Role;
 import harmonize.Entities.User;
 import harmonize.ErrorHandling.Exceptions.EntityAlreadyExistsException;
 import harmonize.ErrorHandling.Exceptions.EntityNotFoundException;
+import harmonize.ErrorHandling.Exceptions.InternalServerErrorException;
 import harmonize.Repositories.RoleRepository;
 import harmonize.Repositories.UserRepository;
 
@@ -94,5 +98,19 @@ public class AdminService {
         userRepository.save(user);
 
         return new ResponseDTO(String.format("\"%s\" has been deleted from \"%s\"", role, user.getUsername()));
+    }
+
+    public byte[] getIcon(int id) {
+        User user = userRepository.findReferenceById(id);
+
+        if(user == null)
+            throw new EntityNotFoundException("User " + id + " not found.");
+
+        try {
+            File file = new File(user.getIcon().getPath());
+            return Files.readAllBytes(file.toPath());
+        } catch (IOException e) {
+            throw new InternalServerErrorException("Error: Was unable to read image.");
+        }
     }
 }

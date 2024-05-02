@@ -4,7 +4,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="75dp"
-    android:background="@color/cambridge_blue">
+    android:background="@color/Indian_red">
 
 
     <TextView
@@ -13,19 +13,21 @@
         android:textSize="16sp"
         android:layout_marginStart="50dp"
         android:text="ReportedName"
-        android:textColor="@color/black"
+        android:textColor="@color/Jet"
         android:layout_marginEnd="20dp"
         android:maxLines="1"
         android:layout_marginTop="15dp"
         android:layout_height="wrap_content"/>
 
-    <ImageView
-        android:id="@+id/ReportedPersonImage"
-        android:layout_width="20dp"
-        android:layout_height="20dp"
-        android:layout_marginStart="20dp"
-        android:layout_marginTop="30dp"
-        app:srcCompat="@drawable/circle"/>
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/profile_Picture"
+        android:layout_width="35dp"
+        android:layout_height="35dp"
+        android:layout_alignParentStart="true"
+        android:layout_centerVertical="true"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginLeft="7dp"
+        android:src="@drawable/ic_launcher_foreground" />
 
     <TextView
         android:id="@+id/ReportedMessageDate"
@@ -38,6 +40,7 @@
         android:layout_alignParentRight="true"
         android:gravity="center"
         android:text="dd/mm/yyyy hh:mm"
+        android:textColor="@color/Ebony"
         android:textSize="10sp" />
 
 
@@ -53,6 +56,7 @@
         android:layout_marginRight="15dp"
         android:gravity="center"
         android:text="Report Reason"
+        android:textColor="@color/Ebony"
         android:textSize="10sp" />
 
     <TextView
@@ -65,6 +69,7 @@
         android:layout_marginStart="50dp"
         android:gravity="center"
         android:text="Last sent message"
+        android:textColor="@color/Ebony"
         android:textSize="10sp"/>
 
 

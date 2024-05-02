@@ -60,8 +60,10 @@ public class TestUtil {
     @AfterEach
     public void teardown() {
         ResponseEntity<List<UserDTO>> usersResponseEntity = adminTestService.getUsers();
-        if (usersResponseEntity.getStatusCode() != HttpStatus.OK)
+        if (usersResponseEntity.getStatusCode() != HttpStatus.OK) {
+            fail("Admin user could not get users.");
             return;
+        }
         
         List<UserDTO> usersBody = usersResponseEntity.getBody();
         if (usersBody == null) {

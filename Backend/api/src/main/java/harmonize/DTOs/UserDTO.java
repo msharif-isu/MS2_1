@@ -55,4 +55,17 @@ public class UserDTO {
         this.bio = bio;
         this.roles = roles;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || this.getClass() != o.getClass()) return false;
+        UserDTO user = (UserDTO) o;
+        return user.id == this.id;
+    }
+
+    @Override
+    public int hashCode() {
+        return id;
+    }
 }

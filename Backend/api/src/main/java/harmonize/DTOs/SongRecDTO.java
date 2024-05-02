@@ -14,14 +14,14 @@ import lombok.RequiredArgsConstructor;
 @Data
 @NoArgsConstructor
 @RequiredArgsConstructor
-public class RecommendationDTO {
+public class SongRecDTO {
     @NonNull
     private String limit;
     private List<String> artistIds;
     private List<String> songIds;
 
     @JsonCreator
-    public RecommendationDTO(@JsonProperty("limit") String limit, @JsonProperty("artistIds") List<String> artistIds, @JsonProperty("songIds") List<String> songIds) {
+    public SongRecDTO(@JsonProperty("limit") String limit, @JsonProperty("artistIds") List<String> artistIds, @JsonProperty("songIds") List<String> songIds) {
         if(artistIds.size() + songIds.size() > 5)
             throw new InternalServerErrorException("Combined size of artistIds and songIds must be equal to or less than 5");
 

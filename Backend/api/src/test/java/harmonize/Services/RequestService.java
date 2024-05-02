@@ -11,10 +11,12 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.util.MultiValueMap;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
 import harmonize.DTOs.AuthDTO;
+import harmonize.DTOs.ConversationDTO;
 import harmonize.DTOs.ReportDTO;
 import harmonize.DTOs.ResponseDTO;
 import harmonize.DTOs.RoleDTO;
@@ -84,6 +86,46 @@ public class RequestService {
             method,
             new HttpEntity<>(body, headers),
             ReportDTO.class);
+    }
+
+    public ResponseEntity<String> requestString(AuthDTO auth, String path, HttpMethod method) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization", "Bearer " + auth.getAccessToken());
+        return testRestTemplate.exchange(
+            path,
+            method,
+            new HttpEntity<>(headers),
+            String.class);
+    }
+
+    public ResponseEntity<String> requestString(AuthDTO auth, String path, HttpMethod method, Object body) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization", "Bearer " + auth.getAccessToken());
+        return testRestTemplate.exchange(
+            path,
+            method,
+            new HttpEntity<>(body, headers),
+            String.class);
+    }
+
+    public ResponseEntity<ConversationDTO> requestConversation(AuthDTO auth, String path, HttpMethod method) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization", "Bearer " + auth.getAccessToken());
+        return testRestTemplate.exchange(
+            path,
+            method,
+            new HttpEntity<>(headers),
+            new ParameterizedTypeReference<ConversationDTO>() {});
+    }
+
+    public ResponseEntity<ConversationDTO> requestConversation(AuthDTO auth, String path, HttpMethod method, Object body) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization", "Bearer " + auth.getAccessToken());
+        return testRestTemplate.exchange(
+            path,
+            method,
+            new HttpEntity<>(body, headers),
+            new ParameterizedTypeReference<ConversationDTO>() {});
     }
 
     public ResponseEntity<List<UserDTO>> requestUserList(AuthDTO auth, String path, HttpMethod method) {
@@ -186,4 +228,21 @@ public class RequestService {
             JsonNode.class);
     }
 
+    public ResponseEntity<byte[]> requestByteArray(AuthDTO auth, String path, HttpMethod method) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization", "Bearer " + auth.getAccessToken());
+        return testRestTemplate.exchange(
+            path,
+            method,
+            new HttpEntity<>(headers),
+            byte[].class);
+    }
+
+    public ResponseEntity<byte[]> requestByteArray(AuthDTO auth, String path, HttpMethod method, HttpEntity<MultiValueMap<String, Object>> requestEntity) {
+        return testRestTemplate.exchange(
+            path,
+            method,
+            requestEntity,
+            byte[].class);
+    }
 }

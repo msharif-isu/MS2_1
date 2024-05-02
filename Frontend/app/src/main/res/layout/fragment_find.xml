@@ -1,36 +1,34 @@
 <?xml version="1.0" encoding="utf-8"?>
-
-<!-- fragment_user_list.xml -->
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@color/Indian_red"
+    android:orientation="vertical">
 
-    <LinearLayout
-        android:id="@+id/container"
+    <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:text="Recommended Friends"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        android:padding="16dp"
+        android:gravity="center" />
 
-        <!-- User item layout -->
-        <!-- This will be inflated dynamically for each user -->
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
 
-    </LinearLayout>
-</ScrollView>
+        <LinearLayout
+            android:id="@+id/container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
 
+            <!-- User item layout -->
+            <!-- This will be inflated dynamically for each user -->
 
+        </LinearLayout>
 
-<!--<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"-->
-<!--    xmlns:tools="http://schemas.android.com/tools"-->
-<!--    android:layout_width="match_parent"-->
-<!--    android:layout_height="match_parent"-->
-<!--    tools:context=".FindFragment">-->
+    </ScrollView>
 
-<!--    <TextView-->
-<!--        android:layout_width="wrap_content"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:layout_gravity="center"-->
-<!--        android:textSize="30sp"-->
-<!--        android:text="@string/find_fragment_text"-->
-<!--        />-->
-
-<!--</FrameLayout>-->
+</LinearLayout>

@@ -12,6 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
@@ -40,14 +41,15 @@ import UserInfo.UserSession;
  */
 public class ReportMessageFragment extends Fragment {
 
-    private Button backBtn, sendBtn;
+    private Button sendBtn;
+    private ImageButton backBtn;
     private EditText inputReport;
 
     private MessageDTO reportedMessage;
 
     private RequestQueue mQueue;
 
-    private String URL = "http://coms-309-032.class.las.iastate.edu:8080";
+//    private String URL = "http://coms-309-032.class.las.iastate.edu:8080";
 
 
 
@@ -92,7 +94,7 @@ public class ReportMessageFragment extends Fragment {
 
         View view = inflater.inflate(R.layout.report_message_popup, container, false);
 
-        backBtn = view.findViewById(R.id.Back_button);
+        backBtn = view.findViewById(R.id.back_button);
         sendBtn = view.findViewById(R.id.button_send);
         inputReport = view.findViewById(R.id.edit_message);
         backBtn.setOnClickListener(new View.OnClickListener() {
@@ -103,6 +105,9 @@ public class ReportMessageFragment extends Fragment {
                 FragmentTransaction transaction = fragmentManager.beginTransaction();
                 transaction.remove(ReportMessageFragment.this);
                 transaction.commit();
+
+                getActivity().findViewById(R.id.popout_frame_layout).setVisibility(View.GONE);
+
             }
         });
 
@@ -154,7 +159,7 @@ public class ReportMessageFragment extends Fragment {
 
         JsonObjectRequest jsonObjReq = new JsonObjectRequest(
                 Request.Method.POST,
-                URL + "/users/reports",
+                UserSession.getInstance().getURL() + "/users/reports",
                 jsonBody, // Pass null as the request body since it's a GET request
                 new Response.Listener<JSONObject>() {
                     @Override

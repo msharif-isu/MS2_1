@@ -133,7 +133,7 @@ public class MessageFragment extends Fragment implements WebSocketListener {
             }
         };
 
-        String serverURL = "ws://coms-309-032.class.las.iastate.edu:8080/chats?username=" + username + "&password=" + password;
+        String serverURL = "wss://coms-309-032.class.las.iastate.edu:8443/chats?username=" + username + "&password=" + password;
         Log.e("msg", "Before websocket connection");
         WebSocketManagerChat.getInstance().connectWebSocket(serverURL);
         WebSocketManagerChat.getInstance().setWebSocketListener(this);

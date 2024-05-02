@@ -133,7 +133,7 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
             int userId = feedItem.getData().getItem().getUser().getId();
 
             // Make API request to retrieve user information
-            String userUrl = "http://coms-309-032.class.las.iastate.edu:8080/users/id/" + userId;
+            String userUrl = UserSession.getInstance().getURL() + "/users/id/" + userId;
             JsonObjectRequest userRequest = new JsonObjectRequest(Request.Method.GET, userUrl, null,
                     new Response.Listener<JSONObject>() {
                         @Override
@@ -213,7 +213,7 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
             feedItemTypeTextView.setText(feedItem.getData().getItem().getType().replaceAll("_", " "));
 
             // Make API request to retrieve track information
-            String trackUrl = "http://coms-309-032.class.las.iastate.edu:8080/music/songs/" + feedItem.getData().getItem().getSong().getId();
+            String trackUrl = UserSession.getInstance().getURL() + "/music/songs/" + feedItem.getData().getItem().getSong().getId();
             JsonObjectRequest trackRequest = new JsonObjectRequest(Request.Method.GET, trackUrl, null,
                     new Response.Listener<JSONObject>() {
                         @Override

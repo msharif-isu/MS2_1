@@ -45,6 +45,7 @@ import java.util.List;
 import java.util.Map;
 
 import Connections.VolleyCallBack;
+import DTO.FeedDTO;
 import PictureData.SeePictureFragment;
 import PictureData.SharedViewModel;
 import UserInfo.Member;
@@ -86,8 +87,6 @@ public class AccountPreferencesFragment extends Fragment {
 
     private static Member currentUser;
 
-    private String URL = "http://coms-309-032.class.las.iastate.edu:8080";
-//    private String URL = "http://10.48.110.126";
     private SharedViewModel viewModel;
 
 
@@ -351,7 +350,7 @@ public class AccountPreferencesFragment extends Fragment {
 
         JsonObjectRequest jsonObjReq = new JsonObjectRequest(
                 Request.Method.GET,
-                URL + "/users",
+                UserSession.getInstance().getURL() + "/users",
                 null, // Pass null as the request body since it's a GET request
                 new Response.Listener<JSONObject>() {
                     @Override
@@ -405,7 +404,7 @@ public class AccountPreferencesFragment extends Fragment {
 
     private void makeImageRequest() {
         ImageRequest imageRequest = new ImageRequest(
-                URL + "/users/icons", // Do change
+                UserSession.getInstance().getURL()  + "/users/icons", // Do change
                 new Response.Listener<Bitmap>() {
                     @Override
                     public void onResponse(Bitmap response) {
@@ -467,7 +466,7 @@ public class AccountPreferencesFragment extends Fragment {
     private void deleteUser(VolleyCallBack volleyCallBack) {
         JsonObjectRequest jsonObjReq = new JsonObjectRequest(
                 Request.Method.DELETE,
-                URL + "/users",
+                UserSession.getInstance().getURL()  + "/users",
                 null,
                 new Response.Listener<JSONObject>() {
                     @Override
@@ -584,7 +583,7 @@ public class AccountPreferencesFragment extends Fragment {
     private void checkRoles(VolleyCallBack volleyCallBack) {
         JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(
                 Request.Method.GET,
-                URL + "/users/roles",
+                UserSession.getInstance().getURL()  + "/users/roles",
                 null, // Pass null as the request body since it's a GET request
                 response -> {
                     try {

@@ -49,7 +49,6 @@ public class ReportMessageFragment extends Fragment {
 
     private RequestQueue mQueue;
 
-//    private String URL = "http://coms-309-032.class.las.iastate.edu:8080";
 
 
 

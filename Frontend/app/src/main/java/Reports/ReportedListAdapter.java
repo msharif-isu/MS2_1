@@ -104,13 +104,7 @@ public class ReportedListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                deleteUser(reportedId, new VolleyCallBack() {
-                    @Override
-                    public void onSuccess() {
-                        reportList.remove(position);
-                        notifyItemRemoved(position);
-                    }
-                });
+
             }
         });
 
@@ -229,34 +223,34 @@ public class ReportedListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         mQueue.add(jsonObjReq);
     }
 
-    private void deleteUser(int id, VolleyCallBack volleyCallBack) {
-        StringRequest stringRequest = new StringRequest(
-                Request.Method.DELETE,
-                UserSession.getInstance().getURL() + "/moderators/users/" + String.valueOf(id),
-                new Response.Listener<String>() {
-
-                    @Override
-                    public void onResponse(String response) {
-                        Log.e("Report", response);
-                        volleyCallBack.onSuccess();
-
-                    }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-
-                    }
-                }
-        )
-        {
-            @Override
-            public Map<String, String> getHeaders() throws AuthFailureError {
-                HashMap<String, String> headers = new HashMap<String, String>();
-                headers.put("Authorization", UserSession.getInstance().getJwtToken());
-                return headers;
-            }
-        };
-        mQueue.add(stringRequest);
-    }
+//    private void deleteUser(int id, VolleyCallBack volleyCallBack) {
+//        StringRequest stringRequest = new StringRequest(
+//                Request.Method.DELETE,
+//                UserSession.getInstance().getURL() + "/moderators/users/" + String.valueOf(id),
+//                new Response.Listener<String>() {
+//
+//                    @Override
+//                    public void onResponse(String response) {
+//                        Log.e("Report", response);
+//                        volleyCallBack.onSuccess();
+//
+//                    }
+//                },
+//                new Response.ErrorListener() {
+//                    @Override
+//                    public void onErrorResponse(VolleyError error) {
+//
+//                    }
+//                }
+//        )
+//        {
+//            @Override
+//            public Map<String, String> getHeaders() throws AuthFailureError {
+//                HashMap<String, String> headers = new HashMap<String, String>();
+//                headers.put("Authorization", UserSession.getInstance().getJwtToken());
+//                return headers;
+//            }
+//        };
+//        mQueue.add(stringRequest);
+//    }
 }

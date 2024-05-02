@@ -216,7 +216,7 @@ public class FriendsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
-                        Log.e("Friends", response);
+                        Log.e("Friends", "Friend removed");
                         volleyCallBack.onSuccess();
 
                     }

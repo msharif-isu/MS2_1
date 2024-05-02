@@ -1,6 +1,7 @@
 package com.example.harmonizefrontend;
 
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -26,6 +27,7 @@ import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.bumptech.glide.Glide;
+import com.google.gson.Gson;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -37,7 +39,10 @@ import java.util.Map;
 
 import java.util.ArrayList;
 
+import Connections.VolleyCallBack;
 import Connections.VolleySingleton;
+import Reports.Report;
+import UserInfo.Member;
 import UserInfo.User;
 import UserInfo.UserSession;
 
@@ -47,6 +52,8 @@ import UserInfo.UserSession;
 public class FindFragment extends Fragment {
     private ArrayList<User> userList;
     private RequestQueue mQueue;
+
+    private ArrayList<Member> pendingList = new ArrayList<>();
 
     public FindFragment() {
         // Required empty public constructor
@@ -127,6 +134,12 @@ public class FindFragment extends Fragment {
 
                         userList.add(new User(id, username, artistName));
                     }
+                    getPendingRequests(new VolleyCallBack() {
+                        @Override
+                        public void onSuccess() {
+                            Log.e("Pending", "got the pending requests");
+                        }
+                    });
 
                     populateUserItems();
                 } catch (JSONException e) {
@@ -170,6 +183,91 @@ public class FindFragment extends Fragment {
 
             LinearLayout containerLayout = requireView().findViewById(R.id.container);
             LayoutInflater inflater = LayoutInflater.from(getContext());
+
+            for (Member member: pendingList) {
+                User user = new User(member.getid(), member.getUsername(), "");
+
+                View userItemView = inflater.inflate(R.layout.user_item, containerLayout, false);
+
+                // This binds the user information to the user item view
+                ImageView profileImageView = userItemView.findViewById(R.id.profileImageView);
+                TextView usernameTextView = userItemView.findViewById(R.id.usernameTextView);
+                TextView sharedInterestsTextView = userItemView.findViewById(R.id.sharedInterestsTextView);
+                ImageButton addFriendButton = userItemView.findViewById(R.id.addFriendButton);
+
+                ImageRequest imageRequest = new ImageRequest(
+                        UserSession.getInstance().getURL() + "/users/icons/" + user.getId(),
+                        new Response.Listener<Bitmap>() {
+                            @Override
+                            public void onResponse(Bitmap response) {
+                                // Display the image in the ImageView
+
+                                profileImageView.setImageBitmap(response);
+                                Log.d("Image", "Got the image");
+                            }
+                        },
+                        0, // Width, set to 0 to get the original width
+                        0, // Height, set to 0 to get the original height
+                        ImageView.ScaleType.FIT_XY, // ScaleType
+                        Bitmap.Config.RGB_565, // Bitmap config
+
+                        new Response.ErrorListener() {
+                            @Override
+                            public void onErrorResponse(VolleyError error) {
+                                if (error == null || error.networkResponse == null) {
+                                    return;
+                                }
+                                String body = "";
+                                final String statusCode = String.valueOf(error.networkResponse.statusCode);
+                                try {
+                                    body = new String(error.networkResponse.data,"UTF-8");
+                                } catch (UnsupportedEncodingException e) {
+                                    // exception
+                                }
+                                Log.e("Image", body);
+                                Log.e("Image", statusCode);
+                                if (statusCode.equals("404")) {
+                                    profileImageView.setImageResource(R.drawable.ic_launcher_foreground);
+                                }
+                            }
+                        }
+
+                )
+
+                {
+                    @Override
+                    public Map<String, String> getHeaders() throws AuthFailureError {
+                        HashMap<String, String> headers = new HashMap<String, String>();
+                        headers.put("Authorization", UserSession.getInstance().getJwtToken());
+                        return headers;
+                    }
+
+                };
+
+                // Adding request to request queue
+                mQueue.add(imageRequest);
+
+
+
+                //Replace .getProfileImageUrl with correct method
+                //Glide.with(requireContext()).load(user.getProfileImageUrl()).into(profileImageView);
+
+                String sharedInterests = "Impending friend request";
+                sharedInterestsTextView.setText(sharedInterests);
+                usernameTextView.setText(user.getUsername());
+                userItemView.setBackgroundColor(Color.rgb(200, 100, 106));
+
+                addFriendButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        addFriendButton.setVisibility(View.INVISIBLE);
+                        addFriend(user.getId());
+                    }
+                });
+
+                containerLayout.addView(userItemView);
+
+            }
 
             for (User user: userList) {
 
@@ -304,6 +402,42 @@ public class FindFragment extends Fragment {
 
         // Add the request to the requestQueue
         mQueue.add(stringRequest);
+    }
+
+    private void getPendingRequests(VolleyCallBack volleyCallBack) {
+        JsonArrayRequest jsonArrayReq = new JsonArrayRequest(
+                Request.Method.GET,
+                UserSession.getInstance().getURL() + "/users/friends/invites",
+                null,
+                response -> {
+                    try {
+                        for (int i = 0; i < response.length(); i++) {
+                            JSONObject reportObject = response.getJSONObject(i);
+                            Member member = parseMember(reportObject);
+                            pendingList.add(member);
+                            Log.e("Pending", "New member pending");
+                        }
+                        volleyCallBack.onSuccess();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                },
+                error -> Log.e("report", error.toString())
+        ) {
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                HashMap<String, String> headers = new HashMap<>();
+                headers.put("Authorization", UserSession.getInstance().getJwtToken());
+                return headers;
+            }
+        };
+        mQueue.add(jsonArrayReq);
+    }
+
+    private Member parseMember(JSONObject reportObject) {
+        Gson gson = new Gson();
+
+        return gson.fromJson(reportObject.toString(), Member.class);
     }
 
     private void makeImageRequest(int id, ImageView imageView) {

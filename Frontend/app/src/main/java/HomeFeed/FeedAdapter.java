@@ -5,6 +5,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.WebView;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -117,7 +118,7 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
         abstract void bind(FeedDTO feedItem);
     }
 
-    static class PostViewHolder extends ViewHolder {
+    public static class PostViewHolder extends ViewHolder {
         private ImageView profileImageView;
         private TextView usernameTextView;
         private TextView postTextView;
@@ -185,26 +186,30 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
      * This constructor takes the inflated view item as a parameter and initializes the views.
      * This class represents a single item view in the RecyclerView and holds references to the views within that item view.
      */
-    static class FeedViewHolder extends ViewHolder {
-        private ImageView albumCoverImageView;
+    public static class FeedViewHolder extends ViewHolder {
         private TextView feedItemTypeTextView;
         private TextView artistNameTextView;
         private TextView albumNameTextView;
         private TextView trackNameTextView;
         private ImageButton addButton;
+        private ImageButton albumButton;
+        private WebView playSongView;
 
         private RequestQueue requestQueue;
 
         FeedViewHolder(@NonNull View itemView) {
-
             super(itemView);
 
-            albumCoverImageView = itemView.findViewById(R.id.albumCoverImageView);
             feedItemTypeTextView = itemView.findViewById(R.id.feedItemTypeTextView);
             artistNameTextView = itemView.findViewById(R.id.artistNameTextView);
             albumNameTextView = itemView.findViewById(R.id.albumNameTextView);
             trackNameTextView = itemView.findViewById(R.id.trackNameTextView);
             addButton = itemView.findViewById(R.id.addButton);
+            albumButton = itemView.findViewById(R.id.albumCoverImageButton);
+
+            playSongView = itemView.findViewById(R.id.webView);
+
+            playSongView.getSettings().setJavaScriptEnabled(true);
 
             requestQueue = Volley.newRequestQueue(itemView.getContext());
         }
@@ -236,14 +241,14 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
                                         .load(albumImage)
                                         .placeholder(R.drawable.placeholder_image)
                                         .error(R.drawable.error_image)
-                                        .into(albumCoverImageView);
+                                        .into(albumButton);
                             } catch (JSONException e) {
                                 e.printStackTrace();
                                 // Handle JSON parsing error
                                 trackNameTextView.setText("Track not found");
                                 artistNameTextView.setText("Artist not found");
                                 albumNameTextView.setText("Album not found");
-                                albumCoverImageView.setImageResource(R.drawable.error_image);
+                                albumButton.setImageResource(R.drawable.error_image);
                             }
                         }
                     },
@@ -271,6 +276,24 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
                 public void onClick(View v) {
                     if (onAddTrackListener != null) {
                         onAddTrackListener.onAddTrack(feedItem);
+                        addButton.setImageResource(R.drawable.green_checkbox);
+                    }
+                }
+            });
+            albumButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (playSongView.getVisibility() == View.GONE) {
+                        // Expand the WebView and load the URL
+                        playSongView.setVisibility(View.VISIBLE);
+                        playSongView.getLayoutParams().height = ViewGroup.LayoutParams.WRAP_CONTENT;
+                        playSongView.requestLayout();
+                        playSongView.loadUrl("https://open.spotify.com/embed/track/" + feedItem.getData().getItem().getSong().getId() + "?utm_source=generator&theme=0");
+                    } else {
+                        // Collapse the WebView
+                        playSongView.setVisibility(View.GONE);
+                        playSongView.getLayoutParams().height = 0;
+                        playSongView.requestLayout();
                     }
                 }
             });

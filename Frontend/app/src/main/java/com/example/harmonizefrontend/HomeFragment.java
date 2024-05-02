@@ -316,6 +316,7 @@ public class HomeFragment extends Fragment implements WebSocketListener, FeedAda
                     public void onResponse(String response) {
                         // Track added successfully
                         Toast.makeText(getActivity(), "Track added to liked songs", Toast.LENGTH_SHORT).show();
+
                     }
                 },
                 new Response.ErrorListener() {

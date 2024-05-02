@@ -84,9 +84,12 @@ public class GroupListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                     if (gcList.contains(friend)) {
                         gcList.remove(friend);
                         viewHolder.itemView.setBackgroundColor(Color.TRANSPARENT);
+                        viewHolder.friendUsername.setTextColor(Color.BLACK);
                     } else {
-                        gcList.add(friend);
-                        viewHolder.itemView.setBackgroundColor(Color.rgb(200, 120, 106));
+                        friends.add(friend);
+                        viewHolder.itemView.setBackgroundColor(Color.rgb(189, 93, 76));
+                        viewHolder.friendUsername.setTextColor(Color.WHITE);
+                        viewHolder.friendName.setTextColor(Color.WHITE);
                     }
 
                     ArrayList<Integer> ids = new ArrayList<>();

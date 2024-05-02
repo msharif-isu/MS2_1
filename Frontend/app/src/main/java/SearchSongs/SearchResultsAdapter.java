@@ -72,6 +72,7 @@ public class SearchResultsAdapter extends RecyclerView.Adapter<SearchResultsAdap
             addButton.setOnClickListener(v -> {
                 if (listener != null) {
                     listener.onAddTrack(track);
+                    addButton.setImageResource(R.drawable.green_checkbox);
                 }
             });
 

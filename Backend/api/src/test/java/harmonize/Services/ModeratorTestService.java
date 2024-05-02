@@ -1,5 +1,6 @@
 package harmonize.Services;
 
+import harmonize.DTOs.ResponseDTO;
 import harmonize.DTOs.UserDTO;
 
 import org.springframework.http.HttpMethod;
@@ -21,7 +22,7 @@ public class ModeratorTestService extends AbstractUserTestService {
         return requestService.requestUser(auth, url + port + "/moderators", HttpMethod.GET);
     }
     
-    public ResponseEntity<String> deleteSelf() {
-        return requestService.requestString(auth, url + port + "/moderators", HttpMethod.DELETE);
+    public ResponseEntity<ResponseDTO> deleteSelf() {
+        return requestService.requestResponse(auth, url + port + "/moderators", HttpMethod.DELETE);
     }
 }

@@ -9,6 +9,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import harmonize.DTOs.ReportDTO;
+import harmonize.DTOs.ResponseDTO;
 import harmonize.Entities.Message;
 import harmonize.Entities.Report;
 import harmonize.Entities.User;
@@ -115,7 +116,7 @@ public class ReportService {
     }
 
     @NonNull
-    public String deleteSentReport(int id, int reportID) {
+    public ResponseDTO deleteSentReport(int id, int reportID) {
         User user = userRepository.findReferenceById(id);
         if (user == null)
             throw new EntityNotFoundException("User " + id + " not found.");
@@ -123,7 +124,7 @@ public class ReportService {
         if (report == null || !user.getSentReports().contains(report))
             throw new EntityNotFoundException("Report" + reportID + " not found.");
         deleteReport(report);
-        return new String(String.format("Report %d was deleted.", report.getId()));
+        return new ResponseDTO(String.format("Report %d was deleted.", report.getId()));
     }
 
     @NonNull
@@ -144,13 +145,13 @@ public class ReportService {
     }
 
     @NonNull
-    public String deleteReport(int id) {
+    public ResponseDTO deleteReport(int id) {
         Report report = reportRepository.findReferenceById(id);
         if (report == null)
             throw new EntityNotFoundException("Report" + id + " not found.");
         deleteReport(report);
 
-        return new String(String.format("Report %d was deleted.", report.getId()));
+        return new ResponseDTO(String.format("Report %d was deleted.", report.getId()));
     }
 
     public void deleteReport(Report report) {

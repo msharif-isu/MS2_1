@@ -1,13 +1,14 @@
 package harmonize.DTOs;
 
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import harmonize.Entities.Artist;
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NonNull;
 
 @Data
-@AllArgsConstructor
 public class ArtistDTO {
     @NonNull
     private String id;
@@ -18,6 +19,12 @@ public class ArtistDTO {
     public ArtistDTO(Artist artist) {
         this.id = artist.getId();
         this.name = artist.getName();
+    }
+
+    @JsonCreator
+    public ArtistDTO(@JsonProperty("id") String id, @JsonProperty("name") String name) {
+        this.id = id;
+        this.name = name;
     }
 
     @Override

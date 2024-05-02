@@ -1,11 +1,18 @@
 package harmonize.DTOs;
 
-import lombok.AllArgsConstructor;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import lombok.Data;
 
 @Data
-@AllArgsConstructor
 public class TransmissionDTO {
     Class<? extends Object> type;
     Object data;
+
+    @JsonCreator
+    public TransmissionDTO(@JsonProperty("type") Class<? extends Object> type, @JsonProperty("data") Object data) {
+        this.type = type;
+        this.data = data;
+    }
 }

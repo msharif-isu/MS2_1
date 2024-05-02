@@ -158,45 +158,36 @@ public class UserTest extends TestUtil {
 
     @Test
     public void addFriendInviteOkTest() throws Exception {
-        ResponseEntity<String> responseEntity = todTestService.addFriend(bobTestService.getUser().getId());
-        assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
+        assertEquals(HttpStatus.OK, todTestService.addFriend(bobTestService.getUser().getId()).getStatusCode());
     }
 
     @Test
     public void addFriendNotFoundTest() throws Exception {
-        ResponseEntity<String> responseEntity = todTestService.addFriend(0);
-        assertEquals(HttpStatus.NOT_FOUND, responseEntity.getStatusCode());
+        assertEquals(HttpStatus.NOT_FOUND, todTestService.addFriend(0).getStatusCode());
     }
 
     @Test
     public void addFriendInviteAlreadySentTest() throws Exception {
         todTestService.addFriend(bobTestService.getUser().getId());
-
-        ResponseEntity<String> responseEntity = todTestService.addFriend(bobTestService.getUser().getId());
-        assertEquals(HttpStatus.CONFLICT, responseEntity.getStatusCode());
+        assertEquals(HttpStatus.CONFLICT, todTestService.addFriend(bobTestService.getUser().getId()).getStatusCode());
     }
 
     @Test
     public void addFriendOkTest() throws Exception {
         bobTestService.addFriend(todTestService.getUser().getId());
-
-        ResponseEntity<String> responseEntity = todTestService.addFriend(bobTestService.getUser().getId());
-        assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
+        assertEquals(HttpStatus.OK, todTestService.addFriend(bobTestService.getUser().getId()).getStatusCode());
     }
 
     @Test
     public void addFriendAlreadyFriendTest() throws Exception {
         todTestService.addFriend(bobTestService.getUser().getId());
         bobTestService.addFriend(todTestService.getUser().getId());
-        
-        ResponseEntity<String> responseEntity = todTestService.addFriend(bobTestService.getUser().getId());
-        assertEquals(HttpStatus.CONFLICT, responseEntity.getStatusCode());
+        assertEquals(HttpStatus.CONFLICT, todTestService.addFriend(bobTestService.getUser().getId()).getStatusCode());
     }
 
     @Test
     public void addFriendSelfTest() throws Exception {
-        ResponseEntity<String> responseEntity = todTestService.addFriend(todTestService.getUser().getId());
-        assertEquals(HttpStatus.BAD_REQUEST, responseEntity.getStatusCode());
+        assertEquals(HttpStatus.BAD_REQUEST, todTestService.addFriend(todTestService.getUser().getId()).getStatusCode());
     }
 
     @Test
@@ -216,13 +207,13 @@ public class UserTest extends TestUtil {
         
         String text = "Mean Message";
         bobTestService.getChatSocket().send(new MessageDTO(conversation, text));
-        Thread.sleep(5000);
+        Thread.sleep(1000);
 
         MessageDTO message = bobTestService.getChatSocket().getChats().stream()
             .filter(item -> (item.getText().equals(text)))
             .findAny()
             .get();
-        Thread.sleep(5000);
+        Thread.sleep(1000);
 
         String reportText = "It was offensive";
         ResponseEntity<ReportDTO> responseEntity = todTestService.sendReport(message, reportText);
@@ -243,7 +234,7 @@ public class UserTest extends TestUtil {
             .filter(item -> (item.getMembers().containsAll(Set.of(todTestService.getUser(), bobTestService.getUser()))))
             .findAny()
             .get();
-        Thread.sleep(5000);
+        Thread.sleep(1000);
 
         MessageDTO message = new MessageDTO(conversation, "Hello");
         message.setId(0);
@@ -272,13 +263,13 @@ public class UserTest extends TestUtil {
         
         String text = "Mean Message";
         bobTestService.getChatSocket().send(new MessageDTO(conversation, text));
-        Thread.sleep(5000);
+        Thread.sleep(1000);
 
         MessageDTO message = bobTestService.getChatSocket().getChats().stream()
             .filter(item -> (item.getText().equals(text)))
             .findAny()
             .get();
-        Thread.sleep(5000);
+        Thread.sleep(1000);
 
         String reportText = "It was offensive";
         try {
@@ -304,18 +295,17 @@ public class UserTest extends TestUtil {
         
         String text = "Mean Message";
         bobTestService.getChatSocket().send(new MessageDTO(conversation, text));
-        Thread.sleep(5000);
+        Thread.sleep(1000);
 
         MessageDTO message = bobTestService.getChatSocket().getChats().stream()
             .filter(item -> (item.getText().equals(text)))
             .findAny()
             .get();
-        Thread.sleep(5000);
+        Thread.sleep(1000);
 
         String reportText = "It was offensive";
         ReportDTO report = todTestService.sendReport(message, reportText).getBody();
-        ResponseEntity<String> responseEntity = todTestService.deleteReport(report);
-        assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
+        assertEquals(HttpStatus.OK, todTestService.deleteReport(report).getStatusCode());
     }
 
     @Test
@@ -335,13 +325,13 @@ public class UserTest extends TestUtil {
         
         String text = "Mean Message";
         bobTestService.getChatSocket().send(new MessageDTO(conversation, text));
-        Thread.sleep(5000);
+        Thread.sleep(1000);
 
         MessageDTO message = bobTestService.getChatSocket().getChats().stream()
             .filter(item -> (item.getText().equals(text)))
             .findAny()
             .get();
-        Thread.sleep(5000);
+        Thread.sleep(1000);
 
         String reportText = "It was offensive";
         todTestService.sendReport(message, "It was offensive");

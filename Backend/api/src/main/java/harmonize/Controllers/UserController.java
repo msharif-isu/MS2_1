@@ -26,6 +26,7 @@ import harmonize.DTOs.ConversationDTO;
 import harmonize.DTOs.FriendRecDTO;
 import harmonize.DTOs.PostDTO;
 import harmonize.DTOs.ReportDTO;
+import harmonize.DTOs.ResponseDTO;
 import harmonize.DTOs.RoleDTO;
 import harmonize.DTOs.SongDTO;
 import harmonize.DTOs.UserDTO;
@@ -80,8 +81,8 @@ public class UserController {
     }
 
     @DeleteMapping(path = "")
-    public ResponseEntity<String> deleteUser(Principal principal){
-        return ResponseEntity.ok(userService.deleteUser(userService.getUser(principal.getName(), false).getId()));
+    public ResponseEntity<ResponseDTO> deleteUser(Principal principal){
+        return ResponseEntity.ok(userService.deleteUser(userService.getUser(principal.getName()).getId()));
     }
 
     @GetMapping(path = "/roles")
@@ -105,13 +106,13 @@ public class UserController {
     }
 
     @PostMapping(path = "/friends/{id}")
-    public ResponseEntity<String> addFriend(Principal principal, @PathVariable int id){
-        return ResponseEntity.ok(userService.addFriend(userService.getUser(principal.getName(), false).getId(), id));
+    public ResponseEntity<ResponseDTO> addFriend(Principal principal, @PathVariable int id){
+        return ResponseEntity.ok(userService.addFriend(userService.getUser(principal.getName()).getId(), id));
     }
 
     @DeleteMapping(path = "/friends/{id}")
-    public ResponseEntity<String> removeFriend(Principal principal, @PathVariable int id){
-        return ResponseEntity.ok(userService.removeFriend(userService.getUser(principal.getName(), false).getId(), id));
+    public ResponseEntity<ResponseDTO> removeFriend(Principal principal, @PathVariable int id){
+        return ResponseEntity.ok(userService.removeFriend(userService.getUser(principal.getName()).getId(), id));
     }
 
     @GetMapping(path = "/reports")
@@ -130,8 +131,8 @@ public class UserController {
     }
 
     @DeleteMapping(path = "/reports/{id}")
-    public ResponseEntity<String> deleteSentReport(Principal principal, @PathVariable int id){
-        return ResponseEntity.ok(reportService.deleteSentReport(userService.getUser(principal.getName(), false).getId(), id));
+    public ResponseEntity<ResponseDTO> deleteSentReport(Principal principal, @PathVariable int id){
+        return ResponseEntity.ok(reportService.deleteSentReport(userService.getUser(principal.getName()).getId(), id));
     }
 
     @GetMapping(path = "/songs")
@@ -140,13 +141,13 @@ public class UserController {
     }
 
     @PostMapping(path = "/songs/{id}")
-    public ResponseEntity<String> addSong(Principal principal, @PathVariable String id){
-        return ResponseEntity.ok(userService.addSong(userService.getUser(principal.getName(), false).getId(), id));
+    public ResponseEntity<ResponseDTO> addSong(Principal principal, @PathVariable String id){
+        return ResponseEntity.ok(userService.addSong(userService.getUser(principal.getName()).getId(), id));
     }
 
     @DeleteMapping(path = "/songs/{id}")
-    public ResponseEntity<String> removeSong(Principal principal, @PathVariable String id){
-        return ResponseEntity.ok(userService.removeSong(userService.getUser(principal.getName(), false).getId(), id));
+    public ResponseEntity<ResponseDTO> removeSong(Principal principal, @PathVariable String id){
+        return ResponseEntity.ok(userService.removeSong(userService.getUser(principal.getName()).getId(), id));
     }
 
     @GetMapping(path = "/icons", produces = MediaType.IMAGE_JPEG_VALUE)

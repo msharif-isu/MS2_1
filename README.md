@@ -84,10 +84,10 @@ https://github.com/msharif-isu/MS2_1/assets/169219030/19272d51-bfac-45dc-8635-3b
         </a>
     </td>
     <td align="center" style="word-wrap: break-word; width: 150px; height: 150px">
-        <a href="https://github.com/banisharifm">
-          <img src="https://avatars.githubusercontent.com/u/41099498?v=4" width="100" height="100" style="border-radius:10%; align-items:center; justify-content:center; overflow:hidden; padding-top:10px" alt="Teaching Assistant"/>
+        <a href="#">
+          <img src="https://avatars.githubusercontent.com/u/41099498?v=4" width="100" height="100" style="border-radius:50%; align-items:center; justify-content:center; overflow:hidden; padding-top:10px" alt="Teaching Assistant"/>
           <br />
-          <sub style="font-size:14px"><b>Mahdi Banisharif</b></sub>
+          <sub style="font-size:14px"><b>Teaching Assistant Name</b></sub>
         </a>
     </td>
 </tr>

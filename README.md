@@ -26,6 +26,9 @@ https://github.com/msharif-isu/MS2_1/assets/169219030/19272d51-bfac-45dc-8635-3b
 
 <a href="https://www.youtube.com/watch?v=5yaI2-MMgGA" target="_blank">Watch the Video on YouTube!</a>
 
+![MS2_1 Team](https://github.com/msharif-isu/MS2_1/assets/169219030/9462368f-ddc5-43f9-809d-c89155060b25)
+
+
 ## Language/Platform/Libraries
 - Java
 - Android Studio

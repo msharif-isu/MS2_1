@@ -55,7 +55,7 @@ If you have ideas for releases in the future, it is a good idea to list them in 
 <tr>
     <td align="center" style="word-wrap: break-word; width: 150.0; height: 150.0">
         <a href=https://github.com/idenning2003>
-          ![20240129_130816](https://github.com/msharif-isu/MS2_1/assets/169219030/dae22262-9762-469b-ae49-3757584ba8f5)
+          ![20240129_130816](https://github.com/msharif-isu/MS2_1/assets/169219030/6959bc48-b389-4c3b-92de-2803b2a9d10f)
             <br />
             <sub style="font-size:14px"><b>Isaac Denning</b></sub>
         </a>

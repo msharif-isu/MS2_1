@@ -1,8 +1,4 @@
-# MS2_1
-
-
-
-## Harmonize
+# Harmonize
 Fixing today’s friend-finding apps
 
 ## Description
@@ -23,7 +19,10 @@ Fixing today’s friend-finding apps
 <img width="468" alt="image" src="https://github.com/msharif-isu/MS2_1/blob/main/Frontend/app/src/main/res/drawable/logo.png">
 
 ## Visuals
-Depending on what you are making, it can be a good idea to include screenshots or even a video (you'll frequently see GIFs rather than actual videos). Tools like ttygif can help, but check out Asciinema for a more sophisticated method.
+
+https://github.com/msharif-isu/MS2_1/assets/169219030/1099439e-61d1-472a-8c82-d59a5cdd8449
+
+<a href="https://www.youtube.com/watch?v=5yaI2-MMgGA" target="_blank">Watch the Video on Youtube!</a>
 
 ## Installation
 Within a particular ecosystem, there may be a common way of installing things, such as using Yarn, NuGet, or Homebrew. However, consider the possibility that whoever is reading your README is a novice and would like more guidance. Listing specific steps helps remove ambiguity and gets people to using your project as quickly as possible. If it only runs in a specific context like a particular programming language version or operating system or has dependencies that have to be installed manually, also add a Requirements subsection.

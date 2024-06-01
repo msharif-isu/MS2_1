@@ -23,9 +23,11 @@ Fixing today’s friend-finding apps
 ## Visuals
 
 <p align="center">
-  <a href="https://github.com/msharif-isu/MS2_1/assets/169219030/1099439e-61d1-472a-8c82-d59a5cdd8449">
-    <img width="468" alt="image" src="https://github.com/msharif-isu/MS2_1/blob/main/Document/video_thumbnail.png">
-  </a>
+  
+
+https://github.com/msharif-isu/MS2_1/assets/169219030/19272d51-bfac-45dc-8635-3b48139729f2
+
+
 </p>
 
 <p align="center">

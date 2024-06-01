@@ -2,17 +2,17 @@
 Fixing today’s friend-finding apps
 
 ## Description
-- Create an account
+- **Create an account**
   - Get assigned a unique account on the database that can be logged in from any device
   - Accounts will have a username and password to log in
-- Link your spotify account
-  - Use last fm api to get the user's specific music data
-- Add people with similar interests
-  - Users will be shown other users with similar musical interest and can be “added”
-- Block people
+- **Link your Spotify account**
+  - Use Last.fm API to get the user's specific music data
+- **Add people with similar interests**
+  - Users will be shown other users with similar musical interests and can be “added”
+- **Block people**
   - If you block someone, they will be removed from your friends list (if they’re in it) and you will also not be suggested as a friend
-- Message other users who’ve added you back
-  - If two users decide to add with each other, they will be able to message each other back
+- **Message other users who’ve added you back**
+  - If two users decide to add each other, they will be able to message each other
   - Able to group chat
 
 ## Badges
@@ -22,9 +22,15 @@ Fixing today’s friend-finding apps
 
 ## Visuals
 
-https://github.com/msharif-isu/MS2_1/assets/169219030/1099439e-61d1-472a-8c82-d59a5cdd8449
+<p align="center">
+  <a href="https://github.com/msharif-isu/MS2_1/assets/169219030/1099439e-61d1-472a-8c82-d59a5cdd8449">
+    <img width="468" alt="image" src="https://github.com/msharif-isu/MS2_1/blob/main/Document/video_thumbnail.png">
+  </a>
+</p>
 
-<a href="https://www.youtube.com/watch?v=5yaI2-MMgGA" target="_blank">Watch the Video on YouTube!</a>
+<p align="center">
+  <a href="https://www.youtube.com/watch?v=5yaI2-MMgGA" target="_blank">Watch the Video on YouTube!</a>
+</p>
 
 ## Language/Platform/Libraries
 - Java
@@ -37,63 +43,66 @@ https://github.com/msharif-isu/MS2_1/assets/169219030/1099439e-61d1-472a-8c82-d5
 - Spotify API
 - Docker
 
-<!-- ## Usage
-
-## Support
-Tell people where they can go to for help. It can be any combination of an issue tracker, a chat room, an email address, etc.
-
-
-## Roadmap
-If you have ideas for releases in the future, it is a good idea to list them in the README.
-
--->
-
 ## Contributing
-
 
 <table>
 <tr>
-    <td align="center" style="word-wrap: break-word; width: 150.0; height: 150.0">
-        <a href=https://github.com/idenning2003>
-          <img src=https://github.com/msharif-isu/MS2_1/blob/main/Document/Isaac%20Denning.jpg width="100;"  style="border-radius:50%;align-items:center;justify-content:center;overflow:hidden;padding-top:10px" alt=Isaac_Denning/>
-            <br />
-            <sub style="font-size:14px"><b>Isaac Denning</b></sub>
+    <td align="center" style="word-wrap: break-word; width: 150px; height: 150px">
+        <a href="https://github.com/idenning2003">
+          <img src="https://github.com/msharif-isu/MS2_1/blob/main/Document/Isaac%20Denning.jpg" width="100" style="border-radius:50%; align-items:center; justify-content:center; overflow:hidden; padding-top:10px" alt="Isaac Denning"/>
+          <br />
+          <sub style="font-size:14px"><b>Isaac Denning</b></sub>
         </a>
     </td>
-  <td align="center" style="word-wrap: break-word; width: 150.0; height: 150.0">
-        <a href=https://github.com/M-M5>
-          <img src=https://github.com/msharif-isu/MS2_1/blob/main/Document/Manas%20Mathur.jpg width="100;"  style="border-radius:50%;align-items:center;justify-content:center;overflow:hidden;padding-top:10px" alt=Manas_Mathur/>
-            <br />
-            <sub style="font-size:14px"><b>Manas Mathur</b></sub>
+    <td align="center" style="word-wrap: break-word; width: 150px; height: 150px">
+        <a href="https://github.com/M-M5">
+          <img src="https://github.com/msharif-isu/MS2_1/blob/main/Document/Manas%20Mathur.jpg" width="100" style="border-radius:50%; align-items:center; justify-content:center; overflow:hidden; padding-top:10px" alt="Manas Mathur"/>
+          <br />
+          <sub style="font-size:14px"><b>Manas Mathur</b></sub>
         </a>
     </td>
-  
-  <td align="center" style="word-wrap: break-word; width: 150.0; height: 150.0">
-        <a href=https://github.com/>
-          <img src=https://github.com/msharif-isu/MS2_1/blob/main/Document/Phu%20Nguyen.jpg width="100;"  style="border-radius:50%;align-items:center;justify-content:center;overflow:hidden;padding-top:10px" alt=Phu_Nguyen/>
-            <br />
-            <sub style="font-size:14px"><b>Phu Nguyen</b></sub>
+    <td align="center" style="word-wrap: break-word; width: 150px; height: 150px">
+        <a href="https://github.com/">
+          <img src="https://github.com/msharif-isu/MS2_1/blob/main/Document/Phu%20Nguyen.jpg" width="100" style="border-radius:50%; align-items:center; justify-content:center; overflow:hidden; padding-top:10px" alt="Phu Nguyen"/>
+          <br />
+          <sub style="font-size:14px"><b>Phu Nguyen</b></sub>
         </a>
     </td>
-    
-  <td align="center" style="word-wrap: break-word; width: 150.0; height: 150.0">
-        <a href=https://github.com/WillPeyer>
-          <img src=https://github.com/msharif-isu/MS2_1/blob/main/Document/Will%20Peyer.png width="100;"  style="border-radius:50%;align-items:center;justify-content:center;overflow:hidden;padding-top:10px" alt=Will_Peyer/>
-            <br />
-            <sub style="font-size:14px"><b></b></sub>
+    <td align="center" style="word-wrap: break-word; width: 150px; height: 150px">
+        <a href="https://github.com/WillPeyer">
+          <img src="https://github.com/msharif-isu/MS2_1/blob/main/Document/Will%20Peyer.png" width="100" style="border-radius:50%; align-items:center; justify-content:center; overflow:hidden; padding-top:10px" alt="Will Peyer"/>
+          <br />
+          <sub style="font-size:14px"><b>Will Peyer</b></sub>
         </a>
     </td>
 </tr>
 </table>
 
-<!--
-## Authors and acknowledgment
-Show your appreciation to those who have contributed to the project.
--->
+## Professors and Teaching Assistants
+
+<table>
+<tr>
+    <td align="center" style="word-wrap: break-word; width: 150px; height: 150px">
+        <a href="#">
+          <img src="https://www.cs.iastate.edu/files/styles/people_thumb/public/people/profilepictures/dsc_0069.jpg" width="100" style="border-radius:50%; align-items:center; justify-content:center; overflow:hidden; padding-top:10px" alt="Professor"/>
+          <br />
+          <sub style="font-size:14px"><b>Simanta Mitra</b></sub>
+        </a>
+    </td>
+    <td align="center" style="word-wrap: break-word; width: 150px; height: 150px">
+        <a href="https://github.com/banisharifm">
+          <img src="https://avatars.githubusercontent.com/u/41099498?v=4" width="100" style="border-radius:50%; align-items:center; justify-content:center; overflow:hidden; padding-top:10px" alt="Teaching Assistant"/>
+          <br />
+          <sub style="font-size:14px"><b>Teaching Assistant Name</b></sub>
+        </a>
+    </td>
+</tr>
+</table>
 
 ## Roles
-- Frontend: Manas, Will
-- Backend: Isaac, Phu
+- **Frontend**: Manas, Will
+- **Backend**: Isaac, Phu
+
 
 ## License
 This project is licensed under the ISU License.

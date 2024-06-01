@@ -20,19 +20,11 @@ Fixing today’s friend-finding apps
   <img width="468" alt="image" src="https://github.com/msharif-isu/MS2_1/blob/main/Frontend/app/src/main/res/drawable/logo.png">
 </p>
 
-## Visuals
-
-<p align="center">
-  
+## Visuals 
 
 https://github.com/msharif-isu/MS2_1/assets/169219030/19272d51-bfac-45dc-8635-3b48139729f2
 
-
-</p>
-
-<p align="center">
-  <a href="https://www.youtube.com/watch?v=5yaI2-MMgGA" target="_blank">Watch the Video on YouTube!</a>
-</p>
+<a href="https://www.youtube.com/watch?v=5yaI2-MMgGA" target="_blank">Watch the Video on YouTube!</a>
 
 ## Language/Platform/Libraries
 - Java

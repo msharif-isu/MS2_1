@@ -26,24 +26,42 @@ https://github.com/msharif-isu/MS2_1/assets/169219030/1099439e-61d1-472a-8c82-d5
 
 <a href="https://www.youtube.com/watch?v=5yaI2-MMgGA" target="_blank">Watch the Video on YouTube!</a>
 
-## Installation
-Within a particular ecosystem, there may be a common way of installing things, such as using Yarn, NuGet, or Homebrew. However, consider the possibility that whoever is reading your README is a novice and would like more guidance. Listing specific steps helps remove ambiguity and gets people to using your project as quickly as possible. If it only runs in a specific context like a particular programming language version or operating system or has dependencies that have to be installed manually, also add a Requirements subsection.
+## Language/Platform/Libraries
+- Java
+- Android Studio
+- Spring
+- MySQL
+- Swagger
+- Javadoc
+- CI/CD
+- Spotify API
+- Docker
 
-## Usage
-Use examples liberally, and show the expected output if you can. It's helpful to have inline the smallest example of usage that you can demonstrate, while providing links to more sophisticated examples if they are too long to reasonably include in the README.
+<!-- ## Usage
 
 ## Support
 Tell people where they can go to for help. It can be any combination of an issue tracker, a chat room, an email address, etc.
 
+
 ## Roadmap
 If you have ideas for releases in the future, it is a good idea to list them in the README.
 
+-->
+
 ## Contributing
-State if you are open to contributions and what your requirements are for accepting them.
 
-For people who want to make changes to your project, it's helpful to have some documentation on how to get started. Perhaps there is a script that they should run or some environment variables that they need to set. Make these steps explicit. These instructions could also be useful to your future self.
 
-You can also document commands to lint the code or run tests. These steps help to ensure high code quality and reduce the likelihood that the changes inadvertently break something. Having instructions for running tests is especially helpful if it requires external setup, such as starting a Selenium server for testing in a browser.
+<table>
+<tr>
+    <td align="center" style="word-wrap: break-word; width: 150.0; height: 150.0">
+        <a href=https://github.com/idenning2003>
+          ![20240129_130816](https://github.com/msharif-isu/MS2_1/assets/169219030/dae22262-9762-469b-ae49-3757584ba8f5)
+            <br />
+            <sub style="font-size:14px"><b>Isaac Denning</b></sub>
+        </a>
+    </td>
+</tr>
+</table>
 
 ## Authors and acknowledgment
 Show your appreciation to those who have contributed to the project.

@@ -93,7 +93,7 @@ https://github.com/msharif-isu/MS2_1/assets/169219030/19272d51-bfac-45dc-8635-3b
         </a>
     </td>
     <td align="center" style="word-wrap: break-word; width: 150px; height: 200px">
-        <a href="https://github.com/banisharif">
+        <a href="https://github.com/banisharifm">
           <img src="https://avatars.githubusercontent.com/u/41099498?v=4" width="100" height="100" style="border-radius:50%; align-items:center; justify-content:center; overflow:hidden; padding-top:2px" alt="Teaching Assistant"/>
           <br />
           <sub style="font-size:14px"><b>Mahdi Banisharif</b></sub>

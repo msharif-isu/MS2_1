@@ -60,6 +60,29 @@ If you have ideas for releases in the future, it is a good idea to list them in 
             <sub style="font-size:14px"><b>Isaac Denning</b></sub>
         </a>
     </td>
+  <td align="center" style="word-wrap: break-word; width: 150.0; height: 150.0">
+        <a href=https://github.com/M-M5>
+          <img src=https://github.com/msharif-isu/MS2_1/blob/main/Document/Manas%20Mathur.jpg width="100;"  style="border-radius:50%;align-items:center;justify-content:center;overflow:hidden;padding-top:10px" alt=Manas_Mathur/>
+            <br />
+            <sub style="font-size:14px"><b>Manas Mathur</b></sub>
+        </a>
+    </td>
+  
+  <td align="center" style="word-wrap: break-word; width: 150.0; height: 150.0">
+        <a href=https://github.com/>
+          <img src=https://github.com/msharif-isu/MS2_1/blob/main/Document/Phu%20Nguyen.jpg width="100;"  style="border-radius:50%;align-items:center;justify-content:center;overflow:hidden;padding-top:10px" alt=Phu_Nguyen/>
+            <br />
+            <sub style="font-size:14px"><b>Phu Nguyen</b></sub>
+        </a>
+    </td>
+    
+  <td align="center" style="word-wrap: break-word; width: 150.0; height: 150.0">
+        <a href=https://github.com/WillPeyer>
+          <img src=https://github.com/msharif-isu/MS2_1/blob/main/Document/Will%20Peyer.jpg width="100;"  style="border-radius:50%;align-items:center;justify-content:center;overflow:hidden;padding-top:10px" alt=Will_Peyer/>
+            <br />
+            <sub style="font-size:14px"><b></b></sub>
+        </a>
+    </td>
 </tr>
 </table>
 

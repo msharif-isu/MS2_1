@@ -76,14 +76,14 @@ https://github.com/msharif-isu/MS2_1/assets/169219030/19272d51-bfac-45dc-8635-3b
 
 <table>
 <tr>
-    <td align="center" style="word-wrap: break-word; width: 150px; height: 180px">
+    <td align="center" style="word-wrap: break-word; width: 150px; height: 200px">
         <a href="https://www.cs.iastate.edu/smitra">
           <img src="https://www.cs.iastate.edu/files/styles/people_thumb/public/people/profilepictures/dsc_0069.jpg" width="100" height="100" style="border-radius:50%; align-items:center; justify-content:center; overflow:hidden; padding-top:2px" alt="Professor"/>
           <br />
           <sub style="font-size:14px"><b>Simanta Mitra</b></sub>
         </a>
     </td>
-    <td align="center" style="word-wrap: break-word; width: 150px; height: 180px">
+    <td align="center" style="word-wrap: break-word; width: 150px; height: 200px">
         <a href="#">
           <img src="https://avatars.githubusercontent.com/u/41099498?v=4" width="100" height="100" style="border-radius:50%; align-items:center; justify-content:center; overflow:hidden; padding-top:2px" alt="Teaching Assistant"/>
           <br />

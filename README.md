@@ -107,5 +107,6 @@ https://github.com/msharif-isu/MS2_1/assets/169219030/19272d51-bfac-45dc-8635-3b
 This project is licensed under the ISU License.
 
 ## Project Status
-Completed as a Iowa State University course project. 
-COM S 309 Software Development Practices.
+Completed as a Iowa State University course project.
+
+**COM S 309** Software Development Practices.

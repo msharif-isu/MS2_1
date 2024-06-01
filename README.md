@@ -56,7 +56,7 @@ https://github.com/msharif-isu/MS2_1/assets/169219030/19272d51-bfac-45dc-8635-3b
         </a>
     </td>
     <td align="center" style="word-wrap: break-word; width: 150px; height: 150px">
-        <a href="https://github.com/">
+        <a href="https://github.com/phunprogrammer">
           <img src="https://github.com/msharif-isu/MS2_1/blob/main/Document/Phu%20Nguyen.jpg" width="100" style="border-radius:50%; align-items:center; justify-content:center; overflow:hidden; padding-top:10px" alt="Phu Nguyen"/>
           <br />
           <sub style="font-size:14px"><b>Phu Nguyen</b></sub>

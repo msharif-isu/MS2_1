@@ -78,7 +78,7 @@ If you have ideas for releases in the future, it is a good idea to list them in 
     
   <td align="center" style="word-wrap: break-word; width: 150.0; height: 150.0">
         <a href=https://github.com/WillPeyer>
-          <img src=https://github.com/msharif-isu/MS2_1/blob/main/Document/Will%20Peyer.jpg width="100;"  style="border-radius:50%;align-items:center;justify-content:center;overflow:hidden;padding-top:10px" alt=Will_Peyer/>
+          <img src=https://github.com/msharif-isu/MS2_1/blob/main/Document/Will%20Peyer.png width="100;"  style="border-radius:50%;align-items:center;justify-content:center;overflow:hidden;padding-top:10px" alt=Will_Peyer/>
             <br />
             <sub style="font-size:14px"><b></b></sub>
         </a>
@@ -86,11 +86,18 @@ If you have ideas for releases in the future, it is a good idea to list them in 
 </tr>
 </table>
 
+<!--
 ## Authors and acknowledgment
 Show your appreciation to those who have contributed to the project.
+-->
+
+## Roles
+- Frontend: Manas, Will
+- Backend: Isaac, Phu
 
 ## License
-For open source projects, say how it is licensed.
+This project is licensed under the ISU License.
 
-## Project status
-If you have run out of energy or time for your project, put a note at the top of the README saying that development has slowed down or stopped completely. Someone may choose to fork your project or volunteer to step in as a maintainer or owner, allowing your project to keep going. You can also make an explicit request for maintainers.
+## Project Status
+Completed as a Iowa State University course project. 
+COM S 309 Software Development Practices.

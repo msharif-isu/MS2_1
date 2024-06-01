@@ -1,12 +1,30 @@
-# MS2_1
+# Harmonize
+
+Fixing today’s friend-finding apps
 
 
+## Description
 
-## Getting started
+Today there aren’t many popular friend-finding apps, even more so specifically it’s difficult to find friends who share the same music tastes. 
+We’re creating Harmonize to solve the problem by allowing people to connect their spotify accounts and then grouping them with people with similar interests.
 
-To make it easy for you to get started with GitLab, here's a list of recommended next steps.
+## How it works
+- Create an account
+  - Get assigned a unique account on the database that can be logged in from any device
+  - Accounts will have a username and password to log in
+- Link your spotify account
+  - Use last fm api to get the user's specific music data
+- Add people with similar interests
+  - Users will be shown other users with similar musical interest and can be “added”
+- Block people
+  - If you block someone, they will be removed from your friends list (if they’re in it) and you will also not be suggested as a friend
+- Message other users who’ve added you back
+  - If two users decide to add with each other, they will be able to message each other back
+  - Able to group chat
 
-Already a pro? Just edit this README.md and make it your own. Want to make it easy? [Use the template at the bottom](#editing-this-readme)!
+
+## Team Competency
+
 
 ## Add your files
 

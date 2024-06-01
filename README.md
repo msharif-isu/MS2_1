@@ -77,7 +77,11 @@ https://github.com/msharif-isu/MS2_1/assets/169219030/19272d51-bfac-45dc-8635-3b
 </tr>
 </table>
 
-## Professors and Teaching Assistants
+## Roles
+- **Frontend**: Manas, Will
+- **Backend**: Isaac, Phu
+  
+## Professors & Teaching Assistants
 
 <table>
 <tr>
@@ -97,10 +101,6 @@ https://github.com/msharif-isu/MS2_1/assets/169219030/19272d51-bfac-45dc-8635-3b
     </td>
 </tr>
 </table>
-
-## Roles
-- **Frontend**: Manas, Will
-- **Backend**: Isaac, Phu
 
 
 ## License
